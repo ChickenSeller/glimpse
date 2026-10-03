@@ -4,7 +4,9 @@
 
 #include <QList>
 #include <QObject>
+#include <QPainterPath>
 #include <QPoint>
+#include <QPolygon>
 #include <QRect>
 
 namespace detail {
@@ -18,12 +20,14 @@ class SelectionOverlay;
 // Region mode: drag out a rectangle.
 // Window mode: hover highlights the window/control under the cursor (wheel
 // walks out to parents and back in), click takes it; dragging still works.
+// Freehand mode: drag to draw an outline; releasing closes it. selected()
+// then carries its bounding box and shape() the outline itself.
 class RegionSelector : public QObject
 {
     Q_OBJECT
 
 public:
-    enum class Mode { Region, Window };
+    enum class Mode { Region, Window, Freehand };
 
     RegionSelector(const DesktopSnapshot &snapshot, Mode mode, QObject *parent = nullptr);
     ~RegionSelector() override;
@@ -31,6 +35,9 @@ public:
     const DesktopSnapshot &snapshot() const { return m_snapshot; }
 
     void start();
+
+    // The drawn outline after a Freehand selection; empty in the other modes.
+    QPainterPath shape() const { return m_shape; }
 
 signals:
     void selected(const QRect &logicalRect);
@@ -43,6 +50,7 @@ private:
     bool isDragging() const { return m_dragging; }
     QPoint cursor() const { return m_cursor; }
     Mode mode() const { return m_mode; }
+    const QPolygon &freehandPath() const { return m_path; }
     // The highlighted window/control in Window mode; empty geometry otherwise.
     CaptureTarget hoverTarget() const;
 
@@ -64,6 +72,8 @@ private:
     QPoint m_cursor;
     bool m_pressed = false;
     bool m_dragging = false;
+    QPolygon m_path;      // Freehand: the outline drawn so far
+    QPainterPath m_shape; // Freehand: the finished outline
 
     QList<CaptureTarget> m_hoverChain; // outermost window first
     qsizetype m_hoverLevel = -1;       // index into m_hoverChain

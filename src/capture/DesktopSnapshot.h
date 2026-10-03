@@ -2,6 +2,7 @@
 
 #include <QImage>
 #include <QList>
+#include <QPainterPath>
 #include <QRect>
 #include <QString>
 
@@ -39,6 +40,9 @@ public:
     // Returns the area under a logical rectangle at native resolution. A rect
     // spanning monitors with different scale factors is rendered at the highest one.
     QImage crop(const QRect &logicalRect) const;
+    // The area inside a logical outline, cropped to its bounding box; pixels
+    // outside the outline are transparent.
+    QImage crop(const QPainterPath &logicalShape) const;
 
     // The windows/controls under `pos`, from the top-level window inward.
     QList<CaptureTarget> targetsAt(const QPoint &pos) const;

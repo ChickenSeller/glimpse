@@ -56,6 +56,35 @@ QImage DesktopSnapshot::crop(const QRect &logicalRect) const
     return result;
 }
 
+QImage DesktopSnapshot::crop(const QPainterPath &logicalShape) const
+{
+    const QRect bounds = logicalShape.boundingRect().toAlignedRect();
+    const QImage area = crop(bounds);
+    if (area.isNull())
+        return {};
+
+    QImage result(area.size(), QImage::Format_ARGB32_Premultiplied);
+    result.fill(Qt::transparent);
+    QPainter painter(&result);
+    painter.setRenderHint(QPainter::Antialiasing);
+    // Outline in image pixels; the crop may have been clipped to the desktop.
+    const qreal scale = area.devicePixelRatio();
+    QTransform toPixels;
+    toPixels.scale(scale, scale);
+    toPixels.translate(-bounds.x(), -bounds.y());
+    QPainterPath outline = toPixels.map(logicalShape);
+    outline.setFillRule(Qt::WindingFill);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(Qt::white);
+    painter.drawPath(outline);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.drawImage(0, 0, area);
+    painter.end();
+
+    result.setDevicePixelRatio(area.devicePixelRatio());
+    return result;
+}
+
 QList<CaptureTarget> DesktopSnapshot::targetsAt(const QPoint &pos) const
 {
     QList<CaptureTarget> chain;

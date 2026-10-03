@@ -100,6 +100,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="freehandButton">
+     <property name="toolTip">
+      <string>Capture Freehand Region</string>
+     </property>
+     <property name="text">
+      <string>Freehand</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/lasso_select.svg</normaloff>:/icons/lasso_select.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="fullScreenButton">
      <property name="toolTip">
       <string>Capture Full Screen</string>

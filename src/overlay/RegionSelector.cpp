@@ -79,6 +79,11 @@ protected:
         p.drawImage(QPointF(0, 0), m_image);
         p.fillRect(rect(), kDim);
 
+        if (m_selector->mode() == RegionSelector::Mode::Freehand && m_selector->freehandPath().size() > 1) {
+            drawFreehand(p, m_selector->freehandPath().translated(-m_origin));
+            return;
+        }
+
         const QRect sel = m_selector->selection().translated(-m_origin);
         if (!sel.isEmpty()) {
             if (sel.intersects(rect())) {
@@ -171,6 +176,29 @@ private:
         p.drawRect(QRectF(r).adjusted(inset, inset, -inset, -inset));
     }
 
+    // Shows the inside of the outline undimmed; the dashed segment shows how
+    // releasing will close it.
+    void drawFreehand(QPainter &p, const QPolygon &path)
+    {
+        QPainterPath inside;
+        inside.addPolygon(path);
+        inside.closeSubpath();
+        p.save();
+        p.setClipPath(inside);
+        p.drawImage(QPointF(0, 0), m_image);
+        p.restore();
+
+        p.setRenderHint(QPainter::Antialiasing);
+        p.setPen(QPen(kAccent, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        p.drawPolyline(path);
+        p.setPen(QPen(kAccent, 1, Qt::DashLine));
+        p.drawLine(path.last(), path.first());
+
+        const QRect bounds = path.boundingRect();
+        if (bounds.intersects(rect()))
+            drawTag(p, rect(), bounds.topLeft(), sizeText(bounds));
+    }
+
     RegionSelector *m_selector;
     QImage m_image;
     QPoint m_origin;
@@ -215,7 +243,7 @@ void RegionSelector::start()
 
 QRect RegionSelector::selection() const
 {
-    if (!m_dragging)
+    if (!m_dragging || m_mode == Mode::Freehand)
         return {};
     const int left = std::min(m_anchor.x(), m_cursor.x());
     const int top = std::min(m_anchor.y(), m_cursor.y());
@@ -235,13 +263,18 @@ void RegionSelector::press(const QPoint &pos)
 {
     m_anchor = m_cursor = pos;
     m_pressed = true;
-    m_dragging = m_mode == Mode::Region;
+    m_dragging = m_mode != Mode::Window;
+    m_path.clear();
+    if (m_mode == Mode::Freehand)
+        m_path.append(pos);
     updateOverlays();
 }
 
 void RegionSelector::move(const QPoint &pos)
 {
     m_cursor = pos;
+    if (m_mode == Mode::Freehand && m_dragging && m_path.last() != pos)
+        m_path.append(pos);
     if (m_pressed && !m_dragging && (pos - m_anchor).manhattanLength() >= kDragThreshold)
         m_dragging = true;
     if (!m_dragging)
@@ -261,6 +294,21 @@ void RegionSelector::release(const QPoint &pos)
         const QRect target = hoverTarget().geometry;
         if (!target.isEmpty())
             finish(target);
+        return;
+    }
+
+    if (m_mode == Mode::Freehand) {
+        if (m_path.last() != pos)
+            m_path.append(pos);
+        const QRect bounds = m_path.boundingRect();
+        if (m_path.size() < 3 || bounds.width() < 2 || bounds.height() < 2) {
+            resetSelection();
+            return;
+        }
+        m_shape = QPainterPath();
+        m_shape.addPolygon(m_path);
+        m_shape.closeSubpath();
+        finish(bounds);
         return;
     }
 
@@ -288,6 +336,7 @@ void RegionSelector::resetSelection()
 {
     m_pressed = false;
     m_dragging = false;
+    m_path.clear();
     updateHover();
     updateOverlays();
 }

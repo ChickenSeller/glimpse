@@ -113,15 +113,20 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+311"/>
+        <location line="+319"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location line="-322"/>
+        <location line="-330"/>
         <source>Scrolling Capture</source>
         <translation>滚动截图</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Capture Freehand Region</source>
+        <translation>捕捉手绘区域</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -157,7 +162,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+154"/>
+        <location line="+161"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>截图失败</translation>
@@ -215,6 +220,16 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
+        <source>Capture Freehand Region</source>
+        <translation>捕捉手绘区域</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Freehand</source>
+        <translation>手绘</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Capture Full Screen</source>
         <translation>捕捉全屏</translation>
     </message>
@@ -255,7 +270,7 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+184"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+185"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -620,7 +635,7 @@ Download them now?</source>
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+321"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+370"/>
         <source>Screen %1</source>
         <translation>屏幕 %1</translation>
     </message>
@@ -684,6 +699,11 @@ Download them now?</source>
         <location line="+13"/>
         <source>Capture &amp;Rectangular Region:</source>
         <translation>捕捉矩形区域(&amp;R)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Capture Free&amp;hand Region:</source>
+        <translation>捕捉手绘区域(&amp;H)：</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -751,7 +771,7 @@ Download them now?</source>
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -761,7 +781,7 @@ Download them now?</source>
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="-85"/>
+        <location line="-86"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

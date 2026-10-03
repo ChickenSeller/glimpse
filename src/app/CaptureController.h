@@ -4,6 +4,7 @@
 
 #include <QHash>
 #include <QObject>
+#include <QPainterPath>
 #include <QPointer>
 #include <QRect>
 
@@ -72,5 +73,6 @@ private:
     // Area chosen before a delay; the live screen is grabbed again once the
     // countdown ends, and this part of it is the capture.
     std::optional<QRect> m_pendingRect;
+    QPainterPath m_pendingShape; // a freehand outline within m_pendingRect
     bool m_restoreToolbar = false;
 };

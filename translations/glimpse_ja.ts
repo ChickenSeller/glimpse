@@ -113,15 +113,20 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+311"/>
+        <location line="+319"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location line="-322"/>
+        <location line="-330"/>
         <source>Scrolling Capture</source>
         <translation>スクロールキャプチャ</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Capture Freehand Region</source>
+        <translation>フリーハンド領域をキャプチャ</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -157,7 +162,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+154"/>
+        <location line="+161"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>キャプチャに失敗しました</translation>
@@ -215,6 +220,16 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
+        <source>Capture Freehand Region</source>
+        <translation>フリーハンド領域をキャプチャ</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Freehand</source>
+        <translation>フリーハンド</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Capture Full Screen</source>
         <translation>全画面をキャプチャ</translation>
     </message>
@@ -255,7 +270,7 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+184"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+185"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -620,7 +635,7 @@ Download them now?</source>
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+321"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+370"/>
         <source>Screen %1</source>
         <translation>画面 %1</translation>
     </message>
@@ -684,6 +699,11 @@ Download them now?</source>
         <location line="+13"/>
         <source>Capture &amp;Rectangular Region:</source>
         <translation>矩形領域をキャプチャ(&amp;R)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Capture Free&amp;hand Region:</source>
+        <translation>フリーハンド領域をキャプチャ(&amp;H)：</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -751,7 +771,7 @@ Download them now?</source>
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -761,7 +781,7 @@ Download them now?</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="-85"/>
+        <location line="-86"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

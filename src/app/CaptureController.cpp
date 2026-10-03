@@ -38,6 +38,7 @@ const char *captureLabel(CaptureMode mode)
     case CaptureMode::QrCode: return QT_TRANSLATE_NOOP("CaptureController", "Scan QR Code");
     case CaptureMode::Ocr: return QT_TRANSLATE_NOOP("CaptureController", "Recognize Text");
     case CaptureMode::Scrolling: return QT_TRANSLATE_NOOP("CaptureController", "Scrolling Capture");
+    case CaptureMode::Freehand: return QT_TRANSLATE_NOOP("CaptureController", "Capture Freehand Region");
     }
     return "";
 }
@@ -212,6 +213,7 @@ void CaptureController::beginCapture(Mode mode)
     m_grabber->setIncludeCursor(AppSettings::captureIncludesCursor() && Platform::supportsCursorCapture());
 
     m_pendingRect.reset();
+    m_pendingShape.clear();
 
     // Full screen has nothing to choose, so its delay comes first. The other
     // modes freeze the screen for choosing the area right away and count down
@@ -240,6 +242,7 @@ void CaptureController::afterDelay(std::function<void()> then)
     connect(countdown, &DelayCountdown::canceled, this, [this, countdown] {
         countdown->deleteLater();
         m_pendingRect.reset();
+        m_pendingShape.clear();
         endCapture();
     });
     countdown->start();
@@ -261,8 +264,10 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
     // The live grab after a delay: the area was chosen before the countdown.
     if (m_pendingRect) {
         const QRect rect = *m_pendingRect;
+        const QPainterPath shape = m_pendingShape;
         m_pendingRect.reset();
-        deliver(snapshot.crop(rect));
+        m_pendingShape.clear();
+        deliver(shape.isEmpty() ? snapshot.crop(rect) : snapshot.crop(shape));
         return;
     }
     if (m_mode == Mode::FullScreen) {
@@ -273,6 +278,7 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
     // Scrolling capture picks its area like Window / Object: hover a
     // scrollable control and click, or drag a rectangle.
     const auto selectorMode = m_mode == Mode::Window || m_mode == Mode::Scrolling ? RegionSelector::Mode::Window
+                              : m_mode == Mode::Freehand                          ? RegionSelector::Mode::Freehand
                                                                                   : RegionSelector::Mode::Region;
     auto *selector = new RegionSelector(snapshot, selectorMode, this);
     connect(selector, &RegionSelector::selected, this, [this, selector](const QRect &rect) {
@@ -282,16 +288,18 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
             return;
         }
         selector->deleteLater();
+        const QPainterPath shape = selector->shape();
         if (AppSettings::captureDelay() > 0) {
             // Area first, then the countdown, then a fresh grab of that area:
             // menus or tooltips opened meanwhile end up in the capture.
-            afterDelay([this, rect] {
+            afterDelay([this, rect, shape] {
                 m_pendingRect = rect;
+                m_pendingShape = shape;
                 m_grabber->grab();
             });
             return;
         }
-        deliver(selector->snapshot().crop(rect));
+        deliver(shape.isEmpty() ? selector->snapshot().crop(rect) : selector->snapshot().crop(shape));
     });
     connect(selector, &RegionSelector::canceled, this, [this, selector] {
         selector->deleteLater();

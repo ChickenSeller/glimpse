@@ -150,6 +150,7 @@ HotkeyEdit *SettingsDialog::hotkeyEdit(CaptureMode mode) const
     case CaptureMode::QrCode: return ui->qrHotkeyEdit;
     case CaptureMode::Ocr: return ui->ocrHotkeyEdit;
     case CaptureMode::Scrolling: return ui->scrollHotkeyEdit;
+    case CaptureMode::Freehand: return ui->freehandHotkeyEdit;
     }
     return nullptr;
 }

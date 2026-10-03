@@ -9,6 +9,7 @@ enum class CaptureMode {
     QrCode, // select a region, decode the QR codes / barcodes in it
     Ocr,    // select a region, recognize the text in it
     Scrolling, // pick a scrollable area, scroll it and stitch a tall image
+    Freehand,  // draw any outline; the outside of it is left transparent
 };
 
 // The modes offered in the UI (tray menu, hotkeys, settings). Scrolling
@@ -17,6 +18,7 @@ enum class CaptureMode {
 inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::Window,
     CaptureMode::Region,
+    CaptureMode::Freehand,
     CaptureMode::FullScreen,
     CaptureMode::QrCode,
     CaptureMode::Ocr,
