@@ -2,10 +2,16 @@
 #include "ui_CaptureToolbar.h"
 
 #include "TintedIcon.h"
+#include "capture/Platform.h"
 
 #include <QCloseEvent>
 #include <QSettings>
 #include <QToolButton>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#include <dwmapi.h>
+#endif
 
 namespace {
 
@@ -19,9 +25,17 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
 {
     ui->setupUi(this);
 
-    connect(ui->windowButton, &QToolButton::clicked, this, &CaptureToolbar::windowRequested);
-    connect(ui->regionButton, &QToolButton::clicked, this, &CaptureToolbar::regionRequested);
-    connect(ui->fullScreenButton, &QToolButton::clicked, this, &CaptureToolbar::fullScreenRequested);
+    m_modeButtons = {
+        {CaptureMode::Window, ui->windowButton},
+        {CaptureMode::Region, ui->regionButton},
+        {CaptureMode::FullScreen, ui->fullScreenButton},
+        {CaptureMode::QrCode, ui->qrButton},
+        {CaptureMode::Ocr, ui->ocrButton},
+    };
+    for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it) {
+        const CaptureMode mode = it.key();
+        connect(it.value(), &QToolButton::clicked, this, [this, mode] { emit captureRequested(mode); });
+    }
     connect(ui->settingsButton, &QToolButton::clicked, this, &CaptureToolbar::settingsRequested);
 
     const auto buttons = findChildren<QToolButton *>();
@@ -30,6 +44,15 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
         m_baseToolTips.insert(button, button->toolTip());
     }
     applyIconColor();
+    applyPlatformLimits();
+
+#ifdef Q_OS_WIN
+    // Windows fades hidden windows out; a capture taken right after hiding the
+    // bar would still show it. Without the transition it disappears at once.
+    const BOOL disable = TRUE;
+    DwmSetWindowAttribute(reinterpret_cast<HWND>(winId()), DWMWA_TRANSITIONS_FORCEDISABLED, &disable,
+                          sizeof(disable));
+#endif
 
     // Wherever the user last left the bar; Qt moves it back on screen if that
     // monitor is gone. Without a saved value the window system places it.
@@ -43,12 +66,11 @@ CaptureToolbar::~CaptureToolbar()
         savePosition();
 }
 
-void CaptureToolbar::setHotkeyHints(const QKeySequence &window, const QKeySequence &region,
-                                    const QKeySequence &fullScreen)
+void CaptureToolbar::setHotkeyHints(const QHash<CaptureMode, QKeySequence> &hotkeys)
 {
-    m_hotkeys.insert(ui->windowButton, window);
-    m_hotkeys.insert(ui->regionButton, region);
-    m_hotkeys.insert(ui->fullScreenButton, fullScreen);
+    m_hotkeys.clear();
+    for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it)
+        m_hotkeys.insert(it.value(), hotkeys.value(it.key()));
     updateToolTips();
 }
 
@@ -71,9 +93,18 @@ void CaptureToolbar::changeEvent(QEvent *event)
         ui->retranslateUi(this);
         for (auto it = m_baseToolTips.begin(); it != m_baseToolTips.end(); ++it)
             it.value() = it.key()->toolTip();
+        applyPlatformLimits();
         updateToolTips();
     }
     QWidget::changeEvent(event);
+}
+
+void CaptureToolbar::applyPlatformLimits()
+{
+    if (!Platform::supportsWindowPicking()) {
+        ui->windowButton->setEnabled(false);
+        m_baseToolTips[ui->windowButton] += QLatin1Char('\n') + Platform::unsupportedHint();
+    }
 }
 
 void CaptureToolbar::applyIconColor()

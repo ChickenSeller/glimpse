@@ -42,6 +42,29 @@
         </layout>
        </item>
        <item>
+        <widget class="QGroupBox" name="captureGroup">
+         <property name="title">
+          <string>Captures</string>
+         </property>
+         <layout class="QVBoxLayout" name="captureLayout">
+          <item>
+           <widget class="QCheckBox" name="captureToolbarCheck">
+            <property name="text">
+             <string>Include the Glimpse &amp;toolbar</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="captureCursorCheck">
+            <property name="text">
+             <string>Include the &amp;mouse pointer</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="generalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -96,6 +119,32 @@
          <item row="2" column="1">
           <widget class="HotkeyEdit" name="fullScreenHotkeyEdit"/>
          </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="qrHotkeyLabel">
+           <property name="text">
+            <string>Scan &amp;QR Code:</string>
+           </property>
+           <property name="buddy">
+            <cstring>qrHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="HotkeyEdit" name="qrHotkeyEdit"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="ocrHotkeyLabel">
+           <property name="text">
+            <string>Recognize &amp;Text:</string>
+           </property>
+           <property name="buddy">
+            <cstring>ocrHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="HotkeyEdit" name="ocrHotkeyEdit"/>
+         </item>
         </layout>
        </item>
        <item>
@@ -120,12 +169,105 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="ocrTab">
+      <attribute name="title">
+       <string>Text Recognition</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="ocrLayout">
+       <item>
+        <layout class="QFormLayout" name="ocrForm">
+         <item row="0" column="0">
+          <widget class="QLabel" name="ocrEngineLabel">
+           <property name="text">
+            <string>&amp;Engine:</string>
+           </property>
+           <property name="buddy">
+            <cstring>ocrEngineCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="ocrEngineCombo"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="ocrEngineNote">
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="foregroundRole">
+            <enum>QPalette::PlaceholderText</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="ocrLanguagesLabel">
+           <property name="text">
+            <string>Languages:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <layout class="QHBoxLayout" name="ocrLanguagesLayout">
+           <item>
+            <widget class="QCheckBox" name="ocrChineseCheck">
+             <property name="text">
+              <string>&amp;Chinese (Simplified)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="ocrJapaneseCheck">
+             <property name="text">
+              <string>&amp;Japanese</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="ocrEnglishCheck">
+             <property name="text">
+              <string>E&amp;nglish</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="ocrLanguagesSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="ocrHint">
+         <property name="text">
+          <string>Recognition models are downloaded the first time they are needed. Selecting fewer languages makes recognition faster and more accurate.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="foregroundRole">
+          <enum>QPalette::PlaceholderText</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="ocrSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
      </property>
     </widget>
    </item>

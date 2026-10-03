@@ -13,7 +13,7 @@ class SettingsDialog;
 }
 
 // Application settings. Layout lives in SettingsDialog.ui; values are read on
-// construction and written to AppSettings when the user presses OK.
+// construction and written to AppSettings by Apply or OK.
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
@@ -24,10 +24,26 @@ public:
 
     void accept() override;
 
+signals:
+    // Settings were saved; the language has already been switched.
+    void applied();
+
+protected:
+    void changeEvent(QEvent *event) override;
+
 private:
+    // Validates and saves; false (with the problem shown) if nothing was saved.
+    bool apply();
+    void setModified(bool modified);
     HotkeyEdit *hotkeyEdit(CaptureMode mode) const;
     void restoreDefaults();
     QString selectedLanguage() const;
+    QStringList selectedOcrLanguages() const;
+    void setOcrLanguages(const QStringList &languages);
+    void updateOcrEngineNote();
+    void applyPlatformLimits();
+    QString systemDefaultLabel() const;
 
     std::unique_ptr<Ui::SettingsDialog> ui;
+    bool m_modified = false;
 };

@@ -18,4 +18,12 @@ DisplayServer displayServer();
 
 QString displayServerName();
 
+// Features implemented only on some platforms so far; the UI disables the rest.
+bool supportsWindowPicking(); // "Capture Window / Object" hit-testing
+bool supportsCursorCapture(); // mouse pointer in captures
+bool supportsGlobalHotkeys();
+
+// Short explanation shown on disabled controls.
+QString unsupportedHint();
+
 } // namespace Platform

@@ -3,10 +3,15 @@
 #include "AppIcon.h"
 #include "AppSettings.h"
 #include "CaptureToolbar.h"
+#include "capture/Platform.h"
 #include "capture/ScreenGrabber.h"
 #include "editor/EditorWindow.h"
 #include "hotkey/GlobalHotkeys.h"
 #include "overlay/RegionSelector.h"
+#include "qr/BarcodeScanner.h"
+#include "qr/QrResultDialog.h"
+#include "ocr/ModelStore.h"
+#include "ocr/OcrResultDialog.h"
 #include "settings/SettingsDialog.h"
 
 #include <QApplication>
@@ -28,6 +33,8 @@ const char *captureLabel(CaptureMode mode)
     case CaptureMode::Window: return QT_TRANSLATE_NOOP("CaptureController", "Capture Window / Object");
     case CaptureMode::Region: return QT_TRANSLATE_NOOP("CaptureController", "Capture Rectangular Region");
     case CaptureMode::FullScreen: return QT_TRANSLATE_NOOP("CaptureController", "Capture Full Screen");
+    case CaptureMode::QrCode: return QT_TRANSLATE_NOOP("CaptureController", "Scan QR Code");
+    case CaptureMode::Ocr: return QT_TRANSLATE_NOOP("CaptureController", "Recognize Text");
     }
     return "";
 }
@@ -44,9 +51,7 @@ CaptureController::CaptureController(QObject *parent)
     connect(m_grabber, &ScreenGrabber::failed, this, &CaptureController::onGrabFailed);
     connect(m_grabber, &ScreenGrabber::canceled, this, &CaptureController::endCapture);
 
-    connect(m_toolbar.get(), &CaptureToolbar::windowRequested, this, &CaptureController::captureWindow);
-    connect(m_toolbar.get(), &CaptureToolbar::regionRequested, this, &CaptureController::captureRegion);
-    connect(m_toolbar.get(), &CaptureToolbar::fullScreenRequested, this, &CaptureController::captureFullScreen);
+    connect(m_toolbar.get(), &CaptureToolbar::captureRequested, this, &CaptureController::beginCapture);
     connect(m_toolbar.get(), &CaptureToolbar::settingsRequested, this, &CaptureController::showSettings);
     connect(m_toolbar.get(), &CaptureToolbar::closed, this, [this] {
         // Without a tray icon there would be no way back, so closing the bar quits.
@@ -92,32 +97,21 @@ void CaptureController::showSettings()
 
     m_settings = new SettingsDialog;
     m_settings->setAttribute(Qt::WA_DeleteOnClose);
-    connect(m_settings, &QDialog::finished, this, [this](int result) {
+    connect(m_settings, &SettingsDialog::applied, this, [this] {
+        // Register right away to report conflicts while the user can still fix
+        // them, then pause again until the dialog closes.
         const QStringList taken = registerHotkeys();
-        if (result == QDialog::Accepted && !taken.isEmpty()) {
-            QMessageBox::warning(nullptr, tr("Hotkeys unavailable"),
+        m_hotkeys->clear();
+        if (!taken.isEmpty()) {
+            QMessageBox::warning(m_settings, tr("Hotkeys unavailable"),
                                  tr("These hotkeys are already in use by another program and will not work:\n%1")
                                      .arg(taken.join(QStringLiteral(", "))));
         }
     });
+    connect(m_settings, &QDialog::finished, this, [this] { registerHotkeys(); });
     m_settings->show();
     m_settings->raise();
     m_settings->activateWindow();
-}
-
-void CaptureController::captureFullScreen()
-{
-    beginCapture(Mode::FullScreen);
-}
-
-void CaptureController::captureRegion()
-{
-    beginCapture(Mode::Region);
-}
-
-void CaptureController::captureWindow()
-{
-    beginCapture(Mode::Window);
 }
 
 void CaptureController::setupTray()
@@ -130,6 +124,8 @@ void CaptureController::setupTray()
         QAction *item = m_trayMenu->addAction(QString(), this, [this, mode] { beginCapture(mode); });
         // The shortcut is only a hint (set in registerHotkeys); the global hotkey does the work.
         item->setShortcutVisibleInContextMenu(true);
+        if (mode == Mode::Window && !Platform::supportsWindowPicking())
+            item->setEnabled(false);
         m_trayCaptureActions.insert(mode, item);
     }
     m_trayMenu->addSeparator();
@@ -184,8 +180,7 @@ QStringList CaptureController::registerHotkeys()
     }
 
     // Hints show only hotkeys that actually work.
-    m_toolbar->setHotkeyHints(active.value(Mode::Window), active.value(Mode::Region),
-                              active.value(Mode::FullScreen));
+    m_toolbar->setHotkeyHints(active);
     for (auto it = m_trayCaptureActions.cbegin(); it != m_trayCaptureActions.cend(); ++it)
         it.value()->setShortcut(active.value(it.key()));
 
@@ -195,14 +190,16 @@ QStringList CaptureController::registerHotkeys()
 
 void CaptureController::beginCapture(Mode mode)
 {
-    if (m_busy)
+    if (m_busy || (mode == Mode::Window && !Platform::supportsWindowPicking()))
         return;
     m_busy = true;
     m_mode = mode;
 
-    m_restoreToolbar = m_toolbar->isVisible();
+    // Hidden unless the user wants it in the picture.
+    m_restoreToolbar = m_toolbar->isVisible() && !AppSettings::captureIncludesToolbar();
     if (m_restoreToolbar)
         m_toolbar->hide();
+    m_grabber->setIncludeCursor(AppSettings::captureIncludesCursor() && Platform::supportsCursorCapture());
 
     QTimer::singleShot(m_restoreToolbar ? kHideDelayMs : kShortDelayMs, m_grabber, &ScreenGrabber::grab);
 }
@@ -221,8 +218,13 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
     connect(selector, &RegionSelector::selected, this, [this, selector](const QRect &rect) {
         const QImage image = selector->snapshot().crop(rect);
         selector->deleteLater();
-        openEditor(image);
         endCapture();
+        if (m_mode == Mode::QrCode)
+            showQrResult(image);
+        else if (m_mode == Mode::Ocr)
+            showOcrResult(image);
+        else
+            openEditor(image);
     });
     connect(selector, &RegionSelector::canceled, this, [this, selector] {
         selector->deleteLater();
@@ -247,6 +249,48 @@ void CaptureController::endCapture()
         m_restoreToolbar = false;
         m_toolbar->show();
     }
+}
+
+void CaptureController::showQrResult(const QImage &image)
+{
+    if (image.isNull())
+        return;
+    auto *dialog = new QrResultDialog(image, scanBarcodes(image));
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
+}
+
+void CaptureController::showOcrResult(const QImage &image)
+{
+    if (image.isNull())
+        return;
+
+    const QString engine = AppSettings::ocrEngine();
+    if (engine.isEmpty()) {
+        QMessageBox::warning(nullptr, tr("Recognize Text"),
+                             tr("No text recognition engine is available in this build."));
+        return;
+    }
+
+    const QStringList languages = AppSettings::ocrLanguages();
+    const QList<ModelFile> missing = Ocr::missingModels(engine, languages);
+    if (!missing.isEmpty()) {
+        QStringList names;
+        for (const ModelFile &file : missing)
+            names << file.name;
+        const auto answer = QMessageBox::question(
+            nullptr, tr("Recognize Text"),
+            tr("%1 needs to download its recognition models first:\n\n%2\n\nDownload them now?")
+                .arg(Ocr::engineName(engine), names.join(QLatin1Char('\n'))));
+        if (answer != QMessageBox::Yes || !ModelStore::download(missing, nullptr))
+            return;
+    }
+
+    auto *dialog = new OcrResultDialog(image, engine, languages);
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
 }
 
 void CaptureController::openEditor(const QImage &image)

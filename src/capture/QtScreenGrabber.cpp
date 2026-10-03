@@ -1,5 +1,6 @@
 #include "QtScreenGrabber.h"
 
+#include "CursorCapture.h"
 #include "WindowList.h"
 
 #include <QGuiApplication>
@@ -24,6 +25,9 @@ void QtScreenGrabber::grab()
         shot.image.setDevicePixelRatio(shot.image.width() / qreal(shot.geometry.width()));
         snapshot.screens.append(shot);
     }
+
+    if (includeCursor())
+        drawCursor(snapshot);
 
     // Window positions are frozen together with the pixels; once the selection
     // overlay is up it would cover everything a live query could find.

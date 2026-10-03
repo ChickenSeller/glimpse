@@ -35,11 +35,6 @@ public:
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
 
-public slots:
-    void captureFullScreen();
-    void captureRegion();
-    void captureWindow();
-
 private:
     void setupTray();
     void retranslate();
@@ -50,6 +45,8 @@ private:
     void onGrabFailed(const QString &message);
     void endCapture();
     void openEditor(const QImage &image);
+    void showQrResult(const QImage &image);
+    void showOcrResult(const QImage &image);
 
     ScreenGrabber *m_grabber = nullptr;
     GlobalHotkeys *m_hotkeys = nullptr;

@@ -51,8 +51,14 @@
    <property name="movable">
     <bool>false</bool>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextOnly</enum>
+    <enum>Qt::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -62,9 +68,15 @@
    </attribute>
    <addaction name="actionSaveAs"/>
    <addaction name="actionCopy"/>
+   <addaction name="separator"/>
+   <addaction name="actionEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionSaveAs">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/save.svg</normaloff>:/icons/save.svg</iconset>
+   </property>
    <property name="text">
     <string>Save As...</string>
    </property>
@@ -73,11 +85,30 @@
    </property>
   </action>
   <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/content_copy.svg</normaloff>:/icons/content_copy.svg</iconset>
+   </property>
    <property name="text">
     <string>Copy</string>
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionEdit">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/edit.svg</normaloff>:/icons/edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit...</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit in the annotation editor</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+E</string>
    </property>
   </action>
   <action name="actionClose">
@@ -89,6 +120,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources/glimpse.qrc"/>
+ </resources>
  <connections/>
 </ui>

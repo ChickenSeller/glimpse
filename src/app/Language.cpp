@@ -1,6 +1,7 @@
 #include "Language.h"
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QLibraryInfo>
 #include <QLocale>
 #include <QTranslator>
@@ -13,10 +14,11 @@ const QString kJapanese = QStringLiteral("ja");
 
 QTranslator *appTranslator = nullptr;
 QTranslator *qtTranslator = nullptr;
+QTranslator *annotatorTranslator = nullptr;
 
 void removeTranslators()
 {
-    for (QTranslator **translator : {&appTranslator, &qtTranslator}) {
+    for (QTranslator **translator : {&appTranslator, &qtTranslator, &annotatorTranslator}) {
         if (*translator) {
             QCoreApplication::removeTranslator(*translator);
             delete *translator;
@@ -73,6 +75,14 @@ void apply(const QString &code)
     if (qtTranslator->load(QStringLiteral("qtbase_") + language,
                            QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
         QCoreApplication::installTranslator(qtTranslator);
+
+    // kImageAnnotator ships its own catalog: next to the executable for our
+    // in-tree build, in the system data directory for a distro package.
+    annotatorTranslator = new QTranslator;
+    const QString annotatorFile = QStringLiteral("kImageAnnotator_") + language;
+    if (annotatorTranslator->load(annotatorFile, QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("translations")))
+        || annotatorTranslator->load(annotatorFile, QStringLiteral("/usr/share/kImageAnnotator/translations")))
+        QCoreApplication::installTranslator(annotatorTranslator);
 
     // Ours are compiled into the binary by qt_add_translations().
     appTranslator = new QTranslator;

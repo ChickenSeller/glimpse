@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CaptureMode.h"
+
 #include <QHash>
 #include <QIcon>
 #include <QKeySequence>
@@ -23,14 +25,11 @@ public:
     explicit CaptureToolbar(QWidget *parent = nullptr);
     ~CaptureToolbar() override;
 
-    // Appends the global hotkeys to the button tooltips; an empty sequence means none.
-    void setHotkeyHints(const QKeySequence &window, const QKeySequence &region,
-                        const QKeySequence &fullScreen);
+    // Appends the global hotkeys to the button tooltips; modes without one show none.
+    void setHotkeyHints(const QHash<CaptureMode, QKeySequence> &hotkeys);
 
 signals:
-    void windowRequested();
-    void fullScreenRequested();
-    void regionRequested();
+    void captureRequested(CaptureMode mode);
     void settingsRequested();
     void closed();
 
@@ -42,10 +41,12 @@ protected:
 private:
     void applyIconColor();
     void updateToolTips();
+    void applyPlatformLimits();
     void savePosition();
 
     std::unique_ptr<Ui::CaptureToolbar> ui;
     QHash<QToolButton *, QString> m_baseToolTips; // as set in the .ui
+    QHash<CaptureMode, QToolButton *> m_modeButtons;
     QHash<QToolButton *, QKeySequence> m_hotkeys;
     QHash<QToolButton *, QIcon> m_sourceIcons; // icons as set in the .ui, before tinting
 };

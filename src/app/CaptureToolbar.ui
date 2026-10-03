@@ -103,9 +103,76 @@
     </widget>
    </item>
    <item>
-    <widget class="Line" name="separator">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+    <widget class="QToolButton" name="qrButton">
+     <property name="toolTip">
+      <string>Scan QR Code in a Region</string>
+     </property>
+     <property name="text">
+      <string>QR Code</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/qr_code_scanner.svg</normaloff>:/icons/qr_code_scanner.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="ocrButton">
+     <property name="toolTip">
+      <string>Recognize Text in a Region</string>
+     </property>
+     <property name="text">
+      <string>Text</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/document_scanner.svg</normaloff>:/icons/document_scanner.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="separator">
+     <property name="minimumSize">
+      <size>
+       <width>1</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: palette(mid);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
     </widget>
    </item>

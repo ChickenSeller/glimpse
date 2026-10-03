@@ -18,8 +18,15 @@ public:
 
     virtual void grab() = 0;
 
+    // Whether the mouse pointer is painted into the snapshot (where supported).
+    void setIncludeCursor(bool include) { m_includeCursor = include; }
+    bool includeCursor() const { return m_includeCursor; }
+
 signals:
     void captured(const DesktopSnapshot &snapshot);
     void canceled();
     void failed(const QString &message);
+
+private:
+    bool m_includeCursor = false;
 };

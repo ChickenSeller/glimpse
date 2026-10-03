@@ -1,15 +1,20 @@
 #pragma once
 
+#include "app/TintedIcon.h"
+
 #include <QImage>
 #include <QMainWindow>
+#include <QPointer>
 
 #include <memory>
+
+class AnnotatorWindow;
 
 namespace Ui {
 class EditorWindow;
 }
 
-// Shows a finished capture. For now: view, save and copy; annotation tools come later.
+// Shows a finished capture: save, copy, or open it in the annotation editor.
 // Layout lives in EditorWindow.ui.
 class EditorWindow : public QMainWindow
 {
@@ -25,9 +30,14 @@ protected:
 private:
     void saveAs();
     void copyToClipboard();
+    void edit();
+    void setImage(const QImage &image);
     void fitToScreen();
     void updateTexts();
+    void updateToolTips();
 
     std::unique_ptr<Ui::EditorWindow> ui;
     QImage m_image;
+    ActionIconTinter m_icons;
+    QPointer<AnnotatorWindow> m_annotator;
 };

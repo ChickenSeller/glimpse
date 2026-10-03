@@ -1,5 +1,6 @@
 #include "Platform.h"
 
+#include <QCoreApplication>
 #include <QtGlobal>
 
 namespace Platform {
@@ -32,6 +33,28 @@ QString displayServerName()
     case DisplayServer::Unknown: break;
     }
     return QStringLiteral("Unknown");
+}
+
+// TODO: X11 (window tree, XFixes cursor, XGrabKey) and Wayland (GlobalShortcuts
+// portal). Wayland cannot offer window picking or the pointer at all.
+bool supportsWindowPicking()
+{
+    return displayServer() == DisplayServer::Windows;
+}
+
+bool supportsCursorCapture()
+{
+    return displayServer() == DisplayServer::Windows;
+}
+
+bool supportsGlobalHotkeys()
+{
+    return displayServer() == DisplayServer::Windows;
+}
+
+QString unsupportedHint()
+{
+    return QCoreApplication::translate("Platform", "Not available on %1 yet.").arg(displayServerName());
 }
 
 } // namespace Platform

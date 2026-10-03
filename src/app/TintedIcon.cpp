@@ -1,5 +1,6 @@
 #include "TintedIcon.h"
 
+#include <QAction>
 #include <QIconEngine>
 #include <QPainter>
 #include <QPixmap>
@@ -62,4 +63,15 @@ QIcon tintedIcon(const QIcon &source, const QColor &color)
     if (source.isNull())
         return source;
     return QIcon(new TintedIconEngine(source, color));
+}
+
+void ActionIconTinter::add(QAction *action)
+{
+    m_icons.insert(action, action->icon());
+}
+
+void ActionIconTinter::apply(const QColor &color) const
+{
+    for (auto it = m_icons.cbegin(); it != m_icons.cend(); ++it)
+        it.key()->setIcon(tintedIcon(it.value(), color));
 }
