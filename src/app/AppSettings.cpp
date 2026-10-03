@@ -18,6 +18,8 @@ QString hotkeySettingsKey(CaptureMode mode)
     case CaptureMode::Ocr: return QStringLiteral("hotkeys/ocr");
     case CaptureMode::Scrolling: return QStringLiteral("hotkeys/scrolling");
     case CaptureMode::Freehand: return QStringLiteral("hotkeys/freehand");
+    case CaptureMode::ColorPicker: return QStringLiteral("hotkeys/colorPicker");
+    case CaptureMode::Crosshair: return QStringLiteral("hotkeys/crosshair");
     }
     return {};
 }
@@ -26,7 +28,7 @@ QString hotkeySettingsKey(CaptureMode mode)
 
 namespace AppSettings {
 
-// Ctrl+Alt+1..7: reachable with the left hand alone, and
+// Ctrl+Alt+1..9: reachable with the left hand alone, and
 // clear of common global hotkeys (WeChat Ctrl+Alt+W, QQ Ctrl+Alt+A/Z/O) and of
 // the Ctrl+Shift+letter shortcuts applications use.
 QKeySequence defaultHotkey(CaptureMode mode)
@@ -38,7 +40,9 @@ QKeySequence defaultHotkey(CaptureMode mode)
     case CaptureMode::QrCode: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_4);
     case CaptureMode::Ocr: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_5);
     case CaptureMode::Freehand: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_6);
-    case CaptureMode::Scrolling: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_7);
+    case CaptureMode::ColorPicker: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_7);
+    case CaptureMode::Crosshair: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_8);
+    case CaptureMode::Scrolling: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_9);
     }
     return {};
 }

@@ -74,6 +74,16 @@ void disableWindowAnimations(QWidget *window)
 #endif
 }
 
+std::optional<QPoint> nativeCursorPos()
+{
+#ifdef Q_OS_WIN
+    POINT point;
+    if (GetCursorPos(&point)) // physical: Qt makes the process per-monitor DPI aware
+        return QPoint(point.x, point.y);
+#endif
+    return std::nullopt;
+}
+
 QString unsupportedHint()
 {
     return QCoreApplication::translate("Platform", "Not available on %1 yet.").arg(displayServerName());

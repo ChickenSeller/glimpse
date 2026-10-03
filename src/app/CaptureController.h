@@ -51,6 +51,7 @@ private:
     void openEditor(const QImage &image);
     void showQrResult(const QImage &image);
     void showOcrResult(const QImage &image);
+    void showColorResult(const QColor &color);
     void startScrollingCapture(const QRect &rect);
     // Runs the "delay before capture" countdown (if any), then `then`.
     void afterDelay(std::function<void()> then);

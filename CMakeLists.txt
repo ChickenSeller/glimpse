@@ -137,6 +137,10 @@ qt_add_executable(glimpse
     src/editor/AnnotatorWindow.cpp
     src/editor/AnnotatorWindow.h
     src/editor/AnnotatorWindow.ui
+    src/color/ColorResultDialog.cpp
+    src/color/ColorResultDialog.h
+    src/color/ColorResultDialog.ui
+
     src/editor/EditorWindow.cpp
     src/editor/EditorWindow.h
     src/editor/EditorWindow.ui

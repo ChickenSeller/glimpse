@@ -92,7 +92,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+35"/>
+        <location filename="../src/app/CaptureController.cpp" line="+36"/>
         <source>Capture Window / Object</source>
         <translation>ウィンドウ／オブジェクトをキャプチャ</translation>
     </message>
@@ -113,13 +113,13 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+320"/>
+        <location line="+341"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location line="-331"/>
+        <location line="-352"/>
         <source>Scrolling Capture</source>
         <translation>スクロールキャプチャ</translation>
     </message>
@@ -127,6 +127,16 @@
         <location line="+1"/>
         <source>Capture Freehand Region</source>
         <translation>フリーハンド領域をキャプチャ</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pick Screen Color</source>
+        <translation>画面の色を取得</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Screen Crosshair</source>
+        <translation>画面クロスヘア</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -162,13 +172,13 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+172"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>キャプチャに失敗しました</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+39"/>
         <source>No text recognition engine is available in this build.</source>
         <translation>このビルドでは利用できる文字認識エンジンがありません。</translation>
     </message>
@@ -270,7 +280,27 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+185"/>
+        <source>Pick a Color from the Screen</source>
+        <translation>画面から色を取得</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Color</source>
+        <translation>色</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Screen Crosshair: position, color and distance</source>
+        <translation>画面クロスヘア：位置・色・距離</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Crosshair</source>
+        <translation>クロスヘア</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+187"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -330,6 +360,36 @@ Download them now?</source>
         <location line="+1"/>
         <source>Delay Before Capture: off</source>
         <translation>キャプチャ前の遅延：オフ</translation>
+    </message>
+</context>
+<context>
+    <name>ColorResultDialog</name>
+    <message>
+        <location filename="../src/color/ColorResultDialog.ui" line="+14"/>
+        <source>Screen Color</source>
+        <translation>画面の色</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <location line="+24"/>
+        <location line="+24"/>
+        <source>Copy</source>
+        <translation>コピー</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>&amp;Pick Again</source>
+        <translation>もう一度取得(&amp;P)</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <location filename="../src/color/ColorResultDialog.cpp" line="+74"/>
+        <source>Copied %1 to the clipboard.</source>
+        <translation>%1 をクリップボードにコピーしました。</translation>
     </message>
 </context>
 <context>
@@ -655,7 +715,33 @@ Download them now?</source>
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+370"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+344"/>
+        <source>Click: pick  ·  Arrows: 1 px</source>
+        <translation>クリック：取得  ·  矢印キー：1 ピクセル移動</translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>Click: lock here  ·  Right-click: unlock</source>
+        <translation>クリック：ここに固定  ·  右クリック：固定解除</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Click: lock  ·  Arrows: 1 px</source>
+        <translation>クリック：固定  ·  矢印キー：1 ピクセル移動</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Ctrl+C: position  ·  Ctrl+Shift+C: color  ·  Esc: exit</source>
+        <translation>Ctrl+C：位置をコピー  ·  Ctrl+Shift+C：色をコピー  ·  Esc：終了</translation>
+    </message>
+    <message>
+        <location line="+224"/>
+        <location line="+12"/>
+        <source>Copied %1</source>
+        <translation>%1 をコピーしました</translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <source>Screen %1</source>
         <translation>画面 %1</translation>
     </message>
@@ -757,6 +843,16 @@ Download them now?</source>
     </message>
     <message>
         <location line="+13"/>
+        <source>&amp;Pick Screen Color:</source>
+        <translation>画面の色を取得(&amp;P)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Screen Cr&amp;osshair:</source>
+        <translation>画面クロスヘア(&amp;O)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>&amp;Scrolling Capture:</source>
         <translation>スクロールキャプチャ(&amp;S)：</translation>
     </message>
@@ -806,7 +902,7 @@ Download them now?</source>
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+54"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -816,7 +912,7 @@ Download them now?</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="-105"/>
+        <location line="-107"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

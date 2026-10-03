@@ -230,6 +230,58 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="colorButton">
+     <property name="toolTip">
+      <string>Pick a Color from the Screen</string>
+     </property>
+     <property name="text">
+      <string>Color</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/colorize.svg</normaloff>:/icons/colorize.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="crosshairButton">
+     <property name="toolTip">
+      <string>Screen Crosshair: position, color and distance</string>
+     </property>
+     <property name="text">
+      <string>Crosshair</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/my_location.svg</normaloff>:/icons/my_location.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="delayButton">
      <property name="toolTip">
       <string>Delay Before Capture</string>

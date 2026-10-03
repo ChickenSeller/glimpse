@@ -35,6 +35,8 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
         {CaptureMode::FullScreen, ui->fullScreenButton},
         {CaptureMode::QrCode, ui->qrButton},
         {CaptureMode::Ocr, ui->ocrButton},
+        {CaptureMode::ColorPicker, ui->colorButton},
+        {CaptureMode::Crosshair, ui->crosshairButton},
         {CaptureMode::Scrolling, ui->scrollButton},
     };
     for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it) {

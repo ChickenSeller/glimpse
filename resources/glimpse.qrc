@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/check.svg</file>
+        <file>icons/colorize.svg</file>
         <file>icons/aspect_ratio.svg</file>
         <file>icons/content_copy.svg</file>
         <file>icons/content_cut.svg</file>
@@ -9,6 +10,7 @@
         <file>icons/lasso_select.svg</file>
         <file>icons/drag_indicator.svg</file>
         <file>icons/edit.svg</file>
+        <file>icons/my_location.svg</file>
         <file>icons/file_save.svg</file>
         <file>icons/photo_size_select_large.svg</file>
         <file>icons/qr_code_scanner.svg</file>

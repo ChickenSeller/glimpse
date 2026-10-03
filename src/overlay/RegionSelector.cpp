@@ -1,5 +1,8 @@
 #include "RegionSelector.h"
 
+#include "capture/Platform.h"
+
+#include <QClipboard>
 #include <QCursor>
 #include <QGuiApplication>
 #include <QKeyEvent>
@@ -10,15 +13,30 @@
 #include <QWidget>
 
 #include <algorithm>
+#include <cmath>
 
 namespace {
 
 const QColor kAccent(0x2d, 0x9c, 0xff);
 const QColor kDim(0, 0, 0, 110);
+const QColor kCrosshair(0xff, 0x40, 0x40);
 // Movement (logical px) before a press turns into a drag, so a slightly
 // shaky click in window mode still picks the window.
 constexpr int kDragThreshold = 4;
 constexpr int kMaxTitleWidth = 360;
+// Color mode magnifier: kZoomCells × kZoomCells native pixels, kZoomCell px each.
+constexpr int kZoomCells = 15;
+constexpr int kZoomCell = 8;
+
+// The native pixel of `image` (whose top-left is at logical `origin`) under
+// the logical point `pos`, moved by `nudge` and kept inside the image.
+QPoint samplePixel(const QImage &image, const QPoint &origin, const QPointF &pos, const QPoint &nudge)
+{
+    const qreal dpr = image.devicePixelRatio();
+    const QPointF local = (pos - QPointF(origin)) * dpr;
+    return QPoint(std::clamp(int(std::floor(local.x())) + nudge.x(), 0, image.width() - 1),
+                  std::clamp(int(std::floor(local.y())) + nudge.y(), 0, image.height() - 1));
+}
 
 QScreen *findScreen(const QString &name)
 {
@@ -60,11 +78,13 @@ public:
         , m_selector(selector)
         , m_image(shot.image)
         , m_origin(shot.geometry.topLeft())
+        , m_name(shot.name)
     {
         setAttribute(Qt::WA_OpaquePaintEvent);
         setAttribute(Qt::WA_NoSystemBackground);
         setMouseTracking(true);
-        setCursor(Qt::CrossCursor);
+        // The crosshair itself marks the pointer.
+        setCursor(selector->mode() == RegionSelector::Mode::Crosshair ? Qt::BlankCursor : Qt::CrossCursor);
         if (QScreen *screen = findScreen(shot.name))
             setScreen(screen);
         setGeometry(shot.geometry);
@@ -77,6 +97,15 @@ protected:
     {
         QPainter p(this);
         p.drawImage(QPointF(0, 0), m_image);
+        if (m_selector->mode() == RegionSelector::Mode::Color) {
+            // Undimmed: the colors on screen are the ones being picked.
+            drawMagnifier(p);
+            return;
+        }
+        if (m_selector->mode() == RegionSelector::Mode::Crosshair) {
+            drawCrosshair(p);
+            return;
+        }
         p.fillRect(rect(), kDim);
 
         if (m_selector->mode() == RegionSelector::Mode::Freehand && m_selector->freehandPath().size() > 1) {
@@ -118,6 +147,16 @@ protected:
 
     void mousePressEvent(QMouseEvent *event) override
     {
+        if (m_selector->mode() == RegionSelector::Mode::Crosshair) {
+            m_selector->setPreciseCursor(preciseGlobal(event));
+            if (event->button() == Qt::LeftButton)
+                m_selector->lockAtCursor();
+            else if (event->button() == Qt::RightButton && m_selector->lockedSample())
+                m_selector->unlock();
+            else if (event->button() == Qt::RightButton)
+                m_selector->cancel();
+            return;
+        }
         if (event->button() == Qt::LeftButton) {
             m_selector->press(toGlobal(event));
         } else if (event->button() == Qt::RightButton) {
@@ -129,7 +168,11 @@ protected:
         }
     }
 
-    void mouseMoveEvent(QMouseEvent *event) override { m_selector->move(toGlobal(event)); }
+    void mouseMoveEvent(QMouseEvent *event) override
+    {
+        m_selector->setPreciseCursor(preciseGlobal(event));
+        m_selector->move(toGlobal(event));
+    }
 
     void mouseReleaseEvent(QMouseEvent *event) override
     {
@@ -146,16 +189,63 @@ protected:
 
     void keyPressEvent(QKeyEvent *event) override
     {
-        if (event->key() == Qt::Key_Escape)
+        if (event->key() == Qt::Key_Escape) {
             m_selector->cancel();
-        else
-            QWidget::keyPressEvent(event);
+            return;
+        }
+        if (m_selector->mode() == RegionSelector::Mode::Crosshair && event->key() == Qt::Key_C
+            && event->modifiers().testFlag(Qt::ControlModifier)) {
+            if (event->modifiers().testFlag(Qt::ShiftModifier))
+                m_selector->copyColor();
+            else
+                m_selector->copyPosition();
+            return;
+        }
+        if (m_selector->mode() == RegionSelector::Mode::Crosshair) {
+            switch (event->key()) {
+            case Qt::Key_Left: m_selector->nudgeBy(-1, 0); return;
+            case Qt::Key_Right: m_selector->nudgeBy(1, 0); return;
+            case Qt::Key_Up: m_selector->nudgeBy(0, -1); return;
+            case Qt::Key_Down: m_selector->nudgeBy(0, 1); return;
+            case Qt::Key_Return:
+            case Qt::Key_Enter:
+            case Qt::Key_Space: m_selector->lockAtCursor(); return;
+            default: break;
+            }
+        }
+        if (m_selector->mode() == RegionSelector::Mode::Color) {
+            switch (event->key()) {
+            case Qt::Key_Left: m_selector->nudgeBy(-1, 0); return;
+            case Qt::Key_Right: m_selector->nudgeBy(1, 0); return;
+            case Qt::Key_Up: m_selector->nudgeBy(0, -1); return;
+            case Qt::Key_Down: m_selector->nudgeBy(0, 1); return;
+            case Qt::Key_Return:
+            case Qt::Key_Enter:
+            case Qt::Key_Space: m_selector->pickColor(); return;
+            default: break;
+            }
+        }
+        QWidget::keyPressEvent(event);
     }
 
 private:
     // Built from the local position plus our known origin: on Wayland a window
     // does not know its global position, so globalPosition() is unreliable there.
     QPoint toGlobal(const QMouseEvent *event) const { return m_origin + event->position().toPoint(); }
+
+    // The pointer's logical position, at the center of the physical pixel
+    // under its hotspot where the platform tells it exactly.
+    QPointF preciseGlobal(const QMouseEvent *event) const
+    {
+        if (const std::optional<QPoint> native = Platform::nativeCursorPos()) {
+            const qreal dpr = m_image.devicePixelRatio();
+            const QPoint nativeOrigin(qRound(m_origin.x() * dpr), qRound(m_origin.y() * dpr));
+            const QPointF local = (QPointF(*native - nativeOrigin) + QPointF(0.5, 0.5)) / dpr;
+            if (QRectF(rect()).contains(local))
+                return QPointF(m_origin) + local;
+        }
+        return QPointF(m_origin) + event->position();
+    }
 
     QString sizeText(const QRect &r) const
     {
@@ -199,9 +289,146 @@ private:
             drawTag(p, rect(), bounds.topLeft(), sizeText(bounds));
     }
 
+    // A magnifier of the pixels around `pixel` of `image`, with its color
+    // swatch, `lines` of values and dimmer `hints`, placed beside `near`.
+    void drawPanel(QPainter &p, const QImage &image, const QPoint &pixel, const QPointF &near,
+                   const QStringList &lines, const QStringList &hints)
+    {
+        const QColor color = image.pixelColor(pixel);
+        const QFontMetrics fm = p.fontMetrics();
+        const int zoomSize = kZoomCells * kZoomCell;
+        const int swatchSize = fm.height() * 2;
+        int textWidth = 0;
+        for (int i = 0; i < lines.size(); ++i)
+            textWidth = std::max(textWidth, fm.horizontalAdvance(lines[i]) + (i < 2 ? swatchSize + 8 : 0));
+        for (const QString &hint : hints)
+            textWidth = std::max(textWidth, fm.horizontalAdvance(hint));
+        const int textLines = std::max<int>(2, lines.size()) + hints.size();
+        QRect box(0, 0, std::max(zoomSize, textWidth + 12), zoomSize + textLines * fm.height() + 12);
+        // Beside the cursor, flipped to the other side near a screen edge.
+        QPoint pos = near.toPoint() + QPoint(24, 24);
+        if (pos.x() + box.width() > width())
+            pos.setX(int(near.x()) - 24 - box.width());
+        if (pos.y() + box.height() > height())
+            pos.setY(int(near.y()) - 24 - box.height());
+        box.moveTopLeft(pos);
+
+        const int half = kZoomCells / 2;
+        QImage area = image.copy(pixel.x() - half, pixel.y() - half, kZoomCells, kZoomCells);
+        area.setDevicePixelRatio(1.0);
+        const QRect zoom(box.left() + (box.width() - zoomSize) / 2, box.top(), zoomSize, zoomSize);
+        p.fillRect(box, QColor(0x20, 0x20, 0x20)); // opaque: nothing behind may show through
+        p.drawImage(zoom, area); // nearest-neighbour: every pixel a crisp square
+
+        const QRect center(zoom.left() + half * kZoomCell, zoom.top() + half * kZoomCell, kZoomCell, kZoomCell);
+        p.setPen(QPen(Qt::black, 1));
+        p.drawRect(center.adjusted(-1, -1, 0, 0));
+        p.setPen(QPen(Qt::white, 1));
+        p.drawRect(center.adjusted(-2, -2, 1, 1));
+        p.setPen(QPen(kAccent, 1));
+        p.drawRect(box.adjusted(0, 0, -1, -1));
+
+        const int left = box.left() + 6;
+        int y = zoom.bottom() + 7;
+        const QRect swatch(left, y, swatchSize, swatchSize);
+        p.fillRect(swatch, color);
+        p.setPen(QPen(Qt::white, 1));
+        p.drawRect(swatch.adjusted(0, 0, -1, -1));
+        for (int i = 0; i < lines.size(); ++i) {
+            // The first two lines sit beside the swatch, the rest below it.
+            const int x = i < 2 ? swatch.right() + 9 : left;
+            p.drawText(x, y + i * fm.height() + fm.ascent(), lines[i]);
+        }
+        y += std::max<int>(2, lines.size()) * fm.height();
+        p.setPen(QColor(255, 255, 255, 170));
+        for (const QString &hint : hints) {
+            p.drawText(left, y + fm.ascent(), hint);
+            y += fm.height();
+        }
+    }
+
+    // Color mode: the panel for the pixel under the cursor, on its screen only.
+    void drawMagnifier(QPainter &p)
+    {
+        const RegionSelector::Sample sample = m_selector->sampleAtCursor();
+        if (sample.screen != m_name)
+            return;
+        const QColor color = m_image.pixelColor(sample.pixel);
+        drawPanel(p, m_image, sample.pixel, m_selector->preciseCursor() - QPointF(m_origin),
+                  {color.name(QColor::HexRgb).toUpper(),
+                   QStringLiteral("%1, %2, %3").arg(color.red()).arg(color.green()).arg(color.blue())},
+                  {RegionSelector::tr("Click: pick  ·  Arrows: 1 px")});
+    }
+
+    // Center of a native pixel of this screen, in local logical coordinates.
+    QPointF pixelCenter(const QPoint &pixel) const
+    {
+        const qreal dpr = m_image.devicePixelRatio();
+        return QPointF((pixel.x() + 0.5) / dpr, (pixel.y() + 0.5) / dpr);
+    }
+
+    // Crosshair mode: lines through the locked (or hovered) pixel; with a lock,
+    // a line to the cursor and the distance between them.
+    void drawCrosshair(QPainter &p)
+    {
+        const RegionSelector::Sample live = m_selector->sampleAtCursor();
+        const std::optional<RegionSelector::Sample> lock = m_selector->lockedSample();
+        const RegionSelector::Sample target = lock ? *lock : live;
+
+        if (target.screen == m_name) {
+            const QPointF c = pixelCenter(target.pixel);
+            // Dark under light, so the lines show on any background.
+            for (const auto &[color, offset] : {std::pair{QColor(0, 0, 0, 150), 1.0}, std::pair{kCrosshair, 0.0}}) {
+                p.setPen(QPen(color, 1));
+                p.drawLine(QPointF(0, c.y() + offset), QPointF(width(), c.y() + offset));
+                p.drawLine(QPointF(c.x() + offset, 0), QPointF(c.x() + offset, height()));
+            }
+        }
+        if (lock && live.screen == m_name) {
+            const QPointF cursor = pixelCenter(live.pixel);
+            p.setRenderHint(QPainter::Antialiasing);
+            if (lock->screen == m_name) {
+                p.setPen(QPen(kCrosshair, 1, Qt::DashLine));
+                p.drawLine(pixelCenter(lock->pixel), cursor);
+            }
+            p.setPen(QPen(kCrosshair, 1.5));
+            p.drawLine(cursor - QPointF(6, 0), cursor + QPointF(6, 0));
+            p.drawLine(cursor - QPointF(0, 6), cursor + QPointF(0, 6));
+            p.setRenderHint(QPainter::Antialiasing, false);
+        }
+        if (live.screen != m_name)
+            return;
+
+        const ScreenImage *targetShot = m_selector->screenImage(target.screen);
+        if (!targetShot)
+            return;
+        const QColor color = targetShot->image.pixelColor(target.pixel);
+        const QPoint pos = m_selector->globalPixel(target);
+        QStringList lines = {color.name(QColor::HexRgb).toUpper(),
+                             QStringLiteral("%1, %2, %3").arg(color.red()).arg(color.green()).arg(color.blue()),
+                             QStringLiteral("X %1   Y %2").arg(pos.x()).arg(pos.y())};
+        if (lock) {
+            const QPoint delta = m_selector->globalPixel(live) - pos;
+            lines << QStringLiteral("\u0394 %1, %2   %3 px")
+                         .arg(delta.x())
+                         .arg(delta.y())
+                         .arg(std::hypot(delta.x(), delta.y()), 0, 'f', 1);
+        }
+        QStringList hints;
+        if (!m_selector->message().isEmpty()) {
+            hints << m_selector->message();
+        } else {
+            hints << (lock ? RegionSelector::tr("Click: lock here  ·  Right-click: unlock")
+                           : RegionSelector::tr("Click: lock  ·  Arrows: 1 px"))
+                  << RegionSelector::tr("Ctrl+C: position  ·  Ctrl+Shift+C: color  ·  Esc: exit");
+        }
+        drawPanel(p, targetShot->image, target.pixel, m_selector->preciseCursor() - QPointF(m_origin), lines, hints);
+    }
+
     RegionSelector *m_selector;
     QImage m_image;
     QPoint m_origin;
+    QString m_name;
 };
 
 } // namespace detail
@@ -221,6 +448,7 @@ RegionSelector::~RegionSelector()
 void RegionSelector::start()
 {
     m_cursor = QCursor::pos();
+    m_preciseCursor = m_cursor;
     updateHover();
 
     for (const ScreenImage &shot : std::as_const(m_snapshot.screens)) {
@@ -261,6 +489,10 @@ CaptureTarget RegionSelector::hoverTarget() const
 
 void RegionSelector::press(const QPoint &pos)
 {
+    if (m_mode == Mode::Color) {
+        pickColor();
+        return;
+    }
     m_anchor = m_cursor = pos;
     m_pressed = true;
     m_dragging = m_mode != Mode::Window;
@@ -318,6 +550,114 @@ void RegionSelector::release(const QPoint &pos)
         return;
     }
     finish(rect);
+}
+
+void RegionSelector::setPreciseCursor(const QPointF &pos)
+{
+    if (pos == m_preciseCursor)
+        return;
+    m_preciseCursor = pos;
+    if (!m_lock)
+        m_nudge = {}; // the mouse takes over from the arrow keys
+    m_message.clear();
+    updateOverlays();
+}
+
+void RegionSelector::nudgeBy(int dx, int dy)
+{
+    m_message.clear();
+    if (m_lock) {
+        // A locked point moves itself, within its monitor.
+        if (const ScreenImage *shot = screenImage(m_lock->screen)) {
+            m_lock->pixel = QPoint(std::clamp(m_lock->pixel.x() + dx, 0, shot->image.width() - 1),
+                                   std::clamp(m_lock->pixel.y() + dy, 0, shot->image.height() - 1));
+        }
+    } else {
+        m_nudge += QPoint(dx, dy);
+    }
+    updateOverlays();
+}
+
+RegionSelector::Sample RegionSelector::sampleAtCursor() const
+{
+    for (const ScreenImage &shot : std::as_const(m_snapshot.screens)) {
+        if (QRectF(shot.geometry).contains(m_preciseCursor))
+            return {shot.name, samplePixel(shot.image, shot.geometry.topLeft(), m_preciseCursor,
+                                           m_lock ? QPoint() : m_nudge)};
+    }
+    return {};
+}
+
+const ScreenImage *RegionSelector::screenImage(const QString &name) const
+{
+    for (const ScreenImage &shot : std::as_const(m_snapshot.screens)) {
+        if (shot.name == name)
+            return &shot;
+    }
+    return nullptr;
+}
+
+QPoint RegionSelector::globalPixel(const Sample &sample) const
+{
+    const ScreenImage *shot = screenImage(sample.screen);
+    if (!shot)
+        return {};
+    const qreal dpr = shot->image.devicePixelRatio();
+    return QPoint(qRound(shot->geometry.x() * dpr), qRound(shot->geometry.y() * dpr)) + sample.pixel;
+}
+
+void RegionSelector::pickColor()
+{
+    const Sample sample = sampleAtCursor();
+    const ScreenImage *shot = screenImage(sample.screen);
+    if (!shot)
+        return;
+    const QColor color = shot->image.pixelColor(sample.pixel);
+    m_pressed = false;
+    closeOverlays();
+    emit colorPicked(color);
+}
+
+void RegionSelector::lockAtCursor()
+{
+    const Sample sample = sampleAtCursor();
+    if (sample.screen.isEmpty())
+        return;
+    m_lock = sample;
+    m_nudge = {};
+    m_message.clear();
+    updateOverlays();
+}
+
+void RegionSelector::unlock()
+{
+    m_lock.reset();
+    m_message.clear();
+    updateOverlays();
+}
+
+void RegionSelector::copyPosition()
+{
+    const Sample sample = m_lock ? *m_lock : sampleAtCursor();
+    if (sample.screen.isEmpty())
+        return;
+    const QPoint pos = globalPixel(sample);
+    const QString text = QStringLiteral("%1, %2").arg(pos.x()).arg(pos.y());
+    QGuiApplication::clipboard()->setText(text);
+    m_message = tr("Copied %1").arg(text);
+    updateOverlays();
+}
+
+void RegionSelector::copyColor()
+{
+    const Sample sample = m_lock ? *m_lock : sampleAtCursor();
+    const ScreenImage *shot = screenImage(sample.screen);
+    if (!shot)
+        return;
+    const QString text = shot->image.pixelColor(sample.pixel).name(QColor::HexRgb).toUpper();
+    QGuiApplication::clipboard()->setText(text);
+    m_message = tr("Copied %1").arg(text);
+    updateOverlays();
 }
 
 void RegionSelector::wheel(int steps)

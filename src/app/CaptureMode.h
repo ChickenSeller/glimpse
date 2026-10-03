@@ -10,6 +10,8 @@ enum class CaptureMode {
     Ocr,    // select a region, recognize the text in it
     Scrolling, // pick a scrollable area, scroll it and stitch a tall image
     Freehand,  // draw any outline; the outside of it is left transparent
+    ColorPicker, // pick a pixel's color from the frozen screen
+    Crosshair,   // full-screen crosshair with position, color and distances
 };
 
 // The modes offered in the UI (tray menu, hotkeys, settings). Scrolling
@@ -22,6 +24,8 @@ inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::FullScreen,
     CaptureMode::QrCode,
     CaptureMode::Ocr,
+    CaptureMode::ColorPicker,
+    CaptureMode::Crosshair,
 };
 inline constexpr bool kScrollingHidden = true;
 

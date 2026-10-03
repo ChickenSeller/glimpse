@@ -92,7 +92,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+35"/>
+        <location filename="../src/app/CaptureController.cpp" line="+36"/>
         <source>Capture Window / Object</source>
         <translation>捕捉窗口/对象</translation>
     </message>
@@ -113,13 +113,13 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+320"/>
+        <location line="+341"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location line="-331"/>
+        <location line="-352"/>
         <source>Scrolling Capture</source>
         <translation>滚动截图</translation>
     </message>
@@ -127,6 +127,16 @@
         <location line="+1"/>
         <source>Capture Freehand Region</source>
         <translation>捕捉手绘区域</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pick Screen Color</source>
+        <translation>屏幕取色</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Screen Crosshair</source>
+        <translation>屏幕十字线</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -162,13 +172,13 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+172"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>截图失败</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+39"/>
         <source>No text recognition engine is available in this build.</source>
         <translation>此版本中没有可用的文字识别引擎。</translation>
     </message>
@@ -270,7 +280,27 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+185"/>
+        <source>Pick a Color from the Screen</source>
+        <translation>从屏幕上取色</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Color</source>
+        <translation>取色</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Screen Crosshair: position, color and distance</source>
+        <translation>屏幕十字线：位置、颜色和距离</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Crosshair</source>
+        <translation>十字线</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+187"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -330,6 +360,36 @@ Download them now?</source>
         <location line="+1"/>
         <source>Delay Before Capture: off</source>
         <translation>截图前延迟：关闭</translation>
+    </message>
+</context>
+<context>
+    <name>ColorResultDialog</name>
+    <message>
+        <location filename="../src/color/ColorResultDialog.ui" line="+14"/>
+        <source>Screen Color</source>
+        <translation>屏幕取色</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <location line="+24"/>
+        <location line="+24"/>
+        <source>Copy</source>
+        <translation>复制</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>&amp;Pick Again</source>
+        <translation>重新取色(&amp;P)</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../src/color/ColorResultDialog.cpp" line="+74"/>
+        <source>Copied %1 to the clipboard.</source>
+        <translation>已将 %1 复制到剪贴板。</translation>
     </message>
 </context>
 <context>
@@ -655,7 +715,33 @@ Download them now?</source>
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+370"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+344"/>
+        <source>Click: pick  ·  Arrows: 1 px</source>
+        <translation>单击：取色  ·  方向键：移动 1 像素</translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>Click: lock here  ·  Right-click: unlock</source>
+        <translation>单击：锁定到此处  ·  右键：解除锁定</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Click: lock  ·  Arrows: 1 px</source>
+        <translation>单击：锁定  ·  方向键：移动 1 像素</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Ctrl+C: position  ·  Ctrl+Shift+C: color  ·  Esc: exit</source>
+        <translation>Ctrl+C：复制位置  ·  Ctrl+Shift+C：复制颜色  ·  Esc：退出</translation>
+    </message>
+    <message>
+        <location line="+224"/>
+        <location line="+12"/>
+        <source>Copied %1</source>
+        <translation>已复制 %1</translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <source>Screen %1</source>
         <translation>屏幕 %1</translation>
     </message>
@@ -757,6 +843,16 @@ Download them now?</source>
     </message>
     <message>
         <location line="+13"/>
+        <source>&amp;Pick Screen Color:</source>
+        <translation>屏幕取色(&amp;P)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Screen Cr&amp;osshair:</source>
+        <translation>屏幕十字线(&amp;O)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>&amp;Scrolling Capture:</source>
         <translation>滚动截图(&amp;S)：</translation>
     </message>
@@ -806,7 +902,7 @@ Download them now?</source>
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+54"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -816,7 +912,7 @@ Download them now?</source>
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="-105"/>
+        <location line="-107"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

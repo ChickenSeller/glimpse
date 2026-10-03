@@ -168,6 +168,8 @@ HotkeyEdit *SettingsDialog::hotkeyEdit(CaptureMode mode) const
     case CaptureMode::Ocr: return ui->ocrHotkeyEdit;
     case CaptureMode::Scrolling: return ui->scrollHotkeyEdit;
     case CaptureMode::Freehand: return ui->freehandHotkeyEdit;
+    case CaptureMode::ColorPicker: return ui->colorHotkeyEdit;
+    case CaptureMode::Crosshair: return ui->crosshairHotkeyEdit;
     }
     return nullptr;
 }

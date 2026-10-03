@@ -5,6 +5,7 @@
 #include "CaptureToolbar.h"
 #include "DelayCountdown.h"
 #include "capture/Platform.h"
+#include "color/ColorResultDialog.h"
 #include "capture/ScrollCaptureSession.h"
 #include "capture/ScreenGrabber.h"
 #include "editor/EditorWindow.h"
@@ -39,6 +40,8 @@ const char *captureLabel(CaptureMode mode)
     case CaptureMode::Ocr: return QT_TRANSLATE_NOOP("CaptureController", "Recognize Text");
     case CaptureMode::Scrolling: return QT_TRANSLATE_NOOP("CaptureController", "Scrolling Capture");
     case CaptureMode::Freehand: return QT_TRANSLATE_NOOP("CaptureController", "Capture Freehand Region");
+    case CaptureMode::ColorPicker: return QT_TRANSLATE_NOOP("CaptureController", "Pick Screen Color");
+    case CaptureMode::Crosshair: return QT_TRANSLATE_NOOP("CaptureController", "Screen Crosshair");
     }
     return "";
 }
@@ -210,7 +213,9 @@ void CaptureController::beginCapture(Mode mode)
     m_restoreToolbar = m_toolbar->isVisible() && !AppSettings::captureIncludesToolbar();
     if (m_restoreToolbar)
         m_toolbar->hide();
-    m_grabber->setIncludeCursor(AppSettings::captureIncludesCursor() && Platform::supportsCursorCapture());
+    // The pointer would sit right on top of the pixel being picked.
+    m_grabber->setIncludeCursor(AppSettings::captureIncludesCursor() && Platform::supportsCursorCapture()
+                                && mode != Mode::ColorPicker && mode != Mode::Crosshair);
 
     m_pendingRect.reset();
     m_pendingShape.clear();
@@ -279,6 +284,8 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
     // scrollable control and click, or drag a rectangle.
     const auto selectorMode = m_mode == Mode::Window || m_mode == Mode::Scrolling ? RegionSelector::Mode::Window
                               : m_mode == Mode::Freehand                          ? RegionSelector::Mode::Freehand
+                              : m_mode == Mode::ColorPicker                       ? RegionSelector::Mode::Color
+                              : m_mode == Mode::Crosshair                         ? RegionSelector::Mode::Crosshair
                                                                                   : RegionSelector::Mode::Region;
     auto *selector = new RegionSelector(snapshot, selectorMode, this);
     connect(selector, &RegionSelector::selected, this, [this, selector](const QRect &rect) {
@@ -301,6 +308,12 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
         }
         deliver(shape.isEmpty() ? selector->snapshot().crop(rect)
                                 : selector->snapshot().crop(shape, AppSettings::freehandFill()));
+    });
+    // Picks from the frozen screen, so the capture delay does not apply.
+    connect(selector, &RegionSelector::colorPicked, this, [this, selector](const QColor &color) {
+        selector->deleteLater();
+        endCapture();
+        showColorResult(color);
     });
     connect(selector, &RegionSelector::canceled, this, [this, selector] {
         selector->deleteLater();
@@ -344,6 +357,15 @@ void CaptureController::showQrResult(const QImage &image)
     if (image.isNull())
         return;
     auto *dialog = new QrResultDialog(image, scanBarcodes(image));
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
+}
+
+void CaptureController::showColorResult(const QColor &color)
+{
+    auto *dialog = new ColorResultDialog(color);
+    connect(dialog, &ColorResultDialog::pickAgainRequested, this, [this] { beginCapture(Mode::ColorPicker); });
     dialog->show();
     dialog->raise();
     dialog->activateWindow();
