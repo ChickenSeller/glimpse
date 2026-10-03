@@ -6,9 +6,11 @@
         <file>icons/content_cut.svg</file>
         <file>icons/crop.svg</file>
         <file>icons/document_scanner.svg</file>
+        <file>icons/drag_indicator.svg</file>
         <file>icons/edit.svg</file>
         <file>icons/photo_size_select_large.svg</file>
         <file>icons/qr_code_scanner.svg</file>
+        <file>icons/remove.svg</file>
         <file>icons/rotate_right.svg</file>
         <file>icons/save.svg</file>
         <file>icons/screenshot_region.svg</file>

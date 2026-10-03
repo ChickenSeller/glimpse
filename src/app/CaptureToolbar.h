@@ -34,9 +34,12 @@ signals:
     void captureRequested(CaptureMode mode);
     void settingsRequested();
     void closed();
+    void minimizeRequested();
 
 protected:
     void changeEvent(QEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 

@@ -113,18 +113,18 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+269"/>
+        <location line="+311"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location line="-280"/>
+        <location line="-322"/>
         <source>Scrolling Capture</source>
         <translation>スクロールキャプチャ</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+43"/>
         <location line="+34"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
@@ -157,7 +157,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+154"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>キャプチャに失敗しました</translation>
@@ -190,6 +190,11 @@ Download them now?</source>
     </message>
     <message>
         <location line="+24"/>
+        <source>Drag to Move</source>
+        <translation>ドラッグして移動</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Capture Window / Object (mouse wheel: parent / child)</source>
         <translation>ウィンドウ／オブジェクトをキャプチャ（マウスホイール：親／子を切り替え）</translation>
     </message>
@@ -250,7 +255,7 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+153"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+184"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -261,7 +266,12 @@ Download them now?</source>
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureToolbar.cpp" line="-25"/>
+        <location line="+23"/>
+        <source>Minimize to Tray</source>
+        <translation>トレイに最小化</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureToolbar.cpp" line="-27"/>
         <source>No Delay</source>
         <translation>遅延なし</translation>
     </message>
@@ -285,12 +295,12 @@ Download them now?</source>
         </translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>Seconds to wait before capturing:</source>
         <translation>キャプチャ前に待つ秒数：</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+13"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
@@ -549,29 +559,24 @@ Download them now?</source>
 <context>
     <name>PortalScreenGrabber</name>
     <message>
-        <location filename="../src/capture/PortalScreenGrabber.cpp" line="+26"/>
         <source>The session D-Bus is not available.</source>
-        <translation>セッション D-Bus を利用できません。</translation>
+        <translation type="vanished">セッション D-Bus を利用できません。</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Screenshot portal error: %1</source>
-        <translation>スクリーンショットポータルのエラー：%1</translation>
+        <translation type="vanished">スクリーンショットポータルのエラー：%1</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>The screenshot portal refused the request.</source>
-        <translation>スクリーンショットポータルが要求を拒否しました。</translation>
+        <translation type="vanished">スクリーンショットポータルが要求を拒否しました。</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Could not load the screenshot returned by the portal.</source>
-        <translation>ポータルから返されたスクリーンショットを読み込めませんでした。</translation>
+        <translation type="vanished">ポータルから返されたスクリーンショットを読み込めませんでした。</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>No screens are available.</source>
-        <translation>利用可能な画面がありません。</translation>
+        <translation type="vanished">利用可能な画面がありません。</translation>
     </message>
 </context>
 <context>

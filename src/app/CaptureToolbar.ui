@@ -25,6 +25,29 @@
     <enum>QLayout::SetFixedSize</enum>
    </property>
    <item>
+    <widget class="QToolButton" name="dragHandle">
+     <property name="toolTip">
+      <string>Drag to Move</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/drag_indicator.svg</normaloff>:/icons/drag_indicator.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="windowButton">
      <property name="toolTip">
       <string>Capture Window / Object (mouse wheel: parent / child)</string>
@@ -239,6 +262,29 @@
      <property name="icon">
       <iconset resource="../../resources/glimpse.qrc">
        <normaloff>:/icons/settings.svg</normaloff>:/icons/settings.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="minimizeButton">
+     <property name="toolTip">
+      <string>Minimize to Tray</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/remove.svg</normaloff>:/icons/remove.svg</iconset>
      </property>
      <property name="iconSize">
       <size>

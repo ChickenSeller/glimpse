@@ -113,18 +113,18 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+269"/>
+        <location line="+311"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location line="-280"/>
+        <location line="-322"/>
         <source>Scrolling Capture</source>
         <translation>滚动截图</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+43"/>
         <location line="+34"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
@@ -157,7 +157,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+154"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>截图失败</translation>
@@ -190,6 +190,11 @@ Download them now?</source>
     </message>
     <message>
         <location line="+24"/>
+        <source>Drag to Move</source>
+        <translation>拖动以移动</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Capture Window / Object (mouse wheel: parent / child)</source>
         <translation>捕捉窗口/对象（鼠标滚轮：切换父级/子级）</translation>
     </message>
@@ -250,7 +255,7 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+153"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+184"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -261,7 +266,12 @@ Download them now?</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureToolbar.cpp" line="-25"/>
+        <location line="+23"/>
+        <source>Minimize to Tray</source>
+        <translation>最小化到托盘</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureToolbar.cpp" line="-27"/>
         <source>No Delay</source>
         <translation>不延迟</translation>
     </message>
@@ -285,12 +295,12 @@ Download them now?</source>
         </translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>Seconds to wait before capturing:</source>
         <translation>截图前等待的秒数：</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+13"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
@@ -549,29 +559,24 @@ Download them now?</source>
 <context>
     <name>PortalScreenGrabber</name>
     <message>
-        <location filename="../src/capture/PortalScreenGrabber.cpp" line="+26"/>
         <source>The session D-Bus is not available.</source>
-        <translation>会话 D-Bus 不可用。</translation>
+        <translation type="vanished">会话 D-Bus 不可用。</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Screenshot portal error: %1</source>
-        <translation>截图门户（portal）出错：%1</translation>
+        <translation type="vanished">截图门户（portal）出错：%1</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>The screenshot portal refused the request.</source>
-        <translation>截图门户（portal）拒绝了请求。</translation>
+        <translation type="vanished">截图门户（portal）拒绝了请求。</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Could not load the screenshot returned by the portal.</source>
-        <translation>无法加载门户（portal）返回的截图。</translation>
+        <translation type="vanished">无法加载门户（portal）返回的截图。</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>No screens are available.</source>
-        <translation>没有可用的屏幕。</translation>
+        <translation type="vanished">没有可用的屏幕。</translation>
     </message>
 </context>
 <context>

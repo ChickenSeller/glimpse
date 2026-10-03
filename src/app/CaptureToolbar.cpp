@@ -9,8 +9,11 @@
 #include <QCloseEvent>
 #include <QInputDialog>
 #include <QMenu>
+#include <QMouseEvent>
+#include <QPainter>
 #include <QSettings>
 #include <QToolButton>
+#include <QWindow>
 
 
 namespace {
@@ -20,7 +23,7 @@ const QString kGeometryKey = QStringLiteral("toolbar/geometry");
 } // namespace
 
 CaptureToolbar::CaptureToolbar(QWidget *parent)
-    : QWidget(parent, Qt::Tool | Qt::WindowStaysOnTopHint)
+    : QWidget(parent, Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint)
     , ui(std::make_unique<Ui::CaptureToolbar>())
 {
     ui->setupUi(this);
@@ -38,6 +41,12 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
         connect(it.value(), &QToolButton::clicked, this, [this, mode] { emit captureRequested(mode); });
     }
     connect(ui->settingsButton, &QToolButton::clicked, this, &CaptureToolbar::settingsRequested);
+    connect(ui->minimizeButton, &QToolButton::clicked, this, &CaptureToolbar::minimizeRequested);
+
+    // No title bar: the grip moves the window. The window system does the
+    // moving, which also works on Wayland, where windows cannot place themselves.
+    ui->dragHandle->setCursor(Qt::SizeAllCursor);
+    ui->dragHandle->installEventFilter(this);
 
     const auto buttons = findChildren<QToolButton *>();
     for (QToolButton *button : buttons) {
@@ -103,6 +112,26 @@ void CaptureToolbar::changeEvent(QEvent *event)
         setupDelayMenu();
     }
     QWidget::changeEvent(event);
+}
+
+bool CaptureToolbar::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == ui->dragHandle && event->type() == QEvent::MouseButtonPress
+        && static_cast<QMouseEvent *>(event)->button() == Qt::LeftButton) {
+        if (QWindow *window = windowHandle())
+            window->startSystemMove();
+        return true;
+    }
+    return QWidget::eventFilter(watched, event);
+}
+
+void CaptureToolbar::paintEvent(QPaintEvent *)
+{
+    // Without a frame the bar needs its own edge to stand out from what is behind it.
+    QPainter painter(this);
+    painter.fillRect(rect(), palette().window());
+    painter.setPen(palette().color(QPalette::Mid));
+    painter.drawRect(rect().adjusted(0, 0, -1, -1));
 }
 
 void CaptureToolbar::applyPlatformLimits()

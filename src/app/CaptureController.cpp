@@ -61,6 +61,14 @@ CaptureController::CaptureController(QObject *parent)
         if (!m_tray)
             QApplication::quit();
     });
+    connect(m_toolbar.get(), &CaptureToolbar::minimizeRequested, this, [this] {
+        // To the tray, like FastStone; the tray icon or a hotkey brings it back.
+        // A tool window has no taskbar button, so without a tray it can only shrink.
+        if (m_tray)
+            m_toolbar->hide();
+        else
+            m_toolbar->showMinimized();
+    });
 
     connect(m_hotkeys, &GlobalHotkeys::activated, this, [this](int id) {
         beginCapture(static_cast<Mode>(id));
@@ -82,7 +90,7 @@ CaptureController::~CaptureController() = default;
 
 void CaptureController::showToolbar()
 {
-    m_toolbar->show();
+    m_toolbar->showNormal(); // also undoes a minimize
     m_toolbar->raise();
     m_toolbar->activateWindow();
 }
