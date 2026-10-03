@@ -84,7 +84,7 @@
         <translation>修改画布大小和颜色</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.cpp" line="+102"/>
+        <location filename="../src/editor/AnnotatorWindow.cpp" line="+118"/>
         <source>Apply your edits to the capture before closing the editor?</source>
         <translation>关闭编辑器前，要把编辑结果应用到截图吗？</translation>
     </message>
@@ -92,7 +92,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+33"/>
+        <location filename="../src/app/CaptureController.cpp" line="+35"/>
         <source>Capture Window / Object</source>
         <translation>捕捉窗口/对象</translation>
     </message>
@@ -113,13 +113,18 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+234"/>
+        <location line="+269"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location line="-211"/>
+        <location line="-280"/>
+        <source>Scrolling Capture</source>
+        <translation>滚动截图</translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <location line="+34"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
@@ -137,7 +142,7 @@
 %1</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+45"/>
         <source>Show Toolbar</source>
         <translation>显示工具栏</translation>
     </message>
@@ -152,7 +157,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+120"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>截图失败</translation>
@@ -215,6 +220,16 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
+        <source>Scrolling Capture (Esc to stop)</source>
+        <translation>滚动截图（按 Esc 停止）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Scrolling</source>
+        <translation>滚动</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Scan QR Code in a Region</source>
         <translation>框选区域识别二维码</translation>
     </message>
@@ -234,10 +249,70 @@ Download them now?</source>
         <translation>文字</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+23"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+153"/>
+        <source>Delay Before Capture</source>
+        <translation>截图前延迟</translation>
+    </message>
+    <message>
+        <location line="+48"/>
         <location line="+3"/>
         <source>Settings</source>
         <translation>设置</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureToolbar.cpp" line="-25"/>
+        <source>No Delay</source>
+        <translation>不延迟</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+0"/>
+        <source>%n second(s)</source>
+        <translation>
+            <numerusform>%n 秒</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Custom...</source>
+        <translation>自定义...</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+0"/>
+        <source>Custom (%n s)...</source>
+        <translation>
+            <numerusform>自定义（%n 秒）...</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Seconds to wait before capturing:</source>
+        <translation>截图前等待的秒数：</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 s</source>
+        <translation>%1 秒</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>Delay Before Capture: %n second(s)</source>
+        <translation>
+            <numerusform>截图前延迟：%n 秒</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delay Before Capture: off</source>
+        <translation>截图前延迟：关闭</translation>
+    </message>
+</context>
+<context>
+    <name>DelayCountdown</name>
+    <message>
+        <location filename="../src/app/DelayCountdown.cpp" line="+28"/>
+        <source>Capturing soon. Click or press Esc to cancel.</source>
+        <translation>即将截图。点击或按 Esc 取消。</translation>
     </message>
 </context>
 <context>
@@ -466,7 +541,7 @@ Download them now?</source>
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+57"/>
+        <location filename="../src/capture/Platform.cpp" line="+79"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 上暂不支持。</translation>
     </message>
@@ -546,6 +621,19 @@ Download them now?</source>
     </message>
 </context>
 <context>
+    <name>ScrollCaptureSession</name>
+    <message>
+        <location filename="../src/capture/ScrollCaptureSession.cpp" line="+94"/>
+        <source>Stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Scrolling capture: %1 px  ·  Esc to stop</source>
+        <translation>滚动截图：%1 像素  ·  按 Esc 停止</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <location filename="../src/settings/SettingsDialog.ui" line="+14"/>
@@ -608,6 +696,11 @@ Download them now?</source>
         <translation>识别文字(&amp;T)：</translation>
     </message>
     <message>
+        <location line="+13"/>
+        <source>&amp;Scrolling Capture:</source>
+        <translation>滚动截图(&amp;S)：</translation>
+    </message>
+    <message>
         <location line="+15"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>点击输入框后按下新的组合键。清空输入框即可禁用该快捷键。此窗口打开期间，快捷键暂停生效。</translation>
@@ -653,17 +746,17 @@ Download them now?</source>
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+49"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+26"/>
         <source>Global hotkeys: %1</source>
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="-79"/>
+        <location line="-85"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

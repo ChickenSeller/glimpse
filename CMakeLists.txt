@@ -5,9 +5,18 @@ project(glimpse VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Third-party code comes first so Qt's AUTOMOC/AUTOUIC (enabled further down)
-# do not reach into its sources. Each dependency uses an installed package when
-# CMake finds one (e.g. Linux distros) and otherwise downloads a pinned release.
+# Qt is looked up first: a missing component (or a missing system package Qt
+# itself needs, such as the OpenGL headers on Linux) then fails here with a
+# clear message, and the third-party projects below reuse this Qt.
+find_package(Qt6 6.7 REQUIRED COMPONENTS Widgets Svg Concurrent Network LinguistTools)
+if(UNIX AND NOT APPLE)
+    find_package(Qt6 REQUIRED COMPONENTS DBus) # Wayland screenshot portal
+endif()
+
+# Third-party code comes before qt_standard_project_setup() so Qt's
+# AUTOMOC/AUTOUIC (enabled there) do not reach into its sources. Each
+# dependency uses an installed package when CMake finds one (e.g. Linux
+# distros) and otherwise downloads a pinned release.
 include(FetchContent)
 set(BUILD_SHARED_LIBS OFF)
 
@@ -43,7 +52,6 @@ endif()
 # Annotation editor.
 include(cmake/ImageAnnotator.cmake)
 
-find_package(Qt6 6.7 REQUIRED COMPONENTS Widgets Svg Concurrent Network LinguistTools)
 qt_standard_project_setup()
 # Windows gets a portable layout: glimpse.exe at the top of the install tree,
 # with DLLs, plugin folders and translations beside it (windeployqt's layout).
@@ -100,6 +108,8 @@ qt_add_executable(glimpse
     src/app/CaptureToolbar.cpp
     src/app/CaptureToolbar.h
     src/app/CaptureToolbar.ui
+    src/app/DelayCountdown.cpp
+    src/app/DelayCountdown.h
     src/app/TintedIcon.cpp
     src/app/TintedIcon.h
 
@@ -112,6 +122,11 @@ qt_add_executable(glimpse
     src/capture/QtScreenGrabber.h
     src/capture/ScreenGrabber.cpp
     src/capture/ScreenGrabber.h
+    src/capture/ScrollCaptureSession.cpp
+    src/capture/ScrollCaptureSession.h
+    src/capture/ScrollInput.h
+    src/capture/ScrollStitcher.cpp
+    src/capture/ScrollStitcher.h
     src/capture/WindowList.h
 
     src/hotkey/GlobalHotkeys.h
@@ -166,6 +181,7 @@ target_link_libraries(glimpse PRIVATE glimpse_ocr Qt6::Widgets Qt6::Svg Qt6::Con
 if(WIN32)
     target_sources(glimpse PRIVATE
         src/capture/CursorCapture_win.cpp
+        src/capture/ScrollInput_win.cpp
         src/capture/WindowList_win.cpp
         src/hotkey/GlobalHotkeys_win.cpp
     )
@@ -173,6 +189,7 @@ if(WIN32)
 else()
     target_sources(glimpse PRIVATE
         src/capture/CursorCapture_stub.cpp
+        src/capture/ScrollInput_stub.cpp
         src/capture/WindowList_stub.cpp
         src/hotkey/GlobalHotkeys_stub.cpp
     )
@@ -180,7 +197,6 @@ endif()
 
 # Linux: Wayland screenshots go through xdg-desktop-portal over D-Bus.
 if(UNIX AND NOT APPLE)
-    find_package(Qt6 REQUIRED COMPONENTS DBus)
     target_sources(glimpse PRIVATE
         src/capture/PortalScreenGrabber.cpp
         src/capture/PortalScreenGrabber.h
@@ -224,6 +240,25 @@ endif()
 # glimpse-ocr-test: renders sample text and runs every OCR engine on it.
 qt_add_executable(glimpse-ocr-test tests/OcrSmokeTest.cpp)
 target_link_libraries(glimpse-ocr-test PRIVATE glimpse_ocr)
+
+# glimpse-stitch-test: checks scroll-capture stitching on synthetic pages.
+qt_add_executable(glimpse-stitch-test tests/ScrollStitcherTest.cpp src/capture/ScrollStitcher.cpp)
+target_include_directories(glimpse-stitch-test PRIVATE src)
+target_link_libraries(glimpse-stitch-test PRIVATE Qt6::Gui)
+
+# glimpse-scroll-test: end-to-end scrolling capture on a window it owns
+# (Windows only: needs wheel input injection). Moves the mouse while running.
+if(WIN32)
+    qt_add_executable(glimpse-scroll-test
+        tests/ScrollCaptureTest.cpp
+        src/capture/Platform.cpp
+        src/capture/ScrollCaptureSession.cpp
+        src/capture/ScrollInput_win.cpp
+        src/capture/ScrollStitcher.cpp
+    )
+    target_include_directories(glimpse-scroll-test PRIVATE src)
+    target_link_libraries(glimpse-scroll-test PRIVATE Qt6::Widgets dwmapi)
+endif()
 
 # --- distribution -----------------------------------------------------------------
 # Everything a user needs goes into the "glimpse" install component; the

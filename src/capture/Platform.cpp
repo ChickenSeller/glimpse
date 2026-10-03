@@ -1,7 +1,13 @@
 #include "Platform.h"
 
 #include <QCoreApplication>
+#include <QWidget>
 #include <QtGlobal>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#include <dwmapi.h>
+#endif
 
 namespace Platform {
 
@@ -50,6 +56,22 @@ bool supportsCursorCapture()
 bool supportsGlobalHotkeys()
 {
     return displayServer() == DisplayServer::Windows;
+}
+
+bool supportsScrollingCapture()
+{
+    return displayServer() == DisplayServer::Windows;
+}
+
+void disableWindowAnimations(QWidget *window)
+{
+#ifdef Q_OS_WIN
+    const BOOL disable = TRUE;
+    DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), DWMWA_TRANSITIONS_FORCEDISABLED, &disable,
+                          sizeof(disable));
+#else
+    Q_UNUSED(window)
+#endif
 }
 
 QString unsupportedHint()

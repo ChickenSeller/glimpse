@@ -84,7 +84,7 @@
         <translation>キャンバスのサイズと色を変更</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.cpp" line="+102"/>
+        <location filename="../src/editor/AnnotatorWindow.cpp" line="+118"/>
         <source>Apply your edits to the capture before closing the editor?</source>
         <translation>エディターを閉じる前に、編集内容をキャプチャに反映しますか？</translation>
     </message>
@@ -92,7 +92,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+33"/>
+        <location filename="../src/app/CaptureController.cpp" line="+35"/>
         <source>Capture Window / Object</source>
         <translation>ウィンドウ／オブジェクトをキャプチャ</translation>
     </message>
@@ -113,13 +113,18 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+234"/>
+        <location line="+269"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location line="-211"/>
+        <location line="-280"/>
+        <source>Scrolling Capture</source>
+        <translation>スクロールキャプチャ</translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <location line="+34"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
@@ -137,7 +142,7 @@
 %1</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+45"/>
         <source>Show Toolbar</source>
         <translation>ツールバーを表示</translation>
     </message>
@@ -152,7 +157,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+120"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>キャプチャに失敗しました</translation>
@@ -215,6 +220,16 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
+        <source>Scrolling Capture (Esc to stop)</source>
+        <translation>スクロールキャプチャ（Esc で停止）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Scrolling</source>
+        <translation>スクロール</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Scan QR Code in a Region</source>
         <translation>領域内の QR コードを読み取る</translation>
     </message>
@@ -234,10 +249,70 @@ Download them now?</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+23"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+153"/>
+        <source>Delay Before Capture</source>
+        <translation>キャプチャ前の遅延</translation>
+    </message>
+    <message>
+        <location line="+48"/>
         <location line="+3"/>
         <source>Settings</source>
         <translation>設定</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureToolbar.cpp" line="-25"/>
+        <source>No Delay</source>
+        <translation>遅延なし</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+0"/>
+        <source>%n second(s)</source>
+        <translation>
+            <numerusform>%n 秒</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Custom...</source>
+        <translation>カスタム...</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+0"/>
+        <source>Custom (%n s)...</source>
+        <translation>
+            <numerusform>カスタム（%n 秒）...</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Seconds to wait before capturing:</source>
+        <translation>キャプチャ前に待つ秒数：</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 s</source>
+        <translation>%1 秒</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>Delay Before Capture: %n second(s)</source>
+        <translation>
+            <numerusform>キャプチャ前の遅延：%n 秒</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delay Before Capture: off</source>
+        <translation>キャプチャ前の遅延：オフ</translation>
+    </message>
+</context>
+<context>
+    <name>DelayCountdown</name>
+    <message>
+        <location filename="../src/app/DelayCountdown.cpp" line="+28"/>
+        <source>Capturing soon. Click or press Esc to cancel.</source>
+        <translation>まもなくキャプチャします。クリックするか Esc でキャンセルします。</translation>
     </message>
 </context>
 <context>
@@ -466,7 +541,7 @@ Download them now?</source>
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+57"/>
+        <location filename="../src/capture/Platform.cpp" line="+79"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 ではまだ利用できません。</translation>
     </message>
@@ -546,6 +621,19 @@ Download them now?</source>
     </message>
 </context>
 <context>
+    <name>ScrollCaptureSession</name>
+    <message>
+        <location filename="../src/capture/ScrollCaptureSession.cpp" line="+94"/>
+        <source>Stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Scrolling capture: %1 px  ·  Esc to stop</source>
+        <translation>スクロールキャプチャ：%1 ピクセル  ·  Esc で停止</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <location filename="../src/settings/SettingsDialog.ui" line="+14"/>
@@ -608,6 +696,11 @@ Download them now?</source>
         <translation>テキストを認識(&amp;T)：</translation>
     </message>
     <message>
+        <location line="+13"/>
+        <source>&amp;Scrolling Capture:</source>
+        <translation>スクロールキャプチャ(&amp;S)：</translation>
+    </message>
+    <message>
         <location line="+15"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>入力欄をクリックして新しいキーの組み合わせを押してください。入力欄を空にするとそのホットキーは無効になります。このウィンドウを開いている間、ホットキーは一時停止します。</translation>
@@ -653,17 +746,17 @@ Download them now?</source>
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+49"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+26"/>
         <source>Global hotkeys: %1</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="-79"/>
+        <location line="-85"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

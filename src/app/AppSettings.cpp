@@ -4,6 +4,8 @@
 
 #include <QSettings>
 
+#include <algorithm>
+
 namespace {
 
 QString hotkeySettingsKey(CaptureMode mode)
@@ -14,6 +16,7 @@ QString hotkeySettingsKey(CaptureMode mode)
     case CaptureMode::FullScreen: return QStringLiteral("hotkeys/fullScreen");
     case CaptureMode::QrCode: return QStringLiteral("hotkeys/qrCode");
     case CaptureMode::Ocr: return QStringLiteral("hotkeys/ocr");
+    case CaptureMode::Scrolling: return QStringLiteral("hotkeys/scrolling");
     }
     return {};
 }
@@ -22,7 +25,7 @@ QString hotkeySettingsKey(CaptureMode mode)
 
 namespace AppSettings {
 
-// Ctrl+Alt+1..5 in toolbar order: reachable with the left hand alone, and
+// Ctrl+Alt+1..6 in toolbar order: reachable with the left hand alone, and
 // clear of common global hotkeys (WeChat Ctrl+Alt+W, QQ Ctrl+Alt+A/Z/O) and of
 // the Ctrl+Shift+letter shortcuts applications use.
 QKeySequence defaultHotkey(CaptureMode mode)
@@ -33,6 +36,7 @@ QKeySequence defaultHotkey(CaptureMode mode)
     case CaptureMode::FullScreen: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_3);
     case CaptureMode::QrCode: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_4);
     case CaptureMode::Ocr: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_5);
+    case CaptureMode::Scrolling: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_6);
     }
     return {};
 }
@@ -85,6 +89,16 @@ bool captureIncludesCursor()
 void setCaptureIncludesCursor(bool include)
 {
     QSettings().setValue(QStringLiteral("capture/includeCursor"), include);
+}
+
+int captureDelay()
+{
+    return std::clamp(QSettings().value(QStringLiteral("capture/delay"), 0).toInt(), 0, 60);
+}
+
+void setCaptureDelay(int seconds)
+{
+    QSettings().setValue(QStringLiteral("capture/delay"), std::clamp(seconds, 0, 60));
 }
 
 QString ocrEngine()

@@ -25,6 +25,10 @@ void setCaptureIncludesToolbar(bool include);
 bool captureIncludesCursor();
 void setCaptureIncludesCursor(bool include);
 
+// Seconds to wait before every capture (0 = none), set from the toolbar.
+int captureDelay();
+void setCaptureDelay(int seconds);
+
 // Text recognition: engine id (see Ocr::engineIds()) and language codes.
 QString ocrEngine();
 void setOcrEngine(const QString &engine);

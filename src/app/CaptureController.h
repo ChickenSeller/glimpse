@@ -5,8 +5,11 @@
 #include <QHash>
 #include <QObject>
 #include <QPointer>
+#include <QRect>
 
+#include <functional>
 #include <memory>
+#include <optional>
 
 class CaptureToolbar;
 class DesktopSnapshot;
@@ -47,6 +50,11 @@ private:
     void openEditor(const QImage &image);
     void showQrResult(const QImage &image);
     void showOcrResult(const QImage &image);
+    void startScrollingCapture(const QRect &rect);
+    // Runs the "delay before capture" countdown (if any), then `then`.
+    void afterDelay(std::function<void()> then);
+    // Hands a finished capture to the result window, QR or OCR dialog.
+    void deliver(const QImage &image);
 
     ScreenGrabber *m_grabber = nullptr;
     GlobalHotkeys *m_hotkeys = nullptr;
@@ -61,5 +69,8 @@ private:
 
     Mode m_mode = Mode::FullScreen;
     bool m_busy = false;
+    // Area chosen before a delay; the live screen is grabbed again once the
+    // countdown ends, and this part of it is the capture.
+    std::optional<QRect> m_pendingRect;
     bool m_restoreToolbar = false;
 };

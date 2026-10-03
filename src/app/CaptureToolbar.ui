@@ -103,6 +103,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="scrollButton">
+     <property name="toolTip">
+      <string>Scrolling Capture (Esc to stop)</string>
+     </property>
+     <property name="text">
+      <string>Scrolling</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/swipe_vertical.svg</normaloff>:/icons/swipe_vertical.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="qrButton">
      <property name="toolTip">
       <string>Scan QR Code in a Region</string>
@@ -145,6 +171,32 @@
        <width>24</width>
        <height>24</height>
       </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="delayButton">
+     <property name="toolTip">
+      <string>Delay Before Capture</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/timer.svg</normaloff>:/icons/timer.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::InstantPopup</enum>
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonIconOnly</enum>

@@ -14,6 +14,8 @@
         <file>icons/screenshot_region.svg</file>
         <file>icons/select_window.svg</file>
         <file>icons/settings.svg</file>
+        <file>icons/swipe_vertical.svg</file>
+        <file>icons/timer.svg</file>
         <file>icons/screenshot_monitor.svg</file>
     </qresource>
 </RCC>

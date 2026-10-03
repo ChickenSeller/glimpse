@@ -3,7 +3,9 @@
 #include "AppIcon.h"
 #include "AppSettings.h"
 #include "CaptureToolbar.h"
+#include "DelayCountdown.h"
 #include "capture/Platform.h"
+#include "capture/ScrollCaptureSession.h"
 #include "capture/ScreenGrabber.h"
 #include "editor/EditorWindow.h"
 #include "hotkey/GlobalHotkeys.h"
@@ -35,6 +37,7 @@ const char *captureLabel(CaptureMode mode)
     case CaptureMode::FullScreen: return QT_TRANSLATE_NOOP("CaptureController", "Capture Full Screen");
     case CaptureMode::QrCode: return QT_TRANSLATE_NOOP("CaptureController", "Scan QR Code");
     case CaptureMode::Ocr: return QT_TRANSLATE_NOOP("CaptureController", "Recognize Text");
+    case CaptureMode::Scrolling: return QT_TRANSLATE_NOOP("CaptureController", "Scrolling Capture");
     }
     return "";
 }
@@ -124,8 +127,7 @@ void CaptureController::setupTray()
         QAction *item = m_trayMenu->addAction(QString(), this, [this, mode] { beginCapture(mode); });
         // The shortcut is only a hint (set in registerHotkeys); the global hotkey does the work.
         item->setShortcutVisibleInContextMenu(true);
-        if (mode == Mode::Window && !Platform::supportsWindowPicking())
-            item->setEnabled(false);
+        item->setEnabled(captureModeSupported(mode));
         m_trayCaptureActions.insert(mode, item);
     }
     m_trayMenu->addSeparator();
@@ -190,7 +192,7 @@ QStringList CaptureController::registerHotkeys()
 
 void CaptureController::beginCapture(Mode mode)
 {
-    if (m_busy || (mode == Mode::Window && !Platform::supportsWindowPicking()))
+    if (m_busy || !captureModeSupported(mode))
         return;
     m_busy = true;
     m_mode = mode;
@@ -201,36 +203,105 @@ void CaptureController::beginCapture(Mode mode)
         m_toolbar->hide();
     m_grabber->setIncludeCursor(AppSettings::captureIncludesCursor() && Platform::supportsCursorCapture());
 
+    m_pendingRect.reset();
+
+    // Full screen has nothing to choose, so its delay comes first. The other
+    // modes freeze the screen for choosing the area right away and count down
+    // afterwards (see onSnapshot), like FastStone.
+    if (mode == Mode::FullScreen && AppSettings::captureDelay() > 0) {
+        afterDelay([this] { m_grabber->grab(); });
+        return;
+    }
     QTimer::singleShot(m_restoreToolbar ? kHideDelayMs : kShortDelayMs, m_grabber, &ScreenGrabber::grab);
+}
+
+void CaptureController::afterDelay(std::function<void()> then)
+{
+    const int delay = AppSettings::captureDelay();
+    if (delay <= 0) {
+        then();
+        return;
+    }
+    // The countdown hides itself before finishing; the short pause lets it
+    // vanish from the screen before the grab.
+    auto *countdown = new DelayCountdown(delay);
+    connect(countdown, &DelayCountdown::finished, this, [this, countdown, then] {
+        countdown->deleteLater();
+        QTimer::singleShot(kShortDelayMs, this, then);
+    });
+    connect(countdown, &DelayCountdown::canceled, this, [this, countdown] {
+        countdown->deleteLater();
+        m_pendingRect.reset();
+        endCapture();
+    });
+    countdown->start();
+}
+
+void CaptureController::deliver(const QImage &image)
+{
+    endCapture();
+    if (m_mode == Mode::QrCode)
+        showQrResult(image);
+    else if (m_mode == Mode::Ocr)
+        showOcrResult(image);
+    else
+        openEditor(image);
 }
 
 void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
 {
+    // The live grab after a delay: the area was chosen before the countdown.
+    if (m_pendingRect) {
+        const QRect rect = *m_pendingRect;
+        m_pendingRect.reset();
+        deliver(snapshot.crop(rect));
+        return;
+    }
     if (m_mode == Mode::FullScreen) {
-        openEditor(snapshot.crop(snapshot.virtualGeometry()));
-        endCapture();
+        deliver(snapshot.crop(snapshot.virtualGeometry()));
         return;
     }
 
-    const auto selectorMode = m_mode == Mode::Window ? RegionSelector::Mode::Window
-                                                     : RegionSelector::Mode::Region;
+    // Scrolling capture picks its area like Window / Object: hover a
+    // scrollable control and click, or drag a rectangle.
+    const auto selectorMode = m_mode == Mode::Window || m_mode == Mode::Scrolling ? RegionSelector::Mode::Window
+                                                                                  : RegionSelector::Mode::Region;
     auto *selector = new RegionSelector(snapshot, selectorMode, this);
     connect(selector, &RegionSelector::selected, this, [this, selector](const QRect &rect) {
-        const QImage image = selector->snapshot().crop(rect);
+        if (m_mode == Mode::Scrolling) {
+            selector->deleteLater();
+            startScrollingCapture(rect);
+            return;
+        }
         selector->deleteLater();
-        endCapture();
-        if (m_mode == Mode::QrCode)
-            showQrResult(image);
-        else if (m_mode == Mode::Ocr)
-            showOcrResult(image);
-        else
-            openEditor(image);
+        if (AppSettings::captureDelay() > 0) {
+            // Area first, then the countdown, then a fresh grab of that area:
+            // menus or tooltips opened meanwhile end up in the capture.
+            afterDelay([this, rect] {
+                m_pendingRect = rect;
+                m_grabber->grab();
+            });
+            return;
+        }
+        deliver(selector->snapshot().crop(rect));
     });
     connect(selector, &RegionSelector::canceled, this, [this, selector] {
         selector->deleteLater();
         endCapture();
     });
     selector->start();
+}
+
+void CaptureController::startScrollingCapture(const QRect &rect)
+{
+    // Still "busy": the toolbar stays hidden while the live screen is grabbed.
+    auto *session = new ScrollCaptureSession(rect, this);
+    connect(session, &ScrollCaptureSession::finished, this, [this, session](const QImage &image) {
+        session->deleteLater();
+        endCapture();
+        openEditor(image);
+    });
+    session->start();
 }
 
 void CaptureController::onGrabFailed(const QString &message)

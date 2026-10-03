@@ -1,17 +1,17 @@
 #include "CaptureToolbar.h"
 #include "ui_CaptureToolbar.h"
 
+#include "AppSettings.h"
 #include "TintedIcon.h"
 #include "capture/Platform.h"
 
+#include <QActionGroup>
 #include <QCloseEvent>
+#include <QInputDialog>
+#include <QMenu>
 #include <QSettings>
 #include <QToolButton>
 
-#ifdef Q_OS_WIN
-#include <windows.h>
-#include <dwmapi.h>
-#endif
 
 namespace {
 
@@ -31,6 +31,7 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
         {CaptureMode::FullScreen, ui->fullScreenButton},
         {CaptureMode::QrCode, ui->qrButton},
         {CaptureMode::Ocr, ui->ocrButton},
+        {CaptureMode::Scrolling, ui->scrollButton},
     };
     for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it) {
         const CaptureMode mode = it.key();
@@ -45,14 +46,17 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
     }
     applyIconColor();
     applyPlatformLimits();
+    if (kScrollingHidden)
+        ui->scrollButton->hide();
 
-#ifdef Q_OS_WIN
-    // Windows fades hidden windows out; a capture taken right after hiding the
-    // bar would still show it. Without the transition it disappears at once.
-    const BOOL disable = TRUE;
-    DwmSetWindowAttribute(reinterpret_cast<HWND>(winId()), DWMWA_TRANSITIONS_FORCEDISABLED, &disable,
-                          sizeof(disable));
-#endif
+    // The delay button has its own tooltip (with the current delay), not a hotkey hint.
+    m_baseToolTips.remove(ui->delayButton);
+    m_delayMenu = new QMenu(this);
+    ui->delayButton->setMenu(m_delayMenu);
+    setupDelayMenu();
+
+    // Hidden for every capture: it must be gone at once, not fading out.
+    Platform::disableWindowAnimations(this);
 
     // Wherever the user last left the bar; Qt moves it back on screen if that
     // monitor is gone. Without a saved value the window system places it.
@@ -93,18 +97,79 @@ void CaptureToolbar::changeEvent(QEvent *event)
         ui->retranslateUi(this);
         for (auto it = m_baseToolTips.begin(); it != m_baseToolTips.end(); ++it)
             it.value() = it.key()->toolTip();
+        m_baseToolTips.remove(ui->delayButton);
         applyPlatformLimits();
         updateToolTips();
+        setupDelayMenu();
     }
     QWidget::changeEvent(event);
 }
 
 void CaptureToolbar::applyPlatformLimits()
 {
-    if (!Platform::supportsWindowPicking()) {
-        ui->windowButton->setEnabled(false);
-        m_baseToolTips[ui->windowButton] += QLatin1Char('\n') + Platform::unsupportedHint();
+    for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it) {
+        if (captureModeSupported(it.key()))
+            continue;
+        it.value()->setEnabled(false);
+        m_baseToolTips[it.value()] += QLatin1Char('\n') + Platform::unsupportedHint();
     }
+}
+
+void CaptureToolbar::setupDelayMenu()
+{
+    // FastStone-style presets plus a custom value; the choice is persisted and
+    // applies to every capture, however it is started.
+    m_delayMenu->clear();
+    delete m_delayGroup;
+    m_delayGroup = new QActionGroup(this);
+    const int current = AppSettings::captureDelay();
+    bool matched = false;
+    for (int seconds : {0, 1, 2, 3, 5, 10}) {
+        QAction *action = m_delayMenu->addAction(seconds == 0 ? tr("No Delay") : tr("%n second(s)", nullptr, seconds));
+        action->setCheckable(true);
+        action->setChecked(seconds == current);
+        matched |= seconds == current;
+        m_delayGroup->addAction(action);
+        connect(action, &QAction::triggered, this, [this, seconds] {
+            AppSettings::setCaptureDelay(seconds);
+            setupDelayMenu();
+        });
+        if (seconds == 0)
+            m_delayMenu->addSeparator();
+    }
+    m_delayMenu->addSeparator();
+    QAction *custom = m_delayMenu->addAction(matched ? tr("Custom...") : tr("Custom (%n s)...", nullptr, current));
+    custom->setCheckable(true);
+    custom->setChecked(!matched);
+    m_delayGroup->addAction(custom);
+    connect(custom, &QAction::triggered, this, &CaptureToolbar::chooseCustomDelay);
+    updateDelayButton();
+}
+
+void CaptureToolbar::chooseCustomDelay()
+{
+    const int current = AppSettings::captureDelay();
+    QInputDialog dialog(this);
+    // The bar stays on top of everything; so must its dialog, or it opens behind it.
+    dialog.setWindowFlag(Qt::WindowStaysOnTopHint);
+    dialog.setWindowTitle(tr("Delay Before Capture"));
+    dialog.setLabelText(tr("Seconds to wait before capturing:"));
+    dialog.setInputMode(QInputDialog::IntInput);
+    dialog.setIntRange(1, 60);
+    dialog.setIntValue(current > 0 ? current : 3);
+    if (dialog.exec() == QDialog::Accepted)
+        AppSettings::setCaptureDelay(dialog.intValue());
+    setupDelayMenu(); // also restores the checked item when canceled
+}
+
+void CaptureToolbar::updateDelayButton()
+{
+    const int delay = AppSettings::captureDelay();
+    // With a delay set, the button says so at a glance.
+    ui->delayButton->setText(delay > 0 ? tr("%1 s").arg(delay) : QString());
+    ui->delayButton->setToolButtonStyle(delay > 0 ? Qt::ToolButtonTextBesideIcon : Qt::ToolButtonIconOnly);
+    ui->delayButton->setToolTip(delay > 0 ? tr("Delay Before Capture: %n second(s)", nullptr, delay)
+                                          : tr("Delay Before Capture: off"));
 }
 
 void CaptureToolbar::applyIconColor()

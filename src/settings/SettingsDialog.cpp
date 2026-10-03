@@ -149,6 +149,7 @@ HotkeyEdit *SettingsDialog::hotkeyEdit(CaptureMode mode) const
     case CaptureMode::FullScreen: return ui->fullScreenHotkeyEdit;
     case CaptureMode::QrCode: return ui->qrHotkeyEdit;
     case CaptureMode::Ocr: return ui->ocrHotkeyEdit;
+    case CaptureMode::Scrolling: return ui->scrollHotkeyEdit;
     }
     return nullptr;
 }
@@ -173,6 +174,11 @@ void SettingsDialog::updateOcrEngineNote()
 
 void SettingsDialog::applyPlatformLimits()
 {
+    if (kScrollingHidden) {
+        ui->scrollHotkeyLabel->hide();
+        ui->scrollHotkeyEdit->hide();
+    }
+
     // Features this platform lacks stay visible but disabled, with the reason.
     if (!Platform::supportsCursorCapture()) {
         ui->captureCursorCheck->setEnabled(false);

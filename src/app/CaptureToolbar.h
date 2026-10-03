@@ -9,6 +9,8 @@
 
 #include <memory>
 
+class QActionGroup;
+class QMenu;
 class QToolButton;
 
 namespace Ui {
@@ -42,11 +44,16 @@ private:
     void applyIconColor();
     void updateToolTips();
     void applyPlatformLimits();
+    void setupDelayMenu();
+    void updateDelayButton();
+    void chooseCustomDelay();
     void savePosition();
 
     std::unique_ptr<Ui::CaptureToolbar> ui;
     QHash<QToolButton *, QString> m_baseToolTips; // as set in the .ui
     QHash<CaptureMode, QToolButton *> m_modeButtons;
+    QMenu *m_delayMenu = nullptr;
+    QActionGroup *m_delayGroup = nullptr;
     QHash<QToolButton *, QKeySequence> m_hotkeys;
     QHash<QToolButton *, QIcon> m_sourceIcons; // icons as set in the .ui, before tinting
 };

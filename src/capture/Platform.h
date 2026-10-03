@@ -2,6 +2,8 @@
 
 #include <QString>
 
+class QWidget;
+
 namespace Platform {
 
 enum class DisplayServer {
@@ -22,6 +24,11 @@ QString displayServerName();
 bool supportsWindowPicking(); // "Capture Window / Object" hit-testing
 bool supportsCursorCapture(); // mouse pointer in captures
 bool supportsGlobalHotkeys();
+bool supportsScrollingCapture(); // needs wheel input injection
+
+// Makes a window appear and disappear instantly (no compositor fade), so a
+// capture taken right after hiding it does not catch it fading out.
+void disableWindowAnimations(QWidget *window);
 
 // Short explanation shown on disabled controls.
 QString unsupportedHint();
