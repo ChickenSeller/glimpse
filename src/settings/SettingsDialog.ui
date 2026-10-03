@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SettingsDialog</class>
+ <widget class="QDialog" name="SettingsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>460</width>
+    <height>260</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Glimpse Settings</string>
+  </property>
+  <layout class="QVBoxLayout" name="dialogLayout">
+   <item>
+    <widget class="QTabWidget" name="tabs">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="generalTab">
+      <attribute name="title">
+       <string>General</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="generalLayout">
+       <item>
+        <layout class="QFormLayout" name="generalForm">
+         <item row="0" column="0">
+          <widget class="QLabel" name="languageLabel">
+           <property name="text">
+            <string>&amp;Language:</string>
+           </property>
+           <property name="buddy">
+            <cstring>languageCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="languageCombo"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="generalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="hotkeysTab">
+      <attribute name="title">
+       <string>Hotkeys</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="hotkeysLayout">
+       <item>
+        <layout class="QFormLayout" name="hotkeysForm">
+         <item row="0" column="0">
+          <widget class="QLabel" name="windowHotkeyLabel">
+           <property name="text">
+            <string>Capture &amp;Window / Object:</string>
+           </property>
+           <property name="buddy">
+            <cstring>windowHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="HotkeyEdit" name="windowHotkeyEdit"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="regionHotkeyLabel">
+           <property name="text">
+            <string>Capture &amp;Rectangular Region:</string>
+           </property>
+           <property name="buddy">
+            <cstring>regionHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="HotkeyEdit" name="regionHotkeyEdit"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="fullScreenHotkeyLabel">
+           <property name="text">
+            <string>Capture &amp;Full Screen:</string>
+           </property>
+           <property name="buddy">
+            <cstring>fullScreenHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="HotkeyEdit" name="fullScreenHotkeyEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="hotkeysHint">
+         <property name="text">
+          <string>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="foregroundRole">
+          <enum>QPalette::PlaceholderText</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="hotkeysSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HotkeyEdit</class>
+   <extends>QKeySequenceEdit</extends>
+   <header>settings/HotkeyEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>accept()</slot>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>reject()</slot>
+  </connection>
+ </connections>
+</ui>

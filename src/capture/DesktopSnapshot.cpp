@@ -1,0 +1,73 @@
+#include "DesktopSnapshot.h"
+
+#include <QPainter>
+
+#include <algorithm>
+
+QRect DesktopSnapshot::virtualGeometry() const
+{
+    QRect result;
+    for (const ScreenImage &screen : screens)
+        result |= screen.geometry;
+    return result;
+}
+
+QImage DesktopSnapshot::crop(const QRect &logicalRect) const
+{
+    const QRect area = logicalRect.intersected(virtualGeometry());
+    if (area.isEmpty())
+        return {};
+
+    // Fast path: the area lies on a single monitor, copy its pixels untouched.
+    for (const ScreenImage &screen : screens) {
+        if (!screen.geometry.contains(area))
+            continue;
+        const qreal dpr = screen.image.devicePixelRatio();
+        const QRect local = area.translated(-screen.geometry.topLeft());
+        const QRect source = QRectF(local.x() * dpr, local.y() * dpr,
+                                    local.width() * dpr, local.height() * dpr)
+                                 .toAlignedRect()
+                                 .intersected(screen.image.rect());
+        return screen.image.copy(source);
+    }
+
+    qreal dpr = 1.0;
+    for (const ScreenImage &screen : screens) {
+        if (screen.geometry.intersects(area))
+            dpr = std::max(dpr, screen.image.devicePixelRatio());
+    }
+
+    // Gaps between monitors of different sizes stay transparent.
+    QImage result(qRound(area.width() * dpr), qRound(area.height() * dpr),
+                  QImage::Format_ARGB32_Premultiplied);
+    result.fill(Qt::transparent);
+
+    QPainter painter(&result);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.scale(dpr, dpr);
+    painter.translate(-area.topLeft());
+    for (const ScreenImage &screen : screens) {
+        if (screen.geometry.intersects(area))
+            painter.drawImage(QRectF(screen.geometry), screen.image, QRectF(screen.image.rect()));
+    }
+    painter.end();
+
+    result.setDevicePixelRatio(dpr);
+    return result;
+}
+
+QList<CaptureTarget> DesktopSnapshot::targetsAt(const QPoint &pos) const
+{
+    QList<CaptureTarget> chain;
+    const std::vector<WindowNode> *level = &windows;
+    while (level) {
+        const auto hit = std::find_if(level->begin(), level->end(), [&pos](const WindowNode &node) {
+            return node.geometry.contains(pos);
+        });
+        if (hit == level->end())
+            break;
+        chain.append({hit->geometry, hit->title});
+        level = &hit->children;
+    }
+    return chain;
+}
