@@ -2,6 +2,7 @@
 
 #include "CaptureMode.h"
 
+#include <QColor>
 #include <QKeySequence>
 #include <QString>
 #include <QStringList>
@@ -24,6 +25,14 @@ bool captureIncludesToolbar();
 void setCaptureIncludesToolbar(bool include);
 bool captureIncludesCursor();
 void setCaptureIncludesCursor(bool include);
+// What fills a freehand capture outside the drawn outline: transparent by
+// default, or a solid color (kept while transparency is switched on).
+bool freehandTransparent();
+void setFreehandTransparent(bool transparent);
+QColor freehandColor();
+void setFreehandColor(const QColor &color);
+// The fill actually used: Qt::transparent or the color.
+QColor freehandFill();
 
 // Seconds to wait before every capture (0 = none), set from the toolbar.
 int captureDelay();

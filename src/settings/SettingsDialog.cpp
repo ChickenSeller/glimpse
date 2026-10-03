@@ -7,7 +7,9 @@
 #include "capture/Platform.h"
 #include "ocr/OcrEngine.h"
 
+#include <QColorDialog>
 #include <QMessageBox>
+#include <QPainter>
 #include <QPushButton>
 #include <QStandardItemModel>
 
@@ -26,6 +28,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
     ui->captureToolbarCheck->setChecked(AppSettings::captureIncludesToolbar());
     ui->captureCursorCheck->setChecked(AppSettings::captureIncludesCursor());
+    ui->freehandTransparentCheck->setChecked(AppSettings::freehandTransparent());
+    setFreehandColor(AppSettings::freehandColor());
 
     for (CaptureMode mode : kAllCaptureModes)
         hotkeyEdit(mode)->setKeySequence(AppSettings::hotkey(mode));
@@ -55,10 +59,21 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         updateOcrEngineNote();
         setModified(true);
     });
+    // The color is kept while transparency is on, so switching back restores it.
+    connect(ui->freehandTransparentCheck, &QCheckBox::toggled, ui->freehandColorButton,
+            [this](bool transparent) { ui->freehandColorButton->setEnabled(!transparent); });
+    ui->freehandColorButton->setEnabled(!ui->freehandTransparentCheck->isChecked());
+    connect(ui->freehandColorButton, &QPushButton::clicked, this, [this] {
+        const QColor color = QColorDialog::getColor(m_freehandColor, this, ui->freehandFillLabel->text());
+        if (color.isValid() && color != m_freehandColor) {
+            setFreehandColor(color);
+            setModified(true);
+        }
+    });
     applyPlatformLimits();
     updateOcrEngineNote();
-    for (QCheckBox *check : {ui->captureToolbarCheck, ui->captureCursorCheck, ui->ocrChineseCheck,
-                             ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
+    for (QCheckBox *check : {ui->captureToolbarCheck, ui->captureCursorCheck, ui->freehandTransparentCheck,
+                             ui->ocrChineseCheck, ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
     setModified(false);
 }
@@ -123,6 +138,8 @@ bool SettingsDialog::apply()
     AppSettings::setOcrLanguages(ocrLanguages);
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
     AppSettings::setCaptureIncludesCursor(ui->captureCursorCheck->isChecked());
+    AppSettings::setFreehandTransparent(ui->freehandTransparentCheck->isChecked());
+    AppSettings::setFreehandColor(m_freehandColor);
 
     const QString language = selectedLanguage();
     if (language != AppSettings::language()) {
@@ -163,6 +180,23 @@ QString SettingsDialog::selectedLanguage() const
 QString SettingsDialog::systemDefaultLabel() const
 {
     return tr("System default (%1)").arg(Language::nativeName(Language::systemLanguage()));
+}
+
+void SettingsDialog::setFreehandColor(const QColor &color)
+{
+    m_freehandColor = color;
+    // A swatch of the color, framed so that white shows on a white button.
+    const QSize size = ui->freehandColorButton->iconSize();
+    const qreal dpr = devicePixelRatioF();
+    QPixmap swatch(size * dpr);
+    swatch.setDevicePixelRatio(dpr);
+    swatch.fill(color);
+    QPainter painter(&swatch);
+    painter.setPen(palette().color(QPalette::Mid));
+    painter.drawRect(QRectF(0, 0, size.width(), size.height()).adjusted(0.5, 0.5, -0.5, -0.5));
+    painter.end();
+    ui->freehandColorButton->setIcon(swatch);
+    ui->freehandColorButton->setText(color.name(QColor::HexRgb).toUpper());
 }
 
 void SettingsDialog::updateOcrEngineNote()
@@ -220,6 +254,11 @@ void SettingsDialog::restoreDefaults()
     ui->languageCombo->setCurrentIndex(0); // system default
     ui->captureToolbarCheck->setChecked(false);
     ui->captureCursorCheck->setChecked(false);
+    ui->freehandTransparentCheck->setChecked(true);
+    if (m_freehandColor != QColor(Qt::white)) {
+        setFreehandColor(Qt::white);
+        setModified(true);
+    }
     ui->ocrEngineCombo->setCurrentIndex(std::max(0, ui->ocrEngineCombo->findData(Ocr::defaultEngine())));
     setOcrLanguages(Ocr::defaultLanguages());
     for (CaptureMode mode : kAllCaptureModes)

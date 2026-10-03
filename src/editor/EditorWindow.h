@@ -29,6 +29,7 @@ protected:
 
 private:
     void saveAs();
+    void saveAndCopyPath();
     void copyToClipboard();
     void edit();
     void setImage(const QImage &image);

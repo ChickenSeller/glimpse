@@ -84,7 +84,7 @@
         <translation>キャンバスのサイズと色を変更</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.cpp" line="+118"/>
+        <location filename="../src/editor/AnnotatorWindow.cpp" line="+122"/>
         <source>Apply your edits to the capture before closing the editor?</source>
         <translation>エディターを閉じる前に、編集内容をキャプチャに反映しますか？</translation>
     </message>
@@ -113,13 +113,13 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+319"/>
+        <location line="+320"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location line="-330"/>
+        <location line="-331"/>
         <source>Scrolling Capture</source>
         <translation>スクロールキャプチャ</translation>
     </message>
@@ -162,7 +162,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+161"/>
+        <location line="+162"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>キャプチャに失敗しました</translation>
@@ -353,9 +353,19 @@ Download them now?</source>
         <translation>ファイル</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+33"/>
         <source>Save As...</source>
         <translation>名前を付けて保存...</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Save and Copy Path...</source>
+        <translation>保存してパスをコピー...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save, then copy the file&apos;s full path to the clipboard</source>
+        <translation>保存後、ファイルのフルパスをクリップボードにコピー</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -378,7 +388,7 @@ Download them now?</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../src/editor/EditorWindow.cpp" line="+55"/>
+        <location filename="../src/editor/EditorWindow.cpp" line="+86"/>
         <source>Glimpse - %1 × %2</source>
         <translation>Glimpse - %1 × %2</translation>
     </message>
@@ -388,18 +398,23 @@ Download them now?</source>
         <translation>%1 × %2 ピクセル</translation>
     </message>
     <message>
-        <location filename="../src/editor/ImageActions.cpp" line="+23"/>
-        <location line="+8"/>
+        <location filename="../src/editor/ImageActions.cpp" line="+43"/>
+        <location line="+10"/>
         <source>Save Capture</source>
         <translation>キャプチャを保存</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-12"/>
         <source>PNG Image (*.png);;JPEG Image (*.jpg *.jpeg);;BMP Image (*.bmp)</source>
         <translation>PNG 画像 (*.png);;JPEG 画像 (*.jpg *.jpeg);;BMP 画像 (*.bmp)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-1"/>
+        <source>PNG Image (*.png)</source>
+        <translation>PNG 画像 (*.png)</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Could not save the image to
 %1</source>
         <translation>画像を保存できませんでした：
@@ -409,6 +424,11 @@ Download them now?</source>
         <location filename="../src/editor/EditorWindow.cpp" line="+17"/>
         <source>Saved to %1</source>
         <translation>%1 に保存しました</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Saved; path copied: %1</source>
+        <translation>保存しました。パスをコピーしました：%1</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -686,7 +706,22 @@ Download them now?</source>
         <translation>マウスポインターを含める(&amp;M)</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+9"/>
+        <source>Outside a freehand region:</source>
+        <translation>フリーハンド領域の外側：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Tr&amp;ansparent</source>
+        <translation>透明(&amp;A)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Fill color outside the outline</source>
+        <translation>輪郭の外側を塗りつぶす色</translation>
+    </message>
+    <message>
+        <location line="+33"/>
         <source>Hotkeys</source>
         <translation>ホットキー</translation>
     </message>
@@ -766,22 +801,22 @@ Download them now?</source>
         <translation>認識モデルは初めて必要になったときにダウンロードされます。選択する言語を減らすと、認識が速く正確になります。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+115"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+130"/>
         <source>Select at least one language for text recognition.</source>
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+43"/>
         <source>Global hotkeys: %1</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="-86"/>
+        <location line="-105"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

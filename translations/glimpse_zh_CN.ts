@@ -84,7 +84,7 @@
         <translation>修改画布大小和颜色</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.cpp" line="+118"/>
+        <location filename="../src/editor/AnnotatorWindow.cpp" line="+122"/>
         <source>Apply your edits to the capture before closing the editor?</source>
         <translation>关闭编辑器前，要把编辑结果应用到截图吗？</translation>
     </message>
@@ -113,13 +113,13 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+319"/>
+        <location line="+320"/>
         <location line="+12"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location line="-330"/>
+        <location line="-331"/>
         <source>Scrolling Capture</source>
         <translation>滚动截图</translation>
     </message>
@@ -162,7 +162,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+161"/>
+        <location line="+162"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>截图失败</translation>
@@ -353,9 +353,19 @@ Download them now?</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+33"/>
         <source>Save As...</source>
         <translation>另存为...</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Save and Copy Path...</source>
+        <translation>保存并复制路径...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save, then copy the file&apos;s full path to the clipboard</source>
+        <translation>保存后将文件的完整路径复制到剪贴板</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -378,7 +388,7 @@ Download them now?</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../src/editor/EditorWindow.cpp" line="+55"/>
+        <location filename="../src/editor/EditorWindow.cpp" line="+86"/>
         <source>Glimpse - %1 × %2</source>
         <translation>Glimpse - %1 × %2</translation>
     </message>
@@ -388,18 +398,23 @@ Download them now?</source>
         <translation>%1 × %2 像素</translation>
     </message>
     <message>
-        <location filename="../src/editor/ImageActions.cpp" line="+23"/>
-        <location line="+8"/>
+        <location filename="../src/editor/ImageActions.cpp" line="+43"/>
+        <location line="+10"/>
         <source>Save Capture</source>
         <translation>保存截图</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-12"/>
         <source>PNG Image (*.png);;JPEG Image (*.jpg *.jpeg);;BMP Image (*.bmp)</source>
         <translation>PNG 图像 (*.png);;JPEG 图像 (*.jpg *.jpeg);;BMP 图像 (*.bmp)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-1"/>
+        <source>PNG Image (*.png)</source>
+        <translation>PNG 图像 (*.png)</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Could not save the image to
 %1</source>
         <translation>无法将图像保存到
@@ -409,6 +424,11 @@ Download them now?</source>
         <location filename="../src/editor/EditorWindow.cpp" line="+17"/>
         <source>Saved to %1</source>
         <translation>已保存到 %1</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Saved; path copied: %1</source>
+        <translation>已保存，路径已复制：%1</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -686,7 +706,22 @@ Download them now?</source>
         <translation>截入鼠标指针(&amp;M)</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+9"/>
+        <source>Outside a freehand region:</source>
+        <translation>手绘区域外部：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Tr&amp;ansparent</source>
+        <translation>透明(&amp;A)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Fill color outside the outline</source>
+        <translation>轮廓外部的填充颜色</translation>
+    </message>
+    <message>
+        <location line="+33"/>
         <source>Hotkeys</source>
         <translation>快捷键</translation>
     </message>
@@ -766,22 +801,22 @@ Download them now?</source>
         <translation>识别模型会在首次使用时下载。选择的语言越少，识别越快、越准确。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+115"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+130"/>
         <source>Select at least one language for text recognition.</source>
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+43"/>
         <source>Global hotkeys: %1</source>
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="-86"/>
+        <location line="-105"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

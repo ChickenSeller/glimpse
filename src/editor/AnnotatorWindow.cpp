@@ -35,6 +35,10 @@ AnnotatorWindow::AnnotatorWindow(const QImage &image, QWidget *parent)
     // selected tool (kImageAnnotator stores them in our QSettings).
     m_annotator->setSaveToolSelection(true);
     // Edit in device pixels: every annotation lands on exact image pixels.
+    // kImageAnnotator fills its canvas white, on screen and in the result. A
+    // transparent canvas keeps transparency and shows its checkerboard instead.
+    if (ImageActions::hasTransparency(image))
+        m_annotator->setCanvasColor(Qt::transparent);
     QImage pixels = image;
     pixels.setDevicePixelRatio(1.0);
     m_annotator->loadImage(QPixmap::fromImage(pixels));

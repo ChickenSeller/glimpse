@@ -267,7 +267,7 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
         const QPainterPath shape = m_pendingShape;
         m_pendingRect.reset();
         m_pendingShape.clear();
-        deliver(shape.isEmpty() ? snapshot.crop(rect) : snapshot.crop(shape));
+        deliver(shape.isEmpty() ? snapshot.crop(rect) : snapshot.crop(shape, AppSettings::freehandFill()));
         return;
     }
     if (m_mode == Mode::FullScreen) {
@@ -299,7 +299,8 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
             });
             return;
         }
-        deliver(shape.isEmpty() ? selector->snapshot().crop(rect) : selector->snapshot().crop(shape));
+        deliver(shape.isEmpty() ? selector->snapshot().crop(rect)
+                                : selector->snapshot().crop(shape, AppSettings::freehandFill()));
     });
     connect(selector, &RegionSelector::canceled, this, [this, selector] {
         selector->deleteLater();

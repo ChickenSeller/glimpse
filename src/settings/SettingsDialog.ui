@@ -61,6 +61,44 @@
             </property>
            </widget>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="freehandFillLayout">
+            <item>
+             <widget class="QLabel" name="freehandFillLabel">
+              <property name="text">
+               <string>Outside a freehand region:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="freehandTransparentCheck">
+              <property name="text">
+               <string>Tr&amp;ansparent</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="freehandColorButton">
+              <property name="toolTip">
+               <string>Fill color outside the outline</string>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>14</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="freehandFillSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>

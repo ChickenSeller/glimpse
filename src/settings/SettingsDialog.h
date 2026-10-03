@@ -2,6 +2,7 @@
 
 #include "app/CaptureMode.h"
 
+#include <QColor>
 #include <QDialog>
 
 #include <memory>
@@ -43,7 +44,9 @@ private:
     void updateOcrEngineNote();
     void applyPlatformLimits();
     QString systemDefaultLabel() const;
+    void setFreehandColor(const QColor &color);
 
     std::unique_ptr<Ui::SettingsDialog> ui;
     bool m_modified = false;
+    QColor m_freehandColor;
 };

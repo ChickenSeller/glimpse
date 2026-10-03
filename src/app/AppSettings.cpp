@@ -93,6 +93,32 @@ void setCaptureIncludesCursor(bool include)
     QSettings().setValue(QStringLiteral("capture/includeCursor"), include);
 }
 
+bool freehandTransparent()
+{
+    return QSettings().value(QStringLiteral("capture/freehandTransparent"), true).toBool();
+}
+
+void setFreehandTransparent(bool transparent)
+{
+    QSettings().setValue(QStringLiteral("capture/freehandTransparent"), transparent);
+}
+
+QColor freehandColor()
+{
+    const QColor color(QSettings().value(QStringLiteral("capture/freehandColor")).toString());
+    return color.isValid() ? color : QColor(Qt::white);
+}
+
+void setFreehandColor(const QColor &color)
+{
+    QSettings().setValue(QStringLiteral("capture/freehandColor"), color.name(QColor::HexRgb));
+}
+
+QColor freehandFill()
+{
+    return freehandTransparent() ? QColor(Qt::transparent) : freehandColor();
+}
+
 int captureDelay()
 {
     return std::clamp(QSettings().value(QStringLiteral("capture/delay"), 0).toInt(), 0, 60);

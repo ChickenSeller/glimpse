@@ -67,6 +67,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionSaveAs"/>
+   <addaction name="actionSaveCopyPath"/>
    <addaction name="actionCopy"/>
    <addaction name="separator"/>
    <addaction name="actionEdit"/>
@@ -82,6 +83,21 @@
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSaveCopyPath">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/file_save.svg</normaloff>:/icons/file_save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save and Copy Path...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save, then copy the file's full path to the clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionCopy">

@@ -56,7 +56,7 @@ QImage DesktopSnapshot::crop(const QRect &logicalRect) const
     return result;
 }
 
-QImage DesktopSnapshot::crop(const QPainterPath &logicalShape) const
+QImage DesktopSnapshot::crop(const QPainterPath &logicalShape, const QColor &outside) const
 {
     const QRect bounds = logicalShape.boundingRect().toAlignedRect();
     const QImage area = crop(bounds);
@@ -79,6 +79,10 @@ QImage DesktopSnapshot::crop(const QPainterPath &logicalShape) const
     painter.drawPath(outline);
     painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
     painter.drawImage(0, 0, area);
+    if (outside.alpha() > 0) {
+        painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+        painter.fillRect(result.rect(), outside);
+    }
     painter.end();
 
     result.setDevicePixelRatio(area.devicePixelRatio());
