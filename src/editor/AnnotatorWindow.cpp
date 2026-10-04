@@ -6,6 +6,7 @@
 #include <kImageAnnotator/KImageAnnotator.h>
 
 #include <QCloseEvent>
+#include <QMouseEvent>
 #include <QGuiApplication>
 #include <QMessageBox>
 #include <QScreen>
@@ -36,9 +37,10 @@ AnnotatorWindow::AnnotatorWindow(const QImage &image, QWidget *parent)
     m_annotator->setSaveToolSelection(true);
     // Edit in device pixels: every annotation lands on exact image pixels.
     // kImageAnnotator fills its canvas white, on screen and in the result. A
-    // transparent canvas keeps transparency and shows its checkerboard instead.
-    if (ImageActions::hasTransparency(image))
-        m_annotator->setCanvasColor(Qt::transparent);
+    // transparent canvas keeps transparency and shows the checkerboard
+    // instead, for every image: what shows as transparent (the capture's own
+    // transparency, or space that annotations add around it) is saved so.
+    m_annotator->setCanvasColor(Qt::transparent);
     QImage pixels = image;
     pixels.setDevicePixelRatio(1.0);
     m_annotator->loadImage(QPixmap::fromImage(pixels));
@@ -66,6 +68,16 @@ AnnotatorWindow::AnnotatorWindow(const QImage &image, QWidget *parent)
 
     // Once shown on its screen, start at one image pixel per device pixel.
     QTimer::singleShot(0, this, &AnnotatorWindow::showPixelExact);
+
+    // The view frames what will be saved while the pointer is over it (see
+    // cmake/PatchImageAnnotator.cmake).
+    const auto views = m_annotator->findChildren<QGraphicsView *>();
+    for (QGraphicsView *view : views) {
+        if (qstrcmp(view->metaObject()->className(), "kImageAnnotator::AnnotationView") == 0) {
+            view->viewport()->setMouseTracking(true);
+            view->viewport()->installEventFilter(this);
+        }
+    }
 }
 
 void AnnotatorWindow::showPixelExact()
@@ -103,6 +115,28 @@ void AnnotatorWindow::showPixelExact()
 }
 
 AnnotatorWindow::~AnnotatorWindow() = default;
+
+bool AnnotatorWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    // The saved area's frame shows while the pointer is over that area (or
+    // within a few pixels of it); the view repaints only when that changes.
+    auto *viewport = qobject_cast<QWidget *>(watched);
+    if (viewport && (event->type() == QEvent::MouseMove || event->type() == QEvent::Enter
+                     || event->type() == QEvent::Leave)) {
+        bool framed = false;
+        if (event->type() != QEvent::Leave) {
+            const QPointF pos = event->type() == QEvent::Enter ? static_cast<QEnterEvent *>(event)->position()
+                                                              : static_cast<QMouseEvent *>(event)->position();
+            const QRectF canvas = viewport->property("glimpseCanvas").toRectF();
+            framed = canvas.adjusted(-4, -4, 4, 4).contains(pos);
+        }
+        if (framed != viewport->property("glimpseFramed").toBool()) {
+            viewport->setProperty("glimpseFramed", framed);
+            viewport->update();
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
 
 void AnnotatorWindow::changeEvent(QEvent *event)
 {

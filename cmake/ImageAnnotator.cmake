@@ -44,6 +44,9 @@ endif()
 FetchContent_Declare(kImageAnnotator
     URL https://github.com/ksnip/kImageAnnotator/archive/refs/tags/v0.7.2.tar.gz
     URL_HASH SHA256=7eb593d975b1590a184354ef68dbc3c26479d58eaea00de461d73695176f623c
+    # Its canvas painting (checkerboard, frame of the saved area). The
+    # revision makes existing build trees fetch and patch it afresh.
+    PATCH_COMMAND ${CMAKE_COMMAND} -DGLIMPSE_PATCH_REVISION=6 -P "${CMAKE_CURRENT_LIST_DIR}/PatchImageAnnotator.cmake"
 )
 FetchContent_MakeAvailable(kImageAnnotator)
 

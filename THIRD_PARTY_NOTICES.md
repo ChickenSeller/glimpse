@@ -10,7 +10,7 @@ are in the `licenses/` folder next to this file.
 |---|---|---|---|---|
 | [Qt](https://www.qt.io/) (Core, Gui, Widgets, Svg, Network, Concurrent, Multimedia) | 6.12.0 | LGPL-3.0 | `Qt-GPL-3.0-and-LGPL-3.0.txt` | Shared libraries (DLLs) |
 | [FFmpeg](https://ffmpeg.org/), shipped with Qt Multimedia | as in Qt 6.12.0 | LGPL-2.1-or-later | `FFmpeg-LGPL-2.1.txt` | Shared libraries (DLLs) |
-| [kImageAnnotator](https://github.com/ksnip/kImageAnnotator) | 0.7.2 | LGPL-3.0 | `kImageAnnotator-LGPL-3.0.txt` | Shared library (annotation editor) |
+| [kImageAnnotator](https://github.com/ksnip/kImageAnnotator) | 0.7.2 | LGPL-3.0 | `kImageAnnotator-LGPL-3.0.txt` | Shared library (annotation editor), with one change (see below) |
 | [kColorPicker](https://github.com/ksnip/kColorPicker) | 0.3.1 | LGPL-3.0 | `kColorPicker-LGPL-3.0.txt` | Shared library (annotation editor) |
 | [ZXing-C++](https://github.com/zxing-cpp/zxing-cpp) | 3.1.1 | Apache-2.0 | `ZXing-cpp-Apache-2.0.txt` | Linked statically (QR codes) |
 | [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) | 1.2.1 | MIT | `KDSingleApplication-MIT.txt` | Linked statically (single instance) |
@@ -50,10 +50,17 @@ available at the links above (Glimpse builds `mozilla/translations` at commit
 ## LGPL components
 
 Qt, FFmpeg, kImageAnnotator and kColorPicker are used as separate shared
-libraries (DLLs next to `glimpse.exe`) and are not modified by Glimpse. You may
-replace them with your own builds of compatible versions; Glimpse will use
-them. Their source code is available from their projects (links above) and,
-for Qt, from <https://download.qt.io/official_releases/qt/>. Qt itself
+libraries (DLLs next to `glimpse.exe`). You may replace them with your own
+builds of compatible versions; Glimpse will use them. Their source code is
+available from their projects (links above) and, for Qt, from
+<https://download.qt.io/official_releases/qt/>.
+
+Glimpse modifies none of them except kImageAnnotator, in one place: how it
+paints the canvas and the view around it
+(`src/annotations/misc/CanvasPainter.cpp`), which get Glimpse's checkerboard
+and a frame around the area that is saved. The
+change is applied at build time by `cmake/PatchImageAnnotator.cmake` in
+Glimpse's source code, to kImageAnnotator 0.7.2 as published. Qt itself
 contains further third-party code; see
 <https://doc.qt.io/qt-6/licenses-used-in-qt.html>.
 

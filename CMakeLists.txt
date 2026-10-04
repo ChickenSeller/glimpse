@@ -183,6 +183,8 @@ qt_add_executable(glimpse
     src/color/ColorResultDialog.h
     src/color/ColorResultDialog.ui
 
+    src/editor/CaptureCanvas.cpp
+    src/editor/CaptureCanvas.h
     src/editor/EditorWindow.cpp
     src/editor/EditorWindow.h
     src/editor/EditorWindow.ui

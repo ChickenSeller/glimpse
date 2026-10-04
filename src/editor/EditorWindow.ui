@@ -35,7 +35,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="canvas">
+      <widget class="CaptureCanvas" name="canvas">
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
@@ -152,6 +152,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CaptureCanvas</class>
+   <extends>QLabel</extends>
+   <header>editor/CaptureCanvas.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../resources/glimpse.qrc"/>
  </resources>
