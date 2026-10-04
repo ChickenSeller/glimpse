@@ -1,6 +1,6 @@
 // The release list (releases.json, written when the page is deployed; see
 // the pages job in .gitlab-ci.yml) and the "From this site" download, which
-// points at the newest package. Both stay hidden without releases.
+// leads to it. Both stay hidden without releases.
 (function () {
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -62,10 +62,12 @@
 
     document.getElementById('releases').hidden = false;
     document.getElementById('nav-releases').hidden = false;
-    var latest = document.getElementById('download-site');
-    latest.href = releases[0].files[0].url;
-    latest.title = releases[0].files[0].name;
-    latest.hidden = false;
+    // "From this site" opens the list to pick a version from.
+    var fromSite = document.getElementById('download-site');
+    fromSite.hidden = false;
+    fromSite.addEventListener('click', function () {
+      document.getElementById('download').open = false;
+    });
     if (window.glimpseRetranslate) window.glimpseRetranslate();
   }
 
