@@ -70,10 +70,22 @@ void apply(const QString &code)
     if (language == kEnglish)
         return; // source strings are English
 
-    // Qt's own strings: standard buttons, file dialogs, key names.
+    // Qt's own strings: standard buttons, file dialogs, key names. The package
+    // has them next to the executable, merged into qt_<language>.qm by
+    // windeployqt; a Qt installation (development, Linux) has qtbase_<language>.qm.
     qtTranslator = new QTranslator;
-    if (qtTranslator->load(QStringLiteral("qtbase_") + language,
-                           QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+    const QStringList qtDirectories = {
+        QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("translations")),
+        QLibraryInfo::path(QLibraryInfo::TranslationsPath),
+    };
+    bool qtLoaded = false;
+    for (const QString &directory : qtDirectories) {
+        for (const QString &name : {QStringLiteral("qt_"), QStringLiteral("qtbase_")}) {
+            if (!qtLoaded && qtTranslator->load(name + language, directory))
+                qtLoaded = true;
+        }
+    }
+    if (qtLoaded)
         QCoreApplication::installTranslator(qtTranslator);
 
     // kImageAnnotator ships its own catalog: next to the executable for our
