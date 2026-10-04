@@ -22,6 +22,11 @@ if(MSVC)
     add_compile_options(/utf-8)
 endif()
 
+# Eigen (pulled in by Marian) is MPL-2.0 except for a few LGPL files; this
+# makes any use of those a compile error, so the library holds MPL-2.0 Eigen
+# code only (see THIRD_PARTY_NOTICES.md).
+add_compile_definitions(EIGEN_MPL2_ONLY)
+
 # PCRE2 for the sentence splitter. Its own download script names the MSVC
 # library wrongly, so it is built here and handed over as a target.
 include(FetchContent)
