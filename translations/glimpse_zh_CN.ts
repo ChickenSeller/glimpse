@@ -127,7 +127,7 @@
         <translation>修改画布大小和颜色</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.cpp" line="+122"/>
+        <location filename="../src/editor/AnnotatorWindow.cpp" line="+156"/>
         <source>Apply your edits to the capture before closing the editor?</source>
         <translation>关闭编辑器前，要把编辑结果应用到截图吗？</translation>
     </message>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+488"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+508"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -635,7 +635,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>FirefoxTranslation</name>
     <message>
-        <location filename="../src/translate/FirefoxTranslation.cpp" line="+183"/>
+        <location filename="../src/translate/FirefoxTranslation.cpp" line="+192"/>
         <source>The Firefox translation engine could not be loaded: %1</source>
         <translation>无法加载 Firefox 翻译引擎：%1</translation>
     </message>
@@ -651,12 +651,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+17"/>
-        <location line="+80"/>
+        <location line="+90"/>
         <source>Firefox has no model for %1 to %2.</source>
         <translation>Firefox 没有从%1到%2的翻译模型。</translation>
     </message>
     <message>
-        <location line="-65"/>
+        <location line="-75"/>
         <source>A Firefox translation model could not be loaded: %1</source>
         <translation>无法加载 Firefox 翻译模型：%1</translation>
     </message>
@@ -666,7 +666,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>此版本未包含 Firefox 翻译引擎。</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+97"/>
         <source>Firefox translation failed: %1</source>
         <translation>Firefox 翻译失败：%1</translation>
     </message>
@@ -745,24 +745,37 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Ocr</name>
     <message>
-        <location filename="../src/ocr/ModelStore.cpp" line="+26"/>
         <source>Downloading Recognition Models</source>
-        <translation>正在下载识别模型</translation>
+        <translation type="vanished">正在下载识别模型</translation>
     </message>
     <message>
-        <location line="+11"/>
         <source>Downloading %1 (%2 of %3)...</source>
-        <translation>正在下载 %1（第 %2 个，共 %3 个）...</translation>
+        <translation type="vanished">正在下载 %1（第 %2 个，共 %3 个）...</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location filename="../src/ocr/ModelStore.cpp" line="+60"/>
+        <source>The file is not the expected one (checksum mismatch).</source>
+        <translation>文件与预期不符（校验值不匹配）。</translation>
+    </message>
+    <message>
+        <location line="+70"/>
+        <source>Downloading Models</source>
+        <translation>正在下载模型</translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Cannot write %1:
 %2</source>
         <translation>无法写入 %1：
 %2</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+10"/>
+        <source>Downloading %1 (%2 of %3) from %4...</source>
+        <translation>正在从 %4 下载 %1（第 %2 个，共 %3 个）...</translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>Could not download %1:
 %2</source>
         <translation>无法下载 %1：
@@ -799,7 +812,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>经典的开源引擎。首次使用时，每种所选语言需下载 2-4 MB。</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+60"/>
         <source>The text recognition engine &quot;%1&quot; is not available in this build.</source>
         <translation>此版本中没有文字识别引擎“%1”。</translation>
     </message>
@@ -892,7 +905,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>PinWindow</name>
     <message>
-        <location filename="../src/pin/PinWindow.cpp" line="+192"/>
+        <location filename="../src/pin/PinWindow.cpp" line="+225"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
@@ -902,7 +915,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>滚轮：缩放  ·  Ctrl+滚轮：透明度  ·  双击：关闭</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+28"/>
         <source>Pinned Capture</source>
         <translation>贴图</translation>
     </message>
@@ -1181,7 +1194,37 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>轮廓外部的填充颜色</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+25"/>
+        <source>Downloads (recognition and translation models)</source>
+        <translation>下载（文字识别与翻译模型）</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Download &amp;from:</source>
+        <translation>下载来源(&amp;F)：</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Mirror first, then the official source</source>
+        <translation>优先镜像，失败时用官方来源</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Official source first, then the mirror</source>
+        <translation>优先官方来源，失败时用镜像</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Official source only</source>
+        <translation>只用官方来源</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>M&amp;irror:</source>
+        <translation>镜像地址(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Hotkeys</source>
         <translation>快捷键</translation>
     </message>
@@ -1422,7 +1465,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-431"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-435"/>
         <source>%1 fps</source>
         <translation>%1 帧/秒</translation>
     </message>
@@ -1447,7 +1490,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+75"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -1457,7 +1500,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+101"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
@@ -1477,7 +1520,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-267"/>
+        <location line="-271"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

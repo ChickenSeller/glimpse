@@ -114,6 +114,10 @@ qt_add_library(glimpse_ocr STATIC
 )
 target_include_directories(glimpse_ocr PUBLIC src)
 target_link_libraries(glimpse_ocr PUBLIC Qt6::Widgets Qt6::Concurrent Qt6::Network)
+# Downloads are also tried from this mirror (see ModelStore.h); users can
+# change it in Settings > General.
+set(GLIMPSE_DOWNLOAD_MIRROR "https://pages.yanlei.org/glimpse-mirror" CACHE STRING "Mirror of Glimpse's downloads")
+target_compile_definitions(glimpse_ocr PRIVATE GLIMPSE_DOWNLOAD_MIRROR="${GLIMPSE_DOWNLOAD_MIRROR}")
 
 if(WIN32)
     # Windows' built-in OCR (Windows.Media.Ocr), driven through its WinRT ABI.

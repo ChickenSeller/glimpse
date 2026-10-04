@@ -118,6 +118,18 @@ QString defaultEngine()
     return ids.isEmpty() ? QString() : ids.first();
 }
 
+QList<ModelFile> allModels()
+{
+    QList<ModelFile> all;
+#ifdef GLIMPSE_HAVE_TESSERACT
+    all << TesseractEngine::requiredModels(supportedLanguages());
+#endif
+#ifdef GLIMPSE_HAVE_PADDLE
+    all << PaddleOcrEngine::requiredModels();
+#endif
+    return all;
+}
+
 QList<ModelFile> missingModels(const QString &engine, const QStringList &languages)
 {
     QList<ModelFile> required;

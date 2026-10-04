@@ -133,6 +133,15 @@ QString folderOf(const Direction &d)
     return QDir(base).filePath(QStringLiteral("models/firefox/%1-%2").arg(QLatin1String(d.from), QLatin1String(d.to)));
 }
 
+// Where a part of `d` comes from and goes to.
+ModelFile modelFile(const Direction &d, const ModelPart &p)
+{
+    return ModelFile{QStringLiteral("%1 (%2 → %3)").arg(QString::fromLatin1(p.file), QLatin1String(d.from), QLatin1String(d.to)),
+                     QUrl(QStringLiteral("https://firefox-settings-attachments.cdn.mozilla.net/")
+                          + QString::fromLatin1(p.location)),
+                     QDir(folderOf(d)).filePath(QString::fromLatin1(p.file)), QByteArray(p.sha256)};
+}
+
 QString partPath(const Direction &d, const char *kind)
 {
     for (const ModelPart &p : d.parts) {
@@ -300,6 +309,16 @@ QString detectLanguage(const QString &text)
     return QStringLiteral("en");
 }
 
+QList<ModelFile> allModels()
+{
+    QList<ModelFile> all;
+    for (const Direction &d : directions()) {
+        for (const ModelPart &p : d.parts)
+            all << modelFile(d, p);
+    }
+    return all;
+}
+
 QList<ModelFile> missingModels(const QStringList &texts, const QString &target, QString *unsupported)
 {
     QList<ModelFile> missing;
@@ -320,10 +339,7 @@ QList<ModelFile> missingModels(const QStringList &texts, const QString &target, 
             for (const ModelPart &p : d->parts) {
                 const QString path = QDir(folderOf(*d)).filePath(QString::fromLatin1(p.file));
                 if (!QFileInfo::exists(path)) {
-                    missing << ModelFile{QStringLiteral("%1 (%2 → %3)").arg(QString::fromLatin1(p.file), from, to),
-                                         QUrl(QStringLiteral("https://firefox-settings-attachments.cdn.mozilla.net/")
-                                              + QString::fromLatin1(p.location)),
-                                         path};
+                    missing << modelFile(*d, p);
                 }
             }
         }

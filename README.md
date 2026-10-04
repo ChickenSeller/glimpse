@@ -34,7 +34,12 @@ Homepage: <https://pages.yanlei.org/kaguya/glimpse/>
 - Global hotkeys and a small floating toolbar.
 
 Models for OCR and offline translation are downloaded on first use, not
-bundled.
+bundled. Where Hugging Face or GitHub are hard to reach, Glimpse also fetches
+them from a mirror (by default <https://pages.yanlei.org/glimpse-mirror>,
+tried first); the order and the mirror can be changed in Settings > General.
+To run a mirror, list the files with `glimpse --list-downloads list.tsv` and
+fill a web server's directory with `python tools/mirror-downloads.py list.tsv
+<directory>`.
 
 ### Default hotkeys
 

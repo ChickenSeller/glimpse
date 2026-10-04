@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QByteArray>
 #include <QImage>
 #include <QList>
 #include <QRect>
@@ -26,6 +27,7 @@ struct ModelFile {
     QString name;
     QUrl url;
     QString path; // where it must end up on disk
+    QByteArray sha256 = {}; // hex; when known, a download must match it
 };
 
 // One OCR backend. Instances are created and used on a worker thread.
@@ -55,6 +57,8 @@ QString defaultEngine();
 
 // Models the engine needs for `languages` that are not downloaded yet.
 QList<ModelFile> missingModels(const QString &engine, const QStringList &languages);
+// Every model any engine of this build may download (for mirroring them).
+QList<ModelFile> allModels();
 
 // Null with `error` set when the engine cannot run (e.g. missing models).
 std::unique_ptr<OcrEngine> createEngine(const QString &engine, const QStringList &languages, QString *error);

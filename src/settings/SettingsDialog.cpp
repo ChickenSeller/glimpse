@@ -6,6 +6,7 @@
 #include "app/Language.h"
 #include "app/TintedIcon.h"
 #include "capture/Platform.h"
+#include "ocr/ModelStore.h"
 #include "ocr/OcrEngine.h"
 #include "translate/FirefoxTranslation.h"
 #include "translate/LocalModel.h"
@@ -34,6 +35,21 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     for (const QString &code : languages)
         ui->languageCombo->addItem(Language::nativeName(code), code);
     ui->languageCombo->setCurrentIndex(std::max(0, ui->languageCombo->findData(AppSettings::language())));
+
+    // Downloads: the combo's rows are in ModelStore::SourceOrder's order.
+    ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::sourceOrder()));
+    ui->downloadMirrorEdit->setPlaceholderText(ModelStore::defaultMirror());
+    ui->downloadMirrorEdit->setText(ModelStore::mirror());
+    const auto updateMirror = [this] {
+        ui->downloadMirrorEdit->setEnabled(ui->downloadOrderCombo->currentIndex()
+                                           != int(ModelStore::SourceOrder::OfficialOnly));
+    };
+    updateMirror();
+    connect(ui->downloadOrderCombo, &QComboBox::currentIndexChanged, this, [this, updateMirror] {
+        updateMirror();
+        setModified(true);
+    });
+    connect(ui->downloadMirrorEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
 
     ui->captureToolbarCheck->setChecked(AppSettings::captureIncludesToolbar());
     ui->captureCursorCheck->setChecked(AppSettings::captureIncludesCursor());
@@ -254,6 +270,8 @@ bool SettingsDialog::apply()
     AppSettings::setMicrosoftTranslatorRegion(ui->translateRegionEdit->text().trimmed());
     AppSettings::setLocalModel(ui->translateModelCombo->currentData().toString());
     AppSettings::setLocalModelFile(QDir::fromNativeSeparators(ui->translateModelFileEdit->text().trimmed()));
+    ModelStore::setSourceOrder(ModelStore::SourceOrder(ui->downloadOrderCombo->currentIndex()));
+    ModelStore::setMirror(ui->downloadMirrorEdit->text());
     AppSettings::setToolbarItems(toolbarItems());
     AppSettings::setToolbarIconSize(ui->toolbarIconSizeCombo->currentData().toInt());
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
@@ -423,6 +441,8 @@ void SettingsDialog::setOcrLanguages(const QStringList &languages)
 void SettingsDialog::restoreDefaults()
 {
     ui->languageCombo->setCurrentIndex(0); // system default
+    ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::SourceOrder::MirrorFirst));
+    ui->downloadMirrorEdit->setText(ModelStore::defaultMirror());
     ui->captureToolbarCheck->setChecked(false);
     ui->captureCursorCheck->setChecked(false);
     ui->freehandTransparentCheck->setChecked(true);

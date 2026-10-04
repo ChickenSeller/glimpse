@@ -24,6 +24,8 @@ QString detectLanguage(const QString &text);
 // Files still to download for translating `texts` into `target`. Sets
 // `unsupported` (and returns nothing) when a needed direction has no model.
 QList<ModelFile> missingModels(const QStringList &texts, const QString &target, QString *unsupported);
+// The files of every direction (for mirroring them).
+QList<ModelFile> allModels();
 
 // Blocking: call off the GUI thread, after the models are downloaded. Calls
 // are serialized; loaded models are kept until release().

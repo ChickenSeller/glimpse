@@ -127,7 +127,7 @@
         <translation>キャンバスのサイズと色を変更</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.cpp" line="+122"/>
+        <location filename="../src/editor/AnnotatorWindow.cpp" line="+156"/>
         <source>Apply your edits to the capture before closing the editor?</source>
         <translation>エディターを閉じる前に、編集内容をキャプチャに反映しますか？</translation>
     </message>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+488"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+508"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -635,7 +635,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>FirefoxTranslation</name>
     <message>
-        <location filename="../src/translate/FirefoxTranslation.cpp" line="+183"/>
+        <location filename="../src/translate/FirefoxTranslation.cpp" line="+192"/>
         <source>The Firefox translation engine could not be loaded: %1</source>
         <translation>Firefox 翻訳エンジンを読み込めませんでした：%1</translation>
     </message>
@@ -651,12 +651,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+17"/>
-        <location line="+80"/>
+        <location line="+90"/>
         <source>Firefox has no model for %1 to %2.</source>
         <translation>Firefox には %1 から %2 への翻訳モデルがありません。</translation>
     </message>
     <message>
-        <location line="-65"/>
+        <location line="-75"/>
         <source>A Firefox translation model could not be loaded: %1</source>
         <translation>Firefox の翻訳モデルを読み込めませんでした：%1</translation>
     </message>
@@ -666,7 +666,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>このビルドには Firefox 翻訳エンジンが含まれていません。</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+97"/>
         <source>Firefox translation failed: %1</source>
         <translation>Firefox 翻訳に失敗しました：%1</translation>
     </message>
@@ -745,24 +745,37 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Ocr</name>
     <message>
-        <location filename="../src/ocr/ModelStore.cpp" line="+26"/>
         <source>Downloading Recognition Models</source>
-        <translation>認識モデルをダウンロード中</translation>
+        <translation type="vanished">認識モデルをダウンロード中</translation>
     </message>
     <message>
-        <location line="+11"/>
         <source>Downloading %1 (%2 of %3)...</source>
-        <translation>%1 をダウンロード中（%2 / %3）...</translation>
+        <translation type="vanished">%1 をダウンロード中（%2 / %3）...</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location filename="../src/ocr/ModelStore.cpp" line="+60"/>
+        <source>The file is not the expected one (checksum mismatch).</source>
+        <translation>ファイルが想定と異なります（チェックサムの不一致）。</translation>
+    </message>
+    <message>
+        <location line="+70"/>
+        <source>Downloading Models</source>
+        <translation>モデルをダウンロード中</translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Cannot write %1:
 %2</source>
         <translation>%1 に書き込めません：
 %2</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+10"/>
+        <source>Downloading %1 (%2 of %3) from %4...</source>
+        <translation>%4 から %1 をダウンロード中（%2 / %3）...</translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>Could not download %1:
 %2</source>
         <translation>%1 をダウンロードできませんでした：
@@ -799,7 +812,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>定番のオープンソースエンジンです。初回使用時に、選択した言語ごとに 2～4 MB をダウンロードします。</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+60"/>
         <source>The text recognition engine &quot;%1&quot; is not available in this build.</source>
         <translation>このビルドでは文字認識エンジン「%1」を利用できません。</translation>
     </message>
@@ -892,7 +905,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>PinWindow</name>
     <message>
-        <location filename="../src/pin/PinWindow.cpp" line="+192"/>
+        <location filename="../src/pin/PinWindow.cpp" line="+225"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
@@ -902,7 +915,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ホイール：拡大縮小  ·  Ctrl+ホイール：不透明度  ·  ダブルクリック：閉じる</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+28"/>
         <source>Pinned Capture</source>
         <translation>ピン留めしたキャプチャ</translation>
     </message>
@@ -1181,7 +1194,37 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>輪郭の外側を塗りつぶす色</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+25"/>
+        <source>Downloads (recognition and translation models)</source>
+        <translation>ダウンロード（文字認識と翻訳のモデル）</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Download &amp;from:</source>
+        <translation>ダウンロード元(&amp;F)：</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Mirror first, then the official source</source>
+        <translation>ミラーを優先し、失敗したら公式</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Official source first, then the mirror</source>
+        <translation>公式を優先し、失敗したらミラー</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Official source only</source>
+        <translation>公式のみ</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>M&amp;irror:</source>
+        <translation>ミラー(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Hotkeys</source>
         <translation>ホットキー</translation>
     </message>
@@ -1422,7 +1465,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-431"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-435"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
@@ -1447,7 +1490,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+75"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -1457,7 +1500,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+101"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
@@ -1477,7 +1520,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-267"/>
+        <location line="-271"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

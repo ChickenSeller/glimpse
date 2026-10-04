@@ -103,6 +103,57 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="downloadGroup">
+         <property name="title">
+          <string>Downloads (recognition and translation models)</string>
+         </property>
+         <layout class="QFormLayout" name="downloadForm">
+          <item row="0" column="0">
+           <widget class="QLabel" name="downloadOrderLabel">
+            <property name="text">
+             <string>Download &amp;from:</string>
+            </property>
+            <property name="buddy">
+             <cstring>downloadOrderCombo</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="downloadOrderCombo">
+            <item>
+             <property name="text">
+              <string>Mirror first, then the official source</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Official source first, then the mirror</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Official source only</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="downloadMirrorLabel">
+            <property name="text">
+             <string>M&amp;irror:</string>
+            </property>
+            <property name="buddy">
+             <cstring>downloadMirrorEdit</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="downloadMirrorEdit"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="generalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
