@@ -2,5 +2,6 @@
 
 #include <QIcon>
 
-// Application icon, painted at runtime until we ship real artwork.
+// Application icon: resources/glimpse.svg. glimpse.exe carries the same
+// artwork as resources/glimpse.ico (see resources/README.md).
 QIcon appIcon();

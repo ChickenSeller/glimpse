@@ -248,6 +248,10 @@ target_link_libraries(glimpse PRIVATE glimpse_ocr Qt6::Widgets Qt6::Svg Qt6::Con
 
 # Window/object picking and global hotkeys: Win32 only so far.
 if(WIN32)
+    # The file's icon and version details.
+    enable_language(RC)
+    configure_file(resources/glimpse.rc.in ${CMAKE_CURRENT_BINARY_DIR}/glimpse.rc @ONLY)
+    target_sources(glimpse PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/glimpse.rc)
     target_sources(glimpse PRIVATE
         src/capture/CursorCapture_win.cpp
         src/capture/ScrollInput_win.cpp

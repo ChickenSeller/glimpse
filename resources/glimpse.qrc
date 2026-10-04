@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>glimpse.svg</file>
         <file>icons/check.svg</file>
         <file>icons/colorize.svg</file>
         <file>icons/aspect_ratio.svg</file>
