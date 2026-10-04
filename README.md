@@ -37,6 +37,12 @@ Models for OCR and offline translation are downloaded on first use, not
 bundled. Where Hugging Face or GitHub are hard to reach, Glimpse also fetches
 them from a mirror (by default <https://pages.yanlei.org/glimpse-mirror>,
 tried first); the order and the mirror can be changed in Settings > General.
+On Windows, Glimpse checks the homepage for updates at start; Settings >
+General chooses whether it updates automatically, only to a required
+version, asks first, or never checks. The required version is set with the
+GitLab CI/CD variable `GLIMPSE_REQUIRED_VERSION` and published when the
+homepage is deployed.
+
 To run a mirror, list the files with `glimpse --list-downloads list.tsv` and
 fill a web server's directory with `python tools/mirror-downloads.py list.tsv
 <directory>`.

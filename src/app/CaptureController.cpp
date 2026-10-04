@@ -24,6 +24,7 @@
 #include "translate/FirefoxTranslation.h"
 #include "translate/LocalModel.h"
 #include "translate/Translator.h"
+#include "update/Updater.h"
 
 #include <QApplication>
 #include <QDateTime>
@@ -77,6 +78,15 @@ CaptureController::CaptureController(QObject *parent)
     setupTray();
     // QApplication itself receives LanguageChange when a translator is (un)installed.
     qApp->installEventFilter(this);
+
+    // Checked a little after start, once the toolbar is up.
+    m_updater = new Updater(this);
+    m_updater->setCanRestart([this] { return !m_busy && !m_recording; });
+    connect(m_updater, &Updater::notify, this, [this](const QString &title, const QString &message) {
+        if (m_tray)
+            m_tray->showMessage(title, message);
+    });
+    QTimer::singleShot(5000, m_updater, &Updater::checkAtStartup);
 
     const QStringList taken = registerHotkeys();
     if (!taken.isEmpty() && m_tray) {

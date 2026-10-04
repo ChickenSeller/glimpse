@@ -21,6 +21,7 @@ class QMenu;
 class QSystemTrayIcon;
 class ScreenGrabber;
 class AboutDialog;
+class Updater;
 class SettingsDialog;
 
 // Owns the toolbar and tray icon and runs one capture at a time:
@@ -72,6 +73,7 @@ private:
     std::unique_ptr<CaptureToolbar> m_toolbar;
     std::unique_ptr<QMenu> m_trayMenu;
     QSystemTrayIcon *m_tray = nullptr;
+    Updater *m_updater = nullptr;
     QHash<Mode, QAction *> m_trayCaptureActions;
     QAction *m_trayShowToolbar = nullptr;
     QAction *m_traySettings = nullptr;

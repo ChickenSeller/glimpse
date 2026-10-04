@@ -66,6 +66,8 @@ endif()
 # Shown in the About window.
 set(GLIMPSE_GITHUB_URL "https://github.com/ChickenSeller/glimpse" CACHE STRING "Glimpse's source repository")
 set(GLIMPSE_HOMEPAGE_URL "https://pages.yanlei.org/kaguya/glimpse/" CACHE STRING "Glimpse's homepage")
+# Where Glimpse looks for updates (written with the homepage, see .gitlab-ci.yml).
+set(GLIMPSE_UPDATE_URL "${GLIMPSE_HOMEPAGE_URL}update.json" CACHE STRING "Glimpse's update information")
 
 # Text recognition engines (Windows OCR needs nothing extra).
 option(GLIMPSE_WITH_TESSERACT "Build the Tesseract OCR engine" ON)
@@ -184,6 +186,9 @@ qt_add_executable(glimpse
     src/pin/PinWindow.cpp
     src/pin/PinWindow.h
 
+    src/update/Updater.cpp
+    src/update/Updater.h
+
     src/editor/AnnotatorWindow.cpp
     src/editor/AnnotatorWindow.h
     src/editor/AnnotatorWindow.ui
@@ -242,7 +247,8 @@ qt_add_executable(glimpse
 
 target_include_directories(glimpse PRIVATE src)
 target_compile_definitions(glimpse PRIVATE GLIMPSE_VERSION="${PROJECT_VERSION}"
-    GLIMPSE_GITHUB_URL="${GLIMPSE_GITHUB_URL}" GLIMPSE_HOMEPAGE_URL="${GLIMPSE_HOMEPAGE_URL}")
+    GLIMPSE_GITHUB_URL="${GLIMPSE_GITHUB_URL}" GLIMPSE_HOMEPAGE_URL="${GLIMPSE_HOMEPAGE_URL}"
+    GLIMPSE_UPDATE_URL="${GLIMPSE_UPDATE_URL}")
 # UI translations, compiled to .qm and embedded under :/i18n. Refresh the .ts
 # files after changing UI strings with: cmake --build <dir> --target update_translations
 qt_add_translations(TARGETS glimpse

@@ -155,7 +155,7 @@
         <translation>识别二维码</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+459"/>
+        <location filename="../src/app/CaptureController.cpp" line="+469"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+508"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+520"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -1224,7 +1224,37 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>镜像地址(&amp;I)：</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+16"/>
+        <source>Updates</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>At start&amp;up:</source>
+        <translation>启动时(&amp;U)：</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Update automatically</source>
+        <translation>自动更新</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Install required updates automatically</source>
+        <translation>自动进行必须的更新</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Ask before updating</source>
+        <translation>每次更新前确认</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Never update</source>
+        <translation>永不更新</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Hotkeys</source>
         <translation>快捷键</translation>
     </message>
@@ -1465,7 +1495,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-435"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-442"/>
         <source>%1 fps</source>
         <translation>%1 帧/秒</translation>
     </message>
@@ -1490,17 +1520,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+77"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+86"/>
         <source>Global hotkeys: %1</source>
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+102"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
@@ -1520,7 +1550,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-271"/>
+        <location line="-278"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
@@ -1718,6 +1748,81 @@ Download them now? They are kept on this computer and used offline from then on.
         <location line="+16"/>
         <source>Keep the paragraphs as recognized (same number) to paint them over the capture.</source>
         <translation>段落数量需与识别结果一致，才能把译文画到截图上。</translation>
+    </message>
+</context>
+<context>
+    <name>Updater</name>
+    <message>
+        <location filename="../src/update/Updater.cpp" line="+135"/>
+        <location line="+22"/>
+        <location line="+2"/>
+        <location line="+24"/>
+        <location line="+12"/>
+        <location line="+36"/>
+        <location line="+2"/>
+        <location line="+8"/>
+        <location line="+15"/>
+        <source>Glimpse Update</source>
+        <translation>Glimpse 更新</translation>
+    </message>
+    <message>
+        <location line="-120"/>
+        <source>Glimpse %1 is available; you have %2.
+Update now? Glimpse restarts when it is done.</source>
+        <translation>Glimpse %1 已发布，当前版本是 %2。
+现在更新吗？更新完成后 Glimpse 会自动重启。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Update</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Later</source>
+        <translation>以后再说</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Glimpse %1 is available, but the folder Glimpse runs from cannot be written to. Download it from the homepage and unpack it yourself.</source>
+        <translation>Glimpse %1 已发布，但无法写入 Glimpse 所在的文件夹。请从主页下载并自行解压。</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Downloading Glimpse %1...</source>
+        <translation>正在下载 Glimpse %1...</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Downloading Glimpse %1; Glimpse restarts once it is installed.</source>
+        <translation>正在下载 Glimpse %1，安装完成后 Glimpse 会自动重启。</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>The download is damaged (checksum mismatch).</source>
+        <translation>下载的文件已损坏（校验值不匹配）。</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Could not download Glimpse %1:
+%2</source>
+        <translation>无法下载 Glimpse %1：
+%2</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Could not prepare the update.</source>
+        <translation>无法准备更新。</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Could not start the update.</source>
+        <translation>无法开始更新。</translation>
     </message>
 </context>
 </TS>

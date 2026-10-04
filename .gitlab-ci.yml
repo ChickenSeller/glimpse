@@ -157,6 +157,29 @@ pages:
         } | select(.files | length > 0)]' releases-api.json > public/releases.json
       echo "$(jq length public/releases.json) releases listed"
 
+      # What Glimpse checks at start (src/update/Updater.h): the latest
+      # release, and the one every older Glimpse must update to, set as the
+      # CI/CD variable GLIMPSE_REQUIRED_VERSION (e.g. 0.3.1; empty for none).
+      # Each with the SHA-256 and size of its package, which Glimpse checks.
+      entry() {
+        jq -e --arg v "$1" 'first(.[] | select(.version == $v))' public/releases.json > entry.json || return 1
+        file=$(jq -r '.files[0].name' entry.json)
+        curl -fsS -H "JOB-TOKEN: ${CI_JOB_TOKEN}" -o package.zip \
+          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/glimpse/$1/${file}" || return 1
+        jq --arg sha "$(sha256sum package.zip | cut -d' ' -f1)" --argjson size "$(stat -c %s package.zip)" \
+          '{version, url: .files[0].url, sha256: $sha, size: $size, notes}' entry.json
+        rm -f package.zip
+      }
+      latest=$(jq -r '.[0].version // empty' public/releases.json)
+      latest_json=$( [ -n "$latest" ] && entry "$latest" || echo null)
+      required_json=null
+      if [ -n "${GLIMPSE_REQUIRED_VERSION:-}" ]; then
+        required_json=$(entry "${GLIMPSE_REQUIRED_VERSION#v}" || echo null)
+        [ "$required_json" = null ] && echo "Required version ${GLIMPSE_REQUIRED_VERSION} has no release package; ignored"
+      fi
+      jq -n --argjson latest "$latest_json" --argjson required "$required_json" \
+        '{latest: $latest, required: $required}' > public/update.json
+      echo "update.json: latest $(jq -r '.latest.version // "none"' public/update.json), required $(jq -r '.required.version // "none"' public/update.json)"
   artifacts:
     paths:
       - public

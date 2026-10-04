@@ -154,6 +154,49 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="updateGroup">
+         <property name="title">
+          <string>Updates</string>
+         </property>
+         <layout class="QFormLayout" name="updateForm">
+          <item row="0" column="0">
+           <widget class="QLabel" name="updateModeLabel">
+            <property name="text">
+             <string>At start&amp;up:</string>
+            </property>
+            <property name="buddy">
+             <cstring>updateModeCombo</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="updateModeCombo">
+            <item>
+             <property name="text">
+              <string>Update automatically</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Install required updates automatically</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Ask before updating</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Never update</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="generalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

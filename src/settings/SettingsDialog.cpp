@@ -11,6 +11,7 @@
 #include "translate/FirefoxTranslation.h"
 #include "translate/LocalModel.h"
 #include "translate/Translator.h"
+#include "update/Updater.h"
 
 #include <QColorDialog>
 #include <QCoreApplication>
@@ -35,6 +36,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     for (const QString &code : languages)
         ui->languageCombo->addItem(Language::nativeName(code), code);
     ui->languageCombo->setCurrentIndex(std::max(0, ui->languageCombo->findData(AppSettings::language())));
+
+    // Updates: the combo's rows are in Updater::Mode's order.
+    ui->updateModeCombo->setCurrentIndex(int(Updater::mode()));
+    connect(ui->updateModeCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
 
     // Downloads: the combo's rows are in ModelStore::SourceOrder's order.
     ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::sourceOrder()));
@@ -270,6 +275,8 @@ bool SettingsDialog::apply()
     AppSettings::setMicrosoftTranslatorRegion(ui->translateRegionEdit->text().trimmed());
     AppSettings::setLocalModel(ui->translateModelCombo->currentData().toString());
     AppSettings::setLocalModelFile(QDir::fromNativeSeparators(ui->translateModelFileEdit->text().trimmed()));
+    if (Updater::isSupported())
+        Updater::setMode(Updater::Mode(ui->updateModeCombo->currentIndex()));
     ModelStore::setSourceOrder(ModelStore::SourceOrder(ui->downloadOrderCombo->currentIndex()));
     ModelStore::setMirror(ui->downloadMirrorEdit->text());
     AppSettings::setToolbarItems(toolbarItems());
@@ -393,6 +400,10 @@ void SettingsDialog::applyPlatformLimits()
     }
 
     // Features this platform lacks stay visible but disabled, with the reason.
+    if (!Updater::isSupported()) {
+        ui->updateModeCombo->setEnabled(false);
+        ui->updateModeCombo->setToolTip(Platform::unsupportedHint());
+    }
     if (!Platform::supportsCursorCapture()) {
         ui->captureCursorCheck->setEnabled(false);
         ui->captureCursorCheck->setToolTip(Platform::unsupportedHint());
@@ -441,6 +452,7 @@ void SettingsDialog::setOcrLanguages(const QStringList &languages)
 void SettingsDialog::restoreDefaults()
 {
     ui->languageCombo->setCurrentIndex(0); // system default
+    ui->updateModeCombo->setCurrentIndex(int(Updater::Mode::Ask));
     ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::SourceOrder::MirrorFirst));
     ui->downloadMirrorEdit->setText(ModelStore::defaultMirror());
     ui->captureToolbarCheck->setChecked(false);

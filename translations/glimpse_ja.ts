@@ -155,7 +155,7 @@
         <translation>QR コードを読み取る</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+459"/>
+        <location filename="../src/app/CaptureController.cpp" line="+469"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+508"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+520"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -1224,7 +1224,37 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ミラー(&amp;I)：</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+16"/>
+        <source>Updates</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>At start&amp;up:</source>
+        <translation>起動時(&amp;U)：</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Update automatically</source>
+        <translation>自動的に更新する</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Install required updates automatically</source>
+        <translation>必須の更新を自動的に行う</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Ask before updating</source>
+        <translation>更新の前に毎回確認する</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Never update</source>
+        <translation>更新しない</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Hotkeys</source>
         <translation>ホットキー</translation>
     </message>
@@ -1465,7 +1495,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-435"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-442"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
@@ -1490,17 +1520,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+77"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+86"/>
         <source>Global hotkeys: %1</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+102"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
@@ -1520,7 +1550,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-271"/>
+        <location line="-278"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
@@ -1718,6 +1748,81 @@ Download them now? They are kept on this computer and used offline from then on.
         <location line="+16"/>
         <source>Keep the paragraphs as recognized (same number) to paint them over the capture.</source>
         <translation>訳文をキャプチャに描くには、段落の数を認識結果と同じにしてください。</translation>
+    </message>
+</context>
+<context>
+    <name>Updater</name>
+    <message>
+        <location filename="../src/update/Updater.cpp" line="+135"/>
+        <location line="+22"/>
+        <location line="+2"/>
+        <location line="+24"/>
+        <location line="+12"/>
+        <location line="+36"/>
+        <location line="+2"/>
+        <location line="+8"/>
+        <location line="+15"/>
+        <source>Glimpse Update</source>
+        <translation>Glimpse の更新</translation>
+    </message>
+    <message>
+        <location line="-120"/>
+        <source>Glimpse %1 is available; you have %2.
+Update now? Glimpse restarts when it is done.</source>
+        <translation>Glimpse %1 が公開されています（現在のバージョンは %2）。
+今すぐ更新しますか？完了すると Glimpse は再起動します。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Update</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Later</source>
+        <translation>後で</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Glimpse %1 is available, but the folder Glimpse runs from cannot be written to. Download it from the homepage and unpack it yourself.</source>
+        <translation>Glimpse %1 が公開されていますが、Glimpse のフォルダーに書き込めません。ホームページからダウンロードして展開してください。</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Downloading Glimpse %1...</source>
+        <translation>Glimpse %1 をダウンロード中...</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Downloading Glimpse %1; Glimpse restarts once it is installed.</source>
+        <translation>Glimpse %1 をダウンロード中です。インストールが終わると Glimpse は再起動します。</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>The download is damaged (checksum mismatch).</source>
+        <translation>ダウンロードしたファイルが壊れています（チェックサムの不一致）。</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Could not download Glimpse %1:
+%2</source>
+        <translation>Glimpse %1 をダウンロードできませんでした：
+%2</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Could not prepare the update.</source>
+        <translation>更新の準備ができませんでした。</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Could not start the update.</source>
+        <translation>更新を開始できませんでした。</translation>
     </message>
 </context>
 </TS>
