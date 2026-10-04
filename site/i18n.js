@@ -89,4 +89,16 @@
     lang = lang === 'zh' ? 'en' : 'zh';
     apply(lang);
   });
+
+  // The download menu closes on a click elsewhere or Escape.
+  var download = document.getElementById('download');
+  document.addEventListener('click', function (event) {
+    if (download.open && !download.contains(event.target)) download.open = false;
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && download.open) {
+      download.open = false;
+      download.querySelector('summary').focus();
+    }
+  });
 })();

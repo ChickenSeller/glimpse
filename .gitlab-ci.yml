@@ -118,7 +118,16 @@ pages:
     # The app's toolbar icons (Material Symbols), shared with the page.
     - mkdir public/icons
     - cp resources/icons/*.svg public/icons/
-    - sed -i -e "s|%PROJECT_URL%|${CI_PROJECT_URL}|g" -e "s|%DEFAULT_BRANCH%|${CI_DEFAULT_BRANCH}|g" public/index.html
+    # Source links go to the public GitHub mirror (GITHUB_REPO, see .github);
+    # downloads are offered from both.
+    - test -n "$GITHUB_REPO" || { echo "GITHUB_REPO is not set"; exit 1; }
+    - >
+      sed -i
+      -e "s|%GITHUB_URL%|https://github.com/${GITHUB_REPO}|g"
+      -e "s|%PROJECT_URL%|${CI_PROJECT_URL}|g"
+      -e "s|%GITLAB_HOST%|${CI_SERVER_HOST}|g"
+      -e "s|%DEFAULT_BRANCH%|${CI_DEFAULT_BRANCH}|g"
+      public/index.html
   artifacts:
     paths:
       - public

@@ -31,8 +31,14 @@
       <h1 data-i18n="hero.title">Capture your screen, then do something with it.</h1>
       <p class="lead" data-i18n="hero.lead">Glimpse takes screenshots and screen recordings, lets you mark them up, reads the text in them and translates it. Offline when you want it, free and open source.</p>
       <div class="actions">
-        <a class="btn primary" href="%PROJECT_URL%/-/releases" data-i18n="hero.download">Download</a>
-        <a class="btn" href="%PROJECT_URL%" data-i18n="hero.source">Source code</a>
+        <details class="dropdown" id="download">
+          <summary class="btn primary"><span data-i18n="hero.download">Download</span><span class="caret" aria-hidden="true"></span></summary>
+          <div class="menu">
+            <a href="%GITHUB_URL%/releases/latest"><strong>GitHub</strong><span>github.com</span></a>
+            <a href="%PROJECT_URL%/-/releases/permalink/latest"><strong>GitLab</strong><span>%GITLAB_HOST%</span></a>
+          </div>
+        </details>
+        <a class="btn" href="%GITHUB_URL%" data-i18n="hero.source">Source code</a>
       </div>
       <p class="meta" data-i18n="hero.meta">Windows · Linux (X11 and Wayland) · MIT License</p>
     </div>
@@ -174,7 +180,7 @@
   <div class="wrap">
     <h2 data-i18n="b.title">Build from source</h2>
     <p class="sub" data-i18n="b.lead">Needs Qt 6.8 or later, CMake 3.24 and a C++20 compiler. Other libraries are found on the system or downloaded at pinned versions.</p>
-<pre><code>git clone %PROJECT_URL%.git
+<pre><code>git clone %GITHUB_URL%.git
 cd glimpse
 cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=&lt;Qt dir&gt;
 cmake --build build/release --parallel
@@ -188,8 +194,8 @@ cmake --build build/release --target package</code></pre>
   <div class="wrap foot-inner">
     <span><img src="logo.svg" alt="" width="20" height="20"> Glimpse</span>
     <span>
-      <a href="%PROJECT_URL%/-/blob/%DEFAULT_BRANCH%/LICENSE" data-i18n="foot.license">MIT License</a> ·
-      <a href="%PROJECT_URL%/-/blob/%DEFAULT_BRANCH%/THIRD_PARTY_NOTICES.md" data-i18n="foot.notices">Third-party notices</a> ·
+      <a href="%GITHUB_URL%/blob/%DEFAULT_BRANCH%/LICENSE" data-i18n="foot.license">MIT License</a> ·
+      <a href="%GITHUB_URL%/blob/%DEFAULT_BRANCH%/THIRD_PARTY_NOTICES.md" data-i18n="foot.notices">Third-party notices</a> ·
       <span data-i18n="foot.icons">Icons: Material Symbols</span>
     </span>
   </div>

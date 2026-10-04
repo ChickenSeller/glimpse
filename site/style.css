@@ -106,6 +106,29 @@ h1 { font-size: clamp(32px, 5vw, 50px); line-height: 1.12; letter-spacing: -0.02
 .btn.primary:hover { filter: brightness(1.08); }
 .meta { margin: 20px 0 0; font-size: 14px; color: var(--muted); }
 
+/* Download button with a menu of where to download from */
+.dropdown { position: relative; }
+.dropdown summary { list-style: none; cursor: pointer; gap: 10px; user-select: none; }
+.dropdown summary::-webkit-details-marker { display: none; }
+.caret {
+  width: 8px; height: 8px; margin-top: -4px;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(45deg); transition: transform 0.15s;
+}
+.dropdown[open] .caret { transform: translateY(4px) rotate(-135deg); }
+.menu {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 5;
+  min-width: 240px; padding: 6px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.menu a {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  padding: 10px 12px; border-radius: 8px; color: var(--fg);
+}
+.menu a:hover, .menu a:focus-visible { background: var(--bg-alt); text-decoration: none; }
+.menu a span { color: var(--muted); font-size: 13px; }
+
 /* Hero illustration: a window being captured */
 .shot { border-radius: 14px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); overflow: hidden; }
 .shot-bar { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
