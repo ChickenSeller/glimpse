@@ -106,27 +106,25 @@ protected:
             drawCrosshair(p);
             return;
         }
-        p.fillRect(rect(), kDim);
-
         if (m_selector->mode() == RegionSelector::Mode::Freehand && m_selector->freehandPath().size() > 1) {
+            p.fillRect(rect(), kDim);
             drawFreehand(p, m_selector->freehandPath().translated(-m_origin));
             return;
         }
 
         const QRect sel = m_selector->selection().translated(-m_origin);
         if (!sel.isEmpty()) {
-            if (sel.intersects(rect())) {
-                drawHighlight(p, sel, 1);
+            drawHighlight(p, sel, 1);
+            if (sel.intersects(rect()))
                 drawTag(p, rect(), sel.topLeft(), sizeText(sel));
-            }
             return;
         }
 
         if (m_selector->mode() == RegionSelector::Mode::Window) {
             const CaptureTarget target = m_selector->hoverTarget();
             const QRect local = target.geometry.translated(-m_origin);
+            drawHighlight(p, local, 2);
             if (local.intersects(rect())) {
-                drawHighlight(p, local, 2);
                 const QString title = p.fontMetrics().elidedText(target.title, Qt::ElideRight, kMaxTitleWidth);
                 drawTag(p, rect(), local.intersected(rect()).topLeft(),
                         title.isEmpty() ? sizeText(local) : QStringLiteral("%1  ·  %2").arg(title, sizeText(local)));
@@ -134,15 +132,20 @@ protected:
             return;
         }
 
-        const QPoint c = m_selector->cursor() - m_origin;
-        if (!rect().contains(c))
+        p.fillRect(rect(), kDim);
+        const QPointF c = m_selector->preciseCursor() - QPointF(m_origin);
+        if (!QRectF(rect()).contains(c))
             return;
-        p.setPen(QPen(kAccent, 1, Qt::DashLine));
-        p.drawLine(QPointF(0, c.y() + 0.5), QPointF(width(), c.y() + 0.5));
-        p.drawLine(QPointF(c.x() + 0.5, 0), QPointF(c.x() + 0.5, height()));
+        // Guides through the native pixel under the pointer, one native pixel wide.
         const qreal dpr = m_image.devicePixelRatio();
-        drawTag(p, rect(), c + QPoint(12, 0),
-                QStringLiteral("%1, %2").arg(qRound(c.x() * dpr)).arg(qRound(c.y() * dpr)));
+        const QPoint pixel(int(std::floor(c.x() * dpr)), int(std::floor(c.y() * dpr)));
+        p.save();
+        useNativePixels(p);
+        p.setPen(QPen(kAccent, 1, Qt::DashLine));
+        p.drawLine(QPointF(0, pixel.y() + 0.5), QPointF(m_image.width(), pixel.y() + 0.5));
+        p.drawLine(QPointF(pixel.x() + 0.5, 0), QPointF(pixel.x() + 0.5, m_image.height()));
+        p.restore();
+        drawTag(p, rect(), c.toPoint() + QPoint(12, 0), QStringLiteral("%1, %2").arg(pixel.x()).arg(pixel.y()));
     }
 
     void mousePressEvent(QMouseEvent *event) override
@@ -247,23 +250,48 @@ private:
         return QPointF(m_origin) + event->position();
     }
 
-    QString sizeText(const QRect &r) const
+    // The native pixels a capture of `r` (local logical coordinates) takes:
+    // the same rounding as DesktopSnapshot::crop.
+    QRect toNative(const QRect &r) const
     {
         const qreal dpr = m_image.devicePixelRatio();
-        return QStringLiteral("%1 × %2").arg(qRound(r.width() * dpr)).arg(qRound(r.height() * dpr));
+        return QRectF(r.x() * dpr, r.y() * dpr, r.width() * dpr, r.height() * dpr).toAlignedRect();
     }
 
-    // Shows `r` (local coordinates) undimmed with an accent border.
+    // Makes painter coordinates native pixels of this screen. At fractional
+    // scaling (150%) logical coordinates fall between native pixels.
+    void useNativePixels(QPainter &p) const
+    {
+        const qreal scale = 1.0 / m_image.devicePixelRatio();
+        p.setWorldTransform(QTransform::fromScale(scale, scale));
+    }
+
+    QString sizeText(const QRect &r) const
+    {
+        const QRect native = toNative(r);
+        return QStringLiteral("%1 × %2").arg(native.width()).arg(native.height());
+    }
+
+    // Dims everything but `r` (local coordinates) and borders it. The
+    // screenshot underneath is left as drawn: drawing it again for the
+    // undimmed part would resample it whenever `r` starts between native
+    // pixels, and the content would jitter while dragging.
     void drawHighlight(QPainter &p, const QRect &r, int borderWidth)
     {
         const qreal dpr = m_image.devicePixelRatio();
-        const QRect visible = r.intersected(rect());
-        p.drawImage(QRectF(visible), m_image,
-                    QRectF(visible.x() * dpr, visible.y() * dpr, visible.width() * dpr, visible.height() * dpr));
-        const qreal inset = borderWidth / 2.0;
-        p.setPen(QPen(kAccent, borderWidth));
+        const QRect native = toNative(r);
+        const QRect all(QPoint(0, 0), m_image.size());
+        p.save();
+        useNativePixels(p);
+        p.setClipRegion(QRegion(all).subtracted(QRegion(native)));
+        p.fillRect(all, kDim);
+        p.setClipping(false);
+        const int width = std::max(1, qRound(borderWidth * dpr));
+        const qreal inset = width / 2.0;
+        p.setPen(QPen(kAccent, width));
         p.setBrush(Qt::NoBrush);
-        p.drawRect(QRectF(r).adjusted(inset, inset, -inset, -inset));
+        p.drawRect(QRectF(native).adjusted(inset, inset, -inset, -inset));
+        p.restore();
     }
 
     // Shows the inside of the outline undimmed; the dashed segment shows how
