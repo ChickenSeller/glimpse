@@ -130,13 +130,16 @@ pages:
     - mkdir public/icons
     - cp resources/icons/*.svg public/icons/
     # Source links go to the public GitHub mirror (GITHUB_REPO, see .github);
-    # downloads are offered from both.
+    # downloads are offered from both. Stylesheet and scripts are linked with
+    # the commit (style.css?v=<sha>): caches such as Cloudflare keep them for
+    # a day, while the page itself is fetched fresh.
     - test -n "$GITHUB_REPO" || { echo "GITHUB_REPO is not set"; exit 1; }
     - >
       sed -i
       -e "s|%GITHUB_URL%|https://github.com/${GITHUB_REPO}|g"
       -e "s|%PROJECT_URL%|${CI_PROJECT_URL}|g"
       -e "s|%DEFAULT_BRANCH%|${CI_DEFAULT_BRANCH}|g"
+      -e "s|%ASSET_VERSION%|${CI_COMMIT_SHORT_SHA}|g"
       public/index.html
     # The release list for the page: version, date, notes and the packages,
     # linked under DOWNLOAD_BASE. Nothing else of the release (authors,
