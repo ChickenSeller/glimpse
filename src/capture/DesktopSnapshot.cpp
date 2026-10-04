@@ -78,7 +78,11 @@ QImage DesktopSnapshot::crop(const QPainterPath &logicalShape, const QColor &out
     painter.setBrush(Qt::white);
     painter.drawPath(outline);
     painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-    painter.drawImage(0, 0, area);
+    // Pixel for pixel: drawn as is, an image of a scaled screen (150%) would
+    // be shrunk to its logical size.
+    QImage pixels = area;
+    pixels.setDevicePixelRatio(1.0);
+    painter.drawImage(0, 0, pixels);
     if (outside.alpha() > 0) {
         painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
         painter.fillRect(result.rect(), outside);
