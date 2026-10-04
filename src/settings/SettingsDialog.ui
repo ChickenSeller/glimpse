@@ -171,6 +171,19 @@
           <widget class="HotkeyEdit" name="fullScreenHotkeyEdit"/>
          </item>
          <item row="4" column="0">
+          <widget class="QLabel" name="recordHotkeyLabel">
+           <property name="text">
+            <string>Recor&amp;d Screen:</string>
+           </property>
+           <property name="buddy">
+            <cstring>recordHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="HotkeyEdit" name="recordHotkeyEdit"/>
+         </item>
+         <item row="5" column="0">
           <widget class="QLabel" name="qrHotkeyLabel">
            <property name="text">
             <string>Scan &amp;QR Code:</string>
@@ -180,10 +193,10 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="HotkeyEdit" name="qrHotkeyEdit"/>
          </item>
-         <item row="5" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="ocrHotkeyLabel">
            <property name="text">
             <string>Recognize &amp;Text:</string>
@@ -193,10 +206,23 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="6" column="1">
           <widget class="HotkeyEdit" name="ocrHotkeyEdit"/>
          </item>
-         <item row="6" column="0">
+         <item row="7" column="0">
+          <widget class="QLabel" name="translateHotkeyLabel">
+           <property name="text">
+            <string>Tra&amp;nslate Screenshot:</string>
+           </property>
+           <property name="buddy">
+            <cstring>translateHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="HotkeyEdit" name="translateHotkeyEdit"/>
+         </item>
+         <item row="8" column="0">
           <widget class="QLabel" name="colorHotkeyLabel">
            <property name="text">
             <string>&amp;Pick Screen Color:</string>
@@ -206,10 +232,10 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="8" column="1">
           <widget class="HotkeyEdit" name="colorHotkeyEdit"/>
          </item>
-         <item row="7" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="crosshairHotkeyLabel">
            <property name="text">
             <string>Screen Cr&amp;osshair:</string>
@@ -219,10 +245,10 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="9" column="1">
           <widget class="HotkeyEdit" name="crosshairHotkeyEdit"/>
          </item>
-         <item row="8" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="scrollHotkeyLabel">
            <property name="text">
             <string>&amp;Scrolling Capture:</string>
@@ -232,7 +258,7 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
+         <item row="10" column="1">
           <widget class="HotkeyEdit" name="scrollHotkeyEdit"/>
          </item>
         </layout>
@@ -252,6 +278,160 @@
        </item>
        <item>
         <spacer name="hotkeysSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="recordTab">
+      <attribute name="title">
+       <string>Recording</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="recordLayout">
+       <item>
+        <widget class="QGroupBox" name="recordOverlayGroup">
+         <property name="title">
+          <string>Shown in the Video</string>
+         </property>
+         <layout class="QVBoxLayout" name="recordOverlayLayout">
+          <item>
+           <widget class="QCheckBox" name="recordHighlightCheck">
+            <property name="text">
+             <string>Hi&amp;ghlight the mouse pointer</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="recordClicksCheck">
+            <property name="text">
+             <string>Show mouse cl&amp;icks</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="recordKeysCheck">
+            <property name="text">
+             <string>Show &amp;keys pressed (at the bottom)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="recordKeyStyleLayout">
+            <item>
+             <spacer name="recordKeyStyleIndent">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>22</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="recordKeyStyleLabel">
+              <property name="text">
+               <string>St&amp;yle:</string>
+              </property>
+              <property name="buddy">
+               <cstring>recordKeyStyleCombo</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="recordKeyStyleCombo">
+              <item>
+               <property name="text">
+                <string>Key labels</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Full keyboard</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Keyboard and labels</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <spacer name="recordKeyStyleSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="recordKeysNote">
+            <property name="text">
+             <string>Everything typed is shown, including passwords.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="foregroundRole">
+             <enum>QPalette::PlaceholderText</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QFormLayout" name="recordForm">
+         <item row="0" column="0">
+          <widget class="QLabel" name="recordFrameRateLabel">
+           <property name="text">
+            <string>&amp;Video frame rate:</string>
+           </property>
+           <property name="buddy">
+            <cstring>recordFrameRateCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="recordFrameRateCombo"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="recordFolderLabel">
+           <property name="text">
+            <string>O&amp;utput folder:</string>
+           </property>
+           <property name="buddy">
+            <cstring>recordFolderEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <layout class="QHBoxLayout" name="recordFolderLayout">
+           <item>
+            <widget class="QLineEdit" name="recordFolderEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="recordFolderButton">
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="recordSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -345,6 +525,144 @@
        </item>
        <item>
         <spacer name="ocrSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="translateTab">
+      <attribute name="title">
+       <string>Translation</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="translateLayout">
+       <item>
+        <layout class="QFormLayout" name="translateForm">
+         <item row="0" column="0">
+          <widget class="QLabel" name="translateEngineLabel">
+           <property name="text">
+            <string>&amp;Service:</string>
+           </property>
+           <property name="buddy">
+            <cstring>translateEngineCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="translateEngineCombo"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="translateTargetLabel">
+           <property name="text">
+            <string>Translate &amp;into:</string>
+           </property>
+           <property name="buddy">
+            <cstring>translateTargetCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="translateTargetCombo"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="translateKeyLabel">
+           <property name="text">
+            <string>API &amp;key:</string>
+           </property>
+           <property name="buddy">
+            <cstring>translateKeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="translateKeyEdit">
+           <property name="echoMode">
+            <enum>QLineEdit::PasswordEchoOnEdit</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="translateRegionLabel">
+           <property name="text">
+            <string>&amp;Region:</string>
+           </property>
+           <property name="buddy">
+            <cstring>translateRegionEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="translateModelLabel">
+           <property name="text">
+            <string>&amp;Model:</string>
+           </property>
+           <property name="buddy">
+            <cstring>translateModelCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="translateModelCombo"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="translateModelFileLabel">
+           <property name="text">
+            <string>GGUF &amp;file:</string>
+           </property>
+           <property name="buddy">
+            <cstring>translateModelFileEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <layout class="QHBoxLayout" name="translateModelFileLayout">
+           <item>
+            <widget class="QLineEdit" name="translateModelFileEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="translateModelFileButton">
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="translateRegionEdit">
+           <property name="placeholderText">
+            <string>e.g. japaneast; empty for a global resource</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="translateEngineNote">
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="foregroundRole">
+          <enum>QPalette::PlaceholderText</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="translateKeyNote">
+         <property name="text">
+          <string>Text is recognized on this computer and then sent to the chosen service. Keys are kept in your user settings on this computer.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="foregroundRole">
+          <enum>QPalette::PlaceholderText</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="translateSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

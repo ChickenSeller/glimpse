@@ -12,6 +12,8 @@ enum class CaptureMode {
     Freehand,  // draw any outline; the outside of it is left transparent
     ColorPicker, // pick a pixel's color from the frozen screen
     Crosshair,   // full-screen crosshair with position, color and distances
+    Recording,   // record a screen area to an MP4 video
+    Translate,   // select a region, recognize its text and translate it
 };
 
 // The modes offered in the UI (tray menu, hotkeys, settings). Scrolling
@@ -22,8 +24,10 @@ inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::Region,
     CaptureMode::Freehand,
     CaptureMode::FullScreen,
+    CaptureMode::Recording,
     CaptureMode::QrCode,
     CaptureMode::Ocr,
+    CaptureMode::Translate,
     CaptureMode::ColorPicker,
     CaptureMode::Crosshair,
 };

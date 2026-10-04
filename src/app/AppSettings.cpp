@@ -2,7 +2,12 @@
 
 #include "ocr/OcrEngine.h"
 
+#include <QDir>
 #include <QSettings>
+
+#include "translate/LocalModel.h"
+#include "translate/Translator.h"
+#include <QStandardPaths>
 
 #include <algorithm>
 
@@ -20,6 +25,8 @@ QString hotkeySettingsKey(CaptureMode mode)
     case CaptureMode::Freehand: return QStringLiteral("hotkeys/freehand");
     case CaptureMode::ColorPicker: return QStringLiteral("hotkeys/colorPicker");
     case CaptureMode::Crosshair: return QStringLiteral("hotkeys/crosshair");
+    case CaptureMode::Recording: return QStringLiteral("hotkeys/recording");
+    case CaptureMode::Translate: return QStringLiteral("hotkeys/translate");
     }
     return {};
 }
@@ -42,7 +49,10 @@ QKeySequence defaultHotkey(CaptureMode mode)
     case CaptureMode::Freehand: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_6);
     case CaptureMode::ColorPicker: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_7);
     case CaptureMode::Crosshair: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_8);
+    // V for video; Ctrl+Alt+R is taken by the NVIDIA overlay (performance overlay visibility).
+    case CaptureMode::Recording: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_V);
     case CaptureMode::Scrolling: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_9);
+    case CaptureMode::Translate: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T); // T for translate
     }
     return {};
 }
@@ -121,6 +131,146 @@ void setFreehandColor(const QColor &color)
 QColor freehandFill()
 {
     return freehandTransparent() ? QColor(Qt::transparent) : freehandColor();
+}
+
+bool recordHighlightCursor()
+{
+    return QSettings().value(QStringLiteral("recording/highlightCursor"), true).toBool();
+}
+
+void setRecordHighlightCursor(bool on)
+{
+    QSettings().setValue(QStringLiteral("recording/highlightCursor"), on);
+}
+
+bool recordShowClicks()
+{
+    return QSettings().value(QStringLiteral("recording/showClicks"), true).toBool();
+}
+
+void setRecordShowClicks(bool on)
+{
+    QSettings().setValue(QStringLiteral("recording/showClicks"), on);
+}
+
+bool recordShowKeys()
+{
+    return QSettings().value(QStringLiteral("recording/showKeys"), false).toBool();
+}
+
+void setRecordShowKeys(bool on)
+{
+    QSettings().setValue(QStringLiteral("recording/showKeys"), on);
+}
+
+int recordKeyStyle()
+{
+    return std::clamp(QSettings().value(QStringLiteral("recording/keyStyle"), 1).toInt(), 0, 2);
+}
+
+void setRecordKeyStyle(int style)
+{
+    QSettings().setValue(QStringLiteral("recording/keyStyle"), style);
+}
+
+QList<int> recordFrameRates()
+{
+    return {15, 24, 30, 60};
+}
+
+int recordFrameRate()
+{
+    const int rate = QSettings().value(QStringLiteral("recording/frameRate"), 30).toInt();
+    return recordFrameRates().contains(rate) ? rate : 30;
+}
+
+void setRecordFrameRate(int rate)
+{
+    QSettings().setValue(QStringLiteral("recording/frameRate"), rate);
+}
+
+QString defaultRecordFolder()
+{
+    return QDir(QStandardPaths::writableLocation(QStandardPaths::MoviesLocation)).filePath(QStringLiteral("Glimpse"));
+}
+
+QString recordFolder()
+{
+    const QString folder = QSettings().value(QStringLiteral("recording/folder")).toString();
+    return folder.isEmpty() ? defaultRecordFolder() : folder;
+}
+
+void setRecordFolder(const QString &folder)
+{
+    // Only a chosen folder is stored, so the default follows the system's.
+    if (QDir::cleanPath(folder) == QDir::cleanPath(defaultRecordFolder()))
+        QSettings().remove(QStringLiteral("recording/folder"));
+    else
+        QSettings().setValue(QStringLiteral("recording/folder"), folder);
+}
+
+QString translateEngine()
+{
+    return QSettings().value(QStringLiteral("translate/engine"), Translate::defaultEngine()).toString();
+}
+
+void setTranslateEngine(const QString &engine)
+{
+    QSettings().setValue(QStringLiteral("translate/engine"), engine);
+}
+
+QString translateTarget()
+{
+    const QString target = QSettings().value(QStringLiteral("translate/target")).toString();
+    return Translate::targetLanguages().contains(target) ? target : Translate::defaultTarget();
+}
+
+void setTranslateTarget(const QString &target)
+{
+    QSettings().setValue(QStringLiteral("translate/target"), target);
+}
+
+QString translateKey(const QString &engine)
+{
+    return QSettings().value(QStringLiteral("translate/keys/") + engine).toString();
+}
+
+void setTranslateKey(const QString &engine, const QString &key)
+{
+    if (key.isEmpty())
+        QSettings().remove(QStringLiteral("translate/keys/") + engine);
+    else
+        QSettings().setValue(QStringLiteral("translate/keys/") + engine, key);
+}
+
+QString localModel()
+{
+    return QSettings().value(QStringLiteral("translate/localModel"), LocalModel::defaultPreset()).toString();
+}
+
+void setLocalModel(const QString &model)
+{
+    QSettings().setValue(QStringLiteral("translate/localModel"), model);
+}
+
+QString localModelFile()
+{
+    return QSettings().value(QStringLiteral("translate/localModelFile")).toString();
+}
+
+void setLocalModelFile(const QString &path)
+{
+    QSettings().setValue(QStringLiteral("translate/localModelFile"), path);
+}
+
+QString microsoftTranslatorRegion()
+{
+    return QSettings().value(QStringLiteral("translate/microsoftRegion")).toString();
+}
+
+void setMicrosoftTranslatorRegion(const QString &region)
+{
+    QSettings().setValue(QStringLiteral("translate/microsoftRegion"), region);
 }
 
 int captureDelay()

@@ -30,43 +30,9 @@ QSize cursorSize(HCURSOR cursor, QPoint *hotspot)
     return size;
 }
 
-} // namespace
-
-void drawCursor(DesktopSnapshot &snapshot)
+// Paints `cursor` (of `size`) with its top-left at `topLeft` into `image`.
+void paintCursor(QImage &image, HCURSOR cursor, const QPoint &topLeft, const QSize &size)
 {
-    CURSORINFO cursor{};
-    cursor.cbSize = sizeof(cursor);
-    if (!GetCursorInfo(&cursor) || !(cursor.flags & CURSOR_SHOWING) || !cursor.hCursor)
-        return;
-
-    // The screen image under the pointer and the pointer's place in it, in
-    // physical pixels relative to that monitor.
-    const HMONITOR monitor = MonitorFromPoint(cursor.ptScreenPos, MONITOR_DEFAULTTONULL);
-    MONITORINFO monitorInfo{};
-    monitorInfo.cbSize = sizeof(monitorInfo);
-    if (!monitor || !GetMonitorInfoW(monitor, &monitorInfo))
-        return;
-    ScreenImage *target = nullptr;
-    const auto screens = QGuiApplication::screens();
-    for (QScreen *screen : screens) {
-        auto *native = screen->nativeInterface<QNativeInterface::QWindowsScreen>();
-        if (!native || native->handle() != monitor)
-            continue;
-        for (ScreenImage &shot : snapshot.screens) {
-            if (shot.name == screen->name())
-                target = &shot;
-        }
-    }
-    if (!target)
-        return;
-
-    QPoint hotspot;
-    const QSize size = cursorSize(cursor.hCursor, &hotspot);
-    if (size.isEmpty())
-        return;
-    const QPoint topLeft(cursor.ptScreenPos.x - monitorInfo.rcMonitor.left - hotspot.x(),
-                         cursor.ptScreenPos.y - monitorInfo.rcMonitor.top - hotspot.y());
-    QImage &image = target->image;
     if (image.format() != QImage::Format_RGB32 && image.format() != QImage::Format_ARGB32
         && image.format() != QImage::Format_ARGB32_Premultiplied) {
         const qreal dpr = image.devicePixelRatio();
@@ -105,7 +71,7 @@ void drawCursor(DesktopSnapshot &snapshot)
         std::memcpy(pixels + (offset.y() + y) * stride + offset.x() * 4,
                     image.constScanLine(area.top() + y) + area.left() * 4, size_t(area.width()) * 4);
 
-    DrawIconEx(dc, 0, 0, cursor.hCursor, size.width(), size.height(), 0, nullptr, DI_NORMAL);
+    DrawIconEx(dc, 0, 0, cursor, size.width(), size.height(), 0, nullptr, DI_NORMAL);
     GdiFlush();
 
     for (int y = 0; y < area.height(); ++y) {
@@ -119,4 +85,64 @@ void drawCursor(DesktopSnapshot &snapshot)
     SelectObject(dc, previous);
     DeleteObject(dib);
     DeleteDC(dc);
+}
+
+} // namespace
+
+void drawCursor(DesktopSnapshot &snapshot)
+{
+    CURSORINFO cursor{};
+    cursor.cbSize = sizeof(cursor);
+    if (!GetCursorInfo(&cursor) || !(cursor.flags & CURSOR_SHOWING) || !cursor.hCursor)
+        return;
+
+    // The screen image under the pointer and the pointer's place in it, in
+    // physical pixels relative to that monitor.
+    const HMONITOR monitor = MonitorFromPoint(cursor.ptScreenPos, MONITOR_DEFAULTTONULL);
+    MONITORINFO monitorInfo{};
+    monitorInfo.cbSize = sizeof(monitorInfo);
+    if (!monitor || !GetMonitorInfoW(monitor, &monitorInfo))
+        return;
+    ScreenImage *target = nullptr;
+    const auto screens = QGuiApplication::screens();
+    for (QScreen *screen : screens) {
+        auto *native = screen->nativeInterface<QNativeInterface::QWindowsScreen>();
+        if (!native || native->handle() != monitor)
+            continue;
+        for (ScreenImage &shot : snapshot.screens) {
+            if (shot.name == screen->name())
+                target = &shot;
+        }
+    }
+    if (!target)
+        return;
+
+    QPoint hotspot;
+    const QSize size = cursorSize(cursor.hCursor, &hotspot);
+    if (size.isEmpty())
+        return;
+    const QPoint topLeft(cursor.ptScreenPos.x - monitorInfo.rcMonitor.left - hotspot.x(),
+                         cursor.ptScreenPos.y - monitorInfo.rcMonitor.top - hotspot.y());
+    paintCursor(target->image, cursor.hCursor, topLeft, size);
+}
+
+void drawCursor(QImage &image, QScreen *screen, const QPoint &origin)
+{
+    CURSORINFO cursor{};
+    cursor.cbSize = sizeof(cursor);
+    if (!screen || !GetCursorInfo(&cursor) || !(cursor.flags & CURSOR_SHOWING) || !cursor.hCursor)
+        return;
+    const HMONITOR monitor = MonitorFromPoint(cursor.ptScreenPos, MONITOR_DEFAULTTONULL);
+    MONITORINFO monitorInfo{};
+    monitorInfo.cbSize = sizeof(monitorInfo);
+    auto *native = screen->nativeInterface<QNativeInterface::QWindowsScreen>();
+    if (!monitor || !native || native->handle() != monitor || !GetMonitorInfoW(monitor, &monitorInfo))
+        return;
+    QPoint hotspot;
+    const QSize size = cursorSize(cursor.hCursor, &hotspot);
+    if (size.isEmpty())
+        return;
+    const QPoint topLeft(cursor.ptScreenPos.x - monitorInfo.rcMonitor.left - hotspot.x() - origin.x(),
+                         cursor.ptScreenPos.y - monitorInfo.rcMonitor.top - hotspot.y() - origin.y());
+    paintCursor(image, cursor.hCursor, topLeft, size);
 }

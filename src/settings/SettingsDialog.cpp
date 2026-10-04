@@ -6,11 +6,17 @@
 #include "app/Language.h"
 #include "capture/Platform.h"
 #include "ocr/OcrEngine.h"
+#include "translate/FirefoxTranslation.h"
+#include "translate/LocalModel.h"
+#include "translate/Translator.h"
 
 #include <QColorDialog>
+#include <QDir>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QPainter>
 #include <QPushButton>
+#include <QTimer>
 #include <QStandardItemModel>
 
 SettingsDialog::SettingsDialog(QWidget *parent)
@@ -29,6 +35,34 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->captureToolbarCheck->setChecked(AppSettings::captureIncludesToolbar());
     ui->captureCursorCheck->setChecked(AppSettings::captureIncludesCursor());
     ui->freehandTransparentCheck->setChecked(AppSettings::freehandTransparent());
+
+    ui->recordHighlightCheck->setChecked(AppSettings::recordHighlightCursor());
+    ui->recordClicksCheck->setChecked(AppSettings::recordShowClicks());
+    ui->recordKeysCheck->setChecked(AppSettings::recordShowKeys());
+    ui->recordKeyStyleCombo->setCurrentIndex(AppSettings::recordKeyStyle());
+    // The style only matters while keys are shown.
+    const auto updateKeyStyle = [this] {
+        const bool on = ui->recordKeysCheck->isEnabled() && ui->recordKeysCheck->isChecked();
+        ui->recordKeyStyleLabel->setEnabled(on);
+        ui->recordKeyStyleCombo->setEnabled(on);
+    };
+    connect(ui->recordKeysCheck, &QCheckBox::toggled, this, updateKeyStyle);
+    connect(ui->recordKeyStyleCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+    QTimer::singleShot(0, this, updateKeyStyle); // after applyPlatformLimits()
+    const QList<int> rates = AppSettings::recordFrameRates();
+    for (int rate : rates)
+        ui->recordFrameRateCombo->addItem(tr("%1 fps").arg(rate), rate);
+    ui->recordFrameRateCombo->setCurrentIndex(
+        std::max(0, ui->recordFrameRateCombo->findData(AppSettings::recordFrameRate())));
+    ui->recordFolderEdit->setText(QDir::toNativeSeparators(AppSettings::recordFolder()));
+    connect(ui->recordFolderButton, &QPushButton::clicked, this, [this] {
+        const QString folder = QFileDialog::getExistingDirectory(this, ui->recordFolderLabel->text().remove(QLatin1Char('&')),
+                                                                 ui->recordFolderEdit->text());
+        if (!folder.isEmpty())
+            ui->recordFolderEdit->setText(QDir::toNativeSeparators(folder));
+    });
+    connect(ui->recordFrameRateCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+    connect(ui->recordFolderEdit, &QLineEdit::textChanged, this, [this] { setModified(true); });
     setFreehandColor(AppSettings::freehandColor());
 
     for (CaptureMode mode : kAllCaptureModes)
@@ -45,6 +79,50 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->ocrEngineCombo->setEnabled(!Ocr::engineIds().isEmpty());
     ui->ocrEngineCombo->setCurrentIndex(std::max(0, ui->ocrEngineCombo->findData(AppSettings::ocrEngine())));
     setOcrLanguages(AppSettings::ocrLanguages());
+
+    // Translation: the key field edits the selected engine's key; the others
+    // are kept here until Apply.
+    const QStringList translators = Translate::engineIds();
+    for (const QString &engine : translators) {
+        ui->translateEngineCombo->addItem(Translate::engineName(engine), engine);
+        m_translateKeys.insert(engine, AppSettings::translateKey(engine));
+    }
+    const QStringList targets = Translate::targetLanguages();
+    for (const QString &code : targets)
+        ui->translateTargetCombo->addItem(Translate::languageName(code), code);
+    ui->translateTargetCombo->setCurrentIndex(std::max(0, ui->translateTargetCombo->findData(AppSettings::translateTarget())));
+    ui->translateRegionEdit->setText(AppSettings::microsoftTranslatorRegion());
+    const QList<LocalModel::Preset> models = LocalModel::presets();
+    for (const LocalModel::Preset &model : models)
+        ui->translateModelCombo->addItem(model.name, model.id);
+    ui->translateModelCombo->addItem(tr("Other GGUF model file..."), QString::fromLatin1(LocalModel::kCustom));
+    ui->translateModelCombo->setCurrentIndex(std::max(0, ui->translateModelCombo->findData(AppSettings::localModel())));
+    ui->translateModelFileEdit->setText(QDir::toNativeSeparators(AppSettings::localModelFile()));
+    connect(ui->translateModelCombo, &QComboBox::currentIndexChanged, this, [this] {
+        showTranslateEngine();
+        setModified(true);
+    });
+    connect(ui->translateModelFileEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
+    connect(ui->translateModelFileButton, &QPushButton::clicked, this, [this] {
+        const QString file = QFileDialog::getOpenFileName(this, tr("Choose a GGUF Model"), ui->translateModelFileEdit->text(),
+                                                          tr("GGUF models (*.gguf)"));
+        if (!file.isEmpty()) {
+            ui->translateModelFileEdit->setText(QDir::toNativeSeparators(file));
+            setModified(true);
+        }
+    });
+    ui->translateEngineCombo->setCurrentIndex(std::max(0, ui->translateEngineCombo->findData(AppSettings::translateEngine())));
+    showTranslateEngine();
+    connect(ui->translateEngineCombo, &QComboBox::currentIndexChanged, this, [this] {
+        showTranslateEngine();
+        setModified(true);
+    });
+    connect(ui->translateKeyEdit, &QLineEdit::textEdited, this, [this](const QString &key) {
+        m_translateKeys.insert(m_translateKeyEngine, key.trimmed());
+        setModified(true);
+    });
+    connect(ui->translateTargetCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+    connect(ui->translateRegionEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
 
     connect(ui->buttonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked, this,
             &SettingsDialog::restoreDefaults);
@@ -73,6 +151,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     applyPlatformLimits();
     updateOcrEngineNote();
     for (QCheckBox *check : {ui->captureToolbarCheck, ui->captureCursorCheck, ui->freehandTransparentCheck,
+                             ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck,
                              ui->ocrChineseCheck, ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
     setModified(false);
@@ -92,6 +171,9 @@ void SettingsDialog::changeEvent(QEvent *event)
     if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
         ui->languageCombo->setItemText(0, systemDefaultLabel());
+        for (int i = 0; i < ui->translateEngineCombo->count(); ++i)
+            ui->translateEngineCombo->setItemText(i, Translate::engineName(ui->translateEngineCombo->itemData(i).toString()));
+        showTranslateEngine();
         applyPlatformLimits();
         updateOcrEngineNote();
         // The edits render key names (e.g. "Ctrl") in the UI language.
@@ -136,10 +218,24 @@ bool SettingsDialog::apply()
     if (ui->ocrEngineCombo->count() > 0)
         AppSettings::setOcrEngine(ui->ocrEngineCombo->currentData().toString());
     AppSettings::setOcrLanguages(ocrLanguages);
+    AppSettings::setTranslateEngine(ui->translateEngineCombo->currentData().toString());
+    AppSettings::setTranslateTarget(ui->translateTargetCombo->currentData().toString());
+    for (auto it = m_translateKeys.cbegin(); it != m_translateKeys.cend(); ++it)
+        AppSettings::setTranslateKey(it.key(), it.value());
+    AppSettings::setMicrosoftTranslatorRegion(ui->translateRegionEdit->text().trimmed());
+    AppSettings::setLocalModel(ui->translateModelCombo->currentData().toString());
+    AppSettings::setLocalModelFile(QDir::fromNativeSeparators(ui->translateModelFileEdit->text().trimmed()));
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
     AppSettings::setCaptureIncludesCursor(ui->captureCursorCheck->isChecked());
     AppSettings::setFreehandTransparent(ui->freehandTransparentCheck->isChecked());
     AppSettings::setFreehandColor(m_freehandColor);
+    AppSettings::setRecordHighlightCursor(ui->recordHighlightCheck->isChecked());
+    AppSettings::setRecordShowClicks(ui->recordClicksCheck->isChecked());
+    AppSettings::setRecordShowKeys(ui->recordKeysCheck->isChecked());
+    AppSettings::setRecordKeyStyle(ui->recordKeyStyleCombo->currentIndex());
+    AppSettings::setRecordFrameRate(ui->recordFrameRateCombo->currentData().toInt());
+    const QString recordFolder = QDir::fromNativeSeparators(ui->recordFolderEdit->text().trimmed());
+    AppSettings::setRecordFolder(recordFolder.isEmpty() ? AppSettings::defaultRecordFolder() : recordFolder);
 
     const QString language = selectedLanguage();
     if (language != AppSettings::language()) {
@@ -170,6 +266,8 @@ HotkeyEdit *SettingsDialog::hotkeyEdit(CaptureMode mode) const
     case CaptureMode::Freehand: return ui->freehandHotkeyEdit;
     case CaptureMode::ColorPicker: return ui->colorHotkeyEdit;
     case CaptureMode::Crosshair: return ui->crosshairHotkeyEdit;
+    case CaptureMode::Recording: return ui->recordHotkeyEdit;
+    case CaptureMode::Translate: return ui->translateHotkeyEdit;
     }
     return nullptr;
 }
@@ -201,6 +299,34 @@ void SettingsDialog::setFreehandColor(const QColor &color)
     ui->freehandColorButton->setText(color.name(QColor::HexRgb).toUpper());
 }
 
+void SettingsDialog::showTranslateEngine()
+{
+    m_translateKeyEngine = ui->translateEngineCombo->currentData().toString();
+    ui->translateKeyEdit->setText(m_translateKeys.value(m_translateKeyEngine));
+    ui->translateEngineNote->setText(Translate::engineDescription(m_translateKeyEngine));
+    // Only Azure asks for a region; the local model needs a model, not a key.
+    const bool microsoft = m_translateKeyEngine == QLatin1String("microsoft");
+    ui->translateRegionLabel->setVisible(microsoft);
+    ui->translateRegionEdit->setVisible(microsoft);
+    const bool local = m_translateKeyEngine == QLatin1String("local");
+    const bool keyed = Translate::needsKey(m_translateKeyEngine);
+    ui->translateKeyLabel->setVisible(keyed);
+    ui->translateKeyEdit->setVisible(keyed);
+    const bool firefox = m_translateKeyEngine == QLatin1String("firefox");
+    ui->translateKeyNote->setVisible(!local && !firefox); // about sending text and storing keys
+    ui->translateModelLabel->setVisible(local);
+    ui->translateModelCombo->setVisible(local);
+    const bool custom = local && ui->translateModelCombo->currentData().toString() == QLatin1String(LocalModel::kCustom);
+    ui->translateModelFileLabel->setVisible(custom);
+    ui->translateModelFileEdit->setVisible(custom);
+    ui->translateModelFileButton->setVisible(custom);
+    if (local || firefox) {
+        const QString reason = local ? LocalModel::unavailableReason() : FirefoxTranslation::unavailableReason();
+        if (!reason.isEmpty())
+            ui->translateEngineNote->setText(ui->translateEngineNote->text() + QLatin1Char(' ') + reason);
+    }
+}
+
 void SettingsDialog::updateOcrEngineNote()
 {
     const QString engine = ui->ocrEngineCombo->currentData().toString();
@@ -220,6 +346,17 @@ void SettingsDialog::applyPlatformLimits()
     if (!Platform::supportsCursorCapture()) {
         ui->captureCursorCheck->setEnabled(false);
         ui->captureCursorCheck->setToolTip(Platform::unsupportedHint());
+    }
+    // Recording overlays need global input this platform does not offer.
+    if (!Platform::supportsPointerHighlight()) {
+        ui->recordHighlightCheck->setEnabled(false);
+        ui->recordHighlightCheck->setToolTip(Platform::unsupportedHint());
+    }
+    if (!Platform::supportsInputOverlay()) {
+        for (QCheckBox *check : {ui->recordClicksCheck, ui->recordKeysCheck}) {
+            check->setEnabled(false);
+            check->setToolTip(Platform::unsupportedHint());
+        }
     }
     if (!Platform::supportsGlobalHotkeys()) {
         for (CaptureMode mode : kAllCaptureModes)
@@ -257,12 +394,21 @@ void SettingsDialog::restoreDefaults()
     ui->captureToolbarCheck->setChecked(false);
     ui->captureCursorCheck->setChecked(false);
     ui->freehandTransparentCheck->setChecked(true);
+    ui->recordHighlightCheck->setChecked(true);
+    ui->recordClicksCheck->setChecked(true);
+    ui->recordKeysCheck->setChecked(false);
+    ui->recordKeyStyleCombo->setCurrentIndex(1);
+    ui->recordFrameRateCombo->setCurrentIndex(std::max(0, ui->recordFrameRateCombo->findData(30)));
+    ui->recordFolderEdit->setText(QDir::toNativeSeparators(AppSettings::defaultRecordFolder()));
     if (m_freehandColor != QColor(Qt::white)) {
         setFreehandColor(Qt::white);
         setModified(true);
     }
     ui->ocrEngineCombo->setCurrentIndex(std::max(0, ui->ocrEngineCombo->findData(Ocr::defaultEngine())));
     setOcrLanguages(Ocr::defaultLanguages());
+    // Keys are the user's own and stay; engine and language go back.
+    ui->translateEngineCombo->setCurrentIndex(std::max(0, ui->translateEngineCombo->findData(Translate::defaultEngine())));
+    ui->translateTargetCombo->setCurrentIndex(std::max(0, ui->translateTargetCombo->findData(Translate::defaultTarget())));
     for (CaptureMode mode : kAllCaptureModes)
         hotkeyEdit(mode)->setKeySequence(AppSettings::defaultHotkey(mode));
 }

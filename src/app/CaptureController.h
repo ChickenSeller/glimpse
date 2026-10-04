@@ -13,6 +13,7 @@
 #include <optional>
 
 class CaptureToolbar;
+class RecordingSession;
 class DesktopSnapshot;
 class GlobalHotkeys;
 class QAction;
@@ -51,8 +52,13 @@ private:
     void openEditor(const QImage &image);
     void showQrResult(const QImage &image);
     void showOcrResult(const QImage &image);
+    void showTranslateResult(const QImage &image);
+    // The OCR engine and languages to use, with missing models downloaded
+    // (after asking); false if text cannot be recognized now.
+    bool prepareOcr(const QString &title, QString *engine, QStringList *languages);
     void showColorResult(const QColor &color);
     void startScrollingCapture(const QRect &rect);
+    void startRecording(const QRect &rect);
     // Runs the "delay before capture" countdown (if any), then `then`.
     void afterDelay(std::function<void()> then);
     // Hands a finished capture to the result window, QR or OCR dialog.
@@ -71,6 +77,7 @@ private:
 
     Mode m_mode = Mode::FullScreen;
     bool m_busy = false;
+    QPointer<RecordingSession> m_recording; // while a recording runs
     // Area chosen before a delay; the live screen is grabbed again once the
     // countdown ends, and this part of it is the capture.
     std::optional<QRect> m_pendingRect;

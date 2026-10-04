@@ -92,7 +92,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+36"/>
+        <location filename="../src/app/CaptureController.cpp" line="+45"/>
         <source>Capture Window / Object</source>
         <translation>捕捉窗口/对象</translation>
     </message>
@@ -113,13 +113,12 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+341"/>
-        <location line="+12"/>
+        <location line="+410"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location line="-352"/>
+        <location line="-409"/>
         <source>Scrolling Capture</source>
         <translation>滚动截图</translation>
     </message>
@@ -137,6 +136,16 @@
         <location line="+1"/>
         <source>Screen Crosshair</source>
         <translation>屏幕十字线</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Record Screen</source>
+        <translation>录制屏幕</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Translate Screenshot</source>
+        <translation>截图翻译</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -172,13 +181,18 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="+209"/>
+        <source>Recording failed: %1</source>
+        <translation>录制失败：%1</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>截图失败</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+35"/>
         <source>No text recognition engine is available in this build.</source>
         <translation>此版本中没有可用的文字识别引擎。</translation>
     </message>
@@ -194,6 +208,34 @@ Download them now?</source>
 %2
 
 现在下载吗？</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Translate</source>
+        <translation>翻译</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Local translation needs its model first:
+
+%1
+
+Download it now? It is stored on this computer and used offline from then on.</source>
+        <translation>本地翻译需要先下载模型：
+
+%1
+
+现在下载吗？模型保存在本机，之后离线使用。</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>The chosen GGUF model file does not exist. Open Settings &gt; Translation to choose one?</source>
+        <translation>所选的 GGUF 模型文件不存在。要打开“设置 &gt; 翻译”重新选择吗？</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>%1 needs an API key. Open Settings &gt; Translation to enter one?</source>
+        <translation>%1 需要 API 密钥。要打开“设置 &gt; 翻译”填写吗？</translation>
     </message>
 </context>
 <context>
@@ -250,6 +292,16 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
+        <source>Record Screen (press again to stop)</source>
+        <translation>录制屏幕（再按一次停止）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Record</source>
+        <translation>录屏</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Scrolling Capture (Esc to stop)</source>
         <translation>滚动截图（按 Esc 停止）</translation>
     </message>
@@ -280,6 +332,16 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
+        <source>Translate the Text in a Region</source>
+        <translation>翻译区域中的文字</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Translate</source>
+        <translation>翻译</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Pick a Color from the Screen</source>
         <translation>从屏幕上取色</translation>
     </message>
@@ -300,7 +362,7 @@ Download them now?</source>
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+187"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+189"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -497,6 +559,116 @@ Download them now?</source>
     </message>
 </context>
 <context>
+    <name>FirefoxTranslation</name>
+    <message>
+        <location filename="../src/translate/FirefoxTranslation.cpp" line="+183"/>
+        <source>The Firefox translation engine could not be loaded: %1</source>
+        <translation>无法加载 Firefox 翻译引擎：%1</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>The Firefox translation engine is incomplete.</source>
+        <translation>Firefox 翻译引擎不完整。</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>A Firefox translation file was damaged and has been removed; translate again to download it anew.</source>
+        <translation>一个 Firefox 翻译文件已损坏并被删除，请重新翻译以再次下载。</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+80"/>
+        <source>Firefox has no model for %1 to %2.</source>
+        <translation>Firefox 没有从%1到%2的翻译模型。</translation>
+    </message>
+    <message>
+        <location line="-65"/>
+        <source>A Firefox translation model could not be loaded: %1</source>
+        <translation>无法加载 Firefox 翻译模型：%1</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>This build does not include the Firefox translation engine.</source>
+        <translation>此版本未包含 Firefox 翻译引擎。</translation>
+    </message>
+    <message>
+        <location line="+90"/>
+        <source>Firefox translation failed: %1</source>
+        <translation>Firefox 翻译失败：%1</translation>
+    </message>
+</context>
+<context>
+    <name>LocalModel</name>
+    <message>
+        <source>Qwen3 4B (2.5 GB, balanced)</source>
+        <translation type="vanished">Qwen3 4B（2.5 GB，速度与质量均衡）</translation>
+    </message>
+    <message>
+        <source>Hunyuan-MT 7B (4.6 GB, best translations)</source>
+        <translation type="vanished">混元翻译 Hunyuan-MT 7B（4.6 GB，翻译质量最好）</translation>
+    </message>
+    <message>
+        <location filename="../src/translate/LocalModel.cpp" line="+46"/>
+        <source>Hy-MT2 1.8B (1.1 GB, light: runs on any laptop)</source>
+        <translation>混元翻译 Hy-MT2 1.8B（1.1 GB，轻量：普通笔记本也能跑）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Qwen3 4B (2.5 GB, general model)</source>
+        <translation>Qwen3 4B（2.5 GB，通用模型）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Hy-MT2 7B (4.6 GB, best; wants a graphics card)</source>
+        <translation>混元翻译 Hy-MT2 7B（4.6 GB，质量最好，建议有显卡）</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>This build does not include llama.cpp.</source>
+        <translation>此版本未包含 llama.cpp。</translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>llama.cpp could not be loaded: %1</source>
+        <translation>无法加载 llama.cpp：%1</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>This llama.cpp library is a different version than Glimpse expects.</source>
+        <translation>llama.cpp 库的版本与 Glimpse 不匹配。</translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>The model file does not exist: %1</source>
+        <translation>模型文件不存在：%1</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>The model could not be loaded (is it a GGUF model llama.cpp supports?): %1</source>
+        <translation>无法加载模型（是否为 llama.cpp 支持的 GGUF 模型？）：%1</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Not enough memory to run the model.</source>
+        <translation>内存不足，无法运行模型。</translation>
+    </message>
+    <message>
+        <location line="+80"/>
+        <source>A paragraph is too long for the local model; split it with blank lines.</source>
+        <translation>有段落太长，本地模型处理不了；请用空行把它分成几段。</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>The local model failed to read the text.</source>
+        <translation>本地模型读取文字失败。</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>The llama.cpp libraries are missing next to Glimpse.</source>
+        <translation>Glimpse 程序目录中缺少 llama.cpp 库文件。</translation>
+    </message>
+</context>
+<context>
     <name>Ocr</name>
     <message>
         <location filename="../src/ocr/ModelStore.cpp" line="+26"/>
@@ -646,7 +818,7 @@ Download them now?</source>
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+79"/>
+        <location filename="../src/capture/Platform.cpp" line="+110"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 上暂不支持。</translation>
     </message>
@@ -713,9 +885,84 @@ Download them now?</source>
     </message>
 </context>
 <context>
+    <name>RecordingDoneDialog</name>
+    <message>
+        <location filename="../src/record/RecordingDoneDialog.ui" line="+14"/>
+        <source>Recording Saved</source>
+        <translation>录制完成</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>&amp;Open</source>
+        <translation>打开(&amp;O)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Show in &amp;Folder</source>
+        <translation>打开所在文件夹(&amp;F)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Copy &amp;Path</source>
+        <translation>复制路径(&amp;P)</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../src/record/RecordingDoneDialog.cpp" line="+35"/>
+        <source>Copied</source>
+        <translation>已复制</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Recorded %1:%2 (%3 MB):</source>
+        <translation>已录制 %1:%2（%3 MB）：</translation>
+    </message>
+</context>
+<context>
+    <name>RecordingPanel</name>
+    <message>
+        <location filename="../src/record/RecordingPanel.ui" line="+6"/>
+        <source>Recording</source>
+        <translation>录屏</translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Pause</source>
+        <translation>暂停</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Stop Recording</source>
+        <translation>停止录制</translation>
+    </message>
+</context>
+<context>
+    <name>RecordingSession</name>
+    <message>
+        <location filename="../src/record/RecordingSession.cpp" line="+89"/>
+        <source>Resume</source>
+        <translation>继续</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pause</source>
+        <translation>暂停</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+27"/>
+        <source>%1 (paused)</source>
+        <translation>%1（已暂停）</translation>
+    </message>
+</context>
+<context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+344"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+360"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation>单击：取色  ·  方向键：移动 1 像素</translation>
     </message>
@@ -833,6 +1080,11 @@ Download them now?</source>
     </message>
     <message>
         <location line="+13"/>
+        <source>Recor&amp;d Screen:</source>
+        <translation>录制屏幕(&amp;D)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Scan &amp;QR Code:</source>
         <translation>识别二维码(&amp;Q)：</translation>
     </message>
@@ -840,6 +1092,11 @@ Download them now?</source>
         <location line="+13"/>
         <source>Recognize &amp;Text:</source>
         <translation>识别文字(&amp;T)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Tra&amp;nslate Screenshot:</source>
+        <translation>截图翻译(&amp;N)：</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -863,6 +1120,72 @@ Download them now?</source>
     </message>
     <message>
         <location line="+21"/>
+        <source>Recording</source>
+        <translation>录屏</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Shown in the Video</source>
+        <translation>在视频中显示</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Hi&amp;ghlight the mouse pointer</source>
+        <translation>高亮鼠标指针(&amp;G)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Show mouse cl&amp;icks</source>
+        <translation>显示鼠标点击(&amp;I)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Show &amp;keys pressed (at the bottom)</source>
+        <translation>在底部显示按下的按键(&amp;K)</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>St&amp;yle:</source>
+        <translation>显示方式(&amp;Y)：</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Key labels</source>
+        <translation>按键文字</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Full keyboard</source>
+        <translation>完整键盘</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Keyboard and labels</source>
+        <translation>键盘和文字</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Everything typed is shown, including passwords.</source>
+        <translation>所有输入都会显示出来，包括密码。</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>&amp;Video frame rate:</source>
+        <translation>视频帧率(&amp;V)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>O&amp;utput folder:</source>
+        <translation>保存文件夹(&amp;U)：</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <location line="+201"/>
+        <source>Browse...</source>
+        <translation>浏览...</translation>
+    </message>
+    <message>
+        <location line="-182"/>
         <source>Text Recognition</source>
         <translation>文字识别</translation>
     </message>
@@ -897,24 +1220,284 @@ Download them now?</source>
         <translation>识别模型会在首次使用时下载。选择的语言越少，识别越快、越准确。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+130"/>
+        <location line="+21"/>
+        <source>Translation</source>
+        <translation>翻译</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Service:</source>
+        <translation>翻译服务(&amp;S)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Translate &amp;into:</source>
+        <translation>翻译为(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>API &amp;key:</source>
+        <translation>API 密钥(&amp;K)：</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&amp;Region:</source>
+        <translation>区域(&amp;R)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&amp;Model:</source>
+        <translation>模型(&amp;M)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>GGUF &amp;file:</source>
+        <translation>GGUF 文件(&amp;F)：</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>e.g. japaneast; empty for a global resource</source>
+        <translation>例如 japaneast；全局资源留空</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Text is recognized on this computer and then sent to the chosen service. Keys are kept in your user settings on this computer.</source>
+        <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
+    </message>
+    <message>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+54"/>
+        <source>%1 fps</source>
+        <translation>%1 帧/秒</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Other GGUF model file...</source>
+        <translation>其他 GGUF 模型文件...</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Choose a GGUF Model</source>
+        <translation>选择 GGUF 模型</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>GGUF models (*.gguf)</source>
+        <translation>GGUF 模型 (*.gguf)</translation>
+    </message>
+    <message>
+        <location line="+104"/>
         <source>Select at least one language for text recognition.</source>
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+70"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+82"/>
         <source>Global hotkeys: %1</source>
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="-107"/>
+        <location line="-162"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
+    </message>
+</context>
+<context>
+    <name>Translate</name>
+    <message>
+        <location filename="../src/translate/Translator.cpp" line="+59"/>
+        <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
+        <translation>API 密钥被拒绝（HTTP %1）。请在“设置 &gt; 翻译”中检查。</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>The service returned %1 translations for %2 paragraphs.</source>
+        <translation>翻译服务为 %2 个段落返回了 %1 条译文。</translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Google&apos;s free service did not answer (%1). It may be limiting requests from this network; try another service.</source>
+        <translation>Google 免费翻译服务没有响应（%1）。可能是在限制来自这个网络的请求，请换用其他翻译服务。</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Google&apos;s free service sent an unexpected answer. It may have changed; try another service.</source>
+        <translation>Google 免费翻译服务返回了无法识别的结果，接口可能已变更，请换用其他翻译服务。</translation>
+    </message>
+    <message>
+        <location line="+94"/>
+        <source>Claude declined to translate this text.</source>
+        <translation>Claude 拒绝翻译这段文字。</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Claude&apos;s reply could not be read.</source>
+        <translation>无法解析 Claude 的回复。</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Google Translate (free, online)</source>
+        <translation>Google 翻译（免费，在线）</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Firefox translation (offline, light)</source>
+        <translation>Firefox 翻译（离线，轻量）</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Local model (llama.cpp, offline)</source>
+        <translation>本地模型（llama.cpp，离线）</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Google Cloud Translation</source>
+        <translation>Google Cloud 翻译</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Microsoft Translator</source>
+        <translation>微软翻译</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>The free service behind Google Translate in Chrome: no key, good quality, many languages. It is unofficial, so Google may limit or change it; if it stops working, switch to another service.</source>
+        <translation>Chrome 中 Google 翻译所用的免费服务：不需要密钥，质量好，语种多。它是非官方接口，Google 可能会限流或变更；如果无法使用，请换用其他翻译服务。</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>The engine behind Firefox&apos;s offline translations: small models (35-70 MB per language direction, downloaded on first use) that run fast on any computer. Translates between English and other languages; others, such as Chinese and Japanese, go through English.</source>
+        <translation>Firefox 离线翻译所用的引擎：模型小（每个翻译方向 35–70 MB，首次使用时下载），任何电脑上都很快。在英文和其他语言之间互译；其他组合（如中日互译）经英文中转。</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Runs a language model on this computer: nothing leaves it and no key is needed. The model is downloaded on first use; a graphics card makes it much faster.</source>
+        <translation>在本机运行语言模型：文字不会离开这台电脑，也不需要密钥。首次使用时下载模型；有显卡会快很多。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Natural translations, especially between European languages and Japanese. The free plan includes 500,000 characters a month; get a key at deepl.com.</source>
+        <translation>译文自然，尤其擅长欧洲语言和日语。免费版每月 50 万字符，可在 deepl.com 获取密钥。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Many languages and fast. Needs a Google Cloud API key with the Cloud Translation API enabled.</source>
+        <translation>语种多、速度快。需要已启用 Cloud Translation API 的 Google Cloud API 密钥。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Many languages, with a free tier of 2 million characters a month. Needs an Azure Translator key, and its region unless the resource is global.</source>
+        <translation>语种多，免费额度每月 200 万字符。需要 Azure 翻译服务的密钥；非全局资源还需填写区域。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>A large language model: reads through OCR mistakes and keeps the tone and terms in context. Needs an Anthropic API key; billed per use.</source>
+        <translation>大语言模型：能读懂识别错误的文字，并结合上下文保留语气和术语。需要 Anthropic API 密钥，按用量计费。</translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Firefox translation needs these language files first (about 50 MB per direction):
+
+%1
+
+Download them now? They are kept on this computer and used offline from then on.</source>
+        <translation>Firefox 翻译需要先下载这些语言文件（每个方向约 50 MB）：
+
+%1
+
+现在下载吗？文件保存在本机，之后离线使用。</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The Firefox language files were not downloaded.</source>
+        <translation>未下载 Firefox 语言文件。</translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>No API key is set for %1. Add one in Settings &gt; Translation.</source>
+        <translation>%1 尚未设置 API 密钥。请在“设置 &gt; 翻译”中填写。</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Unknown translation engine: %1</source>
+        <translation>未知的翻译服务：%1</translation>
+    </message>
+</context>
+<context>
+    <name>TranslateResultDialog</name>
+    <message>
+        <location filename="../src/translate/TranslateResultDialog.ui" line="+14"/>
+        <source>Translate</source>
+        <translation>翻译</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Recognized text (editable; paragraphs separated by blank lines)</source>
+        <translation>识别出的文字（可编辑；段落之间用空行分隔）</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Translation</source>
+        <translation>翻译</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&amp;Into:</source>
+        <translation>翻译为(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&amp;Translate Again</source>
+        <translation>重新翻译(&amp;T)</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>&amp;Copy Translation</source>
+        <translation>复制译文(&amp;C)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location filename="../src/translate/TranslateResultDialog.cpp" line="+261"/>
+        <source>Paint the translation over the capture, where the text was</source>
+        <translation>把译文画在截图中原文的位置上</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Translated &amp;Image</source>
+        <translation>翻译图片(&amp;I)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../src/translate/TranslateResultDialog.cpp" line="-78"/>
+        <source>No text was found in the selected area.</source>
+        <translation>所选区域中没有找到文字。</translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>Recognizing text...</source>
+        <translation>正在识别文字...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Translating with %1...</source>
+        <translation>正在用 %1 翻译...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Translated with %1.</source>
+        <translation>已用 %1 翻译。</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Keep the paragraphs as recognized (same number) to paint them over the capture.</source>
+        <translation>段落数量需与识别结果一致，才能把译文画到截图上。</translation>
     </message>
 </context>
 </TS>

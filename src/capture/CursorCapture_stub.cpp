@@ -5,3 +5,7 @@
 void drawCursor(DesktopSnapshot &)
 {
 }
+
+void drawCursor(QImage &, QScreen *, const QPoint &)
+{
+}

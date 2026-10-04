@@ -74,6 +74,27 @@ void disableWindowAnimations(QWidget *window)
 #endif
 }
 
+bool supportsInputOverlay()
+{
+    return displayServer() == DisplayServer::Windows;
+}
+
+bool supportsPointerHighlight()
+{
+    return displayServer() == DisplayServer::Windows || displayServer() == DisplayServer::X11;
+}
+
+void excludeFromCapture(QWidget *window)
+{
+#ifdef Q_OS_WIN
+    // WDA_EXCLUDEFROMCAPTURE (Windows 10 2004+); older systems ignore it.
+    constexpr DWORD kExcludeFromCapture = 0x11;
+    SetWindowDisplayAffinity(reinterpret_cast<HWND>(window->winId()), kExcludeFromCapture);
+#else
+    Q_UNUSED(window);
+#endif
+}
+
 std::optional<QPoint> nativeCursorPos()
 {
 #ifdef Q_OS_WIN

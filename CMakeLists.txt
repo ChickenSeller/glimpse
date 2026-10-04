@@ -8,7 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Qt is looked up first: a missing component (or a missing system package Qt
 # itself needs, such as the OpenGL headers on Linux) then fails here with a
 # clear message, and the third-party projects below reuse this Qt.
-find_package(Qt6 6.7 REQUIRED COMPONENTS Widgets Svg Concurrent Network LinguistTools)
+# Multimedia: screen recording (QScreenCapture, QVideoFrameInput: Qt 6.8+).
+find_package(Qt6 6.8 REQUIRED COMPONENTS Widgets Svg Concurrent Network Multimedia LinguistTools)
 if(UNIX AND NOT APPLE)
     find_package(Qt6 REQUIRED COMPONENTS DBus) # Wayland screenshot portal
 endif()
@@ -47,6 +48,18 @@ if(GLIMPSE_WITH_TESSERACT)
 endif()
 if(GLIMPSE_WITH_PADDLEOCR)
     include(cmake/OnnxRuntime.cmake)
+endif()
+
+# Local (offline) translation.
+option(GLIMPSE_WITH_LLAMA "Build local translation with llama.cpp" ON)
+if(GLIMPSE_WITH_LLAMA)
+    include(cmake/Llama.cmake)
+endif()
+
+# Firefox's offline translation engine (needs Visual Studio on Windows).
+option(GLIMPSE_WITH_BERGAMOT "Build Firefox's translation engine (Bergamot)" ON)
+if(GLIMPSE_WITH_BERGAMOT)
+    include(cmake/Bergamot.cmake)
 endif()
 
 # Annotation editor.
@@ -157,11 +170,33 @@ qt_add_executable(glimpse
     src/qr/QrResultDialog.h
     src/qr/QrResultDialog.ui
 
+    src/record/InputMonitor.h
+    src/record/KeyboardOverlay.cpp
+    src/record/KeyboardOverlay.h
+    src/record/RecordingDoneDialog.cpp
+    src/record/RecordingDoneDialog.h
+    src/record/RecordingDoneDialog.ui
+    src/record/RecordingPanel.ui
+    src/record/RecordingSession.cpp
+    src/record/RecordingSession.h
+    src/record/ScreenRecorder.cpp
+    src/record/ScreenRecorder.h
+
     src/settings/HotkeyEdit.cpp
     src/settings/HotkeyEdit.h
     src/settings/SettingsDialog.cpp
     src/settings/SettingsDialog.h
     src/settings/SettingsDialog.ui
+
+    src/translate/FirefoxTranslation.cpp
+    src/translate/FirefoxTranslation.h
+    src/translate/LocalModel.cpp
+    src/translate/LocalModel.h
+    src/translate/TranslateResultDialog.cpp
+    src/translate/TranslateResultDialog.h
+    src/translate/TranslateResultDialog.ui
+    src/translate/Translator.cpp
+    src/translate/Translator.h
 
     resources/glimpse.qrc
 )
@@ -178,7 +213,7 @@ qt_add_translations(TARGETS glimpse
 )
 
 # Svg: the SVG icon engine plugin that renders the Material Symbols icons.
-target_link_libraries(glimpse PRIVATE glimpse_ocr Qt6::Widgets Qt6::Svg Qt6::Concurrent ZXing::ZXing
+target_link_libraries(glimpse PRIVATE glimpse_ocr Qt6::Widgets Qt6::Svg Qt6::Concurrent Qt6::Multimedia Qt6::Network ZXing::ZXing
                                       ${GLIMPSE_ANNOTATOR_TARGET})
 
 # Window/object picking and global hotkeys: Win32 only so far.
@@ -188,6 +223,7 @@ if(WIN32)
         src/capture/ScrollInput_win.cpp
         src/capture/WindowList_win.cpp
         src/hotkey/GlobalHotkeys_win.cpp
+        src/record/InputMonitor_win.cpp
     )
     target_link_libraries(glimpse PRIVATE dwmapi)
 else()
@@ -196,6 +232,7 @@ else()
         src/capture/ScrollInput_stub.cpp
         src/capture/WindowList_stub.cpp
         src/hotkey/GlobalHotkeys_stub.cpp
+        src/record/InputMonitor_stub.cpp
     )
 endif()
 
@@ -213,6 +250,27 @@ set_target_properties(glimpse PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
 )
+
+# The Firefox engine's C interface (the library itself is loaded at run time).
+target_include_directories(glimpse PRIVATE bergamot)
+if(GLIMPSE_BERGAMOT_LIBRARY)
+    add_dependencies(glimpse glimpse_bergamot)
+    add_custom_command(TARGET glimpse POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GLIMPSE_BERGAMOT_LIBRARY}" "$<TARGET_FILE_DIR:glimpse>"
+        VERBATIM)
+endif()
+
+# llama.cpp is loaded at run time from next to the executable; the build only
+# needs its headers.
+if(GLIMPSE_LLAMA_INCLUDE_DIRS)
+    target_include_directories(glimpse PRIVATE ${GLIMPSE_LLAMA_INCLUDE_DIRS})
+    target_compile_definitions(glimpse PRIVATE GLIMPSE_HAVE_LLAMA)
+endif()
+foreach(_lib IN LISTS GLIMPSE_LLAMA_RUNTIME_FILES)
+    add_custom_command(TARGET glimpse POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_lib}" "$<TARGET_FILE_DIR:glimpse>"
+        VERBATIM)
+endforeach()
 
 # The downloaded ONNX Runtime library lives next to the executable, where
 # PaddleOcrEngine looks for it first.
@@ -264,6 +322,42 @@ if(WIN32)
     target_link_libraries(glimpse-scroll-test PRIVATE Qt6::Widgets dwmapi)
 endif()
 
+# glimpse-translate-test: local (llama.cpp) translation of sample text with
+# the model the settings select (it must be downloaded already).
+if(GLIMPSE_LLAMA_INCLUDE_DIRS)
+    qt_add_executable(glimpse-translate-test
+        tests/TranslateTest.cpp
+        src/app/AppSettings.cpp
+        src/translate/FirefoxTranslation.cpp
+        src/translate/LocalModel.cpp
+        src/translate/Translator.cpp
+    )
+    target_include_directories(glimpse-translate-test PRIVATE src bergamot ${GLIMPSE_LLAMA_INCLUDE_DIRS})
+    target_compile_definitions(glimpse-translate-test PRIVATE GLIMPSE_HAVE_LLAMA)
+    target_link_libraries(glimpse-translate-test PRIVATE glimpse_ocr Qt6::Widgets Qt6::Network Qt6::Concurrent)
+endif()
+
+# glimpse-record-test: records a few seconds of the screen to an MP4 and reads
+# it back.
+qt_add_executable(glimpse-record-test
+    tests/RecordTest.cpp
+    src/capture/DesktopSnapshot.cpp
+    src/capture/Platform.cpp
+    src/record/InputMonitor.h
+    src/record/KeyboardOverlay.cpp
+    src/record/KeyboardOverlay.h
+    src/record/ScreenRecorder.cpp
+    src/record/ScreenRecorder.h
+)
+if(WIN32)
+    target_sources(glimpse-record-test PRIVATE src/capture/CursorCapture_win.cpp src/record/InputMonitor_win.cpp)
+    target_link_libraries(glimpse-record-test PRIVATE dwmapi)
+else()
+    target_sources(glimpse-record-test PRIVATE src/capture/CursorCapture_stub.cpp src/record/InputMonitor_stub.cpp)
+endif()
+target_include_directories(glimpse-record-test PRIVATE src)
+target_link_libraries(glimpse-record-test PRIVATE Qt6::Widgets Qt6::Multimedia)
+
 # --- distribution -----------------------------------------------------------------
 # Everything a user needs goes into the "glimpse" install component; the
 # third-party projects' own install rules (headers, static libs, CMake configs)
@@ -278,6 +372,10 @@ install(TARGETS glimpse
     RUNTIME DESTINATION ${GLIMPSE_INSTALL_BINDIR} COMPONENT glimpse
 )
 install(FILES ${GLIMPSE_ORT_RUNTIME_FILES} DESTINATION ${GLIMPSE_INSTALL_BINDIR} COMPONENT glimpse)
+install(FILES ${GLIMPSE_LLAMA_RUNTIME_FILES} DESTINATION ${GLIMPSE_INSTALL_BINDIR} COMPONENT glimpse)
+if(GLIMPSE_BERGAMOT_LIBRARY)
+    install(FILES ${GLIMPSE_BERGAMOT_LIBRARY} DESTINATION ${GLIMPSE_INSTALL_BINDIR} COMPONENT glimpse)
+endif()
 set(_glimpse_extra_libs "")
 foreach(_lib IN LISTS GLIMPSE_ANNOTATOR_RUNTIME)
     install(FILES "$<TARGET_FILE:${_lib}>" DESTINATION ${GLIMPSE_INSTALL_BINDIR} COMPONENT glimpse)

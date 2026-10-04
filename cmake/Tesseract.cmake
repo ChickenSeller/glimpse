@@ -76,6 +76,16 @@ if(MINGW)
     target_compile_options(libtesseract PRIVATE -Wa,-muse-unaligned-vector-move)
 endif()
 
+# The LSTM recognizer keeps each text line image; by default it encodes them
+# as PNG, which this Leptonica (built without libpng) cannot do: it falls back
+# to BMP and warns on every line ("png library missing"). Keep them as plain
+# images instead, which also skips the encoding.
+target_compile_definitions(libtesseract PRIVATE TESSERACT_IMAGEDATA_AS_PIX)
+# Each Tesseract instance loads Leptonica's bitmap font for captions on debug
+# images (never produced here); the font is stored as TIFF, which this
+# Leptonica cannot read, so every engine start logged "bmfCreate" errors.
+target_compile_definitions(libtesseract PRIVATE TESSERACT_DISABLE_DEBUG_FONTS)
+
 # The public headers include the generated tesseract/version.h, which an
 # in-tree build only has in its binary directory.
 target_include_directories(libtesseract INTERFACE $<BUILD_INTERFACE:${tesseract_BINARY_DIR}/include>)

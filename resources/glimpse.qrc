@@ -11,6 +11,10 @@
         <file>icons/drag_indicator.svg</file>
         <file>icons/edit.svg</file>
         <file>icons/my_location.svg</file>
+        <file>icons/pause.svg</file>
+        <file>icons/play_arrow.svg</file>
+        <file>icons/stop.svg</file>
+        <file>icons/videocam.svg</file>
         <file>icons/file_save.svg</file>
         <file>icons/photo_size_select_large.svg</file>
         <file>icons/qr_code_scanner.svg</file>
@@ -22,6 +26,7 @@
         <file>icons/settings.svg</file>
         <file>icons/swipe_vertical.svg</file>
         <file>icons/timer.svg</file>
+        <file>icons/translate.svg</file>
         <file>icons/screenshot_monitor.svg</file>
     </qresource>
 </RCC>

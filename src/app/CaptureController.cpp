@@ -12,12 +12,21 @@
 #include "hotkey/GlobalHotkeys.h"
 #include "overlay/RegionSelector.h"
 #include "qr/BarcodeScanner.h"
+#include "record/RecordingDoneDialog.h"
+#include "record/RecordingSession.h"
 #include "qr/QrResultDialog.h"
 #include "ocr/ModelStore.h"
 #include "ocr/OcrResultDialog.h"
 #include "settings/SettingsDialog.h"
+#include "translate/TranslateResultDialog.h"
+#include "translate/FirefoxTranslation.h"
+#include "translate/LocalModel.h"
+#include "translate/Translator.h"
 
 #include <QApplication>
+#include <QDateTime>
+#include <QDir>
+#include <QFileInfo>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSystemTrayIcon>
@@ -42,6 +51,8 @@ const char *captureLabel(CaptureMode mode)
     case CaptureMode::Freehand: return QT_TRANSLATE_NOOP("CaptureController", "Capture Freehand Region");
     case CaptureMode::ColorPicker: return QT_TRANSLATE_NOOP("CaptureController", "Pick Screen Color");
     case CaptureMode::Crosshair: return QT_TRANSLATE_NOOP("CaptureController", "Screen Crosshair");
+    case CaptureMode::Recording: return QT_TRANSLATE_NOOP("CaptureController", "Record Screen");
+    case CaptureMode::Translate: return QT_TRANSLATE_NOOP("CaptureController", "Translate Screenshot");
     }
     return "";
 }
@@ -204,6 +215,11 @@ QStringList CaptureController::registerHotkeys()
 
 void CaptureController::beginCapture(Mode mode)
 {
+    // The record button / hotkey / tray entry also stops a running recording.
+    if (mode == Mode::Recording && m_recording) {
+        m_recording->stop();
+        return;
+    }
     if (m_busy || !captureModeSupported(mode))
         return;
     m_busy = true;
@@ -260,6 +276,8 @@ void CaptureController::deliver(const QImage &image)
         showQrResult(image);
     else if (m_mode == Mode::Ocr)
         showOcrResult(image);
+    else if (m_mode == Mode::Translate)
+        showTranslateResult(image);
     else
         openEditor(image);
 }
@@ -282,7 +300,8 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
 
     // Scrolling capture picks its area like Window / Object: hover a
     // scrollable control and click, or drag a rectangle.
-    const auto selectorMode = m_mode == Mode::Window || m_mode == Mode::Scrolling ? RegionSelector::Mode::Window
+    const auto selectorMode = m_mode == Mode::Window || m_mode == Mode::Scrolling || m_mode == Mode::Recording
+                                  ? RegionSelector::Mode::Window
                               : m_mode == Mode::Freehand                          ? RegionSelector::Mode::Freehand
                               : m_mode == Mode::ColorPicker                       ? RegionSelector::Mode::Color
                               : m_mode == Mode::Crosshair                         ? RegionSelector::Mode::Crosshair
@@ -292,6 +311,12 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
         if (m_mode == Mode::Scrolling) {
             selector->deleteLater();
             startScrollingCapture(rect);
+            return;
+        }
+        if (m_mode == Mode::Recording) {
+            // Area first, then the countdown (if any), then recording.
+            selector->deleteLater();
+            afterDelay([this, rect] { QTimer::singleShot(kShortDelayMs, this, [this, rect] { startRecording(rect); }); });
             return;
         }
         selector->deleteLater();
@@ -334,6 +359,38 @@ void CaptureController::startScrollingCapture(const QRect &rect)
     session->start();
 }
 
+void CaptureController::startRecording(const QRect &rect)
+{
+    // Still "busy" while recording: the toolbar stays hidden (it would be in
+    // the video); the record button, hotkey or the panel's Stop end it.
+    const QString folder = AppSettings::recordFolder();
+    QDir().mkpath(folder);
+    ScreenRecorder::Options options;
+    options.filePath = QDir(folder).filePath(
+        QStringLiteral("Glimpse_%1.mp4").arg(QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_HHmmss"))));
+    options.frameRate = AppSettings::recordFrameRate();
+    options.highlightCursor = AppSettings::recordHighlightCursor() && Platform::supportsPointerHighlight();
+    options.showClicks = AppSettings::recordShowClicks() && Platform::supportsInputOverlay();
+    options.showKeys = AppSettings::recordShowKeys() && Platform::supportsInputOverlay();
+    options.keyStyle = static_cast<ScreenRecorder::KeyStyle>(AppSettings::recordKeyStyle());
+
+    auto *session = new RecordingSession(rect, options, this);
+    m_recording = session;
+    connect(session, &RecordingSession::finished, this, [this, session](const QString &path, qint64 durationMs) {
+        session->deleteLater();
+        endCapture();
+        auto *dialog = new RecordingDoneDialog(path, durationMs);
+        dialog->show();
+        dialog->raise();
+        dialog->activateWindow();
+    });
+    connect(session, &RecordingSession::failed, this, [this, session](const QString &message) {
+        session->deleteLater();
+        onGrabFailed(tr("Recording failed: %1").arg(message));
+    });
+    session->start();
+}
+
 void CaptureController::onGrabFailed(const QString &message)
 {
     endCapture();
@@ -371,33 +428,90 @@ void CaptureController::showColorResult(const QColor &color)
     dialog->activateWindow();
 }
 
-void CaptureController::showOcrResult(const QImage &image)
+bool CaptureController::prepareOcr(const QString &title, QString *engine, QStringList *languages)
 {
-    if (image.isNull())
-        return;
-
-    const QString engine = AppSettings::ocrEngine();
-    if (engine.isEmpty()) {
-        QMessageBox::warning(nullptr, tr("Recognize Text"),
-                             tr("No text recognition engine is available in this build."));
-        return;
+    *engine = AppSettings::ocrEngine();
+    if (engine->isEmpty()) {
+        QMessageBox::warning(nullptr, title, tr("No text recognition engine is available in this build."));
+        return false;
     }
 
-    const QStringList languages = AppSettings::ocrLanguages();
-    const QList<ModelFile> missing = Ocr::missingModels(engine, languages);
+    *languages = AppSettings::ocrLanguages();
+    const QList<ModelFile> missing = Ocr::missingModels(*engine, *languages);
     if (!missing.isEmpty()) {
         QStringList names;
         for (const ModelFile &file : missing)
             names << file.name;
         const auto answer = QMessageBox::question(
-            nullptr, tr("Recognize Text"),
+            nullptr, title,
             tr("%1 needs to download its recognition models first:\n\n%2\n\nDownload them now?")
-                .arg(Ocr::engineName(engine), names.join(QLatin1Char('\n'))));
+                .arg(Ocr::engineName(*engine), names.join(QLatin1Char('\n'))));
         if (answer != QMessageBox::Yes || !ModelStore::download(missing, nullptr))
-            return;
+            return false;
     }
+    return true;
+}
 
+void CaptureController::showOcrResult(const QImage &image)
+{
+    QString engine;
+    QStringList languages;
+    if (image.isNull() || !prepareOcr(tr("Recognize Text"), &engine, &languages))
+        return;
     auto *dialog = new OcrResultDialog(image, engine, languages);
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
+}
+
+void CaptureController::showTranslateResult(const QImage &image)
+{
+    const QString title = tr("Translate");
+    // Without a key every engine fails; offer the settings instead.
+    const QString translator = AppSettings::translateEngine();
+    if (translator == QLatin1String("firefox")) {
+        // Language files are fetched when the text is known (see Translate::translate).
+        const QString reason = FirefoxTranslation::unavailableReason();
+        if (!reason.isEmpty()) {
+            QMessageBox::warning(nullptr, title, reason);
+            return;
+        }
+    } else if (translator == QLatin1String("local")) {
+        // The local model: the runtime must be there, and the model downloaded or chosen.
+        const QString reason = LocalModel::unavailableReason();
+        if (!reason.isEmpty()) {
+            QMessageBox::warning(nullptr, title, reason);
+            return;
+        }
+        if (const std::optional<LocalModel::Preset> missing = LocalModel::missingPreset()) {
+            const auto answer = QMessageBox::question(
+                nullptr, title,
+                tr("Local translation needs its model first:\n\n%1\n\nDownload it now? It is stored on this "
+                   "computer and used offline from then on.")
+                    .arg(missing->name));
+            if (answer != QMessageBox::Yes || !ModelStore::download({missing->file}, nullptr))
+                return;
+        } else if (!QFileInfo::exists(LocalModel::modelPath())) {
+            const auto answer = QMessageBox::question(
+                nullptr, title, tr("The chosen GGUF model file does not exist. Open Settings > Translation to choose one?"));
+            if (answer == QMessageBox::Yes)
+                showSettings();
+            return;
+        }
+    } else if (Translate::needsKey(translator) && AppSettings::translateKey(translator).trimmed().isEmpty()) {
+        const auto answer = QMessageBox::question(
+            nullptr, title,
+            tr("%1 needs an API key. Open Settings > Translation to enter one?").arg(Translate::engineName(translator)));
+        if (answer == QMessageBox::Yes)
+            showSettings();
+        return;
+    }
+    QString engine;
+    QStringList languages;
+    if (image.isNull() || !prepareOcr(title, &engine, &languages))
+        return;
+    auto *dialog = new TranslateResultDialog(image, engine, languages);
+    connect(dialog, &TranslateResultDialog::translatedImageReady, this, &CaptureController::openEditor);
     dialog->show();
     dialog->raise();
     dialog->activateWindow();

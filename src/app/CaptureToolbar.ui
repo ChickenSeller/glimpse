@@ -152,6 +152,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="recordButton">
+     <property name="toolTip">
+      <string>Record Screen (press again to stop)</string>
+     </property>
+     <property name="text">
+      <string>Record</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/videocam.svg</normaloff>:/icons/videocam.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="scrollButton">
      <property name="toolTip">
       <string>Scrolling Capture (Esc to stop)</string>
@@ -214,6 +240,32 @@
      <property name="icon">
       <iconset resource="../../resources/glimpse.qrc">
        <normaloff>:/icons/document_scanner.svg</normaloff>:/icons/document_scanner.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="translateButton">
+     <property name="toolTip">
+      <string>Translate the Text in a Region</string>
+     </property>
+     <property name="text">
+      <string>Translate</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/translate.svg</normaloff>:/icons/translate.svg</iconset>
      </property>
      <property name="iconSize">
       <size>
