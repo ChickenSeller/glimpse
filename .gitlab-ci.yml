@@ -1,5 +1,89 @@
 stages:
+  - build
+  - release
+  - deploy
   - sync
+
+# --- Windows release ----------------------------------------------------------
+# Pushing a version tag (v1.2.3) builds the Windows package and publishes it as
+# a GitLab release. Needs a Windows runner (shell executor, PowerShell) tagged
+# "windows", with Qt (MinGW), CMake, Ninja, Git and Visual Studio 2022 (for the
+# Firefox translation engine) installed, and internet access for the pinned
+# third-party downloads. Adjust QT_DIR and QT_TOOLS to the runner's install.
+.windows-release:
+  tags: [windows]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+  variables:
+    QT_DIR: 'D:\Qt\6.12.0\mingw_64'
+    QT_TOOLS: 'D:\Qt\Tools'
+
+build-windows:
+  extends: .windows-release
+  stage: build
+  script:
+    - $env:PATH = "$env:QT_TOOLS\mingw1310_64\bin;$env:QT_TOOLS\CMake_64\bin;$env:QT_TOOLS\Ninja;$env:QT_DIR\bin;$env:PATH"
+    - $version = $env:CI_COMMIT_TAG.Substring(1)
+    - cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$env:QT_DIR" "-DGLIMPSE_VERSION=$version"
+    - cmake --build build/release --parallel 8
+    - cmake --build build/release --target package
+  artifacts:
+    paths:
+      - build/release/Glimpse-*-windows-x64.zip
+    expire_in: 1 week
+
+# Uploads the package to the project's package registry (artifacts expire,
+# packages do not) and creates the release with a link to it.
+release-windows:
+  extends: .windows-release
+  stage: release
+  needs: [build-windows]
+  script:
+    - |
+      $version = $env:CI_COMMIT_TAG.Substring(1)
+      $zip = Get-Item build/release/Glimpse-*-windows-x64.zip
+      $headers = @{ 'JOB-TOKEN' = $env:CI_JOB_TOKEN }
+      $api = "$env:CI_API_V4_URL/projects/$env:CI_PROJECT_ID"
+      $package = "$api/packages/generic/glimpse/$version/$($zip.Name)"
+      Invoke-RestMethod -Method Put -Uri $package -Headers $headers -InFile $zip.FullName | Out-Null
+      $notes = if ($env:CI_COMMIT_TAG_MESSAGE) { $env:CI_COMMIT_TAG_MESSAGE } else { "Glimpse $version" }
+      $release = @{
+        name = "Glimpse $version"
+        tag_name = $env:CI_COMMIT_TAG
+        description = $notes
+        assets = @{ links = @(@{
+          name = "Windows x64 ($($zip.Name))"
+          url = $package
+          direct_asset_path = "/$($zip.Name)"
+          link_type = 'package'
+        }) }
+      } | ConvertTo-Json -Depth 5
+      Invoke-RestMethod -Method Post -Uri "$api/releases" -Headers $headers `
+        -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes($release)) | Out-Null
+      Write-Host "Released ${env:CI_COMMIT_TAG}: $env:CI_PROJECT_URL/-/releases/$env:CI_COMMIT_TAG"
+
+# The project homepage (site/) on GitLab Pages. Deploys when the site or the
+# icons it uses change on the default branch, and can be started by hand.
+pages:
+  stage: deploy
+  image: alpine:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - site/**/*
+        - resources/icons/*
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+  script:
+    - mkdir public
+    - cp -r site/. public/
+    # The app's toolbar icons (Material Symbols), shared with the page.
+    - mkdir public/icons
+    - cp resources/icons/*.svg public/icons/
+    - sed -i -e "s|%PROJECT_URL%|${CI_PROJECT_URL}|g" -e "s|%DEFAULT_BRANCH%|${CI_DEFAULT_BRANCH}|g" public/index.html
+  artifacts:
+    paths:
+      - public
 
 # Mirrors the default branch and all tags to GitHub. Runs only when started
 # by hand from the pipeline page.

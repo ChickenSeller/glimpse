@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glimpse</title>
+<meta name="description" content="Screenshot and screen recording tool for Windows and Linux: capture, annotate, recognize text and translate.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="brand" href="#"><img src="logo.svg" alt="" width="28" height="28"> Glimpse</a>
+    <nav class="nav">
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#translate" data-i18n="nav.translate">Translation</a>
+      <a href="#hotkeys" data-i18n="nav.hotkeys">Hotkeys</a>
+      <a href="#build" data-i18n="nav.build">Build</a>
+    </nav>
+    <button class="lang" id="lang" type="button" aria-label="Language">中文</button>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-text">
+      <h1 data-i18n="hero.title">Capture your screen, then do something with it.</h1>
+      <p class="lead" data-i18n="hero.lead">Glimpse takes screenshots and screen recordings, lets you mark them up, reads the text in them and translates it. Offline when you want it, free and open source.</p>
+      <div class="actions">
+        <a class="btn primary" href="%PROJECT_URL%/-/releases" data-i18n="hero.download">Download</a>
+        <a class="btn" href="%PROJECT_URL%" data-i18n="hero.source">Source code</a>
+      </div>
+      <p class="meta" data-i18n="hero.meta">Windows · Linux (X11 and Wayland) · MIT License</p>
+    </div>
+
+    <div class="shot" aria-hidden="true">
+      <div class="shot-bar"><i></i><i></i><i></i></div>
+      <div class="shot-body">
+        <div class="doc">
+          <b></b><b class="w60"></b><b class="w80"></b><b class="w40"></b>
+          <b></b><b class="w70"></b><b class="w50"></b>
+        </div>
+        <div class="sel">
+          <span class="size">640 × 360</span>
+          <span class="h tl"></span><span class="h tr"></span><span class="h bl"></span><span class="h br"></span>
+        </div>
+        <div class="toolbar">
+          <span class="ico" style="--i:url(icons/select_window.svg)"></span>
+          <span class="ico on" style="--i:url(icons/screenshot_region.svg)"></span>
+          <span class="ico" style="--i:url(icons/lasso_select.svg)"></span>
+          <span class="ico" style="--i:url(icons/screenshot_monitor.svg)"></span>
+          <span class="ico" style="--i:url(icons/videocam.svg)"></span>
+          <span class="ico" style="--i:url(icons/document_scanner.svg)"></span>
+          <span class="ico" style="--i:url(icons/translate.svg)"></span>
+          <span class="ico" style="--i:url(icons/colorize.svg)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="section">
+  <div class="wrap">
+    <h2 data-i18n="features.title">Everything in one small toolbar</h2>
+    <div class="grid">
+      <article class="card">
+        <span class="ico big" style="--i:url(icons/screenshot_region.svg)"></span>
+        <h3 data-i18n="f.capture.t">Capture</h3>
+        <p data-i18n="f.capture.d">A window, a rectangle, a freehand shape or the whole screen, with an optional delay. Outside a freehand shape can be transparent.</p>
+      </article>
+      <article class="card">
+        <span class="ico big" style="--i:url(icons/edit.svg)"></span>
+        <h3 data-i18n="f.edit.t">Annotate</h3>
+        <p data-i18n="f.edit.d">Arrows, shapes, text, numbering, highlighting and blur, then save, copy, or save and copy the file's path.</p>
+      </article>
+      <article class="card">
+        <span class="ico big" style="--i:url(icons/videocam.svg)"></span>
+        <h3 data-i18n="f.rec.t">Record</h3>
+        <p data-i18n="f.rec.d">Record to MP4 with the pointer and clicks highlighted, and the keys you press, or a full keyboard, shown at the bottom.</p>
+      </article>
+      <article class="card">
+        <span class="ico big" style="--i:url(icons/document_scanner.svg)"></span>
+        <h3 data-i18n="f.ocr.t">Recognize text</h3>
+        <p data-i18n="f.ocr.d">Copy the text out of any part of the screen with Windows OCR, Tesseract or PaddleOCR.</p>
+      </article>
+      <article class="card">
+        <span class="ico big" style="--i:url(icons/translate.svg)"></span>
+        <h3 data-i18n="f.tr.t">Translate</h3>
+        <p data-i18n="f.tr.d">Select some text on screen and read it in your language, online or fully offline.</p>
+      </article>
+      <article class="card">
+        <span class="ico big" style="--i:url(icons/qr_code_scanner.svg)"></span>
+        <h3 data-i18n="f.qr.t">QR codes</h3>
+        <p data-i18n="f.qr.d">Read QR codes and barcodes straight from the screen, no phone needed.</p>
+      </article>
+      <article class="card">
+        <span class="ico big" style="--i:url(icons/colorize.svg)"></span>
+        <h3 data-i18n="f.color.t">Color picker</h3>
+        <p data-i18n="f.color.d">Pick any pixel on screen and copy it as HEX, RGB or HSL.</p>
+      </article>
+      <article class="card">
+        <span class="ico big" style="--i:url(icons/my_location.svg)"></span>
+        <h3 data-i18n="f.cross.t">Crosshair</h3>
+        <p data-i18n="f.cross.d">A full-screen crosshair showing coordinates; lock a point and measure the distance to another, to the pixel.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="translate" class="section alt">
+  <div class="wrap split">
+    <div>
+      <h2 data-i18n="tr.title">Translation that works offline</h2>
+      <p data-i18n="tr.lead">Pick the engine that suits the machine and the text. Offline engines download their model once and never send your screen anywhere.</p>
+    </div>
+    <div class="engines">
+      <h4 data-i18n="tr.offline">Offline</h4>
+      <ul class="chips">
+        <li><strong data-i18n="tr.firefox">Firefox translation</strong> <span data-i18n="tr.firefox.d">Mozilla's Bergamot engine. Fast and light, runs well on office laptops.</span></li>
+        <li><strong data-i18n="tr.llm">Local language model</strong> <span data-i18n="tr.llm.d">Hy-MT2 or Qwen3 through llama.cpp. Uses the GPU (Vulkan) and falls back to the CPU.</span></li>
+      </ul>
+      <h4 data-i18n="tr.online">Online</h4>
+      <ul class="chips inline">
+        <li>Google Translate</li><li>DeepL</li><li>Google Cloud</li><li>Microsoft Translator</li><li>Claude</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="hotkeys" class="section">
+  <div class="wrap">
+    <h2 data-i18n="hk.title">Hotkeys</h2>
+    <p class="sub" data-i18n="hk.lead">Every action has a global hotkey; all of them can be changed in the settings.</p>
+    <div class="keys">
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd><span data-i18n="hk.window">Window</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>2</kbd><span data-i18n="hk.region">Region</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>3</kbd><span data-i18n="hk.full">Full screen</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>4</kbd><span data-i18n="hk.qr">QR code</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>5</kbd><span data-i18n="hk.ocr">Recognize text</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>6</kbd><span data-i18n="hk.free">Freehand region</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>7</kbd><span data-i18n="hk.color">Color picker</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>8</kbd><span data-i18n="hk.cross">Crosshair</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>V</kbd><span data-i18n="hk.rec">Screen recording</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>T</kbd><span data-i18n="hk.tr">Translate</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap">
+    <h2 data-i18n="pf.title">Platforms</h2>
+    <div class="table">
+      <table>
+        <thead><tr><th></th><th>Windows</th><th>X11</th><th>Wayland</th></tr></thead>
+        <tbody>
+          <tr><td data-i18n="pf.capture">Region, freehand and full screen</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+          <tr><td data-i18n="pf.window">Window capture, pointer in captures</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n">—</td></tr>
+          <tr><td data-i18n="pf.hotkeys">Global hotkeys</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n" data-i18n="pf.planned">Planned</td></tr>
+          <tr><td data-i18n="pf.overlay">Click and key overlays in recordings</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n">—</td></tr>
+          <tr><td data-i18n="pf.ocr">Tesseract and PaddleOCR</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+          <tr><td data-i18n="pf.llm">Local language model translation</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+          <tr><td data-i18n="pf.firefox">Firefox translation</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n" data-i18n="pf.planned">Planned</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="build" class="section">
+  <div class="wrap">
+    <h2 data-i18n="b.title">Build from source</h2>
+    <p class="sub" data-i18n="b.lead">Needs Qt 6.8 or later, CMake 3.24 and a C++20 compiler. Other libraries are found on the system or downloaded at pinned versions.</p>
+<pre><code>git clone %PROJECT_URL%.git
+cd glimpse
+cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=&lt;Qt dir&gt;
+cmake --build build/release --parallel
+cmake --build build/release --target package</code></pre>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span><img src="logo.svg" alt="" width="20" height="20"> Glimpse</span>
+    <span>
+      <a href="%PROJECT_URL%/-/blob/%DEFAULT_BRANCH%/LICENSE" data-i18n="foot.license">MIT License</a> ·
+      <a href="%PROJECT_URL%/-/blob/%DEFAULT_BRANCH%/THIRD_PARTY_NOTICES.md" data-i18n="foot.notices">Third-party notices</a> ·
+      <span data-i18n="foot.icons">Icons: Material Symbols</span>
+    </span>
+  </div>
+</footer>
+
+<script src="i18n.js"></script>
+</body>
+</html>
