@@ -13,7 +13,9 @@ permissions:
 
 jobs:
   windows:
-    runs-on: windows-2025
+    # The Firefox engine is built with Visual Studio 2022, as on the
+    # developers' machines; windows-2025 now comes with Visual Studio 2026.
+    runs-on: windows-2022
     timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
