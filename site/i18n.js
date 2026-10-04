@@ -9,6 +9,12 @@
     'hero.lead': 'Glimpse 能截图、录屏、标注，还能识别截图里的文字并翻译。需要时可以完全离线，免费且开源。',
     'hero.download': '下载',
     'hero.source': '源代码',
+    'dl.site': '从本站下载',
+    'nav.releases': '版本',
+    'rel.title': '版本',
+    'rel.lead': '从本站下载各个版本的 Windows 安装包，与 GitLab 上的发布内容相同。',
+    'rel.latest': '最新',
+    'rel.download': '下载',
     'dl.github': '从 GitHub 下载',
     'dl.gitlab': '从 GitLab 下载',
     'hero.meta': 'Windows · Linux（X11 和 Wayland）· MIT 许可证',
@@ -66,17 +72,17 @@
     'foot.icons': '图标：Material Symbols'
   };
 
-  var nodes = document.querySelectorAll('[data-i18n]');
-  var en = {};
-  for (var i = 0; i < nodes.length; i++) en[nodes[i].getAttribute('data-i18n')] = nodes[i].textContent;
-
   var button = document.getElementById('lang');
 
+  // Rescans the page each time, so parts added later (the release list) are
+  // translated too; each element keeps its English text in data-en.
   function apply(lang) {
-    var table = lang === 'zh' ? zh : en;
+    var nodes = document.querySelectorAll('[data-i18n]');
     for (var i = 0; i < nodes.length; i++) {
-      var text = table[nodes[i].getAttribute('data-i18n')];
-      if (text) nodes[i].textContent = text;
+      var node = nodes[i];
+      if (node.dataset.en === undefined) node.dataset.en = node.textContent;
+      var text = lang === 'zh' ? zh[node.getAttribute('data-i18n')] : null;
+      node.textContent = text || node.dataset.en;
     }
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
     button.textContent = lang === 'zh' ? 'English' : '中文';
@@ -92,6 +98,7 @@
     lang = lang === 'zh' ? 'en' : 'zh';
     apply(lang);
   });
+  window.glimpseRetranslate = function () { apply(lang); };
 
   // The download menu closes on a click elsewhere or Escape.
   var download = document.getElementById('download');

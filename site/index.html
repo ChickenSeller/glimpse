@@ -15,6 +15,7 @@
     <a class="brand" href="#"><img src="logo.svg" alt="" width="28" height="28"> Glimpse</a>
     <nav class="nav">
       <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#releases" id="nav-releases" hidden data-i18n="nav.releases">Releases</a>
       <a href="#translate" data-i18n="nav.translate">Translation</a>
       <a href="#hotkeys" data-i18n="nav.hotkeys">Hotkeys</a>
       <a href="#build" data-i18n="nav.build">Build</a>
@@ -36,6 +37,7 @@
           <div class="menu">
             <a class="btn" href="%GITHUB_URL%/releases/latest" data-i18n="dl.github">From GitHub</a>
             <a class="btn" href="%PROJECT_URL%/-/releases/permalink/latest" data-i18n="dl.gitlab">From GitLab</a>
+            <a class="btn" id="download-site" href="#releases" hidden data-i18n="dl.site">From this site</a>
           </div>
         </details>
         <a class="btn" href="%GITHUB_URL%" data-i18n="hero.source">Source code</a>
@@ -177,6 +179,15 @@
   </div>
 </section>
 
+<!-- Filled from releases.json by releases.js; hidden without releases. -->
+<section id="releases" class="section" hidden>
+  <div class="wrap">
+    <h2 data-i18n="rel.title">Releases</h2>
+    <p class="sub" data-i18n="rel.lead">Windows packages of every version, from this site; the same as the releases on GitLab.</p>
+    <div class="releases" id="release-list"></div>
+  </div>
+</section>
+
 <section id="build" class="section">
   <div class="wrap">
     <h2 data-i18n="b.title">Build from source</h2>
@@ -203,5 +214,6 @@ cmake --build build/release --target package</code></pre>
 </footer>
 
 <script src="i18n.js"></script>
+<script src="releases.js"></script>
 </body>
 </html>
