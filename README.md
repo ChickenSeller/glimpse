@@ -5,6 +5,8 @@ FastStone Capture. Built with Qt 6 for Windows and Linux (X11 and Wayland).
 
 The interface is available in English, Simplified Chinese and Japanese.
 
+Homepage: <https://pages.yanlei.org/kaguya/glimpse/>
+
 ## Features
 
 - **Capture**: active window, rectangular region, freehand region or full
