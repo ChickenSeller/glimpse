@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.24)
 
-# The release pipeline passes the version from the tag (v1.2.3 -> 1.2.3).
-set(GLIMPSE_VERSION 0.1.0 CACHE STRING "Version of Glimpse")
+# The version. The release pipeline passes the one of the tag instead
+# (v1.2.3 -> -DGLIMPSE_RELEASE_VERSION=1.2.3).
+set(GLIMPSE_VERSION 0.2.1)
+if(GLIMPSE_RELEASE_VERSION)
+    set(GLIMPSE_VERSION ${GLIMPSE_RELEASE_VERSION})
+endif()
 project(glimpse VERSION ${GLIMPSE_VERSION} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)

@@ -35,7 +35,7 @@ jobs:
         shell: pwsh
         run: |
           $configure = @('-S', '.', '-B', 'build/release', '-G', 'Ninja', '-DCMAKE_BUILD_TYPE=Release', "-DCMAKE_PREFIX_PATH=$env:QT_ROOT_DIR")
-          if ($env:GITHUB_REF_TYPE -eq 'tag') { $configure += "-DGLIMPSE_VERSION=$($env:GITHUB_REF_NAME.Substring(1))" }
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $configure += "-DGLIMPSE_RELEASE_VERSION=$($env:GITHUB_REF_NAME.Substring(1))" }
           cmake @configure
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           cmake --build build/release --parallel
