@@ -71,6 +71,7 @@
    <addaction name="actionCopy"/>
    <addaction name="separator"/>
    <addaction name="actionEdit"/>
+   <addaction name="actionPin"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionSaveAs">
@@ -125,6 +126,21 @@
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionPin">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/push_pin.svg</normaloff>:/icons/push_pin.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Pin to Screen</string>
+   </property>
+   <property name="toolTip">
+    <string>Pin to the screen, on top of all windows</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+P</string>
    </property>
   </action>
   <action name="actionClose">

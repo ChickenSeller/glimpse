@@ -2,6 +2,49 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../src/app/AboutDialog.ui" line="+6"/>
+        <source>About Glimpse</source>
+        <translation>关于 Glimpse</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>A screenshot and screen recording tool: capture, annotate, pin to the screen, recognize text and translate it.</source>
+        <translation>截图与录屏工具：截图、标注、贴到屏幕、识别文字并翻译。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="+43"/>
+        <source>Version %1</source>
+        <translation>版本 %1</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Source code</source>
+        <translation>源代码</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Homepage</source>
+        <translation>主页</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Copyright © 2026 Kaguya. Released under the %1; built with Qt %2 and other open-source components (%3).</source>
+        <translation>Copyright © 2026 Kaguya。以 %1 发布；基于 Qt %2 及其他开源组件构建（%3）。</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>MIT License</source>
+        <translation>MIT 许可证</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>third-party notices</source>
+        <translation>第三方声明</translation>
+    </message>
+</context>
+<context>
     <name>AnnotatorWindow</name>
     <message>
         <location filename="../src/editor/AnnotatorWindow.ui" line="+14"/>
@@ -92,7 +135,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+45"/>
+        <location filename="../src/app/CaptureMode.h" line="+55"/>
         <source>Capture Window / Object</source>
         <translation>捕捉窗口/对象</translation>
     </message>
@@ -112,13 +155,13 @@
         <translation>识别二维码</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+410"/>
+        <location filename="../src/app/CaptureController.cpp" line="+459"/>
+        <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location line="-409"/>
+        <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Scrolling Capture</source>
         <translation>滚动截图</translation>
     </message>
@@ -148,25 +191,30 @@
         <translation>截图翻译</translation>
     </message>
     <message>
-        <location line="+43"/>
-        <location line="+34"/>
+        <location line="+1"/>
+        <source>Pin Region to Screen</source>
+        <translation>贴图到屏幕</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureController.cpp" line="-376"/>
+        <location line="+35"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-34"/>
         <source>Already in use by another program: %1</source>
         <translation>已被其他程序占用：%1</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>以下快捷键已被其他程序占用，将无法使用：
 %1</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+55"/>
         <source>Show Toolbar</source>
         <translation>显示工具栏</translation>
     </message>
@@ -177,11 +225,16 @@
     </message>
     <message>
         <location line="+1"/>
+        <source>About Glimpse...</source>
+        <translation>关于 Glimpse...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+209"/>
+        <location line="+212"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -292,6 +345,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
+        <source>Pin a Region to the Screen</source>
+        <translation>截取区域并贴到屏幕上</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pin</source>
+        <translation>贴图</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Record Screen (press again to stop)</source>
         <translation>录制屏幕（再按一次停止）</translation>
     </message>
@@ -362,7 +425,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+189"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+488"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -475,7 +539,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文件</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+34"/>
         <source>Save As...</source>
         <translation>另存为...</translation>
     </message>
@@ -505,12 +569,22 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>在标注编辑器中编辑</translation>
     </message>
     <message>
+        <location line="+12"/>
+        <source>Pin to Screen</source>
+        <translation>贴到屏幕</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pin to the screen, on top of all windows</source>
+        <translation>贴到屏幕上，置于所有窗口之上</translation>
+    </message>
+    <message>
         <location line="+8"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../src/editor/EditorWindow.cpp" line="+86"/>
+        <location filename="../src/editor/EditorWindow.cpp" line="+88"/>
         <source>Glimpse - %1 × %2</source>
         <translation>Glimpse - %1 × %2</translation>
     </message>
@@ -816,6 +890,59 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
 </context>
 <context>
+    <name>PinWindow</name>
+    <message>
+        <location filename="../src/pin/PinWindow.cpp" line="+192"/>
+        <source>Opacity %1%</source>
+        <translation>不透明度 %1%</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Scroll: zoom  ·  Ctrl+scroll: opacity  ·  Double-click: close</source>
+        <translation>滚轮：缩放  ·  Ctrl+滚轮：透明度  ·  双击：关闭</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Pinned Capture</source>
+        <translation>贴图</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Copy</source>
+        <translation>复制(&amp;C)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Save As...</source>
+        <translation>另存为(&amp;S)...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open in &amp;Editor</source>
+        <translation>在编辑器中打开(&amp;E)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Actual Size</source>
+        <translation>实际大小(&amp;A)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>C&amp;lose</source>
+        <translation>关闭(&amp;L)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Copied</source>
+        <translation>已复制</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Saved</source>
+        <translation>已保存</translation>
+    </message>
+</context>
+<context>
     <name>Platform</name>
     <message>
         <location filename="../src/capture/Platform.cpp" line="+110"/>
@@ -962,7 +1089,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+360"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+388"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation>单击：取色  ·  方向键：移动 1 像素</translation>
     </message>
@@ -1080,6 +1207,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+13"/>
+        <source>P&amp;in Region to Screen:</source>
+        <translation>贴图到屏幕(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Recor&amp;d Screen:</source>
         <translation>录制屏幕(&amp;D)：</translation>
     </message>
@@ -1120,6 +1252,31 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+21"/>
+        <source>Toolbar</source>
+        <translation>工具栏</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The buttons on the capture toolbar, from left to right. Uncheck a button to hide it; drag it or use the arrows to move it.</source>
+        <translation>截图工具栏上的按钮，从左到右排列。取消勾选可隐藏按钮；拖动或使用右侧按钮可调整顺序。</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Move &amp;Up</source>
+        <translation>上移(&amp;U)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Move Do&amp;wn</source>
+        <translation>下移(&amp;W)</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&amp;Icon size:</source>
+        <translation>图标大小(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Recording</source>
         <translation>录屏</translation>
     </message>
@@ -1265,12 +1422,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+54"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-431"/>
         <source>%1 fps</source>
         <translation>%1 帧/秒</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+69"/>
         <source>Other GGUF model file...</source>
         <translation>其他 GGUF 模型文件...</translation>
     </message>
@@ -1285,12 +1442,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>GGUF 模型 (*.gguf)</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+105"/>
         <source>Select at least one language for text recognition.</source>
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+73"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -1300,7 +1457,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="-162"/>
+        <location line="+99"/>
+        <source>Small</source>
+        <translation>小</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Medium</source>
+        <translation>中</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Large</source>
+        <translation>大</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>%1 (%2 px)</source>
+        <translation>%1（%2 像素）</translation>
+    </message>
+    <message>
+        <location line="-267"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

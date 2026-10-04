@@ -5,6 +5,8 @@
 
 #include <QApplication>
 
+#include <kdsingleapplication.h>
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -12,6 +14,16 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName(QStringLiteral("Glimpse"));
     QApplication::setApplicationVersion(QStringLiteral(GLIMPSE_VERSION));
     QApplication::setWindowIcon(appIcon());
+
+    // One Glimpse per user session: a second one could not register the
+    // hotkeys and would add a second tray icon. Starting it again brings the
+    // running one's toolbar up instead.
+    KDSingleApplication instance;
+    if (!instance.isPrimaryInstance()) {
+        instance.sendMessage(QByteArrayLiteral("show"));
+        return 0;
+    }
+
     // The app lives in the tray / floating toolbar; closing an editor must not quit it.
     QApplication::setQuitOnLastWindowClosed(false);
 #ifdef Q_OS_LINUX
@@ -22,6 +34,8 @@ int main(int argc, char *argv[])
 
     CaptureController controller;
     controller.showToolbar();
+    QObject::connect(&instance, &KDSingleApplication::messageReceived, &controller,
+                     [&controller] { controller.showToolbar(); });
 
     return QApplication::exec();
 }

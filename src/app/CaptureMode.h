@@ -2,6 +2,8 @@
 
 #include "capture/Platform.h"
 
+#include <QtGlobal>
+
 enum class CaptureMode {
     Window,
     Region,
@@ -14,6 +16,7 @@ enum class CaptureMode {
     Crosshair,   // full-screen crosshair with position, color and distances
     Recording,   // record a screen area to an MP4 video
     Translate,   // select a region, recognize its text and translate it
+    Pin,         // select a region and pin it to the screen, on top of everything
 };
 
 // The modes offered in the UI (tray menu, hotkeys, settings). Scrolling
@@ -24,6 +27,7 @@ inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::Region,
     CaptureMode::Freehand,
     CaptureMode::FullScreen,
+    CaptureMode::Pin,
     CaptureMode::Recording,
     CaptureMode::QrCode,
     CaptureMode::Ocr,
@@ -41,4 +45,45 @@ inline bool captureModeSupported(CaptureMode mode)
     case CaptureMode::Scrolling: return Platform::supportsScrollingCapture();
     default: return true;
     }
+}
+
+// The mode's name in menus and settings (translated in the "CaptureController"
+// context: QCoreApplication::translate("CaptureController", label)).
+inline const char *captureModeLabel(CaptureMode mode)
+{
+    switch (mode) {
+    case CaptureMode::Window: return QT_TRANSLATE_NOOP("CaptureController", "Capture Window / Object");
+    case CaptureMode::Region: return QT_TRANSLATE_NOOP("CaptureController", "Capture Rectangular Region");
+    case CaptureMode::FullScreen: return QT_TRANSLATE_NOOP("CaptureController", "Capture Full Screen");
+    case CaptureMode::QrCode: return QT_TRANSLATE_NOOP("CaptureController", "Scan QR Code");
+    case CaptureMode::Ocr: return QT_TRANSLATE_NOOP("CaptureController", "Recognize Text");
+    case CaptureMode::Scrolling: return QT_TRANSLATE_NOOP("CaptureController", "Scrolling Capture");
+    case CaptureMode::Freehand: return QT_TRANSLATE_NOOP("CaptureController", "Capture Freehand Region");
+    case CaptureMode::ColorPicker: return QT_TRANSLATE_NOOP("CaptureController", "Pick Screen Color");
+    case CaptureMode::Crosshair: return QT_TRANSLATE_NOOP("CaptureController", "Screen Crosshair");
+    case CaptureMode::Recording: return QT_TRANSLATE_NOOP("CaptureController", "Record Screen");
+    case CaptureMode::Translate: return QT_TRANSLATE_NOOP("CaptureController", "Translate Screenshot");
+    case CaptureMode::Pin: return QT_TRANSLATE_NOOP("CaptureController", "Pin Region to Screen");
+    }
+    return "";
+}
+
+// The mode's toolbar icon (the same as in CaptureToolbar.ui).
+inline const char *captureModeIcon(CaptureMode mode)
+{
+    switch (mode) {
+    case CaptureMode::Window: return ":/icons/select_window.svg";
+    case CaptureMode::Region: return ":/icons/screenshot_region.svg";
+    case CaptureMode::FullScreen: return ":/icons/screenshot_monitor.svg";
+    case CaptureMode::QrCode: return ":/icons/qr_code_scanner.svg";
+    case CaptureMode::Ocr: return ":/icons/document_scanner.svg";
+    case CaptureMode::Scrolling: return ":/icons/swipe_vertical.svg";
+    case CaptureMode::Freehand: return ":/icons/lasso_select.svg";
+    case CaptureMode::ColorPicker: return ":/icons/colorize.svg";
+    case CaptureMode::Crosshair: return ":/icons/my_location.svg";
+    case CaptureMode::Recording: return ":/icons/videocam.svg";
+    case CaptureMode::Translate: return ":/icons/translate.svg";
+    case CaptureMode::Pin: return ":/icons/push_pin.svg";
+    }
+    return "";
 }

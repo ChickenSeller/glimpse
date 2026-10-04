@@ -171,6 +171,19 @@
           <widget class="HotkeyEdit" name="fullScreenHotkeyEdit"/>
          </item>
          <item row="4" column="0">
+          <widget class="QLabel" name="pinHotkeyLabel">
+           <property name="text">
+            <string>P&amp;in Region to Screen:</string>
+           </property>
+           <property name="buddy">
+            <cstring>pinHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="HotkeyEdit" name="pinHotkeyEdit"/>
+         </item>
+         <item row="5" column="0">
           <widget class="QLabel" name="recordHotkeyLabel">
            <property name="text">
             <string>Recor&amp;d Screen:</string>
@@ -180,10 +193,10 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="HotkeyEdit" name="recordHotkeyEdit"/>
          </item>
-         <item row="5" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="qrHotkeyLabel">
            <property name="text">
             <string>Scan &amp;QR Code:</string>
@@ -193,10 +206,10 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="6" column="1">
           <widget class="HotkeyEdit" name="qrHotkeyEdit"/>
          </item>
-         <item row="6" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="ocrHotkeyLabel">
            <property name="text">
             <string>Recognize &amp;Text:</string>
@@ -206,10 +219,10 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="7" column="1">
           <widget class="HotkeyEdit" name="ocrHotkeyEdit"/>
          </item>
-         <item row="7" column="0">
+         <item row="8" column="0">
           <widget class="QLabel" name="translateHotkeyLabel">
            <property name="text">
             <string>Tra&amp;nslate Screenshot:</string>
@@ -219,10 +232,10 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="8" column="1">
           <widget class="HotkeyEdit" name="translateHotkeyEdit"/>
          </item>
-         <item row="8" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="colorHotkeyLabel">
            <property name="text">
             <string>&amp;Pick Screen Color:</string>
@@ -232,10 +245,10 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
+         <item row="9" column="1">
           <widget class="HotkeyEdit" name="colorHotkeyEdit"/>
          </item>
-         <item row="9" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="crosshairHotkeyLabel">
            <property name="text">
             <string>Screen Cr&amp;osshair:</string>
@@ -245,10 +258,10 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="1">
+         <item row="10" column="1">
           <widget class="HotkeyEdit" name="crosshairHotkeyEdit"/>
          </item>
-         <item row="10" column="0">
+         <item row="11" column="0">
           <widget class="QLabel" name="scrollHotkeyLabel">
            <property name="text">
             <string>&amp;Scrolling Capture:</string>
@@ -258,7 +271,7 @@
            </property>
           </widget>
          </item>
-         <item row="10" column="1">
+         <item row="11" column="1">
           <widget class="HotkeyEdit" name="scrollHotkeyEdit"/>
          </item>
         </layout>
@@ -282,6 +295,85 @@
           <enum>Qt::Vertical</enum>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="toolbarTab">
+      <attribute name="title">
+       <string>Toolbar</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="toolbarTabLayout">
+       <item>
+        <widget class="QLabel" name="toolbarHintLabel">
+         <property name="text">
+          <string>The buttons on the capture toolbar, from left to right. Uncheck a button to hide it; drag it or use the arrows to move it.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="toolbarListLayout">
+         <item>
+          <widget class="QListWidget" name="toolbarList">
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::InternalMove</enum>
+           </property>
+           <property name="defaultDropAction">
+            <enum>Qt::MoveAction</enum>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="toolbarMoveLayout">
+           <item>
+            <widget class="QPushButton" name="toolbarUpButton">
+             <property name="text">
+              <string>Move &amp;Up</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="toolbarDownButton">
+             <property name="text">
+              <string>Move Do&amp;wn</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="toolbarMoveSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QFormLayout" name="toolbarForm">
+         <item row="0" column="0">
+          <widget class="QLabel" name="toolbarIconSizeLabel">
+           <property name="text">
+            <string>&amp;Icon size:</string>
+           </property>
+           <property name="buddy">
+            <cstring>toolbarIconSizeCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="toolbarIconSizeCombo"/>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

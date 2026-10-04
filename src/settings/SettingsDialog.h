@@ -1,5 +1,6 @@
 #pragma once
 
+#include "app/AppSettings.h"
 #include "app/CaptureMode.h"
 
 #include <QColor>
@@ -47,6 +48,10 @@ private:
     QString systemDefaultLabel() const;
     void setFreehandColor(const QColor &color);
     void showTranslateEngine();
+    void setToolbarItems(const QList<AppSettings::ToolbarItem> &items);
+    QList<AppSettings::ToolbarItem> toolbarItems() const;
+    void updateToolbarItemTexts();
+    void moveToolbarItem(int delta);
 
     std::unique_ptr<Ui::SettingsDialog> ui;
     bool m_modified = false;

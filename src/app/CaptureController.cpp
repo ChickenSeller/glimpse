@@ -1,5 +1,6 @@
 #include "CaptureController.h"
 
+#include "AboutDialog.h"
 #include "AppIcon.h"
 #include "AppSettings.h"
 #include "CaptureToolbar.h"
@@ -11,6 +12,7 @@
 #include "editor/EditorWindow.h"
 #include "hotkey/GlobalHotkeys.h"
 #include "overlay/RegionSelector.h"
+#include "pin/PinWindow.h"
 #include "qr/BarcodeScanner.h"
 #include "record/RecordingDoneDialog.h"
 #include "record/RecordingSession.h"
@@ -39,23 +41,6 @@ namespace {
 constexpr int kHideDelayMs = 300;
 constexpr int kShortDelayMs = 150;
 
-const char *captureLabel(CaptureMode mode)
-{
-    switch (mode) {
-    case CaptureMode::Window: return QT_TRANSLATE_NOOP("CaptureController", "Capture Window / Object");
-    case CaptureMode::Region: return QT_TRANSLATE_NOOP("CaptureController", "Capture Rectangular Region");
-    case CaptureMode::FullScreen: return QT_TRANSLATE_NOOP("CaptureController", "Capture Full Screen");
-    case CaptureMode::QrCode: return QT_TRANSLATE_NOOP("CaptureController", "Scan QR Code");
-    case CaptureMode::Ocr: return QT_TRANSLATE_NOOP("CaptureController", "Recognize Text");
-    case CaptureMode::Scrolling: return QT_TRANSLATE_NOOP("CaptureController", "Scrolling Capture");
-    case CaptureMode::Freehand: return QT_TRANSLATE_NOOP("CaptureController", "Capture Freehand Region");
-    case CaptureMode::ColorPicker: return QT_TRANSLATE_NOOP("CaptureController", "Pick Screen Color");
-    case CaptureMode::Crosshair: return QT_TRANSLATE_NOOP("CaptureController", "Screen Crosshair");
-    case CaptureMode::Recording: return QT_TRANSLATE_NOOP("CaptureController", "Record Screen");
-    case CaptureMode::Translate: return QT_TRANSLATE_NOOP("CaptureController", "Translate Screenshot");
-    }
-    return "";
-}
 
 } // namespace
 
@@ -124,6 +109,7 @@ void CaptureController::showSettings()
     m_settings = new SettingsDialog;
     m_settings->setAttribute(Qt::WA_DeleteOnClose);
     connect(m_settings, &SettingsDialog::applied, this, [this] {
+        m_toolbar->applyLayoutSettings();
         // Register right away to report conflicts while the user can still fix
         // them, then pause again until the dialog closes.
         const QStringList taken = registerHotkeys();
@@ -138,6 +124,15 @@ void CaptureController::showSettings()
     m_settings->show();
     m_settings->raise();
     m_settings->activateWindow();
+}
+
+void CaptureController::showAbout()
+{
+    if (!m_about)
+        m_about = new AboutDialog;
+    m_about->show();
+    m_about->raise();
+    m_about->activateWindow();
 }
 
 void CaptureController::setupTray()
@@ -156,6 +151,7 @@ void CaptureController::setupTray()
     m_trayMenu->addSeparator();
     m_trayShowToolbar = m_trayMenu->addAction(QString(), this, &CaptureController::showToolbar);
     m_traySettings = m_trayMenu->addAction(QString(), this, &CaptureController::showSettings);
+    m_trayAbout = m_trayMenu->addAction(QString(), this, &CaptureController::showAbout);
     m_trayMenu->addSeparator();
     m_trayExit = m_trayMenu->addAction(QString(), qApp, &QApplication::quit);
 
@@ -173,10 +169,11 @@ void CaptureController::setupTray()
 void CaptureController::retranslate()
 {
     for (auto it = m_trayCaptureActions.cbegin(); it != m_trayCaptureActions.cend(); ++it)
-        it.value()->setText(tr(captureLabel(it.key())));
+        it.value()->setText(tr(captureModeLabel(it.key())));
     if (m_trayShowToolbar) {
         m_trayShowToolbar->setText(tr("Show Toolbar"));
         m_traySettings->setText(tr("Settings..."));
+        m_trayAbout->setText(tr("About Glimpse..."));
         m_trayExit->setText(tr("Exit"));
     }
 }
@@ -278,6 +275,8 @@ void CaptureController::deliver(const QImage &image)
         showOcrResult(image);
     else if (m_mode == Mode::Translate)
         showTranslateResult(image);
+    else if (m_mode == Mode::Pin)
+        pinToScreen(image, m_pinRect);
     else
         openEditor(image);
 }
@@ -321,6 +320,7 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
         }
         selector->deleteLater();
         const QPainterPath shape = selector->shape();
+        m_pinRect = rect;
         if (AppSettings::captureDelay() > 0) {
             // Area first, then the countdown, then a fresh grab of that area:
             // menus or tooltips opened meanwhile end up in the capture.
@@ -515,6 +515,17 @@ void CaptureController::showTranslateResult(const QImage &image)
     dialog->show();
     dialog->raise();
     dialog->activateWindow();
+}
+
+void CaptureController::pinToScreen(const QImage &image, const QRect &where)
+{
+    if (image.isNull())
+        return;
+    // Right where it was captured, so it seems to stay put while the rest moves on.
+    auto *pin = new PinWindow(image, where);
+    pin->show();
+    pin->raise();
+    pin->activateWindow();
 }
 
 void CaptureController::openEditor(const QImage &image)

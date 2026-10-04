@@ -2,6 +2,49 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../src/app/AboutDialog.ui" line="+6"/>
+        <source>About Glimpse</source>
+        <translation>Glimpse について</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>A screenshot and screen recording tool: capture, annotate, pin to the screen, recognize text and translate it.</source>
+        <translation>スクリーンショットと画面録画のツールです。キャプチャ、注釈、画面へのピン留め、文字の認識と翻訳ができます。</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="+43"/>
+        <source>Version %1</source>
+        <translation>バージョン %1</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Source code</source>
+        <translation>ソースコード</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Homepage</source>
+        <translation>ホームページ</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Copyright © 2026 Kaguya. Released under the %1; built with Qt %2 and other open-source components (%3).</source>
+        <translation>Copyright © 2026 Kaguya。%1 で公開しています。Qt %2 とその他のオープンソースコンポーネントで構築されています（%3）。</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>MIT License</source>
+        <translation>MIT ライセンス</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>third-party notices</source>
+        <translation>サードパーティー通知</translation>
+    </message>
+</context>
+<context>
     <name>AnnotatorWindow</name>
     <message>
         <location filename="../src/editor/AnnotatorWindow.ui" line="+14"/>
@@ -92,7 +135,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+45"/>
+        <location filename="../src/app/CaptureMode.h" line="+55"/>
         <source>Capture Window / Object</source>
         <translation>ウィンドウ／オブジェクトをキャプチャ</translation>
     </message>
@@ -112,13 +155,13 @@
         <translation>QR コードを読み取る</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+410"/>
+        <location filename="../src/app/CaptureController.cpp" line="+459"/>
+        <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location line="-409"/>
+        <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Scrolling Capture</source>
         <translation>スクロールキャプチャ</translation>
     </message>
@@ -148,25 +191,30 @@
         <translation>スクリーンショット翻訳</translation>
     </message>
     <message>
-        <location line="+43"/>
-        <location line="+34"/>
+        <location line="+1"/>
+        <source>Pin Region to Screen</source>
+        <translation>画面にピン留め</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureController.cpp" line="-376"/>
+        <location line="+35"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-34"/>
         <source>Already in use by another program: %1</source>
         <translation>他のプログラムが使用中です：%1</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>次のホットキーは他のプログラムが使用中のため、動作しません：
 %1</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+55"/>
         <source>Show Toolbar</source>
         <translation>ツールバーを表示</translation>
     </message>
@@ -177,11 +225,16 @@
     </message>
     <message>
         <location line="+1"/>
+        <source>About Glimpse...</source>
+        <translation>Glimpse について...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Exit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+209"/>
+        <location line="+212"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -292,6 +345,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
+        <source>Pin a Region to the Screen</source>
+        <translation>領域をキャプチャして画面にピン留め</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pin</source>
+        <translation>ピン留め</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Record Screen (press again to stop)</source>
         <translation>画面を録画（もう一度押すと停止）</translation>
     </message>
@@ -362,7 +425,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+189"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+488"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -475,7 +539,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ファイル</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+34"/>
         <source>Save As...</source>
         <translation>名前を付けて保存...</translation>
     </message>
@@ -505,12 +569,22 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>注釈エディターで編集</translation>
     </message>
     <message>
+        <location line="+12"/>
+        <source>Pin to Screen</source>
+        <translation>画面にピン留め</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pin to the screen, on top of all windows</source>
+        <translation>すべてのウィンドウの前面にピン留め</translation>
+    </message>
+    <message>
         <location line="+8"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../src/editor/EditorWindow.cpp" line="+86"/>
+        <location filename="../src/editor/EditorWindow.cpp" line="+88"/>
         <source>Glimpse - %1 × %2</source>
         <translation>Glimpse - %1 × %2</translation>
     </message>
@@ -816,6 +890,59 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
 </context>
 <context>
+    <name>PinWindow</name>
+    <message>
+        <location filename="../src/pin/PinWindow.cpp" line="+192"/>
+        <source>Opacity %1%</source>
+        <translation>不透明度 %1%</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Scroll: zoom  ·  Ctrl+scroll: opacity  ·  Double-click: close</source>
+        <translation>ホイール：拡大縮小  ·  Ctrl+ホイール：不透明度  ·  ダブルクリック：閉じる</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Pinned Capture</source>
+        <translation>ピン留めしたキャプチャ</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Copy</source>
+        <translation>コピー(&amp;C)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Save As...</source>
+        <translation>名前を付けて保存(&amp;S)...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open in &amp;Editor</source>
+        <translation>エディターで開く(&amp;E)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Actual Size</source>
+        <translation>実際のサイズ(&amp;A)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>C&amp;lose</source>
+        <translation>閉じる(&amp;L)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Copied</source>
+        <translation>コピーしました</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Saved</source>
+        <translation>保存しました</translation>
+    </message>
+</context>
+<context>
     <name>Platform</name>
     <message>
         <location filename="../src/capture/Platform.cpp" line="+110"/>
@@ -962,7 +1089,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+360"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+388"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation>クリック：取得  ·  矢印キー：1 ピクセル移動</translation>
     </message>
@@ -1080,6 +1207,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+13"/>
+        <source>P&amp;in Region to Screen:</source>
+        <translation>画面にピン留め(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Recor&amp;d Screen:</source>
         <translation>画面を録画(&amp;D)：</translation>
     </message>
@@ -1120,6 +1252,31 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+21"/>
+        <source>Toolbar</source>
+        <translation>ツールバー</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The buttons on the capture toolbar, from left to right. Uncheck a button to hide it; drag it or use the arrows to move it.</source>
+        <translation>キャプチャツールバーのボタン（左から右の順）。チェックを外すと非表示になります。ドラッグするか右のボタンで並べ替えられます。</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Move &amp;Up</source>
+        <translation>上へ(&amp;U)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Move Do&amp;wn</source>
+        <translation>下へ(&amp;W)</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&amp;Icon size:</source>
+        <translation>アイコンのサイズ(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Recording</source>
         <translation>録画</translation>
     </message>
@@ -1265,12 +1422,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+54"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-431"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+69"/>
         <source>Other GGUF model file...</source>
         <translation>その他の GGUF モデル ファイル...</translation>
     </message>
@@ -1285,12 +1442,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>GGUF モデル (*.gguf)</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+105"/>
         <source>Select at least one language for text recognition.</source>
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+73"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -1300,7 +1457,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="-162"/>
+        <location line="+99"/>
+        <source>Small</source>
+        <translation>小</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Medium</source>
+        <translation>中</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Large</source>
+        <translation>大</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>%1 (%2 px)</source>
+        <translation>%1（%2 px）</translation>
+    </message>
+    <message>
+        <location line="-267"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

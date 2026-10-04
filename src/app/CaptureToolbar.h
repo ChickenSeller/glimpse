@@ -29,6 +29,8 @@ public:
 
     // Appends the global hotkeys to the button tooltips; modes without one show none.
     void setHotkeyHints(const QHash<CaptureMode, QKeySequence> &hotkeys);
+    // Orders, shows and sizes the buttons as set in Settings > Toolbar.
+    void applyLayoutSettings();
 
 signals:
     void captureRequested(CaptureMode mode);

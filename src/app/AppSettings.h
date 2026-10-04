@@ -17,6 +17,23 @@ QKeySequence defaultHotkey(CaptureMode mode);
 QKeySequence hotkey(CaptureMode mode);
 void setHotkey(CaptureMode mode, const QKeySequence &key);
 
+// The toolbar's buttons in order, by id (toolbarItemId(), or "delay" for the
+// delay button), and whether each is shown. Every button is listed: ones
+// added by a newer Glimpse join the end, shown.
+struct ToolbarItem {
+    QString id;
+    bool visible = true;
+};
+inline const QString kDelayItemId = QStringLiteral("delay");
+QString toolbarItemId(CaptureMode mode);
+QList<ToolbarItem> defaultToolbarItems();
+QList<ToolbarItem> toolbarItems();
+void setToolbarItems(const QList<ToolbarItem> &items);
+// Edge length of the toolbar icons, one of toolbarIconSizes().
+QList<int> toolbarIconSizes();
+int toolbarIconSize();
+void setToolbarIconSize(int size);
+
 // UI language code (see Language); empty follows the system language.
 QString language();
 void setLanguage(const QString &code);

@@ -32,6 +32,7 @@ private:
     void saveAndCopyPath();
     void copyToClipboard();
     void edit();
+    void pinToScreen();
     void setImage(const QImage &image);
     void fitToScreen();
     void updateTexts();

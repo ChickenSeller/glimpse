@@ -27,6 +27,7 @@ QString hotkeySettingsKey(CaptureMode mode)
     case CaptureMode::Crosshair: return QStringLiteral("hotkeys/crosshair");
     case CaptureMode::Recording: return QStringLiteral("hotkeys/recording");
     case CaptureMode::Translate: return QStringLiteral("hotkeys/translate");
+    case CaptureMode::Pin: return QStringLiteral("hotkeys/pin");
     }
     return {};
 }
@@ -53,8 +54,78 @@ QKeySequence defaultHotkey(CaptureMode mode)
     case CaptureMode::Recording: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_V);
     case CaptureMode::Scrolling: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_9);
     case CaptureMode::Translate: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T); // T for translate
+    case CaptureMode::Pin: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_P); // P for pin
     }
     return {};
+}
+
+QString toolbarItemId(CaptureMode mode)
+{
+    return hotkeySettingsKey(mode).section(QLatin1Char('/'), 1); // e.g. "region"
+}
+
+QList<ToolbarItem> defaultToolbarItems()
+{
+    QList<ToolbarItem> items;
+    for (CaptureMode mode : kAllCaptureModes)
+        items.append({toolbarItemId(mode), true});
+    items.append({kDelayItemId, true});
+    return items;
+}
+
+QList<ToolbarItem> toolbarItems()
+{
+    const QSettings settings;
+    const QStringList order = settings.value(QStringLiteral("toolbar/order")).toStringList();
+    const QStringList hidden = settings.value(QStringLiteral("toolbar/hidden")).toStringList();
+    const QList<ToolbarItem> defaults = defaultToolbarItems();
+    const auto known = [&defaults](const QString &id) {
+        return std::any_of(defaults.cbegin(), defaults.cend(), [&id](const ToolbarItem &item) { return item.id == id; });
+    };
+
+    QList<ToolbarItem> items;
+    QStringList seen;
+    for (const QString &id : order) {
+        if (known(id) && !seen.contains(id)) {
+            items.append({id, !hidden.contains(id)});
+            seen << id;
+        }
+    }
+    for (const ToolbarItem &item : defaults) {
+        if (!seen.contains(item.id))
+            items.append({item.id, !hidden.contains(item.id)});
+    }
+    return items;
+}
+
+void setToolbarItems(const QList<ToolbarItem> &items)
+{
+    QStringList order;
+    QStringList hidden;
+    for (const ToolbarItem &item : items) {
+        order << item.id;
+        if (!item.visible)
+            hidden << item.id;
+    }
+    QSettings settings;
+    settings.setValue(QStringLiteral("toolbar/order"), order);
+    settings.setValue(QStringLiteral("toolbar/hidden"), hidden);
+}
+
+QList<int> toolbarIconSizes()
+{
+    return {20, 24, 32};
+}
+
+int toolbarIconSize()
+{
+    const int size = QSettings().value(QStringLiteral("toolbar/iconSize"), 24).toInt();
+    return toolbarIconSizes().contains(size) ? size : 24;
+}
+
+void setToolbarIconSize(int size)
+{
+    QSettings().setValue(QStringLiteral("toolbar/iconSize"), size);
 }
 
 QKeySequence hotkey(CaptureMode mode)

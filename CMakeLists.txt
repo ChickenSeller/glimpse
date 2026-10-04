@@ -42,6 +42,27 @@ if(zxing_SOURCE_DIR)
     set_property(DIRECTORY ${zxing_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
 endif()
 
+# Single instance: KDSingleApplication (MIT, KDAB). A second start hands over
+# to the running Glimpse, which owns the global hotkeys and the tray icon.
+set(KDSingleApplication_QT6 ON CACHE BOOL "" FORCE)
+set(KDSingleApplication_STATIC ON CACHE BOOL "" FORCE)
+set(KDSingleApplication_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(KDSingleApplication_TESTS OFF CACHE BOOL "" FORCE)
+set(KDSingleApplication_DOCS OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(KDSingleApplication
+    URL https://github.com/KDAB/KDSingleApplication/releases/download/v1.2.1/kdsingleapplication-1.2.1.tar.gz
+    URL_HASH SHA256=e3254ce9dc5ecf6d61ef83264bc61d486a307f0e3c9ed1bb2176f068cdbcbe09
+    FIND_PACKAGE_ARGS NAMES KDSingleApplication-qt6
+)
+FetchContent_MakeAvailable(KDSingleApplication)
+if(kdsingleapplication_SOURCE_DIR)
+    set_property(DIRECTORY ${kdsingleapplication_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL TRUE)
+endif()
+
+# Shown in the About window.
+set(GLIMPSE_GITHUB_URL "https://github.com/ChickenSeller/glimpse" CACHE STRING "Glimpse's source repository")
+set(GLIMPSE_HOMEPAGE_URL "https://pages.yanlei.org/kaguya/glimpse/" CACHE STRING "Glimpse's homepage")
+
 # Text recognition engines (Windows OCR needs nothing extra).
 option(GLIMPSE_WITH_TESSERACT "Build the Tesseract OCR engine" ON)
 option(GLIMPSE_WITH_PADDLEOCR "Build the PaddleOCR engine (ONNX Runtime)" ON)
@@ -113,6 +134,9 @@ endif()
 qt_add_executable(glimpse
     src/main.cpp
 
+    src/app/AboutDialog.cpp
+    src/app/AboutDialog.h
+    src/app/AboutDialog.ui
     src/app/AppIcon.cpp
     src/app/AppIcon.h
     src/app/AppSettings.cpp
@@ -148,6 +172,9 @@ qt_add_executable(glimpse
 
     src/overlay/RegionSelector.cpp
     src/overlay/RegionSelector.h
+
+    src/pin/PinWindow.cpp
+    src/pin/PinWindow.h
 
     src/editor/AnnotatorWindow.cpp
     src/editor/AnnotatorWindow.h
@@ -204,7 +231,8 @@ qt_add_executable(glimpse
 )
 
 target_include_directories(glimpse PRIVATE src)
-target_compile_definitions(glimpse PRIVATE GLIMPSE_VERSION="${PROJECT_VERSION}")
+target_compile_definitions(glimpse PRIVATE GLIMPSE_VERSION="${PROJECT_VERSION}"
+    GLIMPSE_GITHUB_URL="${GLIMPSE_GITHUB_URL}" GLIMPSE_HOMEPAGE_URL="${GLIMPSE_HOMEPAGE_URL}")
 # UI translations, compiled to .qm and embedded under :/i18n. Refresh the .ts
 # files after changing UI strings with: cmake --build <dir> --target update_translations
 qt_add_translations(TARGETS glimpse
@@ -216,7 +244,7 @@ qt_add_translations(TARGETS glimpse
 
 # Svg: the SVG icon engine plugin that renders the Material Symbols icons.
 target_link_libraries(glimpse PRIVATE glimpse_ocr Qt6::Widgets Qt6::Svg Qt6::Concurrent Qt6::Multimedia Qt6::Network ZXing::ZXing
-                                      ${GLIMPSE_ANNOTATOR_TARGET})
+                                      KDAB::kdsingleapplication ${GLIMPSE_ANNOTATOR_TARGET})
 
 # Window/object picking and global hotkeys: Win32 only so far.
 if(WIN32)

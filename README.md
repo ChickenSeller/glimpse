@@ -12,6 +12,8 @@ Homepage: <https://pages.yanlei.org/kaguya/glimpse/>
 - **Capture**: active window, rectangular region, freehand region or full
   screen, with an optional delay. The area outside a freehand region can be
   filled with a color or left transparent.
+- **Pin to the screen**: keep a captured region floating on top of all
+  windows, right where it was taken; drag, zoom and fade it.
 - **Annotate**: arrows, shapes, text, highlighting, blur and more, in the
   built-in editor (kImageAnnotator).
 - **Save and share**: save, copy to the clipboard, or *Save and Copy Path*,
@@ -41,6 +43,7 @@ bundled.
 | Ctrl+Alt+1 | Window |
 | Ctrl+Alt+2 | Region |
 | Ctrl+Alt+3 | Full screen |
+| Ctrl+Alt+P | Pin region to screen |
 | Ctrl+Alt+4 | QR code |
 | Ctrl+Alt+5 | Text recognition (OCR) |
 | Ctrl+Alt+6 | Freehand region |

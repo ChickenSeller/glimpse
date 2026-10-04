@@ -13,6 +13,7 @@ are in the `licenses/` folder next to this file.
 | [kImageAnnotator](https://github.com/ksnip/kImageAnnotator) | 0.7.2 | LGPL-3.0 | `kImageAnnotator-LGPL-3.0.txt` | Shared library (annotation editor) |
 | [kColorPicker](https://github.com/ksnip/kColorPicker) | 0.3.1 | LGPL-3.0 | `kColorPicker-LGPL-3.0.txt` | Shared library (annotation editor) |
 | [ZXing-C++](https://github.com/zxing-cpp/zxing-cpp) | 3.1.1 | Apache-2.0 | `ZXing-cpp-Apache-2.0.txt` | Linked statically (QR codes) |
+| [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) | 1.2.1 | MIT | `KDSingleApplication-MIT.txt` | Linked statically (single instance) |
 | [Tesseract](https://github.com/tesseract-ocr/tesseract) | 5.5.3 | Apache-2.0 | `Tesseract-Apache-2.0.txt` | Linked statically (text recognition) |
 | [Leptonica](http://www.leptonica.org/) | 1.87.0 | BSD-2-Clause | `Leptonica-BSD-2-Clause.txt` | Linked statically (used by Tesseract) |
 | [ONNX Runtime](https://onnxruntime.ai/) | 1.30.0 | MIT | `ONNXRuntime-MIT.txt`, `ONNXRuntime-ThirdPartyNotices.txt` | Shared library (PaddleOCR) |

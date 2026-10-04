@@ -20,6 +20,7 @@ class QAction;
 class QMenu;
 class QSystemTrayIcon;
 class ScreenGrabber;
+class AboutDialog;
 class SettingsDialog;
 
 // Owns the toolbar and tray icon and runs one capture at a time:
@@ -36,6 +37,7 @@ public:
 
     void showToolbar();
     void showSettings();
+    void showAbout();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -50,6 +52,7 @@ private:
     void onGrabFailed(const QString &message);
     void endCapture();
     void openEditor(const QImage &image);
+    void pinToScreen(const QImage &image, const QRect &where);
     void showQrResult(const QImage &image);
     void showOcrResult(const QImage &image);
     void showTranslateResult(const QImage &image);
@@ -72,8 +75,10 @@ private:
     QHash<Mode, QAction *> m_trayCaptureActions;
     QAction *m_trayShowToolbar = nullptr;
     QAction *m_traySettings = nullptr;
+    QAction *m_trayAbout = nullptr;
     QAction *m_trayExit = nullptr;
     QPointer<SettingsDialog> m_settings;
+    QPointer<AboutDialog> m_about;
 
     Mode m_mode = Mode::FullScreen;
     bool m_busy = false;
@@ -82,5 +87,6 @@ private:
     // countdown ends, and this part of it is the capture.
     std::optional<QRect> m_pendingRect;
     QPainterPath m_pendingShape; // a freehand outline within m_pendingRect
+    QRect m_pinRect; // where the region being pinned was chosen
     bool m_restoreToolbar = false;
 };

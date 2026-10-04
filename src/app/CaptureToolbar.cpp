@@ -33,6 +33,7 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
         {CaptureMode::Region, ui->regionButton},
         {CaptureMode::Freehand, ui->freehandButton},
         {CaptureMode::FullScreen, ui->fullScreenButton},
+        {CaptureMode::Pin, ui->pinButton},
         {CaptureMode::Recording, ui->recordButton},
         {CaptureMode::QrCode, ui->qrButton},
         {CaptureMode::Ocr, ui->ocrButton},
@@ -72,6 +73,8 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
     // Hidden for every capture: it must be gone at once, not fading out.
     Platform::disableWindowAnimations(this);
 
+    applyLayoutSettings();
+
     // Wherever the user last left the bar; Qt moves it back on screen if that
     // monitor is gone. Without a saved value the window system places it.
     restoreGeometry(QSettings().value(kGeometryKey).toByteArray());
@@ -90,6 +93,34 @@ void CaptureToolbar::setHotkeyHints(const QHash<CaptureMode, QKeySequence> &hotk
     for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it)
         m_hotkeys.insert(it.value(), hotkeys.value(it.key()));
     updateToolTips();
+}
+
+void CaptureToolbar::applyLayoutSettings()
+{
+    QHash<QString, QToolButton *> buttons;
+    for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it)
+        buttons.insert(AppSettings::toolbarItemId(it.key()), it.value());
+    buttons.insert(AppSettings::kDelayItemId, ui->delayButton);
+
+    // Right after the drag grip, in the chosen order.
+    int index = ui->layout->indexOf(ui->dragHandle) + 1;
+    const QList<AppSettings::ToolbarItem> items = AppSettings::toolbarItems();
+    for (const AppSettings::ToolbarItem &item : items) {
+        QToolButton *button = buttons.value(item.id);
+        if (!button)
+            continue;
+        ui->layout->removeWidget(button);
+        ui->layout->insertWidget(index++, button);
+        button->setVisible(item.visible);
+    }
+    if (kScrollingHidden)
+        ui->scrollButton->hide();
+
+    const int size = AppSettings::toolbarIconSize();
+    const auto all = findChildren<QToolButton *>();
+    for (QToolButton *button : all)
+        button->setIconSize(QSize(size, size));
+    adjustSize(); // shrinks when buttons were hidden
 }
 
 void CaptureToolbar::updateToolTips()

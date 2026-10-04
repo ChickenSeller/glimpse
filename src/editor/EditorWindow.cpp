@@ -3,6 +3,7 @@
 
 #include "AnnotatorWindow.h"
 #include "ImageActions.h"
+#include "pin/PinWindow.h"
 
 #include <QAction>
 #include <QClipboard>
@@ -56,9 +57,10 @@ EditorWindow::EditorWindow(const QImage &image, QWidget *parent)
     connect(ui->actionSaveCopyPath, &QAction::triggered, this, &EditorWindow::saveAndCopyPath);
     connect(ui->actionCopy, &QAction::triggered, this, &EditorWindow::copyToClipboard);
     connect(ui->actionEdit, &QAction::triggered, this, &EditorWindow::edit);
+    connect(ui->actionPin, &QAction::triggered, this, &EditorWindow::pinToScreen);
     connect(ui->actionClose, &QAction::triggered, this, &QWidget::close);
 
-    for (QAction *action : {ui->actionSaveAs, ui->actionSaveCopyPath, ui->actionCopy, ui->actionEdit})
+    for (QAction *action : {ui->actionSaveAs, ui->actionSaveCopyPath, ui->actionCopy, ui->actionEdit, ui->actionPin})
         m_icons.add(action);
     m_icons.apply(palette().color(QPalette::ButtonText));
 
@@ -90,7 +92,7 @@ void EditorWindow::updateTexts()
 void EditorWindow::updateToolTips()
 {
     // Icon-only buttons: name the shortcut in the tooltip (as set by the .ui).
-    for (QAction *action : {ui->actionSaveAs, ui->actionSaveCopyPath, ui->actionCopy, ui->actionEdit}) {
+    for (QAction *action : {ui->actionSaveAs, ui->actionSaveCopyPath, ui->actionCopy, ui->actionEdit, ui->actionPin}) {
         QString text = action->toolTip();
         text.remove(QStringLiteral("..."));
         action->setToolTip(QStringLiteral("%1  (%2)").arg(text, action->shortcut().toString(QKeySequence::NativeText)));
@@ -134,6 +136,16 @@ void EditorWindow::edit()
     m_annotator->show();
     m_annotator->raise();
     m_annotator->activateWindow();
+}
+
+void EditorWindow::pinToScreen()
+{
+    // The pin takes over: it can copy, save and reopen the editor itself.
+    auto *pin = new PinWindow(m_image);
+    pin->show();
+    pin->raise();
+    pin->activateWindow();
+    close();
 }
 
 void EditorWindow::setImage(const QImage &image)

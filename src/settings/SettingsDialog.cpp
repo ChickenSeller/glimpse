@@ -4,6 +4,7 @@
 #include "HotkeyEdit.h"
 #include "app/AppSettings.h"
 #include "app/Language.h"
+#include "app/TintedIcon.h"
 #include "capture/Platform.h"
 #include "ocr/OcrEngine.h"
 #include "translate/FirefoxTranslation.h"
@@ -11,6 +12,8 @@
 #include "translate/Translator.h"
 
 #include <QColorDialog>
+#include <QCoreApplication>
+#include <QListWidget>
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -67,6 +70,31 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
     for (CaptureMode mode : kAllCaptureModes)
         hotkeyEdit(mode)->setKeySequence(AppSettings::hotkey(mode));
+
+    // Toolbar: its buttons as a checkable list, in toolbar order.
+    setToolbarItems(AppSettings::toolbarItems());
+    const QList<int> iconSizes = AppSettings::toolbarIconSizes();
+    for (int size : iconSizes)
+        ui->toolbarIconSizeCombo->addItem(QString(), size);
+    updateToolbarItemTexts();
+    ui->toolbarIconSizeCombo->setCurrentIndex(
+        std::max(0, ui->toolbarIconSizeCombo->findData(AppSettings::toolbarIconSize())));
+    connect(ui->toolbarUpButton, &QPushButton::clicked, this, [this] { moveToolbarItem(-1); });
+    connect(ui->toolbarDownButton, &QPushButton::clicked, this, [this] { moveToolbarItem(1); });
+    const auto updateMoveButtons = [this] {
+        const int row = ui->toolbarList->currentRow();
+        ui->toolbarUpButton->setEnabled(row > 0);
+        ui->toolbarDownButton->setEnabled(row >= 0 && row < ui->toolbarList->count() - 1);
+    };
+    connect(ui->toolbarList, &QListWidget::currentRowChanged, this, updateMoveButtons);
+    updateMoveButtons();
+    connect(ui->toolbarList, &QListWidget::itemChanged, this, [this] { setModified(true); });
+    // A drag within the list moves a row.
+    connect(ui->toolbarList->model(), &QAbstractItemModel::rowsMoved, this, [this, updateMoveButtons] {
+        updateMoveButtons();
+        setModified(true);
+    });
+    connect(ui->toolbarIconSizeCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
 
     // All engines are listed; those missing here are shown but cannot be picked.
     const QStringList engines = Ocr::allEngineIds();
@@ -176,6 +204,7 @@ void SettingsDialog::changeEvent(QEvent *event)
         showTranslateEngine();
         applyPlatformLimits();
         updateOcrEngineNote();
+        updateToolbarItemTexts();
         // The edits render key names (e.g. "Ctrl") in the UI language.
         for (CaptureMode mode : kAllCaptureModes) {
             HotkeyEdit *edit = hotkeyEdit(mode);
@@ -225,6 +254,8 @@ bool SettingsDialog::apply()
     AppSettings::setMicrosoftTranslatorRegion(ui->translateRegionEdit->text().trimmed());
     AppSettings::setLocalModel(ui->translateModelCombo->currentData().toString());
     AppSettings::setLocalModelFile(QDir::fromNativeSeparators(ui->translateModelFileEdit->text().trimmed()));
+    AppSettings::setToolbarItems(toolbarItems());
+    AppSettings::setToolbarIconSize(ui->toolbarIconSizeCombo->currentData().toInt());
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
     AppSettings::setCaptureIncludesCursor(ui->captureCursorCheck->isChecked());
     AppSettings::setFreehandTransparent(ui->freehandTransparentCheck->isChecked());
@@ -268,6 +299,7 @@ HotkeyEdit *SettingsDialog::hotkeyEdit(CaptureMode mode) const
     case CaptureMode::Crosshair: return ui->crosshairHotkeyEdit;
     case CaptureMode::Recording: return ui->recordHotkeyEdit;
     case CaptureMode::Translate: return ui->translateHotkeyEdit;
+    case CaptureMode::Pin: return ui->pinHotkeyEdit;
     }
     return nullptr;
 }
@@ -411,4 +443,70 @@ void SettingsDialog::restoreDefaults()
     ui->translateTargetCombo->setCurrentIndex(std::max(0, ui->translateTargetCombo->findData(Translate::defaultTarget())));
     for (CaptureMode mode : kAllCaptureModes)
         hotkeyEdit(mode)->setKeySequence(AppSettings::defaultHotkey(mode));
+    setToolbarItems(AppSettings::defaultToolbarItems());
+    ui->toolbarIconSizeCombo->setCurrentIndex(std::max(0, ui->toolbarIconSizeCombo->findData(24)));
+    setModified(true);
+}
+
+void SettingsDialog::setToolbarItems(const QList<AppSettings::ToolbarItem> &items)
+{
+    const QSignalBlocker blocker(ui->toolbarList);
+    ui->toolbarList->clear();
+    const QColor iconColor = palette().color(QPalette::ButtonText);
+    for (const AppSettings::ToolbarItem &item : items) {
+        QString icon = QStringLiteral(":/icons/timer.svg");
+        for (CaptureMode mode : kAllCaptureModes) {
+            if (AppSettings::toolbarItemId(mode) == item.id)
+                icon = QString::fromLatin1(captureModeIcon(mode));
+        }
+        auto *row = new QListWidgetItem(tintedIcon(QIcon(icon), iconColor), QString(), ui->toolbarList);
+        row->setData(Qt::UserRole, item.id);
+        row->setFlags((row->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsDragEnabled) & ~Qt::ItemIsDropEnabled);
+        row->setCheckState(item.visible ? Qt::Checked : Qt::Unchecked);
+    }
+    updateToolbarItemTexts();
+    ui->toolbarList->setCurrentRow(0);
+}
+
+QList<AppSettings::ToolbarItem> SettingsDialog::toolbarItems() const
+{
+    QList<AppSettings::ToolbarItem> items;
+    for (int i = 0; i < ui->toolbarList->count(); ++i) {
+        const QListWidgetItem *row = ui->toolbarList->item(i);
+        items.append({row->data(Qt::UserRole).toString(), row->checkState() == Qt::Checked});
+    }
+    return items;
+}
+
+void SettingsDialog::updateToolbarItemTexts()
+{
+    const QSignalBlocker blocker(ui->toolbarList);
+    for (int i = 0; i < ui->toolbarList->count(); ++i) {
+        QListWidgetItem *row = ui->toolbarList->item(i);
+        const QString id = row->data(Qt::UserRole).toString();
+        // The names the tray menu and the toolbar use, in their contexts.
+        QString text = QCoreApplication::translate("CaptureToolbar", "Delay Before Capture");
+        for (CaptureMode mode : kAllCaptureModes) {
+            if (AppSettings::toolbarItemId(mode) == id)
+                text = QCoreApplication::translate("CaptureController", captureModeLabel(mode));
+        }
+        row->setText(text);
+    }
+    const QStringList sizes = {tr("Small"), tr("Medium"), tr("Large")};
+    for (int i = 0; i < ui->toolbarIconSizeCombo->count(); ++i) {
+        const int size = ui->toolbarIconSizeCombo->itemData(i).toInt();
+        ui->toolbarIconSizeCombo->setItemText(i, tr("%1 (%2 px)").arg(sizes.value(i), QString::number(size)));
+    }
+}
+
+void SettingsDialog::moveToolbarItem(int delta)
+{
+    const int row = ui->toolbarList->currentRow();
+    const int target = row + delta;
+    if (row < 0 || target < 0 || target >= ui->toolbarList->count())
+        return;
+    QListWidgetItem *item = ui->toolbarList->takeItem(row);
+    ui->toolbarList->insertItem(target, item);
+    ui->toolbarList->setCurrentRow(target);
+    setModified(true);
 }
