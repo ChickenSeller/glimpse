@@ -275,8 +275,16 @@ bool Updater::install(const QString &zipPath, QString *error)
         QStringLiteral("-ProcessId"), QString::number(QCoreApplication::applicationPid()),
         QStringLiteral("-Exe"), QDir::toNativeSeparators(QCoreApplication::applicationFilePath()),
     };
-    if (!QProcess::startDetached(QStringLiteral("powershell.exe"), arguments)) {
-        *error = tr("Could not start the update.");
+    // By its full path: PATH does not always include PowerShell's folder.
+    const QString windows = qEnvironmentVariable("SystemRoot", QStringLiteral("C:\\Windows"));
+    QString powershell = QDir(windows).filePath(QStringLiteral("System32/WindowsPowerShell/v1.0/powershell.exe"));
+    if (!QFileInfo::exists(powershell))
+        powershell = QStringLiteral("powershell.exe"); // let Windows look for it after all
+    QProcess process;
+    process.setProgram(QDir::toNativeSeparators(powershell));
+    process.setArguments(arguments);
+    if (!process.startDetached()) {
+        *error = tr("Could not start the update.") + QLatin1Char('\n') + process.errorString();
         return false;
     }
     // The script waits for Glimpse to exit, replaces its files and starts it again.
