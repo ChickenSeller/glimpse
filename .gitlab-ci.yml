@@ -1,0 +1,30 @@
+stages:
+  - sync
+
+# Mirrors the default branch and all tags to GitHub. Runs only when started
+# by hand from the pipeline page.
+#
+# Set these under Settings > CI/CD > Variables:
+#   GITHUB_REPO   owner/name of the GitHub repository, e.g. kaguya/glimpse
+#   GITHUB_TOKEN  fine-grained token with Contents: read and write on that
+#                 repository only (mark it Masked and Protected)
+sync-github:
+  stage: sync
+  image:
+    name: alpine/git:latest
+    entrypoint: [""]
+  variables:
+    # GitHub rejects pushes from a shallow clone, so fetch the full history.
+    GIT_DEPTH: 0
+    GIT_STRATEGY: clone
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+  script:
+    - test -n "$GITHUB_REPO" || { echo "GITHUB_REPO is not set"; exit 1; }
+    - test -n "$GITHUB_TOKEN" || { echo "GITHUB_TOKEN is not set"; exit 1; }
+    - git remote add github "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git"
+    # Not a force push: if GitHub has commits GitLab lacks, this fails rather
+    # than discarding them.
+    - git push github "HEAD:refs/heads/${CI_DEFAULT_BRANCH}"
+    - git push github --tags
