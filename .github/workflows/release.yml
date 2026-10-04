@@ -1,0 +1,74 @@
+# Builds the Windows package. A version tag (v1.2.3, pushed here from GitLab)
+# publishes it as a GitHub release, which GitLab's release job then copies.
+# Started by hand, it only builds, and the package is kept as a run artifact.
+name: Release
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-2025
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      # Qt with the MinGW it was built with, and Ninja. Sets IQTA_TOOLS.
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.12.0'
+          host: windows
+          target: desktop
+          arch: win64_mingw
+          modules: qtmultimedia
+          tools: tools_mingw1310 tools_ninja
+          cache: true
+
+      - name: Build
+        shell: pwsh
+        run: |
+          $env:PATH = "$env:IQTA_TOOLS\mingw1310_64\bin;$env:IQTA_TOOLS\Ninja;$env:PATH"
+          $configure = @('-S', '.', '-B', 'build/release', '-G', 'Ninja', '-DCMAKE_BUILD_TYPE=Release')
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $configure += "-DGLIMPSE_VERSION=$($env:GITHUB_REF_NAME.Substring(1))" }
+          cmake @configure
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cmake --build build/release --parallel
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cmake --build build/release --target package
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
+      # Optional engines are skipped quietly when something is missing (e.g.
+      # Visual Studio for the Firefox engine); a release must have them all.
+      - name: Check the package
+        shell: pwsh
+        run: |
+          $zip = Get-Item build/release/Glimpse-*-windows-x64.zip
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $archive = [IO.Compression.ZipFile]::OpenRead($zip.FullName)
+          $names = $archive.Entries | ForEach-Object { Split-Path $_.FullName -Leaf }
+          $archive.Dispose()
+          $missing = 'glimpse.exe', 'Qt6Core.dll', 'glimpse-bergamot.dll', 'onnxruntime.dll', 'llama.dll', 'LICENSE' |
+            Where-Object { $names -notcontains $_ }
+          if ($missing) { throw "Missing from $($zip.Name): $($missing -join ', ')" }
+          "{0}: {1:N0} MB" -f $zip.Name, ($zip.Length / 1MB)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: glimpse-windows-x64
+          path: build/release/Glimpse-*-windows-x64.zip
+
+      - name: Publish the release
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $zip = Get-Item build/release/Glimpse-*-windows-x64.zip
+          gh release create $env:GITHUB_REF_NAME $zip.FullName --verify-tag --notes-from-tag `
+            --title "Glimpse $($env:GITHUB_REF_NAME.Substring(1))"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }

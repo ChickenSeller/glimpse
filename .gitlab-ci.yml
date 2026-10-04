@@ -1,66 +1,104 @@
 stages:
-  - build
+  - sync
   - release
   - deploy
-  - sync
 
-# --- Windows release ----------------------------------------------------------
-# Pushing a version tag (v1.2.3) builds the Windows package and publishes it as
-# a GitLab release. Needs a Windows runner (shell executor, PowerShell) tagged
-# "windows", with Qt (MinGW), CMake, Ninja, Git and Visual Studio 2022 (for the
-# Firefox translation engine) installed, and internet access for the pinned
-# third-party downloads. Adjust QT_DIR and QT_TOOLS to the runner's install.
-.windows-release:
-  tags: [windows]
+# Set these under Settings > CI/CD > Variables:
+#   GITHUB_REPO   owner/name of the GitHub repository, e.g. kaguya/glimpse
+#   GITHUB_TOKEN  fine-grained token for that repository only, with
+#                 Contents: read and write, and Workflows: read and write
+#                 (to push .github/workflows). Mark it Masked and Protected,
+#                 and protect the v* tags so release pipelines can use it.
+.github:
+  image:
+    name: alpine/git:latest
+    entrypoint: [""]
+  variables:
+    # GitHub rejects pushes from a shallow clone, so fetch the full history.
+    GIT_DEPTH: 0
+    GIT_STRATEGY: clone
+  before_script:
+    - test -n "$GITHUB_REPO" || { echo "GITHUB_REPO is not set"; exit 1; }
+    - test -n "$GITHUB_TOKEN" || { echo "GITHUB_TOKEN is not set"; exit 1; }
+    - git remote add github "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git"
+
+# Mirrors the default branch and all tags to GitHub. Runs only when started
+# by hand from the pipeline page.
+sync-github:
+  extends: .github
+  stage: sync
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+  script:
+    # Not a force push: if GitHub has commits GitLab lacks, this fails rather
+    # than discarding them.
+    - git push github "HEAD:refs/heads/${CI_DEFAULT_BRANCH}"
+    - git push github --tags
+
+# --- Release ------------------------------------------------------------------
+# Pushing a version tag (v1.2.3) here releases it:
+#   1. sync-tag-github pushes the tag to GitHub;
+#   2. GitHub Actions (.github/workflows/release.yml) builds the Windows
+#      package and publishes a GitHub release with it;
+#   3. release-from-github waits for that, copies the package into this
+#      project's package registry and creates the GitLab release.
+.version-tag:
   rules:
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
-  variables:
-    QT_DIR: 'D:\Qt\6.12.0\mingw_64'
-    QT_TOOLS: 'D:\Qt\Tools'
 
-build-windows:
-  extends: .windows-release
-  stage: build
+sync-tag-github:
+  extends: [.github, .version-tag]
+  stage: sync
   script:
-    - $env:PATH = "$env:QT_TOOLS\mingw1310_64\bin;$env:QT_TOOLS\CMake_64\bin;$env:QT_TOOLS\Ninja;$env:QT_DIR\bin;$env:PATH"
-    - $version = $env:CI_COMMIT_TAG.Substring(1)
-    - cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$env:QT_DIR" "-DGLIMPSE_VERSION=$version"
-    - cmake --build build/release --parallel 8
-    - cmake --build build/release --target package
-  artifacts:
-    paths:
-      - build/release/Glimpse-*-windows-x64.zip
-    expire_in: 1 week
+    - git push github "refs/tags/${CI_COMMIT_TAG}"
 
-# Uploads the package to the project's package registry (artifacts expire,
-# packages do not) and creates the release with a link to it.
-release-windows:
-  extends: .windows-release
+release-from-github:
+  extends: .version-tag
   stage: release
-  needs: [build-windows]
+  image: alpine:latest
+  needs: [sync-tag-github]
+  # The Windows build on GitHub takes a while; this job polls until it is done.
+  timeout: 5h
+  variables:
+    GIT_STRATEGY: none
   script:
+    - apk add --no-cache curl jq
     - |
-      $version = $env:CI_COMMIT_TAG.Substring(1)
-      $zip = Get-Item build/release/Glimpse-*-windows-x64.zip
-      $headers = @{ 'JOB-TOKEN' = $env:CI_JOB_TOKEN }
-      $api = "$env:CI_API_V4_URL/projects/$env:CI_PROJECT_ID"
-      $package = "$api/packages/generic/glimpse/$version/$($zip.Name)"
-      Invoke-RestMethod -Method Put -Uri $package -Headers $headers -InFile $zip.FullName | Out-Null
-      $notes = if ($env:CI_COMMIT_TAG_MESSAGE) { $env:CI_COMMIT_TAG_MESSAGE } else { "Glimpse $version" }
-      $release = @{
-        name = "Glimpse $version"
-        tag_name = $env:CI_COMMIT_TAG
-        description = $notes
-        assets = @{ links = @(@{
-          name = "Windows x64 ($($zip.Name))"
-          url = $package
-          direct_asset_path = "/$($zip.Name)"
-          link_type = 'package'
-        }) }
-      } | ConvertTo-Json -Depth 5
-      Invoke-RestMethod -Method Post -Uri "$api/releases" -Headers $headers `
-        -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes($release)) | Out-Null
-      Write-Host "Released ${env:CI_COMMIT_TAG}: $env:CI_PROJECT_URL/-/releases/$env:CI_COMMIT_TAG"
+      version="${CI_COMMIT_TAG#v}"
+      name="Glimpse-${version}-windows-x64.zip"
+      github() { curl -fsS -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPO}/$1" 2>/dev/null; }
+      echo "Waiting for $name in the GitHub release ${CI_COMMIT_TAG}"
+      echo "(progress: https://github.com/${GITHUB_REPO}/actions)"
+      asset=""
+      while [ -z "$asset" ]; do
+        asset=$(github "releases/tags/${CI_COMMIT_TAG}" \
+          | jq -r --arg name "$name" '.assets[] | select(.name == $name and .state == "uploaded") | .url' || true)
+        [ -n "$asset" ] && break
+        # Stop early when the build for this tag has failed.
+        conclusion=$(github "actions/workflows/release.yml/runs?branch=${CI_COMMIT_TAG}&per_page=1" \
+          | jq -r '.workflow_runs[0].conclusion // empty' || true)
+        case "$conclusion" in
+          failure|cancelled|timed_out|startup_failure)
+            echo "The GitHub build of ${CI_COMMIT_TAG} ended with: $conclusion"; exit 1 ;;
+        esac
+        sleep 60
+      done
+      curl -fsSL -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/octet-stream" -o "$name" "$asset"
+
+      # The package registry keeps the file for good (job artifacts expire).
+      package="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/glimpse/${version}/${name}"
+      curl -fsS -H "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "$name" "$package"
+      echo
+
+      jq -n --arg tag "$CI_COMMIT_TAG" --arg version "$version" --arg name "$name" --arg url "$package" \
+            --arg notes "${CI_COMMIT_TAG_MESSAGE:-Glimpse $version}" \
+        '{tag_name: $tag, name: ("Glimpse " + $version), description: $notes,
+          assets: {links: [{name: ("Windows x64 (" + $name + ")"), url: $url,
+                            direct_asset_path: ("/" + $name), link_type: "package"}]}}' > release.json
+      curl -fsS -H "JOB-TOKEN: ${CI_JOB_TOKEN}" -H "Content-Type: application/json" --data @release.json \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases" > /dev/null
+      echo "Released: ${CI_PROJECT_URL}/-/releases/${CI_COMMIT_TAG}"
 
 # The project homepage (site/) on GitLab Pages. Deploys when the site or the
 # icons it uses change on the default branch, and can be started by hand.
@@ -84,31 +122,3 @@ pages:
   artifacts:
     paths:
       - public
-
-# Mirrors the default branch and all tags to GitHub. Runs only when started
-# by hand from the pipeline page.
-#
-# Set these under Settings > CI/CD > Variables:
-#   GITHUB_REPO   owner/name of the GitHub repository, e.g. kaguya/glimpse
-#   GITHUB_TOKEN  fine-grained token with Contents: read and write on that
-#                 repository only (mark it Masked and Protected)
-sync-github:
-  stage: sync
-  image:
-    name: alpine/git:latest
-    entrypoint: [""]
-  variables:
-    # GitHub rejects pushes from a shallow clone, so fetch the full history.
-    GIT_DEPTH: 0
-    GIT_STRATEGY: clone
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-  script:
-    - test -n "$GITHUB_REPO" || { echo "GITHUB_REPO is not set"; exit 1; }
-    - test -n "$GITHUB_TOKEN" || { echo "GITHUB_TOKEN is not set"; exit 1; }
-    - git remote add github "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git"
-    # Not a force push: if GitHub has commits GitLab lacks, this fails rather
-    # than discarding them.
-    - git push github "HEAD:refs/heads/${CI_DEFAULT_BRANCH}"
-    - git push github --tags
