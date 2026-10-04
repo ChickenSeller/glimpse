@@ -18,22 +18,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Qt with the MinGW it was built with, and Ninja. Sets IQTA_TOOLS.
-      - uses: jurplel/install-qt-action@v4
+      # Qt with the MinGW it was built with, and Ninja (see the script for why
+      # not install-qt-action). Cached: about 1 GB from download.qt.io.
+      - uses: actions/cache@v4
         with:
-          version: '6.12.0'
-          host: windows
-          target: desktop
-          arch: win64_mingw
-          modules: qtmultimedia
-          tools: tools_mingw1310 tools_ninja
-          cache: true
+          path: ${{ runner.temp }}/Qt
+          key: qt-6.12.0-mingw1310-qtmultimedia-${{ hashFiles('.github/scripts/install-qt.py') }}
+
+      - name: Install Qt
+        shell: pwsh
+        run: python .github/scripts/install-qt.py --version 6.12.0 --modules qtmultimedia --dir "${{ runner.temp }}/Qt"
 
       - name: Build
         shell: pwsh
         run: |
-          $env:PATH = "$env:IQTA_TOOLS\mingw1310_64\bin;$env:IQTA_TOOLS\Ninja;$env:PATH"
-          $configure = @('-S', '.', '-B', 'build/release', '-G', 'Ninja', '-DCMAKE_BUILD_TYPE=Release')
+          $configure = @('-S', '.', '-B', 'build/release', '-G', 'Ninja', '-DCMAKE_BUILD_TYPE=Release', "-DCMAKE_PREFIX_PATH=$env:QT_ROOT_DIR")
           if ($env:GITHUB_REF_TYPE -eq 'tag') { $configure += "-DGLIMPSE_VERSION=$($env:GITHUB_REF_NAME.Substring(1))" }
           cmake @configure
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
