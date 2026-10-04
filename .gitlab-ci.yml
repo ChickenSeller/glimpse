@@ -125,7 +125,6 @@ pages:
       sed -i
       -e "s|%GITHUB_URL%|https://github.com/${GITHUB_REPO}|g"
       -e "s|%PROJECT_URL%|${CI_PROJECT_URL}|g"
-      -e "s|%GITLAB_HOST%|${CI_SERVER_HOST}|g"
       -e "s|%DEFAULT_BRANCH%|${CI_DEFAULT_BRANCH}|g"
       public/index.html
   artifacts:

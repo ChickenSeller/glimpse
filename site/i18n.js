@@ -9,6 +9,8 @@
     'hero.lead': 'Glimpse 能截图、录屏、标注，还能识别截图里的文字并翻译。需要时可以完全离线，免费且开源。',
     'hero.download': '下载',
     'hero.source': '源代码',
+    'dl.github': '从 GitHub 下载',
+    'dl.gitlab': '从 GitLab 下载',
     'hero.meta': 'Windows · Linux（X11 和 Wayland）· MIT 许可证',
     'features.title': '一个小工具栏，什么都有',
     'f.capture.t': '截图',
