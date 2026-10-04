@@ -15,6 +15,10 @@
     'rel.lead': '从本站下载各个版本的 Windows 安装包，与 GitLab 上的发布内容相同。',
     'rel.latest': '最新',
     'rel.download': '下载',
+    'rel.elsewhere': '也可以从这里下载：',
+    'rel.loading': '正在读取版本列表...',
+    'rel.none': '还没有发布任何版本。',
+    'rel.error': '暂时无法读取版本列表，可以先到上面的 GitHub 或 GitLab 下载。',
     'dl.github': '从 GitHub 下载',
     'dl.gitlab': '从 GitLab 下载',
     'hero.meta': 'Windows · Linux（X11 和 Wayland）· MIT 许可证',
@@ -100,13 +104,13 @@
   });
   window.glimpseRetranslate = function () { apply(lang); };
 
-  // The download menu closes on a click elsewhere or Escape.
+  // The download menu (home page only) closes on a click elsewhere or Escape.
   var download = document.getElementById('download');
-  document.addEventListener('click', function (event) {
+  if (download) document.addEventListener('click', function (event) {
     if (download.open && !download.contains(event.target)) download.open = false;
   });
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && download.open) {
+    if (event.key === 'Escape' && download && download.open) {
       download.open = false;
       download.querySelector('summary').focus();
     }

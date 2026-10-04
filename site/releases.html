@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glimpse Releases</title>
+<meta name="description" content="Every Glimpse release, with its notes, downloadable from this site.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css?v=%ASSET_VERSION%">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="brand" href="./"><img src="logo.svg" alt="" width="28" height="28"> Glimpse</a>
+    <nav class="nav">
+      <a href="./#features" data-i18n="nav.features">Features</a>
+      <a href="releases.html" aria-current="page" data-i18n="nav.releases">Releases</a>
+      <a href="./#translate" data-i18n="nav.translate">Translation</a>
+      <a href="./#hotkeys" data-i18n="nav.hotkeys">Hotkeys</a>
+      <a href="./#build" data-i18n="nav.build">Build</a>
+    </nav>
+    <button class="lang" id="lang" type="button" aria-label="Language">中文</button>
+  </div>
+</header>
+
+<main>
+
+<!-- Filled by releases.js from releases.json, which the server reads live
+     from the GitLab releases. -->
+<section class="section page-head">
+  <div class="wrap">
+    <h1 data-i18n="rel.title">Releases</h1>
+    <p class="sub" data-i18n="rel.lead">Windows packages of every version, from this site; the same as the releases on GitLab.</p>
+    <p class="sub alt-links">
+      <span data-i18n="rel.elsewhere">Also on</span>
+      <a href="%GITHUB_URL%/releases">GitHub</a> ·
+      <a href="%PROJECT_URL%/-/releases">GitLab</a>
+    </p>
+    <p class="status" id="release-status" data-i18n="rel.loading">Loading the releases...</p>
+    <div class="releases" id="release-list"></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span><img src="logo.svg" alt="" width="20" height="20"> Glimpse</span>
+    <span>
+      <a href="%GITHUB_URL%/blob/%DEFAULT_BRANCH%/LICENSE" data-i18n="foot.license">MIT License</a> ·
+      <a href="%GITHUB_URL%/blob/%DEFAULT_BRANCH%/THIRD_PARTY_NOTICES.md" data-i18n="foot.notices">Third-party notices</a> ·
+      <span data-i18n="foot.icons">Icons: Material Symbols</span>
+    </span>
+  </div>
+</footer>
+
+<script src="i18n.js?v=%ASSET_VERSION%"></script>
+<script src="releases.js?v=%ASSET_VERSION%"></script>
+</body>
+</html>

@@ -13,14 +13,14 @@ class QNetworkReply;
 class QProgressDialog;
 class QSaveFile;
 
-// Keeps Glimpse up to date from the homepage's update.json (written with the
-// release list when the page is deployed, see .gitlab-ci.yml):
+// Keeps Glimpse up to date from the homepage's update.json (which the web
+// server reads live from the GitLab releases, see deploy/nginx/):
 //
 //   {"latest":   {"version", "url", "sha256", "size", "notes"} or null,
 //    "required": the same, or null}
 //
-// "required" is the version every older Glimpse must move to (set in GitLab
-// as GLIMPSE_REQUIRED_VERSION). What happens depends on Settings > General:
+// "required" is the version every older Glimpse must move to (set on the
+// web server). What happens depends on Settings > General:
 // install the latest automatically, install a required version
 // automatically, ask about the latest, or never check.
 //

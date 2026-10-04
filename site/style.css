@@ -224,6 +224,12 @@ pre {
   font: 14px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
+/* Release page */
+.page-head h1 { margin-bottom: 12px; }
+.alt-links { margin-top: -20px; font-size: 15px; }
+.status { color: var(--muted); }
+.nav a[aria-current="page"] { color: var(--fg); font-weight: 600; }
+
 /* Releases */
 .releases { display: grid; gap: 14px; }
 .release { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; }

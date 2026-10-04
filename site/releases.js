@@ -1,6 +1,5 @@
-// The release list (releases.json, written when the page is deployed; see
-// the pages job in .gitlab-ci.yml) and the "From this site" download, which
-// leads to it. Both stay hidden without releases.
+// The release page's list, from releases.json: the web server reads it live
+// from the GitLab releases (see deploy/nginx/).
 (function () {
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -36,8 +35,21 @@
     return box;
   }
 
+  // The status line: loading, nothing yet, or the list could not be read.
+  function status(key, text) {
+    var line = document.getElementById('release-status');
+    line.setAttribute('data-i18n', key);
+    line.textContent = text;
+    delete line.dataset.en;
+    line.hidden = !key;
+    if (window.glimpseRetranslate) window.glimpseRetranslate();
+  }
+
   function show(releases) {
-    if (!releases.length) return;
+    if (!releases.length) {
+      status('rel.none', 'No releases yet.');
+      return;
+    }
     var listBox = document.getElementById('release-list');
     releases.forEach(function (release, index) {
       var card = el('article', 'release' + (index === 0 ? ' latest' : ''));
@@ -59,22 +71,19 @@
       card.appendChild(notes(release.notes, release.version));
       listBox.appendChild(card);
     });
-
-    document.getElementById('releases').hidden = false;
-    document.getElementById('nav-releases').hidden = false;
-    // "From this site" opens the list to pick a version from.
-    var fromSite = document.getElementById('download-site');
-    fromSite.hidden = false;
-    fromSite.addEventListener('click', function () {
-      document.getElementById('download').open = false;
-    });
-    if (window.glimpseRetranslate) window.glimpseRetranslate();
+    status('', '');
   }
 
+  // Read live from GitLab by the server on every visit (cached for a minute).
   fetch('releases.json', {cache: 'no-cache'})
-    .then(function (response) { return response.ok ? response.json() : []; })
+    .then(function (response) {
+      if (!response.ok) throw new Error(response.status);
+      return response.json();
+    })
     .then(function (releases) {
       show((releases || []).filter(function (r) { return r.files && r.files.length; }));
     })
-    .catch(function () {});
+    .catch(function () {
+      status('rel.error', 'The releases cannot be read right now. Try GitHub or GitLab above.');
+    });
 })();
