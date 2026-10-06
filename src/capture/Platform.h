@@ -36,6 +36,12 @@ bool supportsPointerHighlight();
 // Makes a window appear and disappear instantly (no compositor fade), so a
 // capture taken right after hiding it does not catch it fading out.
 void disableWindowAnimations(QWidget *window);
+// True where disableWindowAnimations() works, so a hidden window is gone as
+// soon as the screen is next composed (see flushCompositor()).
+bool hidesWindowsInstantly();
+// Waits until what was just shown or hidden is on screen. Does nothing where
+// unsupported.
+void flushCompositor();
 
 // The pointer position in physical pixels, where the platform reports it
 // exactly. Qt's logical positions are rounded on fractional scale factors

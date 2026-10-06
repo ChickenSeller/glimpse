@@ -63,6 +63,25 @@ bool supportsScrollingCapture()
     return displayServer() == DisplayServer::Windows;
 }
 
+bool hidesWindowsInstantly()
+{
+#ifdef Q_OS_WIN
+    return true;
+#else
+    return false;
+#endif
+}
+
+void flushCompositor()
+{
+#ifdef Q_OS_WIN
+    // Each call waits for the next frame DWM presents; the second makes sure
+    // the frame was composed after the change, not already on its way.
+    DwmFlush();
+    DwmFlush();
+#endif
+}
+
 void disableWindowAnimations(QWidget *window)
 {
 #ifdef Q_OS_WIN

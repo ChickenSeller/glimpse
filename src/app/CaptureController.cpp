@@ -40,7 +40,9 @@
 namespace {
 
 // Time for our own windows (toolbar, tray menu) to disappear before grabbing;
-// compositors animate window hiding.
+// compositors animate window hiding. Where the toolbar's animation is turned
+// off (Platform::hidesWindowsInstantly), it is gone with the next frame
+// instead; menus and dialogs still fade out.
 constexpr int kHideDelayMs = 300;
 constexpr int kShortDelayMs = 150;
 
@@ -166,7 +168,7 @@ void CaptureController::setupTray()
 
     m_trayMenu = std::make_unique<QMenu>();
     for (CaptureMode mode : kAllCaptureModes) {
-        QAction *item = m_trayMenu->addAction(QString(), this, [this, mode] { beginCapture(mode); });
+        QAction *item = m_trayMenu->addAction(QString(), this, [this, mode] { beginCaptureAfterFade(mode); });
         // The shortcut is only a hint (set in registerHotkeys); the global hotkey does the work.
         item->setShortcutVisibleInContextMenu(true);
         item->setEnabled(captureModeSupported(mode));
@@ -239,6 +241,16 @@ QStringList CaptureController::registerHotkeys()
 
 void CaptureController::beginCapture(Mode mode)
 {
+    startCapture(mode, false);
+}
+
+void CaptureController::beginCaptureAfterFade(Mode mode)
+{
+    startCapture(mode, true);
+}
+
+void CaptureController::startCapture(Mode mode, bool afterFade)
+{
     // The record button / hotkey / tray entry also stops a running recording.
     if (mode == Mode::Recording && m_recording) {
         m_recording->stop();
@@ -267,7 +279,13 @@ void CaptureController::beginCapture(Mode mode)
         afterDelay([this] { m_grabber->grab(); });
         return;
     }
-    QTimer::singleShot(m_restoreToolbar ? kHideDelayMs : kShortDelayMs, m_grabber, &ScreenGrabber::grab);
+    int delay = m_restoreToolbar ? kHideDelayMs : kShortDelayMs;
+    if (Platform::hidesWindowsInstantly())
+        delay = afterFade ? kShortDelayMs : 0;
+    QTimer::singleShot(delay, this, [this] {
+        Platform::flushCompositor();
+        m_grabber->grab();
+    });
 }
 
 void CaptureController::afterDelay(std::function<void()> then)
@@ -452,7 +470,7 @@ void CaptureController::showQrResult(const QImage &image)
 void CaptureController::showColorResult(const QColor &color)
 {
     auto *dialog = new ColorResultDialog(color);
-    connect(dialog, &ColorResultDialog::pickAgainRequested, this, [this] { beginCapture(Mode::ColorPicker); });
+    connect(dialog, &ColorResultDialog::pickAgainRequested, this, [this] { beginCaptureAfterFade(Mode::ColorPicker); });
     dialog->show();
     dialog->raise();
     dialog->activateWindow();

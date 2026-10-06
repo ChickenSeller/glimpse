@@ -49,6 +49,9 @@ private:
     // (Re)registers all configured hotkeys; returns the ones another program owns.
     QStringList registerHotkeys();
     void beginCapture(Mode mode);
+    // From a menu or dialog that is still fading out as the capture starts.
+    void beginCaptureAfterFade(Mode mode);
+    void startCapture(Mode mode, bool afterFade);
     void onSnapshot(const DesktopSnapshot &snapshot);
     void onGrabFailed(const QString &message);
     void endCapture();
