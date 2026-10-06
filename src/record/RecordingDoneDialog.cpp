@@ -4,8 +4,10 @@
 #include <QClipboard>
 #include <QDesktopServices>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QGuiApplication>
+#include <QMessageBox>
 #include <QProcess>
 #include <QUrl>
 
@@ -34,7 +36,28 @@ RecordingDoneDialog::RecordingDoneDialog(const QString &filePath, qint64 duratio
         QGuiApplication::clipboard()->setText(m_path);
         ui->copyPathButton->setText(tr("Copied"));
     });
+    connect(ui->discardButton, &QPushButton::clicked, this, &RecordingDoneDialog::discard);
     updateTexts();
+}
+
+// To the Recycle Bin, so a slip of the mouse can be undone; deleted for good
+// only when there is none and the user agrees.
+void RecordingDoneDialog::discard()
+{
+    QFile file(m_path);
+    if (!file.exists() || file.moveToTrash()) {
+        close();
+        return;
+    }
+    const auto answer = QMessageBox::question(
+        this, windowTitle(), tr("The recording cannot be moved to the Recycle Bin. Delete it permanently?"),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (answer != QMessageBox::Yes)
+        return;
+    if (file.remove())
+        close();
+    else
+        QMessageBox::warning(this, windowTitle(), tr("Could not delete the recording:\n%1").arg(file.errorString()));
 }
 
 RecordingDoneDialog::~RecordingDoneDialog() = default;

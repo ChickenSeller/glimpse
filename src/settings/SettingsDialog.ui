@@ -39,6 +39,50 @@
          <item row="0" column="1">
           <widget class="QComboBox" name="languageCombo"/>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="saveFolderLabel">
+           <property name="text">
+            <string>Sa&amp;ve files in:</string>
+           </property>
+           <property name="buddy">
+            <cstring>saveFolderEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <layout class="QHBoxLayout" name="saveFolderLayout">
+           <item>
+            <widget class="QLineEdit" name="saveFolderEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="saveFolderButton">
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="clearFolderButton">
+             <property name="text">
+              <string>Cl&amp;ear</string>
+             </property>
+             <property name="toolTip">
+              <string>Move saved screenshots or recordings to the Recycle Bin</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="saveFolderHint">
+           <property name="text">
+            <string>Screenshots go to its Screenshots subfolder, recordings to Recordings.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -67,30 +111,6 @@
              <string>&amp;Copy each capture to the clipboard</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="saveFolderLayout">
-            <item>
-             <widget class="QLabel" name="saveFolderLabel">
-              <property name="text">
-               <string>Sa&amp;ve captures in:</string>
-              </property>
-              <property name="buddy">
-               <cstring>saveFolderEdit</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="saveFolderEdit"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="saveFolderButton">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
           <item>
            <layout class="QHBoxLayout" name="freehandFillLayout">
@@ -499,17 +519,38 @@
        <item>
         <layout class="QFormLayout" name="toolbarForm">
          <item row="0" column="0">
-          <widget class="QLabel" name="toolbarIconSizeLabel">
+          <widget class="QLabel" name="toolbarScaleLabel">
            <property name="text">
-            <string>&amp;Icon size:</string>
+            <string>Toolbar &amp;size:</string>
            </property>
            <property name="buddy">
-            <cstring>toolbarIconSizeCombo</cstring>
+            <cstring>toolbarScaleSlider</cstring>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="toolbarIconSizeCombo"/>
+          <layout class="QHBoxLayout" name="toolbarScaleLayout">
+           <item>
+            <widget class="QSlider" name="toolbarScaleSlider">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="toolbarScaleValue">
+             <property name="minimumWidth">
+              <number>48</number>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -634,29 +675,15 @@
          <item row="0" column="1">
           <widget class="QComboBox" name="recordFrameRateCombo"/>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="recordFolderLabel">
+         <item row="1" column="1">
+          <widget class="QLabel" name="recordFolderHint">
            <property name="text">
-            <string>O&amp;utput folder:</string>
+            <string>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</string>
            </property>
-           <property name="buddy">
-            <cstring>recordFolderEdit</cstring>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
-         </item>
-         <item row="1" column="1">
-          <layout class="QHBoxLayout" name="recordFolderLayout">
-           <item>
-            <widget class="QLineEdit" name="recordFolderEdit"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="recordFolderButton">
-             <property name="text">
-              <string>Browse...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </item>
         </layout>
        </item>

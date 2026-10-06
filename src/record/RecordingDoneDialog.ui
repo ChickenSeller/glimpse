@@ -55,6 +55,16 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="discardButton">
+       <property name="text">
+        <string>&amp;Discard</string>
+       </property>
+       <property name="toolTip">
+        <string>Move the recording to the Recycle Bin</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="closeButton">
        <property name="text">
         <string>Close</string>

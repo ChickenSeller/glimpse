@@ -46,6 +46,7 @@ private:
     void setModified(bool modified);
     HotkeyEdit *hotkeyEdit(CaptureMode mode) const;
     void restoreDefaults();
+    void clearSavedFiles(bool screenshots, bool recordings);
     QString selectedLanguage() const;
     QStringList selectedOcrLanguages() const;
     void setOcrLanguages(const QStringList &languages);

@@ -34,7 +34,7 @@ bool hasTransparency(const QImage &image)
 QString saveAs(QWidget *parent, const QImage &image)
 {
     // The folder chosen in Settings > General, created if it is not there yet.
-    const QString dir = AppSettings::saveFolder();
+    const QString dir = AppSettings::screenshotFolder();
     QDir().mkpath(dir);
     const QString name = QStringLiteral("Glimpse_%1.png")
                              .arg(QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_HHmmss")));

@@ -9,7 +9,8 @@ class RecordingDoneDialog;
 }
 
 // Shown when a recording has been written: where it is, how long it is, and
-// Open / Show in Folder / Copy Path. Layout lives in RecordingDoneDialog.ui.
+// Open / Show in Folder / Copy Path / Discard. Layout lives in
+// RecordingDoneDialog.ui.
 class RecordingDoneDialog : public QDialog
 {
     Q_OBJECT
@@ -23,6 +24,7 @@ protected:
 
 private:
     void updateTexts();
+    void discard();
 
     std::unique_ptr<Ui::RecordingDoneDialog> ui;
     QString m_path;

@@ -11,9 +11,12 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QScreen>
 #include <QSettings>
 #include <QToolButton>
 #include <QWindow>
+
+#include <algorithm>
 
 
 namespace {
@@ -78,6 +81,7 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
     // Wherever the user last left the bar; Qt moves it back on screen if that
     // monitor is gone. Without a saved value the window system places it.
     restoreGeometry(QSettings().value(kGeometryKey).toByteArray());
+    keepOnScreen(); // at the size the settings ask for
 }
 
 CaptureToolbar::~CaptureToolbar()
@@ -116,11 +120,37 @@ void CaptureToolbar::applyLayoutSettings()
     if (kScrollingHidden)
         ui->scrollButton->hide();
 
+    // Icons, and the gaps around them, at the chosen size.
+    const qreal scale = AppSettings::toolbarScale() / 100.0;
     const int size = AppSettings::toolbarIconSize();
     const auto all = findChildren<QToolButton *>();
     for (QToolButton *button : all)
         button->setIconSize(QSize(size, size));
-    adjustSize(); // shrinks when buttons were hidden
+    if (m_baseSpacing < 0) {
+        m_baseSpacing = ui->layout->spacing();
+        m_baseMargins = ui->layout->contentsMargins();
+    }
+    ui->layout->setSpacing(qRound(m_baseSpacing * scale));
+    ui->layout->setContentsMargins(qRound(m_baseMargins.left() * scale), qRound(m_baseMargins.top() * scale),
+                                   qRound(m_baseMargins.right() * scale), qRound(m_baseMargins.bottom() * scale));
+    adjustSize(); // fits the new size, and shrinks when buttons were hidden
+    keepOnScreen();
+}
+
+// Grown, the bar may reach past the edge of its screen: move it back in.
+void CaptureToolbar::keepOnScreen()
+{
+    if (const QScreen *screen = this->screen()) {
+        const QRect available = screen->availableGeometry();
+        QRect frame = frameGeometry();
+        if (!available.contains(frame)) {
+            frame.moveRight(std::min(frame.right(), available.right()));
+            frame.moveBottom(std::min(frame.bottom(), available.bottom()));
+            frame.moveLeft(std::max(frame.left(), available.left()));
+            frame.moveTop(std::max(frame.top(), available.top()));
+            move(frame.topLeft());
+        }
+    }
 }
 
 void CaptureToolbar::updateToolTips()

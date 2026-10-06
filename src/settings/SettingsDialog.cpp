@@ -16,6 +16,7 @@
 #include <QColorDialog>
 #include <QCoreApplication>
 #include <QListWidget>
+#include <QMenu>
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -67,6 +68,15 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         }
     });
     connect(ui->saveFolderEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
+    // Built when opened, so it is always in the current language.
+    auto *clearMenu = new QMenu(ui->clearFolderButton);
+    connect(clearMenu, &QMenu::aboutToShow, this, [this, clearMenu] {
+        clearMenu->clear();
+        clearMenu->addAction(tr("Screenshots"), this, [this] { clearSavedFiles(true, false); });
+        clearMenu->addAction(tr("Recordings"), this, [this] { clearSavedFiles(false, true); });
+        clearMenu->addAction(tr("Screenshots and Recordings"), this, [this] { clearSavedFiles(true, true); });
+    });
+    ui->clearFolderButton->setMenu(clearMenu);
 
     ui->captureToolbarCheck->setChecked(AppSettings::captureIncludesToolbar());
     ui->captureCursorCheck->setChecked(AppSettings::captureIncludesCursor());
@@ -91,15 +101,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         ui->recordFrameRateCombo->addItem(tr("%1 fps").arg(rate), rate);
     ui->recordFrameRateCombo->setCurrentIndex(
         std::max(0, ui->recordFrameRateCombo->findData(AppSettings::recordFrameRate())));
-    ui->recordFolderEdit->setText(QDir::toNativeSeparators(AppSettings::recordFolder()));
-    connect(ui->recordFolderButton, &QPushButton::clicked, this, [this] {
-        const QString folder = QFileDialog::getExistingDirectory(this, ui->recordFolderLabel->text().remove(QLatin1Char('&')),
-                                                                 ui->recordFolderEdit->text());
-        if (!folder.isEmpty())
-            ui->recordFolderEdit->setText(QDir::toNativeSeparators(folder));
-    });
     connect(ui->recordFrameRateCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
-    connect(ui->recordFolderEdit, &QLineEdit::textChanged, this, [this] { setModified(true); });
     setFreehandColor(AppSettings::freehandColor());
 
     for (CaptureMode mode : kAllCaptureModes)
@@ -107,12 +109,18 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
     // Toolbar: its buttons as a checkable list, in toolbar order.
     setToolbarItems(AppSettings::toolbarItems());
-    const QList<int> iconSizes = AppSettings::toolbarIconSizes();
-    for (int size : iconSizes)
-        ui->toolbarIconSizeCombo->addItem(QString(), size);
     updateToolbarItemTexts();
-    ui->toolbarIconSizeCombo->setCurrentIndex(
-        std::max(0, ui->toolbarIconSizeCombo->findData(AppSettings::toolbarIconSize())));
+    // The size in steps of 10%.
+    ui->toolbarScaleSlider->setRange(AppSettings::kToolbarScaleMin / 10, AppSettings::kToolbarScaleMax / 10);
+    ui->toolbarScaleSlider->setSingleStep(1);
+    ui->toolbarScaleSlider->setPageStep(1);
+    ui->toolbarScaleSlider->setTickInterval(5);
+    const auto showScale = [this](int steps) {
+        ui->toolbarScaleValue->setText(QStringLiteral("%1%").arg(steps * 10));
+    };
+    connect(ui->toolbarScaleSlider, &QSlider::valueChanged, this, showScale);
+    ui->toolbarScaleSlider->setValue(qRound(AppSettings::toolbarScale() / 10.0));
+    showScale(ui->toolbarScaleSlider->value());
     connect(ui->toolbarUpButton, &QPushButton::clicked, this, [this] { moveToolbarItem(-1); });
     connect(ui->toolbarDownButton, &QPushButton::clicked, this, [this] { moveToolbarItem(1); });
     const auto updateMoveButtons = [this] {
@@ -128,7 +136,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         updateMoveButtons();
         setModified(true);
     });
-    connect(ui->toolbarIconSizeCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+    connect(ui->toolbarScaleSlider, &QSlider::valueChanged, this, [this] { setModified(true); });
 
     // All engines are listed; those missing here are shown but cannot be picked.
     const QStringList engines = Ocr::allEngineIds();
@@ -293,7 +301,7 @@ bool SettingsDialog::apply()
     ModelStore::setSourceOrder(ModelStore::SourceOrder(ui->downloadOrderCombo->currentIndex()));
     ModelStore::setMirror(ui->downloadMirrorEdit->text());
     AppSettings::setToolbarItems(toolbarItems());
-    AppSettings::setToolbarIconSize(ui->toolbarIconSizeCombo->currentData().toInt());
+    AppSettings::setToolbarScale(ui->toolbarScaleSlider->value() * 10);
     AppSettings::setSaveFolder(QDir::fromNativeSeparators(ui->saveFolderEdit->text().trimmed()));
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
     AppSettings::setCaptureIncludesCursor(ui->captureCursorCheck->isChecked());
@@ -305,8 +313,6 @@ bool SettingsDialog::apply()
     AppSettings::setRecordShowKeys(ui->recordKeysCheck->isChecked());
     AppSettings::setRecordKeyStyle(ui->recordKeyStyleCombo->currentIndex());
     AppSettings::setRecordFrameRate(ui->recordFrameRateCombo->currentData().toInt());
-    const QString recordFolder = QDir::fromNativeSeparators(ui->recordFolderEdit->text().trimmed());
-    AppSettings::setRecordFolder(recordFolder.isEmpty() ? AppSettings::defaultRecordFolder() : recordFolder);
 
     const QString language = selectedLanguage();
     if (language != AppSettings::language()) {
@@ -481,6 +487,53 @@ void SettingsDialog::setOcrLanguages(const QStringList &languages)
     ui->ocrEnglishCheck->setChecked(languages.contains(QLatin1String("en")));
 }
 
+// Only what Glimpse saves there (its images and videos in their subfolders),
+// and to the Recycle Bin; deleted for good only when the user agrees.
+void SettingsDialog::clearSavedFiles(bool screenshots, bool recordings)
+{
+    QString base = QDir::fromNativeSeparators(ui->saveFolderEdit->text().trimmed());
+    if (base.isEmpty())
+        base = AppSettings::defaultSaveFolder();
+    QFileInfoList files;
+    if (screenshots)
+        files += QDir(AppSettings::screenshotFolder(base))
+                     .entryInfoList({QStringLiteral("*.png"), QStringLiteral("*.jpg"), QStringLiteral("*.jpeg"),
+                                     QStringLiteral("*.bmp")},
+                                    QDir::Files);
+    if (recordings)
+        files += QDir(AppSettings::recordFolder(base)).entryInfoList({QStringLiteral("*.mp4")}, QDir::Files);
+
+    const QString title = ui->clearFolderButton->text().remove(QLatin1Char('&'));
+    if (files.isEmpty()) {
+        QMessageBox::information(this, title, tr("There are no files to clear."));
+        return;
+    }
+    if (QMessageBox::question(this, title, tr("Move %n file(s) to the Recycle Bin?", nullptr, int(files.size())),
+                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
+        != QMessageBox::Yes)
+        return;
+
+    QStringList left;
+    for (const QFileInfo &info : std::as_const(files)) {
+        QFile file(info.filePath());
+        if (!file.moveToTrash())
+            left << info.filePath();
+    }
+    if (left.isEmpty())
+        return;
+    if (QMessageBox::question(this, title,
+                              tr("%n file(s) cannot be moved to the Recycle Bin. Delete them permanently?", nullptr,
+                                 int(left.size())),
+                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
+        != QMessageBox::Yes)
+        return;
+    int failed = 0;
+    for (const QString &path : std::as_const(left))
+        failed += !QFile::remove(path);
+    if (failed > 0)
+        QMessageBox::warning(this, title, tr("%n file(s) could not be deleted.", nullptr, failed));
+}
+
 void SettingsDialog::restoreDefaults()
 {
     ui->languageCombo->setCurrentIndex(0); // system default
@@ -497,7 +550,6 @@ void SettingsDialog::restoreDefaults()
     ui->recordKeysCheck->setChecked(false);
     ui->recordKeyStyleCombo->setCurrentIndex(1);
     ui->recordFrameRateCombo->setCurrentIndex(std::max(0, ui->recordFrameRateCombo->findData(30)));
-    ui->recordFolderEdit->setText(QDir::toNativeSeparators(AppSettings::defaultRecordFolder()));
     if (m_freehandColor != QColor(Qt::white)) {
         setFreehandColor(Qt::white);
         setModified(true);
@@ -510,7 +562,7 @@ void SettingsDialog::restoreDefaults()
     for (CaptureMode mode : kAllCaptureModes)
         hotkeyEdit(mode)->setKeySequence(AppSettings::defaultHotkey(mode));
     setToolbarItems(AppSettings::defaultToolbarItems());
-    ui->toolbarIconSizeCombo->setCurrentIndex(std::max(0, ui->toolbarIconSizeCombo->findData(24)));
+    ui->toolbarScaleSlider->setValue(10); // 100%
     setModified(true);
 }
 
@@ -557,11 +609,6 @@ void SettingsDialog::updateToolbarItemTexts()
                 text = QCoreApplication::translate("CaptureController", captureModeLabel(mode));
         }
         row->setText(text);
-    }
-    const QStringList sizes = {tr("Small"), tr("Medium"), tr("Large")};
-    for (int i = 0; i < ui->toolbarIconSizeCombo->count(); ++i) {
-        const int size = ui->toolbarIconSizeCombo->itemData(i).toInt();
-        ui->toolbarIconSizeCombo->setItemText(i, tr("%1 (%2 px)").arg(sizes.value(i), QString::number(size)));
     }
 }
 

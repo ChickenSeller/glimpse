@@ -29,10 +29,13 @@ QString toolbarItemId(CaptureMode mode);
 QList<ToolbarItem> defaultToolbarItems();
 QList<ToolbarItem> toolbarItems();
 void setToolbarItems(const QList<ToolbarItem> &items);
-// Edge length of the toolbar icons, one of toolbarIconSizes().
-QList<int> toolbarIconSizes();
+// The toolbar's size in percent (kToolbarScaleMin..Max, 100 = 24 px icons),
+// and the icon size that makes.
+inline constexpr int kToolbarScaleMin = 50;
+inline constexpr int kToolbarScaleMax = 200;
+int toolbarScale();
+void setToolbarScale(int percent);
 int toolbarIconSize();
-void setToolbarIconSize(int size);
 
 // UI language code (see Language); empty follows the system language.
 QString language();
@@ -69,14 +72,15 @@ void setRecordKeyStyle(int style);
 QList<int> recordFrameRates();
 int recordFrameRate();
 void setRecordFrameRate(int rate);
-QString defaultRecordFolder();
-QString recordFolder();
-void setRecordFolder(const QString &folder);
 
-// Where "Save As..." starts for captures (the system's Pictures folder by default).
+// The one folder Glimpse saves into ("output" next to the program by default);
+// each kind of file has its own subfolder in it: "Save As..." for captures
+// starts in Screenshots, recordings go to Recordings.
 QString defaultSaveFolder();
 QString saveFolder();
 void setSaveFolder(const QString &folder);
+QString screenshotFolder(const QString &base = saveFolder());
+QString recordFolder(const QString &base = saveFolder());
 
 // Screenshot translation: engine (see Translate::engineIds()), target
 // language, and the user's API key per engine (stored in plain text in the

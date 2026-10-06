@@ -425,8 +425,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+554"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+250"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+606"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -1066,16 +1066,38 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+14"/>
+        <source>&amp;Discard</source>
+        <translation>破棄(&amp;D)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Move the recording to the Recycle Bin</source>
+        <translation>録画をごみ箱に移動</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../src/record/RecordingDoneDialog.cpp" line="+35"/>
+        <location filename="../src/record/RecordingDoneDialog.cpp" line="+37"/>
         <source>Copied</source>
         <translation>コピーしました</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+16"/>
+        <source>The recording cannot be moved to the Recycle Bin. Delete it permanently?</source>
+        <translation>録画をごみ箱に移動できません。完全に削除しますか？</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Could not delete the recording:
+%1</source>
+        <translation>録画を削除できませんでした：
+%1</translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Recorded %1:%2 (%3 MB):</source>
         <translation>%1:%2 録画しました（%3 MB）：</translation>
     </message>
@@ -1182,7 +1204,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>言語(&amp;L)：</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+13"/>
+        <source>Sa&amp;ve files in:</source>
+        <translation>保存先フォルダー(&amp;V):</translation>
+    </message>
+    <message>
+        <location line="+46"/>
         <source>Captures</source>
         <translation>キャプチャ</translation>
     </message>
@@ -1202,12 +1229,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>キャプチャをクリップボードにもコピーする(&amp;C)</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Sa&amp;ve captures in:</source>
-        <translation>キャプチャの保存先(&amp;V)：</translation>
+        <translation type="vanished">キャプチャの保存先(&amp;V)：</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+9"/>
         <source>Outside a freehand region:</source>
         <translation>フリーハンド領域の外側：</translation>
     </message>
@@ -1377,12 +1403,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>下へ(&amp;W)</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>&amp;Icon size:</source>
-        <translation>アイコンのサイズ(&amp;I)：</translation>
+        <translation type="vanished">アイコンのサイズ(&amp;I)：</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+57"/>
         <source>Recording</source>
         <translation>録画</translation>
     </message>
@@ -1437,19 +1462,42 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ビデオのフレームレート(&amp;V)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>O&amp;utput folder:</source>
-        <translation>保存先フォルダー(&amp;U)：</translation>
+        <translation type="vanished">保存先フォルダー(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-551"/>
-        <location line="+566"/>
-        <location line="+201"/>
+        <location line="-608"/>
+        <location line="+823"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-182"/>
+        <location line="-816"/>
+        <source>Cl&amp;ear</source>
+        <translation>クリア(&amp;E)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Move saved screenshots or recordings to the Recycle Bin</source>
+        <translation>保存したスクリーンショットや録画をごみ箱に移動します</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Screenshots go to its Screenshots subfolder, recordings to Recordings.</source>
+        <translation>スクリーンショットはその中の Screenshots、録画は Recordings サブフォルダーに保存されます。</translation>
+    </message>
+    <message>
+        <location line="+445"/>
+        <source>Toolbar &amp;size:</source>
+        <translation>ツールバーのサイズ(&amp;S)：</translation>
+    </message>
+    <message>
+        <location line="+157"/>
+        <source>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</source>
+        <translation>録画は「全般」ページで選んだフォルダーの Recordings サブフォルダーに保存されます。</translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Text Recognition</source>
         <translation>文字認識</translation>
     </message>
@@ -1529,12 +1577,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-463"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-531"/>
+        <source>Screenshots</source>
+        <translation>スクリーンショット</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Recordings</source>
+        <translation>録画</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Screenshots and Recordings</source>
+        <translation>スクリーンショットと録画</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+67"/>
         <source>Other GGUF model file...</source>
         <translation>その他の GGUF モデル ファイル...</translation>
     </message>
@@ -1554,7 +1617,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+92"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -1564,27 +1627,49 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="+104"/>
-        <source>Small</source>
-        <translation>小</translation>
+        <location line="+45"/>
+        <source>There are no files to clear.</source>
+        <translation>クリアするファイルはありません。</translation>
     </message>
-    <message>
-        <location line="+0"/>
-        <source>Medium</source>
-        <translation>中</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Large</source>
-        <translation>大</translation>
-    </message>
-    <message>
+    <message numerus="yes">
         <location line="+3"/>
-        <source>%1 (%2 px)</source>
-        <translation>%1（%2 px）</translation>
+        <source>Move %n file(s) to the Recycle Bin?</source>
+        <translation>
+            <numerusform>%n 個のファイルをごみ箱に移動しますか?</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+14"/>
+        <source>%n file(s) cannot be moved to the Recycle Bin. Delete them permanently?</source>
+        <translation>
+            <numerusform>%n 個のファイルをごみ箱に移動できません。完全に削除しますか?</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+9"/>
+        <source>%n file(s) could not be deleted.</source>
+        <translation>
+            <numerusform>%n 個のファイルを削除できませんでした。</numerusform>
+        </translation>
     </message>
     <message>
-        <location line="-299"/>
+        <source>Small</source>
+        <translation type="vanished">小</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation type="vanished">中</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="vanished">大</translation>
+    </message>
+    <message>
+        <source>%1 (%2 px)</source>
+        <translation type="vanished">%1（%2 px）</translation>
+    </message>
+    <message>
+        <location line="-261"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

@@ -53,6 +53,7 @@ private:
     void updateDelayButton();
     void chooseCustomDelay();
     void savePosition();
+    void keepOnScreen();
 
     std::unique_ptr<Ui::CaptureToolbar> ui;
     QHash<QToolButton *, QString> m_baseToolTips; // as set in the .ui
@@ -61,4 +62,6 @@ private:
     QActionGroup *m_delayGroup = nullptr;
     QHash<QToolButton *, QKeySequence> m_hotkeys;
     QHash<QToolButton *, QIcon> m_sourceIcons; // icons as set in the .ui, before tinting
+    int m_baseSpacing = -1;                     // the layout's, as set in the .ui (at 100%)
+    QMargins m_baseMargins;
 };

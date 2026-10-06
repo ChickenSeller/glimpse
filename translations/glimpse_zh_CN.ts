@@ -425,8 +425,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+554"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+250"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+606"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -1066,16 +1066,38 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+14"/>
+        <source>&amp;Discard</source>
+        <translation>废弃(&amp;D)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Move the recording to the Recycle Bin</source>
+        <translation>把录像移到回收站</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../src/record/RecordingDoneDialog.cpp" line="+35"/>
+        <location filename="../src/record/RecordingDoneDialog.cpp" line="+37"/>
         <source>Copied</source>
         <translation>已复制</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+16"/>
+        <source>The recording cannot be moved to the Recycle Bin. Delete it permanently?</source>
+        <translation>无法把录像移到回收站。要永久删除吗？</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Could not delete the recording:
+%1</source>
+        <translation>无法删除录像：
+%1</translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Recorded %1:%2 (%3 MB):</source>
         <translation>已录制 %1:%2（%3 MB）：</translation>
     </message>
@@ -1182,7 +1204,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>语言(&amp;L)：</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+13"/>
+        <source>Sa&amp;ve files in:</source>
+        <translation>文件保存位置(&amp;V):</translation>
+    </message>
+    <message>
+        <location line="+46"/>
         <source>Captures</source>
         <translation>截图</translation>
     </message>
@@ -1202,12 +1229,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>截图后自动复制到剪贴板(&amp;C)</translation>
     </message>
     <message>
-        <location line="+9"/>
         <source>Sa&amp;ve captures in:</source>
-        <translation>截图保存位置(&amp;V)：</translation>
+        <translation type="vanished">截图保存位置(&amp;V)：</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+9"/>
         <source>Outside a freehand region:</source>
         <translation>手绘区域外部：</translation>
     </message>
@@ -1377,12 +1403,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>下移(&amp;W)</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>&amp;Icon size:</source>
-        <translation>图标大小(&amp;I)：</translation>
+        <translation type="vanished">图标大小(&amp;I)：</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+57"/>
         <source>Recording</source>
         <translation>录屏</translation>
     </message>
@@ -1437,19 +1462,42 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>视频帧率(&amp;V)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>O&amp;utput folder:</source>
-        <translation>保存文件夹(&amp;U)：</translation>
+        <translation type="vanished">保存文件夹(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-551"/>
-        <location line="+566"/>
-        <location line="+201"/>
+        <location line="-608"/>
+        <location line="+823"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-182"/>
+        <location line="-816"/>
+        <source>Cl&amp;ear</source>
+        <translation>清空(&amp;E)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Move saved screenshots or recordings to the Recycle Bin</source>
+        <translation>把已保存的截图或录像移到回收站</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Screenshots go to its Screenshots subfolder, recordings to Recordings.</source>
+        <translation>截图保存在其中的 Screenshots 子文件夹，录像保存在 Recordings 子文件夹。</translation>
+    </message>
+    <message>
+        <location line="+445"/>
+        <source>Toolbar &amp;size:</source>
+        <translation>工具栏大小(&amp;S)：</translation>
+    </message>
+    <message>
+        <location line="+157"/>
+        <source>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</source>
+        <translation>录像保存在“常规”页所选文件夹下的 Recordings 子文件夹中。</translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Text Recognition</source>
         <translation>文字识别</translation>
     </message>
@@ -1529,12 +1577,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-463"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-531"/>
+        <source>Screenshots</source>
+        <translation>截图</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Recordings</source>
+        <translation>录像</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Screenshots and Recordings</source>
+        <translation>截图和录像</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>%1 fps</source>
         <translation>%1 帧/秒</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+67"/>
         <source>Other GGUF model file...</source>
         <translation>其他 GGUF 模型文件...</translation>
     </message>
@@ -1554,7 +1617,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+92"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -1564,27 +1627,49 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="+104"/>
-        <source>Small</source>
-        <translation>小</translation>
+        <location line="+45"/>
+        <source>There are no files to clear.</source>
+        <translation>没有可清空的文件。</translation>
     </message>
-    <message>
-        <location line="+0"/>
-        <source>Medium</source>
-        <translation>中</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Large</source>
-        <translation>大</translation>
-    </message>
-    <message>
+    <message numerus="yes">
         <location line="+3"/>
-        <source>%1 (%2 px)</source>
-        <translation>%1（%2 像素）</translation>
+        <source>Move %n file(s) to the Recycle Bin?</source>
+        <translation>
+            <numerusform>将 %n 个文件移到回收站？</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+14"/>
+        <source>%n file(s) cannot be moved to the Recycle Bin. Delete them permanently?</source>
+        <translation>
+            <numerusform>%n 个文件无法移到回收站。要永久删除吗？</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+9"/>
+        <source>%n file(s) could not be deleted.</source>
+        <translation>
+            <numerusform>%n 个文件无法删除。</numerusform>
+        </translation>
     </message>
     <message>
-        <location line="-299"/>
+        <source>Small</source>
+        <translation type="vanished">小</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation type="vanished">中</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="vanished">大</translation>
+    </message>
+    <message>
+        <source>%1 (%2 px)</source>
+        <translation type="vanished">%1（%2 像素）</translation>
+    </message>
+    <message>
+        <location line="-261"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

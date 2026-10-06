@@ -2,6 +2,7 @@
 
 #include "ocr/OcrEngine.h"
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QSettings>
 
@@ -112,20 +113,25 @@ void setToolbarItems(const QList<ToolbarItem> &items)
     settings.setValue(QStringLiteral("toolbar/hidden"), hidden);
 }
 
-QList<int> toolbarIconSizes()
+int toolbarScale()
 {
-    return {20, 24, 32};
+    const QSettings settings;
+    int percent = settings.value(QStringLiteral("toolbar/scale"), 0).toInt();
+    if (percent == 0) // not set: an icon size chosen by Glimpse 0.2 to 0.3, or the default
+        percent = qRound(settings.value(QStringLiteral("toolbar/iconSize"), 24).toInt() * 100.0 / 24);
+    return std::clamp(percent, kToolbarScaleMin, kToolbarScaleMax);
+}
+
+void setToolbarScale(int percent)
+{
+    QSettings settings;
+    settings.setValue(QStringLiteral("toolbar/scale"), std::clamp(percent, kToolbarScaleMin, kToolbarScaleMax));
+    settings.remove(QStringLiteral("toolbar/iconSize"));
 }
 
 int toolbarIconSize()
 {
-    const int size = QSettings().value(QStringLiteral("toolbar/iconSize"), 24).toInt();
-    return toolbarIconSizes().contains(size) ? size : 24;
-}
-
-void setToolbarIconSize(int size)
-{
-    QSettings().setValue(QStringLiteral("toolbar/iconSize"), size);
+    return qRound(24 * toolbarScale() / 100.0);
 }
 
 QKeySequence hotkey(CaptureMode mode)
@@ -270,44 +276,40 @@ void setRecordFrameRate(int rate)
     QSettings().setValue(QStringLiteral("recording/frameRate"), rate);
 }
 
-QString defaultRecordFolder()
-{
-    return QDir(QStandardPaths::writableLocation(QStandardPaths::MoviesLocation)).filePath(QStringLiteral("Glimpse"));
-}
-
-QString recordFolder()
-{
-    const QString folder = QSettings().value(QStringLiteral("recording/folder")).toString();
-    return folder.isEmpty() ? defaultRecordFolder() : folder;
-}
-
-void setRecordFolder(const QString &folder)
-{
-    // Only a chosen folder is stored, so the default follows the system's.
-    if (QDir::cleanPath(folder) == QDir::cleanPath(defaultRecordFolder()))
-        QSettings().remove(QStringLiteral("recording/folder"));
-    else
-        QSettings().setValue(QStringLiteral("recording/folder"), folder);
-}
-
 QString defaultSaveFolder()
 {
-    return QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+    return QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("output"));
 }
 
 QString saveFolder()
 {
-    const QString folder = QSettings().value(QStringLiteral("captures/saveFolder")).toString();
+    QSettings settings;
+    QString folder = settings.value(QStringLiteral("general/saveFolder")).toString();
+    if (folder.isEmpty()) // chosen before there was one folder for everything
+        folder = settings.value(QStringLiteral("captures/saveFolder")).toString();
     return folder.isEmpty() ? defaultSaveFolder() : folder;
 }
 
 void setSaveFolder(const QString &folder)
 {
+    QSettings settings;
+    settings.remove(QStringLiteral("captures/saveFolder"));
+    settings.remove(QStringLiteral("recording/folder"));
     // Only a chosen folder is stored, so the default follows the system's.
     if (folder.isEmpty() || QDir::cleanPath(folder) == QDir::cleanPath(defaultSaveFolder()))
-        QSettings().remove(QStringLiteral("captures/saveFolder"));
+        settings.remove(QStringLiteral("general/saveFolder"));
     else
-        QSettings().setValue(QStringLiteral("captures/saveFolder"), folder);
+        settings.setValue(QStringLiteral("general/saveFolder"), folder);
+}
+
+QString screenshotFolder(const QString &base)
+{
+    return QDir(base).filePath(QStringLiteral("Screenshots"));
+}
+
+QString recordFolder(const QString &base)
+{
+    return QDir(base).filePath(QStringLiteral("Recordings"));
 }
 
 QString translateEngine()
