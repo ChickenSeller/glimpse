@@ -43,6 +43,9 @@ bool captureIncludesToolbar();
 void setCaptureIncludesToolbar(bool include);
 bool captureIncludesCursor();
 void setCaptureIncludesCursor(bool include);
+// Whether each capture also goes to the clipboard right away.
+bool copyCapturesToClipboard();
+void setCopyCapturesToClipboard(bool copy);
 // What fills a freehand capture outside the drawn outline: transparent by
 // default, or a solid color (kept while transparency is switched on).
 bool freehandTransparent();
@@ -69,6 +72,11 @@ void setRecordFrameRate(int rate);
 QString defaultRecordFolder();
 QString recordFolder();
 void setRecordFolder(const QString &folder);
+
+// Where "Save As..." starts for captures (the system's Pictures folder by default).
+QString defaultSaveFolder();
+QString saveFolder();
+void setSaveFolder(const QString &folder);
 
 // Screenshot translation: engine (see Translate::engineIds()), target
 // language, and the user's API key per engine (stored in plain text in the

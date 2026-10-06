@@ -52,6 +52,9 @@ public:
 
     // Checks once, as the settings say.
     void checkAtStartup();
+    // Checks now on the user's request, whatever the settings: offers a newer
+    // version, or says that there is none or that the check failed.
+    void checkNow();
 
 signals:
     // For the tray: an automatic update started or failed.
@@ -66,7 +69,8 @@ private:
         QString notes;
     };
 
-    void onManifest(QNetworkReply *reply);
+    void requestManifest(bool interactive);
+    void onManifest(QNetworkReply *reply, bool interactive);
     static bool parse(const QJsonObject &object, const QUrl &base, Release *release);
     void ask(const Release &release);
     void download(const Release &release, bool interactive);

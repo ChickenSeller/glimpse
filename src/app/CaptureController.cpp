@@ -10,6 +10,7 @@
 #include "capture/ScrollCaptureSession.h"
 #include "capture/ScreenGrabber.h"
 #include "editor/EditorWindow.h"
+#include "editor/ImageActions.h"
 #include "hotkey/GlobalHotkeys.h"
 #include "overlay/RegionSelector.h"
 #include "pin/PinWindow.h"
@@ -124,6 +125,7 @@ void CaptureController::showSettings()
         // them, then pause again until the dialog closes.
         const QStringList taken = registerHotkeys();
         m_hotkeys->clear();
+        m_settings->setHotkeyStatus(m_hotkeyRegistered);
         if (!taken.isEmpty()) {
             QMessageBox::warning(m_settings, tr("Hotkeys unavailable"),
                                  tr("These hotkeys are already in use by another program and will not work:\n%1")
@@ -131,6 +133,9 @@ void CaptureController::showSettings()
         }
     });
     connect(m_settings, &QDialog::finished, this, [this] { registerHotkeys(); });
+    connect(m_settings, &SettingsDialog::updateNowRequested, m_updater, &Updater::checkNow);
+    // As registered before the hotkeys were paused for the dialog.
+    m_settings->setHotkeyStatus(m_hotkeyRegistered);
     m_settings->show();
     m_settings->raise();
     m_settings->activateWindow();
@@ -201,11 +206,14 @@ QStringList CaptureController::registerHotkeys()
 
     QStringList taken;
     QHash<Mode, QKeySequence> active;
+    m_hotkeyRegistered.clear();
     for (CaptureMode mode : kAllCaptureModes) {
         const QKeySequence key = AppSettings::hotkey(mode);
         if (key.isEmpty())
             continue;
-        if (m_hotkeys->add(int(mode), key))
+        const bool registered = m_hotkeys->add(int(mode), key);
+        m_hotkeyRegistered.insert(mode, registered);
+        if (registered)
             active.insert(mode, key);
         else
             taken << key.toString(QKeySequence::NativeText);
@@ -285,10 +293,13 @@ void CaptureController::deliver(const QImage &image)
         showOcrResult(image);
     else if (m_mode == Mode::Translate)
         showTranslateResult(image);
-    else if (m_mode == Mode::Pin)
+    else if (m_mode == Mode::Pin) {
+        if (AppSettings::copyCapturesToClipboard())
+            ImageActions::copyToClipboard(image);
         pinToScreen(image, m_pinRect);
-    else
-        openEditor(image);
+    } else {
+        showCapture(image);
+    }
 }
 
 void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
@@ -364,7 +375,7 @@ void CaptureController::startScrollingCapture(const QRect &rect)
     connect(session, &ScrollCaptureSession::finished, this, [this, session](const QImage &image) {
         session->deleteLater();
         endCapture();
-        openEditor(image);
+        showCapture(image);
     });
     session->start();
 }
@@ -536,6 +547,18 @@ void CaptureController::pinToScreen(const QImage &image, const QRect &where)
     pin->show();
     pin->raise();
     pin->activateWindow();
+}
+
+void CaptureController::showCapture(const QImage &image)
+{
+    if (image.isNull())
+        return;
+    auto *editor = new EditorWindow(image);
+    if (AppSettings::copyCapturesToClipboard())
+        editor->copyToClipboard();
+    editor->show();
+    editor->raise();
+    editor->activateWindow();
 }
 
 void CaptureController::openEditor(const QImage &image)

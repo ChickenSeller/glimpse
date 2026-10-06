@@ -155,7 +155,7 @@
         <translation>QR コードを読み取る</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+469"/>
+        <location filename="../src/app/CaptureController.cpp" line="+480"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
@@ -196,25 +196,25 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-376"/>
-        <location line="+35"/>
+        <location filename="../src/app/CaptureController.cpp" line="-386"/>
+        <location line="+36"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
     </message>
     <message>
-        <location line="-34"/>
+        <location line="-35"/>
         <source>Already in use by another program: %1</source>
         <translation>他のプログラムが使用中です：%1</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+36"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>次のホットキーは他のプログラムが使用中のため、動作しません：
 %1</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+58"/>
         <source>Show Toolbar</source>
         <translation>ツールバーを表示</translation>
     </message>
@@ -234,7 +234,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+218"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+520"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+554"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -594,7 +594,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1 × %2 ピクセル</translation>
     </message>
     <message>
-        <location filename="../src/editor/ImageActions.cpp" line="+43"/>
+        <location filename="../src/editor/ImageActions.cpp" line="+47"/>
         <location line="+10"/>
         <source>Save Capture</source>
         <translation>キャプチャを保存</translation>
@@ -669,6 +669,24 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+97"/>
         <source>Firefox translation failed: %1</source>
         <translation>Firefox 翻訳に失敗しました：%1</translation>
+    </message>
+</context>
+<context>
+    <name>HotkeyEdit</name>
+    <message>
+        <location filename="../src/settings/HotkeyEdit.cpp" line="+43"/>
+        <source>Working</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Already in use by another program; this hotkey does not work</source>
+        <translation>他のプログラムが使用中のため、このショートカットは使えません</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global hotkeys are not available here</source>
+        <translation>この環境ではグローバルショートカットを使えません</translation>
     </message>
 </context>
 <context>
@@ -1179,7 +1197,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>マウスポインターを含める(&amp;M)</translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>&amp;Copy each capture to the clipboard</source>
+        <translation>キャプチャをクリップボードにもコピーする(&amp;C)</translation>
+    </message>
+    <message>
         <location line="+9"/>
+        <source>Sa&amp;ve captures in:</source>
+        <translation>キャプチャの保存先(&amp;V)：</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Outside a freehand region:</source>
         <translation>フリーハンド領域の外側：</translation>
     </message>
@@ -1254,7 +1282,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>更新しない</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+8"/>
+        <source>Check and Update &amp;Now</source>
+        <translation>今すぐ確認して更新(&amp;N)</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Hotkeys</source>
         <translation>ホットキー</translation>
     </message>
@@ -1409,7 +1442,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>保存先フォルダー(&amp;U)：</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="-551"/>
+        <location line="+566"/>
         <location line="+201"/>
         <source>Browse...</source>
         <translation>参照...</translation>
@@ -1495,7 +1529,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-442"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-463"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
@@ -1520,17 +1554,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+94"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+88"/>
         <source>Global hotkeys: %1</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+104"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
@@ -1550,7 +1584,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-278"/>
+        <location line="-299"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
@@ -1753,7 +1787,9 @@ Download them now? They are kept on this computer and used offline from then on.
 <context>
     <name>Updater</name>
     <message>
-        <location filename="../src/update/Updater.cpp" line="+135"/>
+        <location filename="../src/update/Updater.cpp" line="+115"/>
+        <location line="+18"/>
+        <location line="+27"/>
         <location line="+22"/>
         <location line="+2"/>
         <location line="+24"/>
@@ -1766,7 +1802,19 @@ Download them now? They are kept on this computer and used offline from then on.
         <translation>Glimpse の更新</translation>
     </message>
     <message>
-        <location line="-120"/>
+        <location line="-165"/>
+        <source>Could not check for updates:
+%1</source>
+        <translation>更新を確認できませんでした：
+%1</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Glimpse %1 is the latest version.</source>
+        <translation>Glimpse %1 は最新バージョンです。</translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <source>Glimpse %1 is available; you have %2.
 Update now? Glimpse restarts when it is done.</source>
         <translation>Glimpse %1 が公開されています（現在のバージョンは %2）。
@@ -1820,7 +1868,7 @@ Update now? Glimpse restarts when it is done.</source>
         <translation>更新の準備ができませんでした。</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+22"/>
         <source>Could not start the update.</source>
         <translation>更新を開始できませんでした。</translation>
     </message>

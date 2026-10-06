@@ -1,5 +1,7 @@
 #include "ImageActions.h"
 
+#include "app/AppSettings.h"
+
 #include <QClipboard>
 #include <QCoreApplication>
 #include <QDateTime>
@@ -31,7 +33,9 @@ bool hasTransparency(const QImage &image)
 
 QString saveAs(QWidget *parent, const QImage &image)
 {
-    const QString dir = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+    // The folder chosen in Settings > General, created if it is not there yet.
+    const QString dir = AppSettings::saveFolder();
+    QDir().mkpath(dir);
     const QString name = QStringLiteral("Glimpse_%1.png")
                              .arg(QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_HHmmss")));
     // JPEG and BMP cannot keep transparency, so such images are PNG only.

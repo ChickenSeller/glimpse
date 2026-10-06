@@ -25,11 +25,17 @@ public:
     explicit SettingsDialog(QWidget *parent = nullptr);
     ~SettingsDialog() override;
 
+    // Shows beside each hotkey whether it works: `registered` holds the modes
+    // whose hotkey was registered (true) or is taken by another program (false).
+    void setHotkeyStatus(const QHash<CaptureMode, bool> &registered);
+
     void accept() override;
 
 signals:
     // Settings were saved; the language has already been switched.
     void applied();
+    // The user asked to check for an update right away.
+    void updateNowRequested();
 
 protected:
     void changeEvent(QEvent *event) override;

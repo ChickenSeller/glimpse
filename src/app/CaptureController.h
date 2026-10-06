@@ -53,6 +53,8 @@ private:
     void onGrabFailed(const QString &message);
     void endCapture();
     void openEditor(const QImage &image);
+    // A finished capture: the capture window, and the clipboard if so set.
+    void showCapture(const QImage &image);
     void pinToScreen(const QImage &image, const QRect &where);
     void showQrResult(const QImage &image);
     void showOcrResult(const QImage &image);
@@ -74,6 +76,7 @@ private:
     std::unique_ptr<QMenu> m_trayMenu;
     QSystemTrayIcon *m_tray = nullptr;
     Updater *m_updater = nullptr;
+    QHash<CaptureMode, bool> m_hotkeyRegistered; // per configured hotkey: registered, or taken
     QHash<Mode, QAction *> m_trayCaptureActions;
     QAction *m_trayShowToolbar = nullptr;
     QAction *m_traySettings = nullptr;

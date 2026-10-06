@@ -40,6 +40,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     // Updates: the combo's rows are in Updater::Mode's order.
     ui->updateModeCombo->setCurrentIndex(int(Updater::mode()));
     connect(ui->updateModeCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+    connect(ui->updateNowButton, &QPushButton::clicked, this, &SettingsDialog::updateNowRequested);
 
     // Downloads: the combo's rows are in ModelStore::SourceOrder's order.
     ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::sourceOrder()));
@@ -56,8 +57,20 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     connect(ui->downloadMirrorEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
 
+    ui->saveFolderEdit->setText(QDir::toNativeSeparators(AppSettings::saveFolder()));
+    connect(ui->saveFolderButton, &QPushButton::clicked, this, [this] {
+        const QString folder = QFileDialog::getExistingDirectory(this, ui->saveFolderLabel->text().remove(QLatin1Char('&')),
+                                                                 ui->saveFolderEdit->text());
+        if (!folder.isEmpty()) {
+            ui->saveFolderEdit->setText(QDir::toNativeSeparators(folder));
+            setModified(true);
+        }
+    });
+    connect(ui->saveFolderEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
+
     ui->captureToolbarCheck->setChecked(AppSettings::captureIncludesToolbar());
     ui->captureCursorCheck->setChecked(AppSettings::captureIncludesCursor());
+    ui->captureClipboardCheck->setChecked(AppSettings::copyCapturesToClipboard());
     ui->freehandTransparentCheck->setChecked(AppSettings::freehandTransparent());
 
     ui->recordHighlightCheck->setChecked(AppSettings::recordHighlightCursor());
@@ -199,7 +212,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     applyPlatformLimits();
     updateOcrEngineNote();
-    for (QCheckBox *check : {ui->captureToolbarCheck, ui->captureCursorCheck, ui->freehandTransparentCheck,
+    for (QCheckBox *check : {ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->freehandTransparentCheck,
                              ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck,
                              ui->ocrChineseCheck, ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
@@ -281,8 +294,10 @@ bool SettingsDialog::apply()
     ModelStore::setMirror(ui->downloadMirrorEdit->text());
     AppSettings::setToolbarItems(toolbarItems());
     AppSettings::setToolbarIconSize(ui->toolbarIconSizeCombo->currentData().toInt());
+    AppSettings::setSaveFolder(QDir::fromNativeSeparators(ui->saveFolderEdit->text().trimmed()));
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
     AppSettings::setCaptureIncludesCursor(ui->captureCursorCheck->isChecked());
+    AppSettings::setCopyCapturesToClipboard(ui->captureClipboardCheck->isChecked());
     AppSettings::setFreehandTransparent(ui->freehandTransparentCheck->isChecked());
     AppSettings::setFreehandColor(m_freehandColor);
     AppSettings::setRecordHighlightCursor(ui->recordHighlightCheck->isChecked());
@@ -302,6 +317,21 @@ bool SettingsDialog::apply()
     setModified(false);
     emit applied();
     return true;
+}
+
+void SettingsDialog::setHotkeyStatus(const QHash<CaptureMode, bool> &registered)
+{
+    for (CaptureMode mode : kAllCaptureModes) {
+        HotkeyEdit *edit = hotkeyEdit(mode);
+        if (edit->keySequence().isEmpty())
+            edit->setStatus(HotkeyEdit::Status::Unknown);
+        else if (!Platform::supportsGlobalHotkeys())
+            edit->setStatus(HotkeyEdit::Status::Unsupported);
+        else if (registered.contains(mode))
+            edit->setStatus(registered.value(mode) ? HotkeyEdit::Status::Active : HotkeyEdit::Status::Taken);
+        else
+            edit->setStatus(HotkeyEdit::Status::Unknown);
+    }
 }
 
 void SettingsDialog::setModified(bool modified)
@@ -403,6 +433,8 @@ void SettingsDialog::applyPlatformLimits()
     if (!Updater::isSupported()) {
         ui->updateModeCombo->setEnabled(false);
         ui->updateModeCombo->setToolTip(Platform::unsupportedHint());
+        ui->updateNowButton->setEnabled(false);
+        ui->updateNowButton->setToolTip(Platform::unsupportedHint());
     }
     if (!Platform::supportsCursorCapture()) {
         ui->captureCursorCheck->setEnabled(false);
@@ -455,8 +487,10 @@ void SettingsDialog::restoreDefaults()
     ui->updateModeCombo->setCurrentIndex(int(Updater::Mode::Ask));
     ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::SourceOrder::MirrorFirst));
     ui->downloadMirrorEdit->setText(ModelStore::defaultMirror());
+    ui->saveFolderEdit->setText(QDir::toNativeSeparators(AppSettings::defaultSaveFolder()));
     ui->captureToolbarCheck->setChecked(false);
     ui->captureCursorCheck->setChecked(false);
+    ui->captureClipboardCheck->setChecked(false);
     ui->freehandTransparentCheck->setChecked(true);
     ui->recordHighlightCheck->setChecked(true);
     ui->recordClicksCheck->setChecked(true);

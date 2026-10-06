@@ -155,7 +155,7 @@
         <translation>识别二维码</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+469"/>
+        <location filename="../src/app/CaptureController.cpp" line="+480"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
@@ -196,25 +196,25 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-376"/>
-        <location line="+35"/>
+        <location filename="../src/app/CaptureController.cpp" line="-386"/>
+        <location line="+36"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
     </message>
     <message>
-        <location line="-34"/>
+        <location line="-35"/>
         <source>Already in use by another program: %1</source>
         <translation>已被其他程序占用：%1</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+36"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>以下快捷键已被其他程序占用，将无法使用：
 %1</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+58"/>
         <source>Show Toolbar</source>
         <translation>显示工具栏</translation>
     </message>
@@ -234,7 +234,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+218"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+220"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+520"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+554"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -594,7 +594,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1 × %2 像素</translation>
     </message>
     <message>
-        <location filename="../src/editor/ImageActions.cpp" line="+43"/>
+        <location filename="../src/editor/ImageActions.cpp" line="+47"/>
         <location line="+10"/>
         <source>Save Capture</source>
         <translation>保存截图</translation>
@@ -669,6 +669,24 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+97"/>
         <source>Firefox translation failed: %1</source>
         <translation>Firefox 翻译失败：%1</translation>
+    </message>
+</context>
+<context>
+    <name>HotkeyEdit</name>
+    <message>
+        <location filename="../src/settings/HotkeyEdit.cpp" line="+43"/>
+        <source>Working</source>
+        <translation>已生效</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Already in use by another program; this hotkey does not work</source>
+        <translation>已被其他程序占用，此快捷键无法使用</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global hotkeys are not available here</source>
+        <translation>当前环境不支持全局快捷键</translation>
     </message>
 </context>
 <context>
@@ -1179,7 +1197,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>截入鼠标指针(&amp;M)</translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>&amp;Copy each capture to the clipboard</source>
+        <translation>截图后自动复制到剪贴板(&amp;C)</translation>
+    </message>
+    <message>
         <location line="+9"/>
+        <source>Sa&amp;ve captures in:</source>
+        <translation>截图保存位置(&amp;V)：</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Outside a freehand region:</source>
         <translation>手绘区域外部：</translation>
     </message>
@@ -1254,7 +1282,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>永不更新</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+8"/>
+        <source>Check and Update &amp;Now</source>
+        <translation>立即检查并更新(&amp;N)</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Hotkeys</source>
         <translation>快捷键</translation>
     </message>
@@ -1409,7 +1442,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>保存文件夹(&amp;U)：</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="-551"/>
+        <location line="+566"/>
         <location line="+201"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
@@ -1495,7 +1529,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-442"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-463"/>
         <source>%1 fps</source>
         <translation>%1 帧/秒</translation>
     </message>
@@ -1520,17 +1554,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+94"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+88"/>
         <source>Global hotkeys: %1</source>
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+104"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
@@ -1550,7 +1584,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-278"/>
+        <location line="-299"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
@@ -1753,7 +1787,9 @@ Download them now? They are kept on this computer and used offline from then on.
 <context>
     <name>Updater</name>
     <message>
-        <location filename="../src/update/Updater.cpp" line="+135"/>
+        <location filename="../src/update/Updater.cpp" line="+115"/>
+        <location line="+18"/>
+        <location line="+27"/>
         <location line="+22"/>
         <location line="+2"/>
         <location line="+24"/>
@@ -1766,7 +1802,19 @@ Download them now? They are kept on this computer and used offline from then on.
         <translation>Glimpse 更新</translation>
     </message>
     <message>
-        <location line="-120"/>
+        <location line="-165"/>
+        <source>Could not check for updates:
+%1</source>
+        <translation>无法检查更新：
+%1</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Glimpse %1 is the latest version.</source>
+        <translation>Glimpse %1 已是最新版本。</translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <source>Glimpse %1 is available; you have %2.
 Update now? Glimpse restarts when it is done.</source>
         <translation>Glimpse %1 已发布，当前版本是 %2。
@@ -1820,7 +1868,7 @@ Update now? Glimpse restarts when it is done.</source>
         <translation>无法准备更新。</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+22"/>
         <source>Could not start the update.</source>
         <translation>无法开始更新。</translation>
     </message>

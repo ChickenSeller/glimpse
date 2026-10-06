@@ -24,13 +24,15 @@ public:
     explicit EditorWindow(const QImage &image, QWidget *parent = nullptr);
     ~EditorWindow() override;
 
+    // Copies the image and says so in the status bar.
+    void copyToClipboard();
+
 protected:
     void changeEvent(QEvent *event) override;
 
 private:
     void saveAs();
     void saveAndCopyPath();
-    void copyToClipboard();
     void edit();
     void pinToScreen();
     void setImage(const QImage &image);

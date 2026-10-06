@@ -76,12 +76,23 @@ void Updater::checkAtStartup()
 {
     if (!isSupported() || mode() == Mode::Never)
         return;
+    requestManifest(false);
+}
+
+void Updater::checkNow()
+{
+    if (isSupported())
+        requestManifest(true);
+}
+
+void Updater::requestManifest(bool interactive)
+{
     QNetworkRequest request{QUrl(QStringLiteral(GLIMPSE_UPDATE_URL))};
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
     request.setTransferTimeout(30000);
     QNetworkReply *reply = m_network->get(request);
-    connect(reply, &QNetworkReply::finished, this, [this, reply] { onManifest(reply); });
+    connect(reply, &QNetworkReply::finished, this, [this, reply, interactive] { onManifest(reply, interactive); });
 }
 
 bool Updater::parse(const QJsonObject &object, const QUrl &base, Release *release)
@@ -94,12 +105,17 @@ bool Updater::parse(const QJsonObject &object, const QUrl &base, Release *releas
     return !release->version.isNull() && release->url.isValid() && !release->sha256.isEmpty();
 }
 
-void Updater::onManifest(QNetworkReply *reply)
+void Updater::onManifest(QNetworkReply *reply, bool interactive)
 {
     reply->deleteLater();
-    // Being offline, or a page without update information, is not worth a word.
-    if (reply->error() != QNetworkReply::NoError)
+    // At start, being offline or a page without update information is not
+    // worth a word; asked for, it is.
+    if (reply->error() != QNetworkReply::NoError) {
+        if (interactive)
+            QMessageBox::warning(nullptr, tr("Glimpse Update"),
+                                 tr("Could not check for updates:\n%1").arg(reply->errorString()));
         return;
+    }
     const QJsonObject manifest = QJsonDocument::fromJson(reply->readAll()).object();
     const QVersionNumber current = QVersionNumber::fromString(QStringLiteral(GLIMPSE_VERSION));
 
@@ -109,6 +125,15 @@ void Updater::onManifest(QNetworkReply *reply)
                             && latest.version > current;
     const bool haveRequired = parse(manifest.value(QStringLiteral("required")).toObject(), reply->url(), &required)
                               && required.version > current;
+
+    if (interactive) {
+        if (haveLatest)
+            ask(latest);
+        else
+            QMessageBox::information(nullptr, tr("Glimpse Update"),
+                                     tr("Glimpse %1 is the latest version.").arg(QStringLiteral(GLIMPSE_VERSION)));
+        return;
+    }
 
     switch (mode()) {
     case Mode::Automatic:

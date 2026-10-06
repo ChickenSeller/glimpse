@@ -178,6 +178,16 @@ void setCaptureIncludesCursor(bool include)
     QSettings().setValue(QStringLiteral("capture/includeCursor"), include);
 }
 
+bool copyCapturesToClipboard()
+{
+    return QSettings().value(QStringLiteral("capture/copyToClipboard"), false).toBool();
+}
+
+void setCopyCapturesToClipboard(bool copy)
+{
+    QSettings().setValue(QStringLiteral("capture/copyToClipboard"), copy);
+}
+
 bool freehandTransparent()
 {
     return QSettings().value(QStringLiteral("capture/freehandTransparent"), true).toBool();
@@ -278,6 +288,26 @@ void setRecordFolder(const QString &folder)
         QSettings().remove(QStringLiteral("recording/folder"));
     else
         QSettings().setValue(QStringLiteral("recording/folder"), folder);
+}
+
+QString defaultSaveFolder()
+{
+    return QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+}
+
+QString saveFolder()
+{
+    const QString folder = QSettings().value(QStringLiteral("captures/saveFolder")).toString();
+    return folder.isEmpty() ? defaultSaveFolder() : folder;
+}
+
+void setSaveFolder(const QString &folder)
+{
+    // Only a chosen folder is stored, so the default follows the system's.
+    if (folder.isEmpty() || QDir::cleanPath(folder) == QDir::cleanPath(defaultSaveFolder()))
+        QSettings().remove(QStringLiteral("captures/saveFolder"));
+    else
+        QSettings().setValue(QStringLiteral("captures/saveFolder"), folder);
 }
 
 QString translateEngine()
