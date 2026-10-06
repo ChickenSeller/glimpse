@@ -1,6 +1,8 @@
 #include "WindowList.h"
 
+#include <QFileInfo>
 #include <QGuiApplication>
+#include <QHash>
 #include <QScreen>
 #include <QtGui/qscreen_platform.h>
 
@@ -79,7 +81,21 @@ QString windowTitle(HWND hwnd)
 {
     wchar_t buffer[256];
     const int length = GetWindowTextW(hwnd, buffer, int(std::size(buffer)));
-    return length > 0 ? QString::fromWCharArray(buffer, length) : className(hwnd);
+    return QString::fromWCharArray(buffer, qMax(length, 0));
+}
+
+// "notepad.exe"; empty when the process cannot be opened (elevated, gone).
+QString processName(DWORD process)
+{
+    QString name;
+    if (HANDLE handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process)) {
+        wchar_t buffer[MAX_PATH];
+        DWORD size = DWORD(std::size(buffer));
+        if (QueryFullProcessImageNameW(handle, 0, buffer, &size))
+            name = QFileInfo(QString::fromWCharArray(buffer, int(size))).fileName();
+        CloseHandle(handle);
+    }
+    return name;
 }
 
 bool isCloaked(HWND hwnd)
@@ -96,11 +112,23 @@ bool isEmpty(const RECT &r)
 struct Context {
     CoordinateMapper mapper;
     DWORD ownProcess = GetCurrentProcessId();
+    QHash<DWORD, QString> processNames;
     int budget = kMaxNodes;
     std::vector<WindowNode> *out = nullptr;
 };
 
-void collectChildren(HWND parent, Context &ctx, std::vector<WindowNode> &out, int depth)
+// "Title (app.exe) · ClassName": the window the control belongs to (a
+// control's own title is mostly empty), and the control's class.
+QString withClass(const QString &label, HWND hwnd)
+{
+    const QString cls = className(hwnd);
+    if (label.isEmpty() || cls.isEmpty())
+        return label.isEmpty() ? cls : label;
+    return QStringLiteral("%1  ·  %2").arg(label, cls);
+}
+
+// Controls inside a window are labelled with the window's "Title (app.exe)".
+void collectChildren(HWND parent, const QString &label, Context &ctx, std::vector<WindowNode> &out, int depth)
 {
     if (depth > kMaxDepth)
         return;
@@ -113,8 +141,8 @@ void collectChildren(HWND parent, Context &ctx, std::vector<WindowNode> &out, in
         --ctx.budget;
         WindowNode node;
         node.geometry = ctx.mapper.toLogical(rect);
-        node.title = windowTitle(child);
-        collectChildren(child, ctx, node.children, depth + 1);
+        node.title = withClass(label, child);
+        collectChildren(child, label, ctx, node.children, depth + 1);
         out.push_back(std::move(node));
     }
 }
@@ -153,8 +181,16 @@ BOOL CALLBACK collectTopLevel(HWND hwnd, LPARAM param)
     --ctx.budget;
     WindowNode node;
     node.geometry = ctx.mapper.toLogical(rect);
-    node.title = windowTitle(hwnd);
-    collectChildren(hwnd, ctx, node.children, 1);
+    // "Title (app.exe)", so that it is clear which program a window belongs to.
+    if (!ctx.processNames.contains(process))
+        ctx.processNames.insert(process, processName(process));
+    const QString program = ctx.processNames.value(process);
+    const QString title = windowTitle(hwnd);
+    QString label = title;
+    if (!program.isEmpty())
+        label = title.isEmpty() ? program : QStringLiteral("%1 (%2)").arg(title, program);
+    node.title = withClass(label, hwnd);
+    collectChildren(hwnd, label, ctx, node.children, 1);
     ctx.out->push_back(std::move(node));
     return TRUE;
 }

@@ -125,7 +125,8 @@ protected:
             const QRect local = target.geometry.translated(-m_origin);
             drawHighlight(p, local, 2);
             if (local.intersects(rect())) {
-                const QString title = p.fontMetrics().elidedText(target.title, Qt::ElideRight, kMaxTitleWidth);
+                // Shortened in the middle: the program and class names at the end stay.
+                const QString title = p.fontMetrics().elidedText(target.title, Qt::ElideMiddle, kMaxTitleWidth);
                 drawTag(p, rect(), local.intersected(rect()).topLeft(),
                         title.isEmpty() ? sizeText(local) : QStringLiteral("%1  ·  %2").arg(title, sizeText(local)));
             }
