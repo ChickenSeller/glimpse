@@ -47,6 +47,9 @@ void flushCompositor();
 // exactly. Qt's logical positions are rounded on fractional scale factors
 // (e.g. 150%), which is off by a pixel for pixel-exact tools.
 std::optional<QPoint> nativeCursorPos();
+// Moves the pointer by whole physical pixels. False where windows may not
+// move the pointer (Wayland).
+bool moveCursorBy(int dx, int dy);
 
 // Keeps a window out of screen captures and recordings (it stays visible on
 // screen). Does nothing where unsupported.

@@ -1,6 +1,7 @@
 #include "Platform.h"
 
 #include <QCoreApplication>
+#include <QCursor>
 #include <QWidget>
 #include <QtGlobal>
 
@@ -122,6 +123,20 @@ std::optional<QPoint> nativeCursorPos()
         return QPoint(point.x, point.y);
 #endif
     return std::nullopt;
+}
+
+bool moveCursorBy(int dx, int dy)
+{
+#ifdef Q_OS_WIN
+    // Physical pixels: QCursor works in logical ones, rounded at 150% and the like.
+    POINT point;
+    return GetCursorPos(&point) && SetCursorPos(point.x + dx, point.y + dy);
+#else
+    if (displayServer() != DisplayServer::X11)
+        return false;
+    QCursor::setPos(QCursor::pos() + QPoint(dx, dy));
+    return true;
+#endif
 }
 
 QString unsupportedHint()

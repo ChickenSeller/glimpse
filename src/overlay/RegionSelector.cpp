@@ -601,6 +601,10 @@ void RegionSelector::nudgeBy(int dx, int dy)
             m_lock->pixel = QPoint(std::clamp(m_lock->pixel.x() + dx, 0, shot->image.width() - 1),
                                    std::clamp(m_lock->pixel.y() + dy, 0, shot->image.height() - 1));
         }
+    } else if (Platform::moveCursorBy(dx, dy)) {
+        // The pointer itself moves, and with it everything that follows it;
+        // its mouse move brings the new position.
+        return;
     } else {
         m_nudge += QPoint(dx, dy);
     }
