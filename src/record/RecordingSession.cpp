@@ -4,7 +4,9 @@
 #include "app/TintedIcon.h"
 #include "capture/Platform.h"
 
+#include <QEvent>
 #include <QGuiApplication>
+#include <QPainter>
 #include <QScreen>
 #include <QTimer>
 #include <QWidget>
@@ -117,6 +119,7 @@ void RecordingSession::createChrome()
     m_panel->setScreen(m_screen);
     m_panelUi = std::make_unique<Ui::RecordingPanel>();
     m_panelUi->setupUi(m_panel.get());
+    m_panel->installEventFilter(this); // its border, see eventFilter()
     // Room for the longest time text up front, so the panel never grows
     // (towards the screen edge or over the area) while recording.
     const QFontMetrics metrics(m_panelUi->timeLabel->font());
@@ -137,6 +140,20 @@ void RecordingSession::createChrome()
         if (m_panel)
             placePanel();
     });
+}
+
+bool RecordingSession::eventFilter(QObject *watched, QEvent *event)
+{
+    // Frameless, the panel needs its own edge to stand out from what is
+    // behind it, like the capture toolbar.
+    if (m_panel && watched == m_panel.get() && event->type() == QEvent::Paint) {
+        QPainter painter(m_panel.get());
+        painter.fillRect(m_panel->rect(), m_panel->palette().window());
+        painter.setPen(m_panel->palette().color(QPalette::Mid));
+        painter.drawRect(m_panel->rect().adjusted(0, 0, -1, -1));
+        return true;
+    }
+    return QObject::eventFilter(watched, event);
 }
 
 void RecordingSession::placePanel()

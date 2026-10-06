@@ -34,6 +34,9 @@ signals:
     void finished(const QString &filePath, qint64 durationMs);
     void failed(const QString &message);
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
     void createChrome();
     void placePanel();
