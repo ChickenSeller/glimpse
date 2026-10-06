@@ -16,15 +16,22 @@ struct ScreenImage {
 };
 
 // A window or child control that can be picked as a capture target.
+// Its label: the title of the window it belongs to (a control's own is
+// mostly empty), that window's program ("notepad.exe") and its own class;
+// any of them may be empty.
 struct WindowNode {
     QRect geometry; // logical coordinates on the virtual desktop
     QString title;
+    QString program;
+    QString className;
     std::vector<WindowNode> children; // topmost first
 };
 
 struct CaptureTarget {
     QRect geometry;
     QString title;
+    QString program;
+    QString className;
 };
 
 // A frozen copy of the whole desktop, taken before any selection UI is shown.

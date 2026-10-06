@@ -103,7 +103,7 @@ QList<CaptureTarget> DesktopSnapshot::targetsAt(const QPoint &pos) const
         });
         if (hit == level->end())
             break;
-        chain.append({hit->geometry, hit->title});
+        chain.append({hit->geometry, hit->title, hit->program, hit->className});
         level = &hit->children;
     }
     return chain;

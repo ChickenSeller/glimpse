@@ -23,7 +23,6 @@ const QColor kCrosshair(0xff, 0x40, 0x40);
 // Movement (logical px) before a press turns into a drag, so a slightly
 // shaky click in window mode still picks the window.
 constexpr int kDragThreshold = 4;
-constexpr int kMaxTitleWidth = 360;
 // Color mode magnifier: kZoomCells × kZoomCells native pixels, kZoomCell px each.
 constexpr int kZoomCells = 15;
 constexpr int kZoomCell = 8;
@@ -64,6 +63,26 @@ void drawTag(QPainter &p, const QRect &bounds, const QPoint &anchor, const QStri
     p.drawRoundedRect(box, 3, 3);
     p.setPen(Qt::white);
     p.drawText(box, Qt::AlignCenter, text);
+}
+
+// "Title (app.exe)  ·  ClassName  ·  800 × 600", as wide as it needs. Only a
+// title too long for the screen is shortened; the rest always shows whole.
+QString windowLabel(const QFontMetrics &fm, const CaptureTarget &target, const QString &size, int screenWidth)
+{
+    QStringList tail;
+    if (!target.className.isEmpty())
+        tail << target.className;
+    tail << size;
+    const QString separator = QStringLiteral("  \u00b7  ");
+    if (target.title.isEmpty()) {
+        if (!target.program.isEmpty())
+            tail.prepend(target.program);
+        return tail.join(separator);
+    }
+    const QString program = target.program.isEmpty() ? QString() : QStringLiteral(" (%1)").arg(target.program);
+    const QString rest = program + separator + tail.join(separator);
+    const int room = screenWidth - 24 - fm.horizontalAdvance(rest);
+    return fm.elidedText(target.title, Qt::ElideRight, std::max(room, fm.horizontalAdvance(QStringLiteral("\u2026")))) + rest;
 }
 
 } // namespace
@@ -125,10 +144,7 @@ protected:
             const QRect local = target.geometry.translated(-m_origin);
             drawHighlight(p, local, 2);
             if (local.intersects(rect())) {
-                // Shortened in the middle: the program and class names at the end stay.
-                const QString title = p.fontMetrics().elidedText(target.title, Qt::ElideMiddle, kMaxTitleWidth);
-                drawTag(p, rect(), local.intersected(rect()).topLeft(),
-                        title.isEmpty() ? sizeText(local) : QStringLiteral("%1  ·  %2").arg(title, sizeText(local)));
+                drawTag(p, rect(), local.intersected(rect()).topLeft(), windowLabel(p.fontMetrics(), target, sizeText(local), rect().width()));
             }
             return;
         }

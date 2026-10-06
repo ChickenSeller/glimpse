@@ -111,24 +111,13 @@ bool isEmpty(const RECT &r)
 
 struct Context {
     CoordinateMapper mapper;
-    DWORD ownProcess = GetCurrentProcessId();
     QHash<DWORD, QString> processNames;
     int budget = kMaxNodes;
     std::vector<WindowNode> *out = nullptr;
 };
 
-// "Title (app.exe) · ClassName": the window the control belongs to (a
-// control's own title is mostly empty), and the control's class.
-QString withClass(const QString &label, HWND hwnd)
-{
-    const QString cls = className(hwnd);
-    if (label.isEmpty() || cls.isEmpty())
-        return label.isEmpty() ? cls : label;
-    return QStringLiteral("%1  ·  %2").arg(label, cls);
-}
-
-// Controls inside a window are labelled with the window's "Title (app.exe)".
-void collectChildren(HWND parent, const QString &label, Context &ctx, std::vector<WindowNode> &out, int depth)
+// Controls inside a window are labelled with the window's title and program.
+void collectChildren(HWND parent, const WindowNode &window, Context &ctx, std::vector<WindowNode> &out, int depth)
 {
     if (depth > kMaxDepth)
         return;
@@ -141,8 +130,10 @@ void collectChildren(HWND parent, const QString &label, Context &ctx, std::vecto
         --ctx.budget;
         WindowNode node;
         node.geometry = ctx.mapper.toLogical(rect);
-        node.title = withClass(label, child);
-        collectChildren(child, label, ctx, node.children, depth + 1);
+        node.title = window.title;
+        node.program = window.program;
+        node.className = className(child);
+        collectChildren(child, window, ctx, node.children, depth + 1);
         out.push_back(std::move(node));
     }
 }
@@ -156,10 +147,16 @@ BOOL CALLBACK collectTopLevel(HWND hwnd, LPARAM param)
     if (!IsWindowVisible(hwnd) || IsIconic(hwnd) || isCloaked(hwnd))
         return TRUE;
 
+    // Glimpse's own windows (editors, pins, dialogs) are targets like any
+    // other: the selection overlay does not exist yet. What is kept out of
+    // captures (the recording panel, other programs' protected windows) is
+    // not in the picture, so not a target either.
+    DWORD affinity = 0;
+    if (GetWindowDisplayAffinity(hwnd, &affinity) && affinity != WDA_NONE)
+        return TRUE;
+
     DWORD process = 0;
     GetWindowThreadProcessId(hwnd, &process);
-    if (process == ctx.ownProcess)
-        return TRUE;
 
     // Click-through overlays (game/GPU overlays, some notifications) are not real targets.
     if (GetWindowLongPtrW(hwnd, GWL_EXSTYLE) & WS_EX_TRANSPARENT)
@@ -181,16 +178,13 @@ BOOL CALLBACK collectTopLevel(HWND hwnd, LPARAM param)
     --ctx.budget;
     WindowNode node;
     node.geometry = ctx.mapper.toLogical(rect);
-    // "Title (app.exe)", so that it is clear which program a window belongs to.
+    // The program too, so that it is clear which one a window belongs to.
     if (!ctx.processNames.contains(process))
         ctx.processNames.insert(process, processName(process));
-    const QString program = ctx.processNames.value(process);
-    const QString title = windowTitle(hwnd);
-    QString label = title;
-    if (!program.isEmpty())
-        label = title.isEmpty() ? program : QStringLiteral("%1 (%2)").arg(title, program);
-    node.title = withClass(label, hwnd);
-    collectChildren(hwnd, label, ctx, node.children, 1);
+    node.title = windowTitle(hwnd);
+    node.program = ctx.processNames.value(process);
+    node.className = cls;
+    collectChildren(hwnd, node, ctx, node.children, 1);
     ctx.out->push_back(std::move(node));
     return TRUE;
 }
