@@ -1,5 +1,6 @@
 #include "app/AppIcon.h"
 #include "app/AppSettings.h"
+#include "app/Autostart.h"
 #include "app/CaptureController.h"
 #include "app/Language.h"
 #include "ocr/OcrEngine.h"
@@ -8,6 +9,7 @@
 
 #include <QApplication>
 #include <QFile>
+#include <QSystemTrayIcon>
 
 #include <kdsingleapplication.h>
 
@@ -68,7 +70,10 @@ int main(int argc, char *argv[])
     Language::apply(AppSettings::language());
 
     CaptureController controller;
-    controller.showToolbar();
+    Autostart::refresh();
+    // Started with the session, Glimpse waits in the tray (if there is one).
+    if (!args.contains(Autostart::kArgument) || !QSystemTrayIcon::isSystemTrayAvailable())
+        controller.showToolbar();
     QObject::connect(&instance, &KDSingleApplication::messageReceived, &controller,
                      [&controller] { controller.showToolbar(); });
 

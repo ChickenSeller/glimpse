@@ -155,7 +155,7 @@
         <translation>识别二维码</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+489"/>
+        <location filename="../src/app/CaptureController.cpp" line="+507"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
@@ -196,7 +196,7 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-386"/>
+        <location filename="../src/app/CaptureController.cpp" line="-402"/>
         <location line="+36"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
@@ -234,7 +234,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+234"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+250"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+612"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+620"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -976,7 +976,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+110"/>
+        <location filename="../src/capture/Platform.cpp" line="+129"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 上暂不支持。</translation>
     </message>
@@ -1142,7 +1142,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+388"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+389"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation>单击：取色  ·  方向键：移动 1 像素</translation>
     </message>
@@ -1209,7 +1209,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文件保存位置(&amp;V):</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+56"/>
         <source>Captures</source>
         <translation>截图</translation>
     </message>
@@ -1476,13 +1476,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存文件夹(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-618"/>
-        <location line="+833"/>
+        <location line="-628"/>
+        <location line="+843"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-826"/>
+        <location line="-836"/>
         <source>Cl&amp;ear</source>
         <translation>清空(&amp;E)</translation>
     </message>
@@ -1497,7 +1497,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>截图保存在其中的 Screenshots 子文件夹，录像保存在 Recordings 子文件夹。</translation>
     </message>
     <message>
-        <location line="+455"/>
+        <location line="+10"/>
+        <source>Sta&amp;rt Glimpse when I sign in</source>
+        <translation>登录时启动 Glimpse(&amp;R)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Glimpse then waits in the notification area.</source>
+        <translation>启动后 Glimpse 在通知区域（托盘）中待命。</translation>
+    </message>
+    <message>
+        <location line="+452"/>
         <source>Toolbar &amp;size:</source>
         <translation>工具栏大小(&amp;S)：</translation>
     </message>
@@ -1587,7 +1597,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-536"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-543"/>
         <source>Screenshots</source>
         <translation>截图</translation>
     </message>
@@ -1602,7 +1612,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>截图和录像</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+30"/>
         <source>%1 fps</source>
         <translation>%1 帧/秒</translation>
     </message>
@@ -1627,7 +1637,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+96"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -1679,7 +1689,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-263"/>
+        <location line="-265"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

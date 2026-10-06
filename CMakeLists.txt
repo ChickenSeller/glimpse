@@ -160,6 +160,8 @@ qt_add_executable(glimpse
     src/app/AppIcon.h
     src/app/AppSettings.cpp
     src/app/AppSettings.h
+    src/app/Autostart.cpp
+    src/app/Autostart.h
     src/app/CaptureController.cpp
     src/app/CaptureController.h
     src/app/CaptureMode.h

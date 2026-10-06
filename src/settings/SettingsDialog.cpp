@@ -3,6 +3,7 @@
 
 #include "HotkeyEdit.h"
 #include "app/AppSettings.h"
+#include "app/Autostart.h"
 #include "app/Language.h"
 #include "app/TintedIcon.h"
 #include "capture/Platform.h"
@@ -79,6 +80,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     ui->clearFolderButton->setMenu(clearMenu);
 
+    ui->autostartCheck->setChecked(Autostart::isEnabled());
+    ui->autostartCheck->setEnabled(Autostart::isSupported());
+    if (!Autostart::isSupported())
+        ui->autostartCheck->setToolTip(Platform::unsupportedHint());
     ui->usageStatsCheck->setChecked(UsageStats::isAvailable() && UsageStats::isEnabled());
     ui->usageStatsCheck->setEnabled(UsageStats::isAvailable()); // a build without a statistics site
     ui->captureToolbarCheck->setChecked(AppSettings::captureIncludesToolbar());
@@ -223,7 +228,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     applyPlatformLimits();
     updateOcrEngineNote();
-    for (QCheckBox *check : {ui->usageStatsCheck, ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->freehandTransparentCheck,
+    for (QCheckBox *check : {ui->autostartCheck, ui->usageStatsCheck, ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->freehandTransparentCheck,
                              ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck,
                              ui->ocrChineseCheck, ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
@@ -306,6 +311,8 @@ bool SettingsDialog::apply()
     AppSettings::setToolbarItems(toolbarItems());
     AppSettings::setToolbarScale(ui->toolbarScaleSlider->value() * 10);
     AppSettings::setSaveFolder(QDir::fromNativeSeparators(ui->saveFolderEdit->text().trimmed()));
+    if (Autostart::isSupported() && ui->autostartCheck->isChecked() != Autostart::isEnabled())
+        Autostart::setEnabled(ui->autostartCheck->isChecked());
     if (UsageStats::isAvailable() && ui->usageStatsCheck->isChecked() != UsageStats::isEnabled())
         UsageStats::setEnabled(ui->usageStatsCheck->isChecked());
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
@@ -546,6 +553,7 @@ void SettingsDialog::restoreDefaults()
     ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::SourceOrder::MirrorFirst));
     ui->downloadMirrorEdit->setText(ModelStore::defaultMirror());
     ui->saveFolderEdit->setText(QDir::toNativeSeparators(AppSettings::defaultSaveFolder()));
+    ui->autostartCheck->setChecked(false);
     ui->usageStatsCheck->setChecked(UsageStats::isAvailable());
     ui->captureToolbarCheck->setChecked(false);
     ui->captureCursorCheck->setChecked(false);

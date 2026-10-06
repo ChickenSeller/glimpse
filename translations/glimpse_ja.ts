@@ -155,7 +155,7 @@
         <translation>QR コードを読み取る</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+489"/>
+        <location filename="../src/app/CaptureController.cpp" line="+507"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
@@ -196,7 +196,7 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-386"/>
+        <location filename="../src/app/CaptureController.cpp" line="-402"/>
         <location line="+36"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
@@ -234,7 +234,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+234"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+250"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+612"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+620"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -976,7 +976,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+110"/>
+        <location filename="../src/capture/Platform.cpp" line="+129"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 ではまだ利用できません。</translation>
     </message>
@@ -1142,7 +1142,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+388"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+389"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation>クリック：取得  ·  矢印キー：1 ピクセル移動</translation>
     </message>
@@ -1209,7 +1209,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>保存先フォルダー(&amp;V):</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+56"/>
         <source>Captures</source>
         <translation>キャプチャ</translation>
     </message>
@@ -1476,13 +1476,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存先フォルダー(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-618"/>
-        <location line="+833"/>
+        <location line="-628"/>
+        <location line="+843"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-826"/>
+        <location line="-836"/>
         <source>Cl&amp;ear</source>
         <translation>クリア(&amp;E)</translation>
     </message>
@@ -1497,7 +1497,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>スクリーンショットはその中の Screenshots、録画は Recordings サブフォルダーに保存されます。</translation>
     </message>
     <message>
-        <location line="+455"/>
+        <location line="+10"/>
+        <source>Sta&amp;rt Glimpse when I sign in</source>
+        <translation>サインイン時に Glimpse を起動する(&amp;R)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Glimpse then waits in the notification area.</source>
+        <translation>起動後、Glimpse は通知領域で待機します。</translation>
+    </message>
+    <message>
+        <location line="+452"/>
         <source>Toolbar &amp;size:</source>
         <translation>ツールバーのサイズ(&amp;S)：</translation>
     </message>
@@ -1587,7 +1597,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-536"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-543"/>
         <source>Screenshots</source>
         <translation>スクリーンショット</translation>
     </message>
@@ -1602,7 +1612,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>スクリーンショットと録画</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+30"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
@@ -1627,7 +1637,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+96"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -1679,7 +1689,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-263"/>
+        <location line="-265"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
