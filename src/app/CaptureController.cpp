@@ -26,6 +26,7 @@
 #include "translate/LocalModel.h"
 #include "translate/Translator.h"
 #include "update/Updater.h"
+#include "update/UsageStats.h"
 
 #include <QApplication>
 #include <QDateTime>
@@ -88,6 +89,14 @@ CaptureController::CaptureController(QObject *parent)
             m_tray->showMessage(title, message);
     });
     QTimer::singleShot(5000, m_updater, &Updater::checkAtStartup);
+    QTimer::singleShot(3000, this, [] {
+        QString mode = QStringLiteral("Unsupported");
+        if (Updater::isSupported()) {
+            static const char *const names[] = {"Automatic", "Required only", "Ask", "Never"};
+            mode = QString::fromLatin1(names[int(Updater::mode())]);
+        }
+        UsageStats::reportStart(mode);
+    });
 
     const QStringList taken = registerHotkeys();
     if (!taken.isEmpty() && m_tray) {

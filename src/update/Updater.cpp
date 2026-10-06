@@ -1,5 +1,7 @@
 #include "Updater.h"
 
+#include "UsageStats.h"
+
 #include <QApplication>
 #include <QCryptographicHash>
 #include <QDir>
@@ -135,6 +137,8 @@ void Updater::onManifest(QNetworkReply *reply, bool interactive)
         return;
     }
 
+    if (haveLatest)
+        UsageStats::report(QStringLiteral("Update"), QStringLiteral("Available"), latest.version.toString());
     switch (mode()) {
     case Mode::Automatic:
         if (haveLatest)
@@ -168,6 +172,8 @@ void Updater::ask(const Release &release)
     box.exec();
     if (box.clickedButton() == update)
         download(release, true);
+    else
+        UsageStats::report(QStringLiteral("Update"), QStringLiteral("Declined"), release.version.toString());
 }
 
 void Updater::download(const Release &release, bool interactive)
@@ -250,6 +256,7 @@ void Updater::onDownloaded(const Release &release, QNetworkReply *reply, bool in
     m_file = nullptr;
 
     if (!error.isEmpty()) {
+        UsageStats::report(QStringLiteral("Update"), QStringLiteral("Failed"), release.version.toString());
         QFile::remove(zipPath);
         const QString message = tr("Could not download Glimpse %1:\n%2").arg(release.version.toString(), error);
         if (interactive)

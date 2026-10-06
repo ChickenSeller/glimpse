@@ -257,6 +257,16 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="usageStatsCheck">
+            <property name="text">
+             <string>Send anonymous usage &amp;statistics</string>
+            </property>
+            <property name="toolTip">
+             <string>Which Glimpse version runs and how updating goes, with a random ID for this installation. Nothing about you, your files or your screen is sent.</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

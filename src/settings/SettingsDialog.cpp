@@ -12,6 +12,7 @@
 #include "translate/LocalModel.h"
 #include "translate/Translator.h"
 #include "update/Updater.h"
+#include "update/UsageStats.h"
 
 #include <QColorDialog>
 #include <QCoreApplication>
@@ -78,6 +79,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     ui->clearFolderButton->setMenu(clearMenu);
 
+    ui->usageStatsCheck->setChecked(UsageStats::isAvailable() && UsageStats::isEnabled());
+    ui->usageStatsCheck->setEnabled(UsageStats::isAvailable()); // a build without a statistics site
     ui->captureToolbarCheck->setChecked(AppSettings::captureIncludesToolbar());
     ui->captureCursorCheck->setChecked(AppSettings::captureIncludesCursor());
     ui->captureClipboardCheck->setChecked(AppSettings::copyCapturesToClipboard());
@@ -220,7 +223,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     applyPlatformLimits();
     updateOcrEngineNote();
-    for (QCheckBox *check : {ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->freehandTransparentCheck,
+    for (QCheckBox *check : {ui->usageStatsCheck, ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->freehandTransparentCheck,
                              ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck,
                              ui->ocrChineseCheck, ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
@@ -303,6 +306,8 @@ bool SettingsDialog::apply()
     AppSettings::setToolbarItems(toolbarItems());
     AppSettings::setToolbarScale(ui->toolbarScaleSlider->value() * 10);
     AppSettings::setSaveFolder(QDir::fromNativeSeparators(ui->saveFolderEdit->text().trimmed()));
+    if (UsageStats::isAvailable() && ui->usageStatsCheck->isChecked() != UsageStats::isEnabled())
+        UsageStats::setEnabled(ui->usageStatsCheck->isChecked());
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
     AppSettings::setCaptureIncludesCursor(ui->captureCursorCheck->isChecked());
     AppSettings::setCopyCapturesToClipboard(ui->captureClipboardCheck->isChecked());
@@ -541,6 +546,7 @@ void SettingsDialog::restoreDefaults()
     ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::SourceOrder::MirrorFirst));
     ui->downloadMirrorEdit->setText(ModelStore::defaultMirror());
     ui->saveFolderEdit->setText(QDir::toNativeSeparators(AppSettings::defaultSaveFolder()));
+    ui->usageStatsCheck->setChecked(UsageStats::isAvailable());
     ui->captureToolbarCheck->setChecked(false);
     ui->captureCursorCheck->setChecked(false);
     ui->captureClipboardCheck->setChecked(false);

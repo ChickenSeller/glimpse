@@ -155,7 +155,7 @@
         <translation>QR コードを読み取る</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+480"/>
+        <location filename="../src/app/CaptureController.cpp" line="+489"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+250"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+606"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+612"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -1313,7 +1313,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>今すぐ確認して更新(&amp;N)</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+13"/>
+        <source>Send anonymous usage &amp;statistics</source>
+        <translation>匿名の使用統計を送信する(&amp;S)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Which Glimpse version runs and how updating goes, with a random ID for this installation. Nothing about you, your files or your screen is sent.</source>
+        <translation>実行中の Glimpse のバージョンと更新の状況を、このインストールのランダムな ID とともに送信します。あなた自身やファイル、画面に関する情報は送信しません。</translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Hotkeys</source>
         <translation>ホットキー</translation>
     </message>
@@ -1466,13 +1476,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存先フォルダー(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-608"/>
-        <location line="+823"/>
+        <location line="-618"/>
+        <location line="+833"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-816"/>
+        <location line="-826"/>
         <source>Cl&amp;ear</source>
         <translation>クリア(&amp;E)</translation>
     </message>
@@ -1487,7 +1497,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>スクリーンショットはその中の Screenshots、録画は Recordings サブフォルダーに保存されます。</translation>
     </message>
     <message>
-        <location line="+445"/>
+        <location line="+455"/>
         <source>Toolbar &amp;size:</source>
         <translation>ツールバーのサイズ(&amp;S)：</translation>
     </message>
@@ -1577,7 +1587,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-531"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-536"/>
         <source>Screenshots</source>
         <translation>スクリーンショット</translation>
     </message>
@@ -1592,7 +1602,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>スクリーンショットと録画</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+26"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
@@ -1617,7 +1627,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+94"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -1669,7 +1679,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-261"/>
+        <location line="-263"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
@@ -1872,14 +1882,14 @@ Download them now? They are kept on this computer and used offline from then on.
 <context>
     <name>Updater</name>
     <message>
-        <location filename="../src/update/Updater.cpp" line="+115"/>
+        <location filename="../src/update/Updater.cpp" line="+117"/>
         <location line="+18"/>
-        <location line="+27"/>
-        <location line="+22"/>
+        <location line="+29"/>
+        <location line="+24"/>
         <location line="+2"/>
         <location line="+24"/>
         <location line="+12"/>
-        <location line="+36"/>
+        <location line="+37"/>
         <location line="+2"/>
         <location line="+8"/>
         <location line="+15"/>
@@ -1887,7 +1897,7 @@ Download them now? They are kept on this computer and used offline from then on.
         <translation>Glimpse の更新</translation>
     </message>
     <message>
-        <location line="-165"/>
+        <location line="-170"/>
         <source>Could not check for updates:
 %1</source>
         <translation>更新を確認できませんでした：
@@ -1899,7 +1909,7 @@ Download them now? They are kept on this computer and used offline from then on.
         <translation>Glimpse %1 は最新バージョンです。</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Glimpse %1 is available; you have %2.
 Update now? Glimpse restarts when it is done.</source>
         <translation>Glimpse %1 が公開されています（現在のバージョンは %2）。
@@ -1916,7 +1926,7 @@ Update now? Glimpse restarts when it is done.</source>
         <translation>後で</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Glimpse %1 is available, but the folder Glimpse runs from cannot be written to. Download it from the homepage and unpack it yourself.</source>
         <translation>Glimpse %1 が公開されていますが、Glimpse のフォルダーに書き込めません。ホームページからダウンロードして展開してください。</translation>
     </message>
@@ -1941,7 +1951,7 @@ Update now? Glimpse restarts when it is done.</source>
         <translation>ダウンロードしたファイルが壊れています（チェックサムの不一致）。</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <source>Could not download Glimpse %1:
 %2</source>
         <translation>Glimpse %1 をダウンロードできませんでした：

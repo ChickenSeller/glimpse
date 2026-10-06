@@ -155,7 +155,7 @@
         <translation>识别二维码</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+480"/>
+        <location filename="../src/app/CaptureController.cpp" line="+489"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+250"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+606"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+612"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -1313,7 +1313,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>立即检查并更新(&amp;N)</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+13"/>
+        <source>Send anonymous usage &amp;statistics</source>
+        <translation>发送匿名使用统计(&amp;S)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Which Glimpse version runs and how updating goes, with a random ID for this installation. Nothing about you, your files or your screen is sent.</source>
+        <translation>发送正在运行的 Glimpse 版本和更新情况，附带本次安装的随机 ID。不会发送任何关于你、你的文件或屏幕的信息。</translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Hotkeys</source>
         <translation>快捷键</translation>
     </message>
@@ -1466,13 +1476,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存文件夹(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-608"/>
-        <location line="+823"/>
+        <location line="-618"/>
+        <location line="+833"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-816"/>
+        <location line="-826"/>
         <source>Cl&amp;ear</source>
         <translation>清空(&amp;E)</translation>
     </message>
@@ -1487,7 +1497,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>截图保存在其中的 Screenshots 子文件夹，录像保存在 Recordings 子文件夹。</translation>
     </message>
     <message>
-        <location line="+445"/>
+        <location line="+455"/>
         <source>Toolbar &amp;size:</source>
         <translation>工具栏大小(&amp;S)：</translation>
     </message>
@@ -1577,7 +1587,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-531"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-536"/>
         <source>Screenshots</source>
         <translation>截图</translation>
     </message>
@@ -1592,7 +1602,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>截图和录像</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+26"/>
         <source>%1 fps</source>
         <translation>%1 帧/秒</translation>
     </message>
@@ -1617,7 +1627,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+94"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -1669,7 +1679,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-261"/>
+        <location line="-263"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
@@ -1872,14 +1882,14 @@ Download them now? They are kept on this computer and used offline from then on.
 <context>
     <name>Updater</name>
     <message>
-        <location filename="../src/update/Updater.cpp" line="+115"/>
+        <location filename="../src/update/Updater.cpp" line="+117"/>
         <location line="+18"/>
-        <location line="+27"/>
-        <location line="+22"/>
+        <location line="+29"/>
+        <location line="+24"/>
         <location line="+2"/>
         <location line="+24"/>
         <location line="+12"/>
-        <location line="+36"/>
+        <location line="+37"/>
         <location line="+2"/>
         <location line="+8"/>
         <location line="+15"/>
@@ -1887,7 +1897,7 @@ Download them now? They are kept on this computer and used offline from then on.
         <translation>Glimpse 更新</translation>
     </message>
     <message>
-        <location line="-165"/>
+        <location line="-170"/>
         <source>Could not check for updates:
 %1</source>
         <translation>无法检查更新：
@@ -1899,7 +1909,7 @@ Download them now? They are kept on this computer and used offline from then on.
         <translation>Glimpse %1 已是最新版本。</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Glimpse %1 is available; you have %2.
 Update now? Glimpse restarts when it is done.</source>
         <translation>Glimpse %1 已发布，当前版本是 %2。
@@ -1916,7 +1926,7 @@ Update now? Glimpse restarts when it is done.</source>
         <translation>以后再说</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Glimpse %1 is available, but the folder Glimpse runs from cannot be written to. Download it from the homepage and unpack it yourself.</source>
         <translation>Glimpse %1 已发布，但无法写入 Glimpse 所在的文件夹。请从主页下载并自行解压。</translation>
     </message>
@@ -1941,7 +1951,7 @@ Update now? Glimpse restarts when it is done.</source>
         <translation>下载的文件已损坏（校验值不匹配）。</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <source>Could not download Glimpse %1:
 %2</source>
         <translation>无法下载 Glimpse %1：
