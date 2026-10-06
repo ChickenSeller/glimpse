@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 
 # The version. The release pipeline passes the one of the tag instead
 # (v1.2.3 -> -DGLIMPSE_RELEASE_VERSION=1.2.3).
-set(GLIMPSE_VERSION 0.4.6)
+set(GLIMPSE_VERSION 0.4.7)
 if(GLIMPSE_RELEASE_VERSION)
     set(GLIMPSE_VERSION ${GLIMPSE_RELEASE_VERSION})
 endif()
