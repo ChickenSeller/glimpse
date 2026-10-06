@@ -5,6 +5,7 @@
   <property name="windowTitle">
    <string>Glimpse</string>
   </property>
+  <widget class="QWidget" name="panel">
   <layout class="QHBoxLayout" name="layout">
    <property name="spacing">
     <number>2</number>
@@ -457,6 +458,7 @@
     </widget>
    </item>
   </layout>
+  </widget>
  </widget>
  <resources>
   <include location="../../resources/glimpse.qrc"/>

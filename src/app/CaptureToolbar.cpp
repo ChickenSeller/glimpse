@@ -6,22 +6,46 @@
 #include "capture/Platform.h"
 
 #include <QActionGroup>
+#include <QApplication>
 #include <QCloseEvent>
+#include <QCursor>
 #include <QInputDialog>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QScreen>
 #include <QSettings>
+#include <QTimer>
 #include <QToolButton>
+#include <QVariantAnimation>
 #include <QWindow>
 
 #include <algorithm>
+#include <cmath>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 
 namespace {
 
 const QString kGeometryKey = QStringLiteral("toolbar/geometry");
+const QString kDockEdgeKey = QStringLiteral("toolbar/dockEdge");
+const QString kDockScreenKey = QStringLiteral("toolbar/dockScreen");
+const QString kDockPositionKey = QStringLiteral("toolbar/dockPosition");
+
+constexpr int kSlideInDelayMs = 1000; // after the pointer leaves a docked bar
+constexpr int kSlideMs = 500;         // a whole slide in or out, at the top or bottom
+constexpr int kSlideSidewaysMs = 300; // at the left or right: the whole length of the bar
+constexpr int kDockStrip = 4;         // what stays on screen, slid in
+constexpr int kDragSettleMs = 400;    // no more moves: the drag is over (where unreported)
+
+// Wayland does not tell windows where they are.
+bool dockingSupported()
+{
+    return Platform::displayServer() != Platform::DisplayServer::Wayland;
+}
 
 } // namespace
 
@@ -76,12 +100,34 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
     // Hidden for every capture: it must be gone at once, not fading out.
     Platform::disableWindowAnimations(this);
 
+    m_slide = new QVariantAnimation(this);
+    m_slide->setEasingCurve(QEasingCurve::InOutCubic); // eases off at both ends
+    connect(m_slide, &QVariantAnimation::valueChanged, this,
+            [this](const QVariant &value) { setHiddenAmount(value.toReal()); });
+    m_slideInTimer = new QTimer(this);
+    m_slideInTimer->setSingleShot(true);
+    m_slideInTimer->setInterval(kSlideInDelayMs);
+    connect(m_slideInTimer, &QTimer::timeout, this, &CaptureToolbar::slideInIfIdle);
+    m_dragEndTimer = new QTimer(this);
+    m_dragEndTimer->setSingleShot(true);
+    m_dragEndTimer->setInterval(kDragSettleMs);
+    connect(m_dragEndTimer, &QTimer::timeout, this, &CaptureToolbar::endDrag);
+    connect(qApp, &QGuiApplication::screenRemoved, this, [this](QScreen *screen) {
+        if (screen == m_dockScreen) {
+            undock();
+            keepOnScreen();
+        }
+    });
+
     applyLayoutSettings();
 
     // Wherever the user last left the bar; Qt moves it back on screen if that
     // monitor is gone. Without a saved value the window system places it.
     restoreGeometry(QSettings().value(kGeometryKey).toByteArray());
-    keepOnScreen(); // at the size the settings ask for
+    resize(ui->panel->size()); // saved while slid in, it was a strip
+    keepOnScreen();            // at the size the settings ask for
+    restoreDock();
+
 }
 
 CaptureToolbar::~CaptureToolbar()
@@ -133,13 +179,31 @@ void CaptureToolbar::applyLayoutSettings()
     ui->layout->setSpacing(qRound(m_baseSpacing * scale));
     ui->layout->setContentsMargins(qRound(m_baseMargins.left() * scale), qRound(m_baseMargins.top() * scale),
                                    qRound(m_baseMargins.right() * scale), qRound(m_baseMargins.bottom() * scale));
-    adjustSize(); // fits the new size, and shrinks when buttons were hidden
-    keepOnScreen();
+    // The window follows the panel: it fits the new size, and shrinks when
+    // buttons were hidden.
+    ui->layout->activate();
+    ui->panel->adjustSize();
+    if (m_dockEdge != DockEdge::None && m_dockScreen) {
+        dockTo(m_dockScreen, m_dockEdge, m_dockPosition);
+    } else {
+        resize(ui->panel->size());
+        keepOnScreen();
+    }
+}
+
+void CaptureToolbar::reveal()
+{
+    if (m_dockEdge == DockEdge::None)
+        return;
+    slideTo(0);
+    scheduleSlideIn();
 }
 
 // Grown, the bar may reach past the edge of its screen: move it back in.
 void CaptureToolbar::keepOnScreen()
 {
+    if (m_dockEdge != DockEdge::None)
+        return; // docked, it is placed on its screen already
     if (const QScreen *screen = this->screen()) {
         const QRect available = screen->availableGeometry();
         QRect frame = frameGeometry();
@@ -184,8 +248,10 @@ bool CaptureToolbar::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == ui->dragHandle && event->type() == QEvent::MouseButtonPress
         && static_cast<QMouseEvent *>(event)->button() == Qt::LeftButton) {
-        if (QWindow *window = windowHandle())
-            window->startSystemMove();
+        beginDrag();
+        QWindow *window = windowHandle();
+        if (!window || !window->startSystemMove())
+            m_dragging = false;
         return true;
     }
     return QWidget::eventFilter(watched, event);
@@ -194,10 +260,11 @@ bool CaptureToolbar::eventFilter(QObject *watched, QEvent *event)
 void CaptureToolbar::paintEvent(QPaintEvent *)
 {
     // Without a frame the bar needs its own edge to stand out from what is behind it.
+    // Around the panel, which slides past the window's edge when docked.
     QPainter painter(this);
     painter.fillRect(rect(), palette().window());
     painter.setPen(palette().color(QPalette::Mid));
-    painter.drawRect(rect().adjusted(0, 0, -1, -1));
+    painter.drawRect(ui->panel->geometry().adjusted(0, 0, -1, -1));
 }
 
 void CaptureToolbar::applyPlatformLimits()
@@ -284,7 +351,227 @@ void CaptureToolbar::hideEvent(QHideEvent *event)
 
 void CaptureToolbar::savePosition()
 {
-    QSettings().setValue(kGeometryKey, saveGeometry());
+    QSettings settings;
+    settings.setValue(kGeometryKey, saveGeometry());
+    if (m_dockEdge != DockEdge::None && m_dockScreen) {
+        settings.setValue(kDockEdgeKey, int(m_dockEdge));
+        settings.setValue(kDockScreenKey, m_dockScreen->name());
+        settings.setValue(kDockPositionKey, m_dockPosition);
+    } else {
+        settings.remove(kDockEdgeKey);
+        settings.remove(kDockScreenKey);
+        settings.remove(kDockPositionKey);
+    }
+}
+
+void CaptureToolbar::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    // Back after a capture: as it was, slid in or out.
+    if (m_dockEdge != DockEdge::None) {
+        setHiddenAmount(m_hiddenAmount);
+        if (m_hiddenAmount == 0)
+            scheduleSlideIn();
+    }
+}
+
+void CaptureToolbar::enterEvent(QEnterEvent *event)
+{
+    QWidget::enterEvent(event);
+    m_slideInTimer->stop();
+    if (m_dockEdge != DockEdge::None && !m_dragging)
+        slideTo(0);
+}
+
+void CaptureToolbar::leaveEvent(QEvent *event)
+{
+    QWidget::leaveEvent(event);
+    scheduleSlideIn();
+}
+
+void CaptureToolbar::moveEvent(QMoveEvent *event)
+{
+    QWidget::moveEvent(event);
+#ifndef Q_OS_WIN
+    // X11 does not say when a window manager move ends: it has once the bar
+    // stops moving for a moment.
+    if (m_dragging)
+        m_dragEndTimer->start();
+#endif
+}
+
+bool CaptureToolbar::nativeEvent(const QByteArray &eventType, void *message, qintptr *result)
+{
+#ifdef Q_OS_WIN
+    // The move started by startSystemMove() ends with the button released.
+    if (m_dragging && eventType == "windows_generic_MSG"
+        && static_cast<MSG *>(message)->message == WM_EXITSIZEMOVE)
+        QTimer::singleShot(0, this, &CaptureToolbar::endDrag);
+#endif
+    return QWidget::nativeEvent(eventType, message, result);
+}
+
+void CaptureToolbar::beginDrag()
+{
+    m_dragging = true;
+    m_slideInTimer->stop();
+    m_dragEndTimer->stop();
+    undock(); // whole again, to be moved
+}
+
+// Dropped against an edge of the screen under the pointer: docked there.
+// The pointer, not the bar, picks the screen: at an edge between two screens
+// the bar reaches into the other one.
+void CaptureToolbar::endDrag()
+{
+    if (!m_dragging)
+        return;
+    m_dragging = false;
+    m_dragEndTimer->stop();
+    QScreen *screen = QGuiApplication::screenAt(QCursor::pos());
+    if (!screen)
+        screen = this->screen();
+    if (!dockingSupported() || !screen) {
+        keepOnScreen();
+        return;
+    }
+    const QRect area = screen->availableGeometry();
+    const QRect frame = frameGeometry();
+    DockEdge edge = DockEdge::None;
+    if (frame.left() <= area.left())
+        edge = DockEdge::Left;
+    else if (frame.right() >= area.right())
+        edge = DockEdge::Right;
+    else if (frame.top() <= area.top())
+        edge = DockEdge::Top;
+    else if (frame.bottom() >= area.bottom())
+        edge = DockEdge::Bottom;
+    if (edge == DockEdge::None) {
+        keepOnScreen();
+        return;
+    }
+    dockTo(screen, edge, frame.topLeft());
+    if (!frameGeometry().contains(QCursor::pos()))
+        scheduleSlideIn();
+}
+
+// Against the edge, wholly on the screen, at the slide it had.
+void CaptureToolbar::dockTo(QScreen *screen, DockEdge edge, QPoint position)
+{
+    m_dockScreen = screen;
+    m_dockEdge = edge;
+    const QRect area = screen->availableGeometry();
+    const QSize size = ui->panel->size();
+    int x = std::clamp(position.x(), area.left(), std::max(area.left(), area.right() - size.width() + 1));
+    int y = std::clamp(position.y(), area.top(), std::max(area.top(), area.bottom() - size.height() + 1));
+    switch (edge) {
+    case DockEdge::Left: x = area.left(); break;
+    case DockEdge::Right: x = area.right() - size.width() + 1; break;
+    case DockEdge::Top: y = area.top(); break;
+    case DockEdge::Bottom: y = area.bottom() - size.height() + 1; break;
+    case DockEdge::None: break;
+    }
+    m_dockPosition = QPoint(x, y);
+    setHiddenAmount(m_hiddenAmount);
+}
+
+void CaptureToolbar::undock()
+{
+    m_slide->stop();
+    if (m_dockEdge != DockEdge::None)
+        setHiddenAmount(0);
+    m_dockEdge = DockEdge::None;
+    m_dockScreen = nullptr;
+    m_hiddenAmount = 0;
+    ui->panel->move(0, 0);
+}
+
+void CaptureToolbar::restoreDock()
+{
+    if (!dockingSupported())
+        return;
+    QSettings settings;
+    const int edge = settings.value(kDockEdgeKey, 0).toInt();
+    if (edge <= int(DockEdge::None) || edge > int(DockEdge::Bottom))
+        return;
+    const QString name = settings.value(kDockScreenKey).toString();
+    const auto screens = QGuiApplication::screens();
+    for (QScreen *screen : screens) {
+        if (screen->name() == name) {
+            m_hiddenAmount = 1; // starts slid in, out of the way
+            dockTo(screen, DockEdge(edge), settings.value(kDockPositionKey).toPoint());
+            return;
+        }
+    }
+}
+
+// The window shrinks toward the edge down to a strip; the panel inside moves
+// so that the part nearest the edge is what stays, as if the bar slid in.
+void CaptureToolbar::setHiddenAmount(qreal amount)
+{
+    m_hiddenAmount = amount;
+    if (m_dockEdge == DockEdge::None)
+        return;
+    const QSize full = ui->panel->size();
+    QRect frame(m_dockPosition, full);
+    QPoint panel(0, 0);
+    if (m_dockEdge == DockEdge::Left || m_dockEdge == DockEdge::Right) {
+        const int shown = std::max(kDockStrip, qRound(full.width() - (full.width() - kDockStrip) * amount));
+        frame.setWidth(shown);
+        if (m_dockEdge == DockEdge::Right)
+            frame.moveRight(m_dockPosition.x() + full.width() - 1);
+        else
+            panel.setX(shown - full.width());
+    } else {
+        const int shown = std::max(kDockStrip, qRound(full.height() - (full.height() - kDockStrip) * amount));
+        frame.setHeight(shown);
+        if (m_dockEdge == DockEdge::Bottom)
+            frame.moveBottom(m_dockPosition.y() + full.height() - 1);
+        else
+            panel.setY(shown - full.height());
+    }
+    ui->panel->move(panel);
+    setGeometry(frame);
+    update();
+}
+
+void CaptureToolbar::slideTo(qreal amount)
+{
+    if (m_dockEdge == DockEdge::None)
+        return;
+    m_slide->stop();
+    const qreal from = m_hiddenAmount;
+    if (qFuzzyCompare(1 + from, 1 + amount))
+        return;
+    {
+        // A finished animation stays at its end: changing its values would
+        // report the end value right away and jump the bar there.
+        const QSignalBlocker blocker(m_slide);
+        const bool sideways = m_dockEdge == DockEdge::Left || m_dockEdge == DockEdge::Right;
+        m_slide->setDuration(std::max(1, qRound((sideways ? kSlideSidewaysMs : kSlideMs) * std::abs(amount - from))));
+        m_slide->setStartValue(from);
+        m_slide->setEndValue(amount);
+    }
+    m_slide->start();
+}
+
+void CaptureToolbar::scheduleSlideIn()
+{
+    if (m_dockEdge != DockEdge::None && !m_dragging && isVisible())
+        m_slideInTimer->start();
+}
+
+// Not while the pointer is on the bar, nor while its menu or a dialog of it is open.
+void CaptureToolbar::slideInIfIdle()
+{
+    if (m_dockEdge == DockEdge::None || m_dragging)
+        return;
+    if (frameGeometry().contains(QCursor::pos()) || QApplication::activePopupWidget()
+        || QApplication::activeModalWidget()) {
+        m_slideInTimer->start();
+        return;
+    }
+    slideTo(1);
 }
 
 void CaptureToolbar::closeEvent(QCloseEvent *event)

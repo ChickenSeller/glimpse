@@ -115,6 +115,7 @@ void CaptureController::showToolbar()
     m_toolbar->showNormal(); // also undoes a minimize
     m_toolbar->raise();
     m_toolbar->activateWindow();
+    m_toolbar->reveal();
 }
 
 void CaptureController::showSettings()
