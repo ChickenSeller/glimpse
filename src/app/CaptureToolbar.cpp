@@ -88,8 +88,6 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
     }
     applyIconColor();
     applyPlatformLimits();
-    if (kScrollingHidden)
-        ui->scrollButton->hide();
 
     // The delay button has its own tooltip (with the current delay), not a hotkey hint.
     m_baseToolTips.remove(ui->delayButton);
@@ -163,8 +161,6 @@ void CaptureToolbar::applyLayoutSettings()
         ui->layout->insertWidget(index++, button);
         button->setVisible(item.visible);
     }
-    if (kScrollingHidden)
-        ui->scrollButton->hide();
 
     // Icons, and the gaps around them, at the chosen size.
     const qreal scale = AppSettings::toolbarScale() / 100.0;

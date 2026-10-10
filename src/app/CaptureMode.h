@@ -19,12 +19,11 @@ enum class CaptureMode {
     Pin,         // select a region and pin it to the screen, on top of everything
 };
 
-// The modes offered in the UI (tray menu, hotkeys, settings). Scrolling
-// capture is left out for now: it is not yet reliable on real web pages. Its
-// toolbar button and settings row are hidden as well (see kScrollingHidden).
+// The modes offered in the UI (tray menu, hotkeys, settings).
 inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::Window,
     CaptureMode::Region,
+    CaptureMode::Scrolling,
     CaptureMode::Freehand,
     CaptureMode::FullScreen,
     CaptureMode::Pin,
@@ -35,7 +34,6 @@ inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::ColorPicker,
     CaptureMode::Crosshair,
 };
-inline constexpr bool kScrollingHidden = true;
 
 // Whether this platform can do `mode` (the UI disables the others).
 inline bool captureModeSupported(CaptureMode mode)
@@ -77,7 +75,7 @@ inline const char *captureModeIcon(CaptureMode mode)
     case CaptureMode::FullScreen: return ":/icons/screenshot_monitor.svg";
     case CaptureMode::QrCode: return ":/icons/qr_code_scanner.svg";
     case CaptureMode::Ocr: return ":/icons/document_scanner.svg";
-    case CaptureMode::Scrolling: return ":/icons/swipe_vertical.svg";
+    case CaptureMode::Scrolling: return ":/icons/fit_page_height.svg";
     case CaptureMode::Freehand: return ":/icons/lasso_select.svg";
     case CaptureMode::ColorPicker: return ":/icons/colorize.svg";
     case CaptureMode::Crosshair: return ":/icons/my_location.svg";

@@ -101,6 +101,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="scrollButton">
+     <property name="toolTip">
+      <string>Scrolling Capture (Esc to stop)</string>
+     </property>
+     <property name="text">
+      <string>Scrolling</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/fit_page_height.svg</normaloff>:/icons/fit_page_height.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="freehandButton">
      <property name="toolTip">
       <string>Capture Freehand Region</string>
@@ -189,32 +215,6 @@
      <property name="icon">
       <iconset resource="../../resources/glimpse.qrc">
        <normaloff>:/icons/videocam.svg</normaloff>:/icons/videocam.svg</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonIconOnly</enum>
-     </property>
-     <property name="autoRaise">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QToolButton" name="scrollButton">
-     <property name="toolTip">
-      <string>Scrolling Capture (Esc to stop)</string>
-     </property>
-     <property name="text">
-      <string>Scrolling</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../../resources/glimpse.qrc">
-       <normaloff>:/icons/swipe_vertical.svg</normaloff>:/icons/swipe_vertical.svg</iconset>
      </property>
      <property name="iconSize">
       <size>

@@ -456,10 +456,6 @@ void SettingsDialog::updateOcrEngineNote()
 
 void SettingsDialog::applyPlatformLimits()
 {
-    if (kScrollingHidden) {
-        ui->scrollHotkeyLabel->hide();
-        ui->scrollHotkeyEdit->hide();
-    }
 #ifdef Q_OS_WIN
     // Windows records its own way (see ScreenRecorder::Options::fullColor).
     ui->recordColorLabel->hide();
