@@ -72,7 +72,7 @@ public:
 
     bool isSupported() const override { return true; }
 
-    bool add(int id, const QKeySequence &key) override
+    bool add(int id, const QKeySequence &key, const QString &) override
     {
         if (key.isEmpty())
             return false;

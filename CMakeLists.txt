@@ -295,9 +295,13 @@ else()
         src/capture/CursorCapture_stub.cpp
         src/capture/ScrollInput_stub.cpp
         src/capture/WindowList_stub.cpp
-        src/hotkey/GlobalHotkeys_stub.cpp
         src/record/InputMonitor_stub.cpp
     )
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        target_sources(glimpse PRIVATE src/hotkey/GlobalHotkeys_gnome.cpp) # GNOME custom shortcuts
+    else()
+        target_sources(glimpse PRIVATE src/hotkey/GlobalHotkeys_stub.cpp)
+    endif()
 endif()
 
 # Linux: Wayland screenshots go through xdg-desktop-portal over D-Bus.

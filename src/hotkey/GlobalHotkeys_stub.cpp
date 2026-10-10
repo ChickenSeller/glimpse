@@ -10,7 +10,7 @@ public:
     using GlobalHotkeys::GlobalHotkeys;
 
     bool isSupported() const override { return false; }
-    bool add(int, const QKeySequence &) override { return false; }
+    bool add(int, const QKeySequence &, const QString &) override { return false; }
     void clear() override {}
 };
 

@@ -68,8 +68,10 @@ All hotkeys can be changed in the settings.
 ### Platform support
 
 Windows has every feature. On Linux, the following are not available yet and
-are shown disabled: window capture, the pointer in captures, global hotkeys,
-and the mouse and keyboard overlays in recordings. Wayland also cannot offer
+are shown disabled: window capture, the pointer in captures, global hotkeys
+outside GNOME, and the mouse and keyboard overlays in recordings. On GNOME the
+hotkeys become custom keyboard shortcuts in GNOME's settings, which also
+start Glimpse when it is not running. Wayland also cannot offer
 window picking or the pointer in screenshots; recordings there show the
 pointer. Glimpse runs through XWayland on a Wayland session (unless
 `QT_QPA_PLATFORM` is set), as Wayland windows cannot place themselves or

@@ -118,6 +118,15 @@ void CaptureController::showToolbar()
     m_toolbar->reveal();
 }
 
+void CaptureController::activateHotkey(int id)
+{
+    // Only hotkeys registered now, not a shortcut left behind by an older
+    // setup. (Paused for the settings, they are not in GNOME at all.)
+    const auto mode = static_cast<Mode>(id);
+    if (m_hotkeyRegistered.value(mode))
+        beginCapture(mode);
+}
+
 void CaptureController::showSettings()
 {
     if (m_settings) {
@@ -223,7 +232,7 @@ QStringList CaptureController::registerHotkeys()
         const QKeySequence key = AppSettings::hotkey(mode);
         if (key.isEmpty())
             continue;
-        const bool registered = m_hotkeys->add(int(mode), key);
+        const bool registered = m_hotkeys->add(int(mode), key, tr(captureModeLabel(mode)));
         m_hotkeyRegistered.insert(mode, registered);
         if (registered)
             active.insert(mode, key);

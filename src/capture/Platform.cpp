@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QCursor>
 #include <QGuiApplication>
+#include <QStandardPaths>
 #include <QWidget>
 #include <QtGlobal>
 
@@ -62,7 +63,15 @@ bool supportsCursorCapture()
 
 bool supportsGlobalHotkeys()
 {
+#ifdef Q_OS_LINUX
+    // As custom keyboard shortcuts in GNOME's settings (GlobalHotkeys_gnome.cpp).
+    static const bool gnome = qEnvironmentVariable("XDG_CURRENT_DESKTOP").split(QLatin1Char(':')).contains(QLatin1String("GNOME"))
+                              && !QStandardPaths::findExecutable(QStringLiteral("gsettings")).isEmpty()
+                              && !QStandardPaths::findExecutable(QStringLiteral("dconf")).isEmpty();
+    return gnome;
+#else
     return displayServer() == DisplayServer::Windows;
+#endif
 }
 
 bool supportsScrollingCapture()

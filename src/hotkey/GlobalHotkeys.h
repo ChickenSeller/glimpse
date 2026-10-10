@@ -16,9 +16,10 @@ public:
 
     // False where no backend exists yet; add() then always fails.
     virtual bool isSupported() const = 0;
-    // Registers the first key combination of `key` under `id`. Returns false if
-    // the platform cannot do it or another application already owns the combination.
-    virtual bool add(int id, const QKeySequence &key) = 0;
+    // Registers the first key combination of `key` under `id`; `name` is what
+    // the system shows for it, where it lists shortcuts. Returns false if the
+    // platform cannot do it or another application already owns the combination.
+    virtual bool add(int id, const QKeySequence &key, const QString &name) = 0;
     virtual void clear() = 0;
 
 signals:

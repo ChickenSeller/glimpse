@@ -11,6 +11,8 @@
 #include <QFile>
 #include <QSystemTrayIcon>
 
+#include <optional>
+
 #include <kdsingleapplication.h>
 
 namespace {
@@ -62,12 +64,18 @@ int main(int argc, char *argv[])
     if (const qsizetype i = args.indexOf(QStringLiteral("--list-downloads")); i >= 0 && i + 1 < args.size())
         return listDownloads(args.at(i + 1));
 
+    // glimpse --hotkey <id>: what a hotkey runs where the desktop owns the
+    // keys (GNOME custom shortcuts, see GlobalHotkeys_gnome.cpp).
+    std::optional<int> hotkey;
+    if (const qsizetype i = args.indexOf(QStringLiteral("--hotkey")); i >= 0 && i + 1 < args.size())
+        hotkey = args.at(i + 1).toInt();
+
     // One Glimpse per user session: a second one could not register the
     // hotkeys and would add a second tray icon. Starting it again brings the
-    // running one's toolbar up instead.
+    // running one's toolbar up instead, or passes its hotkey on.
     KDSingleApplication instance;
     if (!instance.isPrimaryInstance()) {
-        instance.sendMessage(QByteArrayLiteral("show"));
+        instance.sendMessage(hotkey ? QByteArrayLiteral("hotkey ") + QByteArray::number(*hotkey) : QByteArrayLiteral("show"));
         return 0;
     }
 
@@ -81,11 +89,17 @@ int main(int argc, char *argv[])
 
     CaptureController controller;
     Autostart::refresh();
-    // Started with the session, Glimpse waits in the tray (if there is one).
-    if (!args.contains(Autostart::kArgument) || !QSystemTrayIcon::isSystemTrayAvailable())
+    // Started with the session or by a hotkey, Glimpse waits in the tray (if there is one).
+    if ((!args.contains(Autostart::kArgument) && !hotkey) || !QSystemTrayIcon::isSystemTrayAvailable())
         controller.showToolbar();
-    QObject::connect(&instance, &KDSingleApplication::messageReceived, &controller,
-                     [&controller] { controller.showToolbar(); });
+    if (hotkey)
+        controller.activateHotkey(*hotkey);
+    QObject::connect(&instance, &KDSingleApplication::messageReceived, &controller, [&controller](const QByteArray &message) {
+        if (message.startsWith("hotkey "))
+            controller.activateHotkey(message.mid(7).toInt());
+        else
+            controller.showToolbar();
+    });
 
     return QApplication::exec();
 }

@@ -37,6 +37,9 @@ public:
     ~CaptureController() override;
 
     void showToolbar();
+    // A hotkey that reached Glimpse other than through GlobalHotkeys (see
+    // main.cpp): `id` as registered, a CaptureMode.
+    void activateHotkey(int id);
     void showSettings();
     void showAbout();
 
