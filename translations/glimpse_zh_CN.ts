@@ -1174,6 +1174,53 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
 </context>
 <context>
+    <name>ScreenCastCapture</name>
+    <message>
+        <source>The session D-Bus is not available.</source>
+        <translation>会话 D-Bus 不可用。</translation>
+    </message>
+    <message>
+        <source>Screen recording was not allowed.</source>
+        <translation>未获准录制屏幕。</translation>
+    </message>
+    <message>
+        <source>The screen cast portal refused the request (%1).</source>
+        <translation>屏幕共享门户拒绝了请求（%1）。</translation>
+    </message>
+    <message>
+        <source>Screen cast portal error: %1</source>
+        <translation>屏幕共享门户错误：%1</translation>
+    </message>
+    <message>
+        <source>The screen cast portal did not create a session.</source>
+        <translation>屏幕共享门户未能创建会话。</translation>
+    </message>
+    <message>
+        <source>No screen was picked.</source>
+        <translation>没有选择屏幕。</translation>
+    </message>
+    <message>
+        <source>Could not connect to PipeWire: %1</source>
+        <translation>无法连接 PipeWire：%1</translation>
+    </message>
+    <message>
+        <source>Could not start PipeWire.</source>
+        <translation>无法启动 PipeWire。</translation>
+    </message>
+    <message>
+        <source>Could not connect to PipeWire.</source>
+        <translation>无法连接 PipeWire。</translation>
+    </message>
+    <message>
+        <source>Could not connect to the screen stream.</source>
+        <translation>无法连接屏幕视频流。</translation>
+    </message>
+    <message>
+        <source>Screen stream error: %1</source>
+        <translation>屏幕视频流错误：%1</translation>
+    </message>
+</context>
+<context>
     <name>ScrollCaptureSession</name>
     <message>
         <location filename="../src/capture/ScrollCaptureSession.cpp" line="+94"/>

@@ -1174,6 +1174,53 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
 </context>
 <context>
+    <name>ScreenCastCapture</name>
+    <message>
+        <source>The session D-Bus is not available.</source>
+        <translation>セッション D-Bus を利用できません。</translation>
+    </message>
+    <message>
+        <source>Screen recording was not allowed.</source>
+        <translation>画面の録画が許可されませんでした。</translation>
+    </message>
+    <message>
+        <source>The screen cast portal refused the request (%1).</source>
+        <translation>画面共有ポータルが要求を拒否しました（%1）。</translation>
+    </message>
+    <message>
+        <source>Screen cast portal error: %1</source>
+        <translation>画面共有ポータルのエラー：%1</translation>
+    </message>
+    <message>
+        <source>The screen cast portal did not create a session.</source>
+        <translation>画面共有ポータルがセッションを作成しませんでした。</translation>
+    </message>
+    <message>
+        <source>No screen was picked.</source>
+        <translation>画面が選択されませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not connect to PipeWire: %1</source>
+        <translation>PipeWire に接続できませんでした：%1</translation>
+    </message>
+    <message>
+        <source>Could not start PipeWire.</source>
+        <translation>PipeWire を開始できませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not connect to PipeWire.</source>
+        <translation>PipeWire に接続できませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not connect to the screen stream.</source>
+        <translation>画面のストリームに接続できませんでした。</translation>
+    </message>
+    <message>
+        <source>Screen stream error: %1</source>
+        <translation>画面のストリームのエラー：%1</translation>
+    </message>
+</context>
+<context>
     <name>ScrollCaptureSession</name>
     <message>
         <location filename="../src/capture/ScrollCaptureSession.cpp" line="+94"/>
