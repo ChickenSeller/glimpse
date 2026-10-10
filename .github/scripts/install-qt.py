@@ -64,10 +64,13 @@ def install(base, repo, packages, target):
             expected = fetch(url + '.sha1').decode().split()[0].lower()
             if hashlib.sha1(data).hexdigest() != expected:
                 sys.exit(f'Checksum mismatch: {url}')
+            # The ICU libraries Linux Qt comes with are packed without their
+            # folder; Qt's installer script puts them into lib/.
+            destination = target / 'lib' if archive.startswith('icu-') else target
             with tempfile.TemporaryDirectory() as tmp:
                 path = Path(tmp, archive)
                 path.write_bytes(data)
-                subprocess.run([SEVEN_ZIP, 'x', '-y', '-bso0', '-bsp0', f'-o{target}', str(path)], check=True)
+                subprocess.run([SEVEN_ZIP, 'x', '-y', '-bso0', '-bsp0', f'-o{destination}', str(path)], check=True)
 
 
 def find_dir(root, file_name):
