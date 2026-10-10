@@ -31,6 +31,52 @@ const QColor kLeftClick(229, 57, 53);
 const QColor kRightClick(30, 136, 229);
 const QColor kMiddleClick(67, 160, 71);
 
+#ifndef Q_OS_WIN
+// From RGB frames FFmpeg encodes H.264 High 4:4:4 (12-bit for h264_nvenc,
+// which NVENC then rejects on every frame); many players and most hardware
+// decoders show 4:4:4 as black. 4:2:0 frames get plain High 4:2:0.
+// BT.709, limited range; the image has even dimensions.
+QVideoFrame toYuv420(const QImage &image)
+{
+    QVideoFrameFormat format(image.size(), QVideoFrameFormat::Format_YUV420P);
+    format.setColorSpace(QVideoFrameFormat::ColorSpace_BT709);
+    format.setColorTransfer(QVideoFrameFormat::ColorTransfer_BT709);
+    format.setColorRange(QVideoFrameFormat::ColorRange_Video);
+    QVideoFrame frame(format);
+    if (!frame.map(QVideoFrame::WriteOnly))
+        return frame;
+    uchar *const yPlane = frame.bits(0);
+    uchar *const uPlane = frame.bits(1);
+    uchar *const vPlane = frame.bits(2);
+    const int yStride = frame.bytesPerLine(0);
+    const int uStride = frame.bytesPerLine(1);
+    const int vStride = frame.bytesPerLine(2);
+    for (int y = 0; y < image.height(); y += 2) {
+        const QRgb *rows[2] = {reinterpret_cast<const QRgb *>(image.constScanLine(y)),
+                               reinterpret_cast<const QRgb *>(image.constScanLine(y + 1))};
+        uchar *yRows[2] = {yPlane + y * yStride, yPlane + (y + 1) * yStride};
+        uchar *u = uPlane + y / 2 * uStride;
+        uchar *v = vPlane + y / 2 * vStride;
+        for (int x = 0; x < image.width(); x += 2) {
+            int r = 0, g = 0, b = 0; // sums over the 2x2 block
+            for (int dy = 0; dy < 2; ++dy) {
+                for (int dx = 0; dx < 2; ++dx) {
+                    const QRgb p = rows[dy][x + dx];
+                    yRows[dy][x + dx] = uchar(16 + ((47 * qRed(p) + 157 * qGreen(p) + 16 * qBlue(p) + 128) >> 8));
+                    r += qRed(p);
+                    g += qGreen(p);
+                    b += qBlue(p);
+                }
+            }
+            u[x / 2] = uchar(128 + ((-26 * r - 87 * g + 112 * b + 512) >> 10));
+            v[x / 2] = uchar(128 + ((112 * r - 102 * g - 10 * b + 512) >> 10));
+        }
+    }
+    frame.unmap();
+    return frame;
+}
+#endif
+
 QColor clickColor(Qt::MouseButton button)
 {
     switch (button) {
@@ -215,7 +261,11 @@ void ScreenRecorder::writeFrame()
     drawCursor(out, m_screen, m_areaOrigin);
     paintOverlays(out, m_areaOrigin, m_scale);
 
+#ifdef Q_OS_WIN
     QVideoFrame video(out);
+#else
+    QVideoFrame video = toYuv420(out);
+#endif
     video.setStartTime(now * 1000);
     video.setEndTime((now + frameMs) * 1000);
     if (m_input->sendVideoFrame(video))
