@@ -118,7 +118,8 @@ h1 { font-size: clamp(32px, 5vw, 50px); line-height: 1.12; letter-spacing: -0.02
   margin-left: 18px; padding: 0 14px;
   border-left: 1px solid color-mix(in srgb, var(--brand-ink) 35%, transparent);
 }
-.split-btn .arrow i {
+.split-btn .arrow i,
+.dl-more .arrow i {
   width: 7px; height: 7px; margin-top: -4px;
   border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
   transform: rotate(45deg);
@@ -241,7 +242,18 @@ pre {
 .release.latest { border-color: color-mix(in srgb, var(--brand) 55%, var(--line)); }
 .release-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
 .release-head h3 { margin: 0; font-size: 20px; display: flex; align-items: center; gap: 10px; }
-.release-head .btn { margin-left: auto; height: 38px; padding: 0 18px; }
+.release-head .btn { height: 38px; padding: 0 18px; }
+
+/* Release downloads: the button takes the visitor's package, the arrow
+   beside it drops down all of them. */
+.dl-group { margin-left: auto; display: inline-flex; }
+.dl-group > .btn:not(:only-child) { border-radius: 10px 0 0 10px; }
+.dl-more summary.btn { padding: 0 13px; border-radius: 0 10px 10px 0; margin-left: -1px; }
+.dl-more summary.btn.primary { border-left-color: color-mix(in srgb, var(--brand-ink) 35%, transparent); }
+.dl-more .arrow { display: flex; align-items: center; }
+.dl-more .menu { left: auto; right: 0; min-width: max-content; }
+.dl-more .menu .btn { justify-content: flex-start; gap: 10px; }
+.pkg-note { font-weight: 400; color: var(--muted); font-size: 14px; }
 .release-date { color: var(--muted); font-size: 14px; }
 .badge {
   font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px;

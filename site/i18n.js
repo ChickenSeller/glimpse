@@ -12,9 +12,18 @@
     'dl.site': '从本站下载',
     'nav.releases': '版本',
     'rel.title': '版本',
-    'rel.lead': '从本站下载各个版本的 Windows 安装包，与 GitLab 上的发布内容相同。',
+    'rel.lead': '从本站下载各个版本的 Windows 和 Linux 安装包，与 GitLab 上的发布内容相同。',
     'rel.latest': '最新',
     'rel.download': '下载',
+    'rel.dl.windows': '下载 Windows 版',
+    'rel.dl.deb': '下载 Linux 版（.deb）',
+    'rel.dl.rpm': '下载 Linux 版（.rpm）',
+    'rel.dl.other': '下载',
+    'rel.pkg.windows': 'Windows x64',
+    'rel.pkg.deb': 'Linux .deb',
+    'rel.pkg.rpm': 'Linux .rpm',
+    'rel.note.deb': 'Debian、Ubuntu',
+    'rel.note.rpm': 'Fedora、openSUSE、RHEL',
     'rel.elsewhere': '也可以从这里下载：',
     'rel.loading': '正在读取版本列表...',
     'rel.none': '还没有发布任何版本。',
@@ -104,15 +113,21 @@
   });
   window.glimpseRetranslate = function () { apply(lang); };
 
-  // The download menu (home page only) closes on a click elsewhere or Escape.
-  var download = document.getElementById('download');
-  if (download) document.addEventListener('click', function (event) {
-    if (download.open && !download.contains(event.target)) download.open = false;
+  // Download menus (the home page's, the release list's) close on a click
+  // elsewhere or Escape; one is open at a time.
+  function openMenus() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.dropdown[open]'));
+  }
+  document.addEventListener('click', function (event) {
+    openMenus().forEach(function (menu) {
+      if (!menu.contains(event.target)) menu.open = false;
+    });
   });
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && download && download.open) {
-      download.open = false;
-      download.querySelector('summary').focus();
-    }
+    if (event.key !== 'Escape') return;
+    openMenus().forEach(function (menu) {
+      menu.open = false;
+      menu.querySelector('summary').focus();
+    });
   });
 })();

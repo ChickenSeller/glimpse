@@ -35,6 +35,71 @@
     return box;
   }
 
+  // What each package is for, by its file name (see .gitlab-ci.yml).
+  var PACKAGES = [
+    {kind: 'windows', test: /-windows-x64\.zip$/, main: 'Download for Windows', item: 'Windows x64', note: '.zip'},
+    {kind: 'deb', test: /\.deb$/, main: 'Download for Linux (.deb)', item: 'Linux .deb', note: 'Debian, Ubuntu'},
+    {kind: 'rpm', test: /\.rpm$/, main: 'Download for Linux (.rpm)', item: 'Linux .rpm', note: 'Fedora, openSUSE, RHEL'}
+  ];
+
+  function packageOf(name) {
+    for (var i = 0; i < PACKAGES.length; i++) {
+      if (PACKAGES[i].test.test(name)) return PACKAGES[i];
+    }
+    return {kind: '', main: 'Download', item: name, note: ''};
+  }
+
+  // The visitor's system, as far as the browser tells: Linux distributions
+  // with .rpm packages sometimes name themselves in the user agent.
+  function visitorKind() {
+    var ua = navigator.userAgent || '';
+    var platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    if (/windows/i.test(ua) || /^win/i.test(platform)) return 'windows';
+    if (/linux/i.test(platform + ' ' + ua) && !/android/i.test(ua)) {
+      return /fedora|red ?hat|rhel|centos|rocky|alma|suse/i.test(ua) ? 'rpm' : 'deb';
+    }
+    return 'windows';
+  }
+
+  function label(parent, key, text) {
+    var span = parent.appendChild(el('span', '', text));
+    span.setAttribute('data-i18n', key);
+    return span;
+  }
+
+  // The button downloads the visitor's package; the arrow beside it drops
+  // down all of the release's packages.
+  function downloads(release, primary) {
+    var group = el('div', 'dl-group');
+    var files = release.files.map(function (file) { return {file: file, kind: packageOf(file.name)}; });
+    var mine = files[0];
+    files.forEach(function (entry) { if (entry.kind.kind === visitorKind()) mine = entry; });
+
+    var main = group.appendChild(el('a', 'btn' + (primary ? ' primary' : '')));
+    main.href = mine.file.url;
+    main.setAttribute('download', mine.file.name);
+    main.title = mine.file.name;
+    label(main, 'rel.dl.' + (mine.kind.kind || 'other'), mine.kind.main);
+
+    if (files.length > 1) {
+      var more = group.appendChild(el('details', 'dropdown dl-more'));
+      var arrow = more.appendChild(el('summary', 'btn' + (primary ? ' primary' : '')));
+      arrow.setAttribute('aria-label', 'All packages');
+      arrow.title = 'All packages';
+      arrow.appendChild(el('span', 'arrow')).appendChild(el('i'));
+      var menu = more.appendChild(el('div', 'menu'));
+      files.forEach(function (entry) {
+        var item = menu.appendChild(el('a', 'btn'));
+        item.href = entry.file.url;
+        item.setAttribute('download', entry.file.name);
+        item.title = entry.file.name;
+        label(item, 'rel.pkg.' + (entry.kind.kind || 'other'), entry.kind.item);
+        if (entry.kind.note) label(item, 'rel.note.' + entry.kind.kind, entry.kind.note).className = 'pkg-note';
+      });
+    }
+    return group;
+  }
+
   // The status line: loading, nothing yet, or the list could not be read.
   function status(key, text) {
     var line = document.getElementById('release-status');
@@ -60,14 +125,7 @@
         badge.setAttribute('data-i18n', 'rel.latest');
       }
       head.appendChild(el('span', 'release-date', release.date || ''));
-      release.files.forEach(function (file) {
-        var link = head.appendChild(el('a', 'btn' + (index === 0 ? ' primary' : '')));
-        link.href = file.url;
-        link.setAttribute('download', file.name);
-        link.title = file.name;
-        var label = link.appendChild(el('span', '', 'Download'));
-        label.setAttribute('data-i18n', 'rel.download');
-      });
+      head.appendChild(downloads(release, index === 0));
       card.appendChild(notes(release.notes, release.version));
       listBox.appendChild(card);
     });

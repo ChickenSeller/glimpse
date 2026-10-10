@@ -76,8 +76,17 @@ local function package_file(version, name)
   return found
 end
 
+-- 自动更新只有 Windows 版：取这个版本的 Windows 安装包（同一个版本还有 Linux 的 .deb、.rpm）
+local function windows_file(release)
+  for _, f in ipairs(release.files) do
+    if f.name:match("%-windows%-x64%.zip$") then return f end
+  end
+  return nil
+end
+
 local function update_entry(release)
-  local file = release.files[1]
+  local file = windows_file(release)
+  if not file then return nil, "no Windows package in " .. release.version end
   local record, err = package_file(file.package_version, file.name)
   if not record then return nil, err end
   return { version = release.version, url = file.url, sha256 = record.file_sha256, size = record.size, notes = release.notes }
