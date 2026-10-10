@@ -76,12 +76,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Linking checks the libraries Qt's own ones need too (libpulse for
+      # Multimedia, which the runner image lacks).
       - name: Install build tools and libraries
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends gcc-12 g++-12 ninja-build p7zip-full rpm dpkg-dev xvfb \
             libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev libfontconfig1-dev \
-            libdbus-1-dev libpipewire-0.3-dev libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-shape0
+            libdbus-1-dev libpipewire-0.3-dev libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-shape0 \
+            libpulse0 libbrotli1 libgssapi-krb5-2
 
       # Qt for Linux (GCC, x86-64). Cached: several hundred MB from download.qt.io.
       - uses: actions/cache@v4
