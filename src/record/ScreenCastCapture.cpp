@@ -10,6 +10,7 @@
 #include <QDBusUnixFileDescriptor>
 #include <QDBusVariant>
 #include <QRandomGenerator>
+#include <QSettings>
 
 #include <pipewire/pipewire.h>
 #include <spa/param/video/format-utils.h>
@@ -28,6 +29,8 @@ const QString kRequestInterface = QStringLiteral("org.freedesktop.portal.Request
 
 constexpr uint kSourceMonitor = 1;
 constexpr uint kCursorEmbedded = 2;
+constexpr uint kPersistUntilRevoked = 2;
+const QString kRestoreTokenKey = QStringLiteral("recording/screenCastRestoreToken");
 
 QString newToken()
 {
@@ -39,6 +42,18 @@ QString requestPath(const QString &token)
 {
     const QString sender = QDBusConnection::sessionBus().baseService().mid(1).replace(QLatin1Char('.'), QLatin1Char('_'));
     return QStringLiteral("%1/request/%2/%3").arg(kObjectPath, sender, token);
+}
+
+// A uint property of the ScreenCast portal; 0 where unknown.
+uint portalProperty(const QString &name)
+{
+    QDBusMessage get = QDBusMessage::createMethodCall(kService, kObjectPath, QStringLiteral("org.freedesktop.DBus.Properties"),
+                                                      QStringLiteral("Get"));
+    get << kScreenCast << name;
+    const QDBusMessage reply = QDBusConnection::sessionBus().call(get);
+    if (reply.type() != QDBusMessage::ReplyMessage || reply.arguments().isEmpty())
+        return 0;
+    return reply.arguments().first().value<QDBusVariant>().variant().toUInt();
 }
 
 QImage::Format imageFormat(spa_video_format format)
@@ -175,13 +190,16 @@ void ScreenCastCapture::onSessionCreated(const QVariantMap &results)
         {QStringLiteral("multiple"), false},
     };
     // Embedded where offered; otherwise the recording simply has no pointer.
-    QDBusMessage get = QDBusMessage::createMethodCall(kService, kObjectPath, QStringLiteral("org.freedesktop.DBus.Properties"),
-                                                      QStringLiteral("Get"));
-    get << kScreenCast << QStringLiteral("AvailableCursorModes");
-    const QDBusMessage modes = QDBusConnection::sessionBus().call(get);
-    if (modes.type() == QDBusMessage::ReplyMessage && !modes.arguments().isEmpty()
-        && (modes.arguments().first().value<QDBusVariant>().variant().toUInt() & kCursorEmbedded))
+    if (portalProperty(QStringLiteral("AvailableCursorModes")) & kCursorEmbedded)
         options.insert(QStringLiteral("cursor_mode"), kCursorEmbedded);
+    // Remembered until revoked (version 4+): the next recording reuses the
+    // screen picked last time instead of asking again.
+    if (portalProperty(QStringLiteral("version")) >= 4) {
+        options.insert(QStringLiteral("persist_mode"), kPersistUntilRevoked);
+        const QString token = QSettings().value(kRestoreTokenKey).toString();
+        if (!token.isEmpty())
+            options.insert(QStringLiteral("restore_token"), token);
+    }
     request(QStringLiteral("SelectSources"), {QVariant::fromValue(QDBusObjectPath(m_session))}, options,
             &ScreenCastCapture::onSourcesSelected);
 }
@@ -194,6 +212,11 @@ void ScreenCastCapture::onSourcesSelected(const QVariantMap &)
 
 void ScreenCastCapture::onStarted(const QVariantMap &results)
 {
+    // A token works once; each start hands out the next one.
+    const QString token = results.value(QStringLiteral("restore_token")).toString();
+    if (!token.isEmpty())
+        QSettings().setValue(kRestoreTokenKey, token);
+
     // streams: a(ua{sv}), the PipeWire node of each picked source.
     quint32 node = 0;
     bool found = false;
