@@ -4,13 +4,11 @@
 
 #include <QHash>
 #include <QObject>
-#include <QPainterPath>
 #include <QPointer>
 #include <QRect>
 
 #include <functional>
 #include <memory>
-#include <optional>
 
 class CaptureToolbar;
 class RecordingSession;
@@ -79,6 +77,7 @@ private:
     void startRecording(const QRect &rect);
     // Runs the "delay before capture" countdown (if any), then `then`.
     void afterDelay(std::function<void()> then);
+    void grabAfterDelay();
     // Hands a finished capture to the result window, QR or OCR dialog.
     void deliver(const QImage &image);
 
@@ -100,11 +99,9 @@ private:
 
     Mode m_mode = Mode::FullScreen;
     bool m_busy = false;
+    bool m_grabbedOnce = false; // a grab has gone through, so permission is settled
+    bool m_probing = false; // a grab only to settle permission before a delay
     QPointer<RecordingSession> m_recording; // while a recording runs
-    // Area chosen before a delay; the live screen is grabbed again once the
-    // countdown ends, and this part of it is the capture.
-    std::optional<QRect> m_pendingRect;
-    QPainterPath m_pendingShape; // a freehand outline within m_pendingRect
     QRect m_pinRect; // where the region being pinned was chosen
     bool m_restoreToolbar = false;
 };

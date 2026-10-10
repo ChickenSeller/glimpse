@@ -21,6 +21,8 @@ public:
     // Forgets an earlier refusal so the next grab asks the user again
     // (the Wayland portal; other backends need no permission).
     virtual void resetPermission() {}
+    // Whether grab() may be refused for want of a permission (permissionNeeded()).
+    virtual bool needsPermission() const { return false; }
 
     // Whether the mouse pointer is painted into the snapshot (where supported).
     void setIncludeCursor(bool include) { m_includeCursor = include; }

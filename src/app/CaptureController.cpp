@@ -291,20 +291,35 @@ void CaptureController::startCapture(Mode mode, bool afterFade)
     m_grabber->setIncludeCursor(AppSettings::captureIncludesCursor() && Platform::supportsCursorCapture()
                                 && mode != Mode::ColorPicker && mode != Mode::Crosshair);
 
-    m_pendingRect.reset();
-    m_pendingShape.clear();
-
-    // Full screen has nothing to choose, so its delay comes first. The other
-    // modes freeze the screen for choosing the area right away and count down
-    // afterwards (see onSnapshot), like FastStone.
-    if (mode == Mode::FullScreen && AppSettings::captureDelay() > 0) {
-        afterDelay([this] { m_grabber->grab(); });
+    // The delay comes first, then the screen is frozen for choosing the
+    // area, so menus or tooltips opened meanwhile end up in the capture.
+    // Picking a color or measuring has nothing to wait for; a recording
+    // counts down once its area is chosen (see onSnapshot).
+    m_probing = false;
+    if (AppSettings::captureDelay() > 0 && mode != Mode::Recording && mode != Mode::ColorPicker
+        && mode != Mode::Crosshair) {
+        // Asking for permission (Wayland) comes before the countdown, not
+        // after it: one grab first settles it, and its picture is dropped.
+        if (m_grabber->needsPermission() && !m_grabbedOnce) {
+            m_probing = true;
+            m_grabber->grab();
+            return;
+        }
+        grabAfterDelay();
         return;
     }
     int delay = m_restoreToolbar ? kHideDelayMs : kShortDelayMs;
     if (Platform::hidesWindowsInstantly())
         delay = afterFade ? kShortDelayMs : 0;
     QTimer::singleShot(delay, this, [this] {
+        Platform::flushCompositor();
+        m_grabber->grab();
+    });
+}
+
+void CaptureController::grabAfterDelay()
+{
+    afterDelay([this] {
         Platform::flushCompositor();
         m_grabber->grab();
     });
@@ -326,8 +341,6 @@ void CaptureController::afterDelay(std::function<void()> then)
     });
     connect(countdown, &DelayCountdown::canceled, this, [this, countdown] {
         countdown->deleteLater();
-        m_pendingRect.reset();
-        m_pendingShape.clear();
         endCapture();
     });
     countdown->start();
@@ -356,19 +369,16 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
     // A late answer to a request the user canceled meanwhile.
     if (!m_busy)
         return;
+    m_grabbedOnce = true;
     // Only the permission request; this snapshot shows our dialog. Capture for real.
     if (m_permissionDialog) {
         closePermissionDialog();
         startCapture(m_mode, true);
         return;
     }
-    // The live grab after a delay: the area was chosen before the countdown.
-    if (m_pendingRect) {
-        const QRect rect = *m_pendingRect;
-        const QPainterPath shape = m_pendingShape;
-        m_pendingRect.reset();
-        m_pendingShape.clear();
-        deliver(shape.isEmpty() ? snapshot.crop(rect) : snapshot.crop(shape, AppSettings::freehandFill()));
+    if (m_probing) {
+        m_probing = false;
+        grabAfterDelay();
         return;
     }
     if (m_mode == Mode::FullScreen) {
@@ -400,20 +410,9 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
         selector->deleteLater();
         const QPainterPath shape = selector->shape();
         m_pinRect = rect;
-        if (AppSettings::captureDelay() > 0) {
-            // Area first, then the countdown, then a fresh grab of that area:
-            // menus or tooltips opened meanwhile end up in the capture.
-            afterDelay([this, rect, shape] {
-                m_pendingRect = rect;
-                m_pendingShape = shape;
-                m_grabber->grab();
-            });
-            return;
-        }
         deliver(shape.isEmpty() ? selector->snapshot().crop(rect)
                                 : selector->snapshot().crop(shape, AppSettings::freehandFill()));
     });
-    // Picks from the frozen screen, so the capture delay does not apply.
     connect(selector, &RegionSelector::colorPicked, this, [this, selector](const QColor &color) {
         selector->deleteLater();
         endCapture();
@@ -555,6 +554,7 @@ void CaptureController::requestPermission(bool resetFirst)
 void CaptureController::endCapture()
 {
     m_busy = false;
+    m_probing = false;
     if (m_restoreToolbar) {
         m_restoreToolbar = false;
         m_toolbar->show();

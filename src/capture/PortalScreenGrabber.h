@@ -14,6 +14,7 @@ public:
 
     void grab() override;
     void resetPermission() override;
+    bool needsPermission() const override { return true; }
 
 private slots:
     void onResponse(uint response, const QVariantMap &results);
