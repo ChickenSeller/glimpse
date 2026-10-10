@@ -40,8 +40,9 @@ sync-github:
 # Pushing a version tag (v1.2.3) here releases it:
 #   1. sync-tag-github pushes the tag to GitHub;
 #   2. GitHub Actions (.github/workflows/release.yml) builds the Windows
-#      package and publishes a GitHub release with it;
-#   3. release-from-github waits for that, copies the package into this
+#      package and the Linux ones (.deb, .rpm) and publishes a GitHub release
+#      with them;
+#   3. release-from-github waits for that, copies the packages into this
 #      project's package registry and creates the GitLab release.
 .version-tag:
   rules:
@@ -58,7 +59,7 @@ release-from-github:
   stage: release
   image: alpine:latest
   needs: [sync-tag-github]
-  # The Windows build on GitHub takes a while; this job polls until it is done.
+  # The builds on GitHub take a while; this job polls until they are done.
   timeout: 5h
   variables:
     GIT_STRATEGY: none
@@ -66,15 +67,27 @@ release-from-github:
     - apk add --no-cache curl jq
     - |
       version="${CI_COMMIT_TAG#v}"
-      name="Glimpse-${version}-windows-x64.zip"
+      # File name and link title of each package, Windows first: Glimpse's
+      # update check (deploy/nginx/) takes the Windows one.
+      packages="Glimpse-${version}-windows-x64.zip|Windows x64
+      glimpse_${version}_amd64.deb|Linux x86-64, Debian and Ubuntu
+      glimpse-${version}-1.x86_64.rpm|Linux x86-64, Fedora, openSUSE and RHEL"
       github() { curl -fsS -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPO}/$1" 2>/dev/null; }
-      echo "Waiting for $name in the GitHub release ${CI_COMMIT_TAG}"
+      # The download URL of an uploaded asset of the GitHub release, or nothing.
+      asset_url() {
+        github "releases/tags/${CI_COMMIT_TAG}" \
+          | jq -r --arg name "$1" '.assets[] | select(.name == $name and .state == "uploaded") | .url' || true
+      }
+      echo "Waiting for the packages in the GitHub release ${CI_COMMIT_TAG}"
       echo "(progress: https://github.com/${GITHUB_REPO}/actions)"
-      asset=""
-      while [ -z "$asset" ]; do
-        asset=$(github "releases/tags/${CI_COMMIT_TAG}" \
-          | jq -r --arg name "$name" '.assets[] | select(.name == $name and .state == "uploaded") | .url' || true)
-        [ -n "$asset" ] && break
+      while :; do
+        missing=""
+        while IFS='|' read -r name title; do
+          [ -n "$(asset_url "$name")" ] || missing="$missing $name"
+        done <<EOF
+      $packages
+      EOF
+        [ -z "$missing" ] && break
         # Stop early when the build for this tag has failed.
         conclusion=$(github "actions/workflows/release.yml/runs?branch=${CI_COMMIT_TAG}&per_page=1" \
           | jq -r '.workflow_runs[0].conclusion // empty' || true)
@@ -84,18 +97,24 @@ release-from-github:
         esac
         sleep 60
       done
-      curl -fsSL -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/octet-stream" -o "$name" "$asset"
 
-      # The package registry keeps the file for good (job artifacts expire).
-      package="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/glimpse/${version}/${name}"
-      curl -fsS -H "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "$name" "$package"
-      echo
+      # The package registry keeps the files for good (job artifacts expire).
+      links="[]"
+      while IFS='|' read -r name title; do
+        name=$(echo "$name" | sed 's/^ *//')
+        curl -fsSL -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/octet-stream" -o "$name" "$(asset_url "$name")"
+        package="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/glimpse/${version}/${name}"
+        curl -fsS -H "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "$name" "$package"
+        echo
+        links=$(echo "$links" | jq --arg name "$name" --arg title "$title" --arg url "$package" \
+          '. + [{name: ($title + " (" + $name + ")"), url: $url, direct_asset_path: ("/" + $name), link_type: "package"}]')
+      done <<EOF
+      $packages
+      EOF
 
-      jq -n --arg tag "$CI_COMMIT_TAG" --arg version "$version" --arg name "$name" --arg url "$package" \
+      jq -n --arg tag "$CI_COMMIT_TAG" --arg version "$version" --argjson links "$links" \
             --arg notes "${CI_COMMIT_TAG_MESSAGE:-Glimpse $version}" \
-        '{tag_name: $tag, name: ("Glimpse " + $version), description: $notes,
-          assets: {links: [{name: ("Windows x64 (" + $name + ")"), url: $url,
-                            direct_asset_path: ("/" + $name), link_type: "package"}]}}' > release.json
+        '{tag_name: $tag, name: ("Glimpse " + $version), description: $notes, assets: {links: $links}}' > release.json
       curl -fsS -H "JOB-TOKEN: ${CI_JOB_TOKEN}" -H "Content-Type: application/json" --data @release.json \
         "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases" > /dev/null
       echo "Released: ${CI_PROJECT_URL}/-/releases/${CI_COMMIT_TAG}"

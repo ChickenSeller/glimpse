@@ -1,6 +1,7 @@
-# Builds the Windows package. A version tag (v1.2.3, pushed here from GitLab)
-# publishes it as a GitHub release, which GitLab's release job then copies.
-# Started by hand, it only builds, and the package is kept as a run artifact.
+# Builds the Windows package and the Linux ones (.deb, .rpm). A version tag
+# (v1.2.3, pushed here from GitLab) publishes them as a GitHub release, which
+# GitLab's release job then copies. Started by hand, it only builds, and the
+# packages are kept as run artifacts.
 name: Release
 
 on:
@@ -63,13 +64,91 @@ jobs:
           name: glimpse-windows-x64
           path: build/release/Glimpse-*-windows-x64.zip
 
+  linux:
+    # The oldest system the packages are for: Qt's Linux build needs glibc
+    # 2.34, Ubuntu 22.04 has 2.35 (Debian 12, Fedora 35, RHEL 9 and later
+    # work too). GCC 12, as its libstdc++ is what 22.04 ships.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+    env:
+      CC: gcc-12
+      CXX: g++-12
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools and libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gcc-12 g++-12 ninja-build p7zip-full rpm dpkg-dev xvfb \
+            libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev libfontconfig1-dev \
+            libdbus-1-dev libpipewire-0.3-dev libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-shape0
+
+      # Qt for Linux (GCC, x86-64). Cached: several hundred MB from download.qt.io.
+      - uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/Qt
+          key: qt-6.12.0-gcc_64-qtmultimedia-${{ hashFiles('.github/scripts/install-qt.py') }}
+
+      - name: Install Qt
+        run: python3 .github/scripts/install-qt.py --host linux --version 6.12.0 --modules qtmultimedia --dir "${{ runner.temp }}/Qt"
+
+      - name: Build
+        run: |
+          configure=(-S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$QT_ROOT_DIR" -DGLIMPSE_LINUX_PACKAGE=ON)
+          if [ "$GITHUB_REF_TYPE" = tag ]; then configure+=("-DGLIMPSE_RELEASE_VERSION=${GITHUB_REF_NAME#v}"); fi
+          cmake "${configure[@]}"
+          cmake --build build/release --parallel
+          (cd build/release && cpack)
+
+      # What a missing deployment step has left out before: Multimedia and
+      # its FFmpeg plugin, OpenSSL for downloads, the editor's soname link.
+      # Then the .deb is installed with its dependencies and Glimpse started.
+      - name: Check the packages
+        run: |
+          deb=$(ls build/release/glimpse_*_amd64.deb)
+          rpm=$(ls build/release/glimpse-*.x86_64.rpm)
+          dpkg-deb -c "$deb" | awk '{print $6}' > deb-files.txt
+          rpm -qpl "$rpm" > rpm-files.txt
+          for list in deb-files.txt rpm-files.txt; do
+            for file in /opt/glimpse/bin/glimpse /opt/glimpse/lib/libQt6Multimedia.so.6 /opt/glimpse/lib/libkImageAnnotator.so.0 \
+                        /opt/glimpse/plugins/multimedia/libffmpegmediaplugin.so /opt/glimpse/plugins/tls/libqopensslbackend.so \
+                        /opt/glimpse/plugins/platforms/libqxcb.so /opt/glimpse/bin/libonnxruntime.so /opt/glimpse/bin/libllama.so \
+                        /usr/bin/glimpse /usr/share/applications/glimpse.desktop; do
+              grep -qx "\.\?$file" "$list" || { echo "Missing from $list: $file"; exit 1; }
+            done
+          done
+          dpkg-deb -f "$deb" Depends
+          rpm -qpR "$rpm"
+          sudo apt-get install -y "./$deb"
+          ! ldd /opt/glimpse/bin/glimpse /opt/glimpse/plugins/multimedia/libffmpegmediaplugin.so | grep 'not found'
+          xvfb-run -a glimpse --list-downloads downloads.txt
+          test -s downloads.txt
+          ls -l "$deb" "$rpm"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: glimpse-linux-x86_64
+          path: |
+            build/release/glimpse_*_amd64.deb
+            build/release/glimpse-*.x86_64.rpm
+
+  publish:
+    if: github.ref_type == 'tag'
+    needs: [windows, linux]
+    runs-on: ubuntu-latest
+    steps:
+      # For --verify-tag and the notes from the tag.
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
       - name: Publish the release
-        if: github.ref_type == 'tag'
-        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $zip = Get-Item build/release/Glimpse-*-windows-x64.zip
-          gh release create $env:GITHUB_REF_NAME $zip.FullName --verify-tag --notes-from-tag `
-            --title "Glimpse $($env:GITHUB_REF_NAME.Substring(1))"
-          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          ls -l dist
+          gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --notes-from-tag \
+            --title "Glimpse ${GITHUB_REF_NAME#v}"
