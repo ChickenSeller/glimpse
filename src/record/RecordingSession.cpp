@@ -14,9 +14,14 @@
 namespace {
 
 constexpr int kBorder = 3;
-// Between the area and the frame: a scaled frame window (XWayland at 150%)
-// blends into the pixels next to it.
+// Between the area and the frame. On Linux the frame cannot be kept out of
+// the capture, and a scaled frame window (XWayland at 150%) blends into the
+// pixels next to it.
+#ifdef Q_OS_WIN
+constexpr int kFrameGap = 0;
+#else
 constexpr int kFrameGap = 1;
+#endif
 const QColor kFrameColor(0xe5, 0x39, 0x35);
 
 QWidget *makeStrip(const QRect &geometry)
@@ -114,10 +119,13 @@ void RecordingSession::createChrome()
         QRect(inner.right() + 1, inner.top(), kBorder, inner.height()),
     };
     for (const QRect &strip : strips) {
+#ifndef Q_OS_WIN
         // Past the screen edge the window system would push it back on
-        // screen, into the video where it cannot be kept out (Linux).
-        if (m_screen->geometry().contains(strip))
-            m_frame.emplace_back(makeStrip(strip));
+        // screen, into the video where it cannot be kept out.
+        if (!m_screen->geometry().contains(strip))
+            continue;
+#endif
+        m_frame.emplace_back(makeStrip(strip));
     }
     for (const auto &strip : m_frame) {
         strip->show();

@@ -326,13 +326,18 @@ void ScreenRecorder::onImage(const QImage &image)
     const QRect screenRect = m_screen->geometry();
     m_scale = qreal(image.width()) / screenRect.width();
 
-    // Only pixels wholly inside the area: the red frame sits right outside
-    // it, and a scaled frame window (XWayland at 150%) blends into the
-    // pixels it partly covers. H.264 (4:2:0) needs even dimensions.
+    // H.264 (4:2:0) needs even dimensions.
     const QRectF area(QPointF(m_rect.topLeft() - screenRect.topLeft()) * m_scale, QSizeF(m_rect.size()) * m_scale);
+#ifdef Q_OS_WIN
+    QRect crop = area.toAlignedRect().intersected(image.rect());
+#else
+    // Only pixels wholly inside the area: the red frame, which cannot be
+    // kept out of the capture here, sits right outside it, and a scaled frame
+    // window (XWayland at 150%) blends into the pixels it partly covers.
     QRect crop = QRect(QPoint(int(std::ceil(area.left())), int(std::ceil(area.top()))),
                        QPoint(int(std::floor(area.right())) - 1, int(std::floor(area.bottom())) - 1))
                      .intersected(image.rect());
+#endif
     crop.setWidth(crop.width() & ~1);
     crop.setHeight(crop.height() & ~1);
     // ARGB32 is what the encoder path takes as is; RGB32 frames came out black.
