@@ -70,7 +70,9 @@ All hotkeys can be changed in the settings.
 Windows has every feature. On Linux, the following are not available yet and
 are shown disabled: window capture, the pointer in captures, global hotkeys,
 and the mouse and keyboard overlays in recordings. Wayland also cannot offer
-window picking or the pointer at all. Windows OCR is Windows only, and the
+window picking or the pointer at all. Glimpse runs through XWayland on a
+Wayland session (unless `QT_QPA_PLATFORM` is set), as Wayland windows cannot
+place themselves or stay on top. Windows OCR is Windows only, and the
 Firefox translation engine is built on Windows only so far.
 
 ## Building

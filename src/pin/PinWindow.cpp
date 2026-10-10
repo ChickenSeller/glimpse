@@ -53,9 +53,9 @@ PinWindow::PinWindow(const QImage &image, const QRect &logicalRect)
 
     // Windows does not reliably report the pointer entering or moving over a
     // window that is not active (another pin or program has the focus), so
-    // the pin also watches the pointer itself. Not on Wayland, where the
-    // pointer position is only known over the focused window anyway.
-    if (Platform::displayServer() != Platform::DisplayServer::Wayland) {
+    // the pin also watches the pointer itself. Not on native Wayland, where
+    // the pointer position is only known over the focused window anyway.
+    if (Platform::windowsCanPlaceThemselves()) {
         m_hoverTimer.setInterval(kHoverPollMs);
         connect(&m_hoverTimer, &QTimer::timeout, this, &PinWindow::pollHover);
         m_hoverTimer.start();

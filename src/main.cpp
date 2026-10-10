@@ -42,6 +42,16 @@ int listDownloads(const QString &path)
 
 int main(int argc, char *argv[])
 {
+#ifdef Q_OS_LINUX
+    // On a Wayland session, run through XWayland unless told otherwise: Wayland
+    // windows can neither place themselves nor stay on top, and the recording
+    // frame, its panel and the docked toolbar need both. Screenshots and
+    // recordings still go through the portal (see Platform::displayServer()).
+    if (!qEnvironmentVariableIsSet("QT_QPA_PLATFORM")
+        && (qEnvironmentVariable("XDG_SESSION_TYPE") == QLatin1String("wayland")
+            || qEnvironmentVariableIsSet("WAYLAND_DISPLAY")))
+        qputenv("QT_QPA_PLATFORM", "xcb;wayland");
+#endif
     QApplication app(argc, argv);
     QApplication::setApplicationName(QStringLiteral("Glimpse"));
     QApplication::setOrganizationName(QStringLiteral("Glimpse"));

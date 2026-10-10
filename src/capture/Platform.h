@@ -23,6 +23,10 @@ DisplayServer displayServer();
 
 QString displayServerName();
 
+// Whether windows can place themselves and learn where they are. Not on
+// native Wayland; through XWayland they can, though pixels still need the portal.
+bool windowsCanPlaceThemselves();
+
 // Features implemented only on some platforms so far; the UI disables the rest.
 bool supportsWindowPicking(); // "Capture Window / Object" hit-testing
 bool supportsCursorCapture(); // mouse pointer in captures

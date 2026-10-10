@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QCursor>
+#include <QGuiApplication>
 #include <QWidget>
 #include <QtGlobal>
 
@@ -40,6 +41,11 @@ QString displayServerName()
     case DisplayServer::Unknown: break;
     }
     return QStringLiteral("Unknown");
+}
+
+bool windowsCanPlaceThemselves()
+{
+    return QGuiApplication::platformName() != QLatin1String("wayland");
 }
 
 // TODO: X11 (window tree, XFixes cursor, XGrabKey) and Wayland (GlobalShortcuts

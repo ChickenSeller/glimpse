@@ -41,10 +41,10 @@ constexpr int kSlideSidewaysMs = 300; // at the left or right: the whole length 
 constexpr int kDockStrip = 4;         // what stays on screen, slid in
 constexpr int kDragSettleMs = 400;    // no more moves: the drag is over (where unreported)
 
-// Wayland does not tell windows where they are.
+// Native Wayland does not tell windows where they are.
 bool dockingSupported()
 {
-    return Platform::displayServer() != Platform::DisplayServer::Wayland;
+    return Platform::windowsCanPlaceThemselves();
 }
 
 } // namespace
