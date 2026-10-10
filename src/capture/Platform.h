@@ -54,6 +54,8 @@ std::optional<QPoint> nativeCursorPos();
 // Moves the pointer by whole physical pixels. False where windows may not
 // move the pointer (Wayland).
 bool moveCursorBy(int dx, int dy);
+// Whether moveCursorBy() can work here.
+bool canMoveCursor();
 
 // Keeps a window out of screen captures and recordings (it stays visible on
 // screen). Does nothing where unsupported.

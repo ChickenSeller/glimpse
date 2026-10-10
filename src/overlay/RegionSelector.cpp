@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPixmap>
 #include <QScreen>
 #include <QWheelEvent>
 #include <QWidget>
@@ -16,6 +17,22 @@
 #include <cmath>
 
 namespace {
+
+// A pointer that does not show. Not Qt::BlankCursor on Linux: through
+// XWayland an empty cursor takes the pointer away altogether, and GNOME on
+// NVIDIA then blacks out the whole screen at times while the overlay
+// changes. One pixel at the lowest alpha keeps a pointer that cannot be seen.
+QCursor hiddenCursor()
+{
+#ifdef Q_OS_LINUX
+    QImage image(2, 2, QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    image.setPixel(0, 0, qRgba(0, 0, 0, 1));
+    return QCursor(QPixmap::fromImage(image), 0, 0);
+#else
+    return QCursor(Qt::BlankCursor);
+#endif
+}
 
 const QColor kAccent(0x2d, 0x9c, 0xff);
 const QColor kDim(0, 0, 0, 110);
@@ -103,7 +120,11 @@ public:
         setAttribute(Qt::WA_NoSystemBackground);
         setMouseTracking(true);
         // The crosshair itself marks the pointer.
-        setCursor(selector->mode() == RegionSelector::Mode::Crosshair ? Qt::BlankCursor : Qt::CrossCursor);
+        // So does the color picker's where the arrow keys cannot move the
+        // real pointer (Wayland): its own one moves with them.
+        const bool ownPointer = selector->mode() == RegionSelector::Mode::Crosshair
+                                || (selector->mode() == RegionSelector::Mode::Color && !Platform::canMoveCursor());
+        setCursor(ownPointer ? hiddenCursor() : QCursor(Qt::CrossCursor));
         if (QScreen *screen = findScreen(shot.name))
             setScreen(screen);
         setGeometry(shot.geometry);
@@ -398,11 +419,36 @@ private:
         const RegionSelector::Sample sample = m_selector->sampleAtCursor();
         if (sample.screen != m_name)
             return;
+        QPointF near = m_selector->preciseCursor() - QPointF(m_origin);
+        if (!Platform::canMoveCursor()) {
+            // The real pointer is hidden (see the constructor); this one sits
+            // on the sampled pixel, also when the arrow keys moved it.
+            drawPointer(p, sample.pixel);
+            near = pixelCenter(sample.pixel);
+        }
         const QColor color = m_image.pixelColor(sample.pixel);
-        drawPanel(p, m_image, sample.pixel, m_selector->preciseCursor() - QPointF(m_origin),
+        drawPanel(p, m_image, sample.pixel, near,
                   {color.name(QColor::HexRgb).toUpper(),
                    QStringLiteral("%1, %2, %3").arg(color.red()).arg(color.green()).arg(color.blue())},
                   {RegionSelector::tr("Click: pick  ·  Arrows: 1 px")});
+    }
+
+    // A cross pointer around one native pixel, which it leaves uncovered;
+    // dark under light, so it shows on any background.
+    void drawPointer(QPainter &p, const QPoint &pixel)
+    {
+        const QPointF c = pixelCenter(pixel);
+        const qreal gap = 0.5 / m_image.devicePixelRatio() + 1; // just clear of the pixel
+        const qreal arm = 10;
+        p.save();
+        for (const auto &[color, width] : {std::pair{QColor(0, 0, 0, 200), 3.0}, std::pair{QColor(Qt::white), 1.0}}) {
+            p.setPen(QPen(color, width, Qt::SolidLine, Qt::FlatCap));
+            p.drawLine(QPointF(c.x() - gap - arm, c.y()), QPointF(c.x() - gap, c.y()));
+            p.drawLine(QPointF(c.x() + gap, c.y()), QPointF(c.x() + gap + arm, c.y()));
+            p.drawLine(QPointF(c.x(), c.y() - gap - arm), QPointF(c.x(), c.y() - gap));
+            p.drawLine(QPointF(c.x(), c.y() + gap), QPointF(c.x(), c.y() + gap + arm));
+        }
+        p.restore();
     }
 
     // Center of a native pixel of this screen, in local logical coordinates.

@@ -140,6 +140,11 @@ std::optional<QPoint> nativeCursorPos()
     return std::nullopt;
 }
 
+bool canMoveCursor()
+{
+    return displayServer() == DisplayServer::Windows || displayServer() == DisplayServer::X11;
+}
+
 bool moveCursorBy(int dx, int dy)
 {
 #ifdef Q_OS_WIN
