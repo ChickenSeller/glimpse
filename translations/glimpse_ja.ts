@@ -155,7 +155,7 @@
         <translation>QR コードを読み取る</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+520"/>
+        <location filename="../src/app/CaptureController.cpp" line="+611"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
@@ -196,7 +196,7 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-415"/>
+        <location filename="../src/app/CaptureController.cpp" line="-494"/>
         <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
@@ -234,18 +234,56 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+237"/>
+        <location line="+246"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>キャプチャに失敗しました</translation>
     </message>
     <message>
+        <location line="+8"/>
+        <source>Glimpse is still not allowed to take screenshots. If you refused it, now or earlier, the system remembers that answer.
+
+Click &quot;Ask Again&quot; to be asked once more.</source>
+        <translation>Glimpse はまだスクリーンショットを許可されていません。今または以前に拒否した場合、システムはその回答を記憶しています。
+
+「もう一度確認」をクリックすると、再度確認されます。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ask Again</source>
+        <translation>もう一度確認</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Screenshot Permission</source>
+        <translation>スクリーンショットの許可</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The system has not allowed Glimpse to take screenshots yet.
+
+Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appears. You only need to do this once.</source>
+        <translation>システムはまだ Glimpse にスクリーンショットを許可していません。
+
+「スクリーンショットを許可」をクリックし、表示されるシステムダイアログで許可してください。この操作は一度だけ必要です。</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Allow Screenshots</source>
+        <translation>スクリーンショットを許可</translation>
+    </message>
+    <message>
         <location line="+35"/>
+        <source>Waiting for the system dialog...</source>
+        <translation>システムダイアログを待っています…</translation>
+    </message>
+    <message>
+        <location line="+39"/>
         <source>No text recognition engine is available in this build.</source>
         <translation>このビルドでは利用できる文字認識エンジンがありません。</translation>
     </message>
@@ -923,7 +961,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>PinWindow</name>
     <message>
-        <location filename="../src/pin/PinWindow.cpp" line="+225"/>
+        <location filename="../src/pin/PinWindow.cpp" line="+231"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
@@ -994,12 +1032,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>スクリーンショットポータルのエラー：%1</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>The screenshot portal refused the request.</source>
-        <translation>スクリーンショットポータルが要求を拒否しました。</translation>
+        <translation type="vanished">スクリーンショットポータルが要求を拒否しました。</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+33"/>
         <source>Could not load the screenshot returned by the portal.</source>
         <translation>ポータルから返されたスクリーンショットを読み込めませんでした。</translation>
     </message>

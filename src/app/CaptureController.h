@@ -17,6 +17,7 @@ class RecordingSession;
 class DesktopSnapshot;
 class GlobalHotkeys;
 class QAction;
+class QDialog;
 class QMenu;
 class QSystemTrayIcon;
 class ScreenGrabber;
@@ -57,6 +58,11 @@ private:
     void startCapture(Mode mode, bool afterFade);
     void onSnapshot(const DesktopSnapshot &snapshot);
     void onGrabFailed(const QString &message);
+    // The screenshot portal refused for lack of permission: asks for it from a
+    // focused window, then starts the capture again.
+    void onPermissionNeeded();
+    void requestPermission(bool resetFirst);
+    void closePermissionDialog();
     void endCapture();
     void openEditor(const QImage &image);
     // A finished capture: the capture window, and the clipboard if so set.
@@ -90,6 +96,7 @@ private:
     QAction *m_trayExit = nullptr;
     QPointer<SettingsDialog> m_settings;
     QPointer<AboutDialog> m_about;
+    QPointer<QDialog> m_permissionDialog; // while asking for screenshot permission
 
     Mode m_mode = Mode::FullScreen;
     bool m_busy = false;

@@ -30,12 +30,17 @@
 
 #include <QApplication>
 #include <QDateTime>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QDir>
 #include <QFileInfo>
+#include <QLabel>
 #include <QMenu>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QSystemTrayIcon>
 #include <QTimer>
+#include <QVBoxLayout>
 
 namespace {
 
@@ -57,7 +62,14 @@ CaptureController::CaptureController(QObject *parent)
 {
     connect(m_grabber, &ScreenGrabber::captured, this, &CaptureController::onSnapshot);
     connect(m_grabber, &ScreenGrabber::failed, this, &CaptureController::onGrabFailed);
-    connect(m_grabber, &ScreenGrabber::canceled, this, &CaptureController::endCapture);
+    connect(m_grabber, &ScreenGrabber::canceled, this, [this] {
+        // Dismissing GNOME's permission dialog is a refusal too.
+        if (m_permissionDialog)
+            onPermissionNeeded();
+        else
+            endCapture();
+    });
+    connect(m_grabber, &ScreenGrabber::permissionNeeded, this, &CaptureController::onPermissionNeeded);
 
     connect(m_toolbar.get(), &CaptureToolbar::captureRequested, this, &CaptureController::beginCapture);
     connect(m_toolbar.get(), &CaptureToolbar::settingsRequested, this, &CaptureController::showSettings);
@@ -341,6 +353,15 @@ void CaptureController::deliver(const QImage &image)
 
 void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
 {
+    // A late answer to a request the user canceled meanwhile.
+    if (!m_busy)
+        return;
+    // Only the permission request; this snapshot shows our dialog. Capture for real.
+    if (m_permissionDialog) {
+        closePermissionDialog();
+        startCapture(m_mode, true);
+        return;
+    }
     // The live grab after a delay: the area was chosen before the countdown.
     if (m_pendingRect) {
         const QRect rect = *m_pendingRect;
@@ -454,11 +475,81 @@ void CaptureController::startRecording(const QRect &rect)
 
 void CaptureController::onGrabFailed(const QString &message)
 {
+    closePermissionDialog();
     endCapture();
     if (m_tray)
         m_tray->showMessage(tr("Capture failed"), message, QSystemTrayIcon::Warning);
     else
         QMessageBox::warning(nullptr, tr("Capture failed"), message);
+}
+
+void CaptureController::onPermissionNeeded()
+{
+    // Refused again while asking: denied now or earlier (GNOME remembers that).
+    if (m_permissionDialog) {
+        m_permissionDialog->findChild<QLabel *>()->setText(
+            tr("Glimpse is still not allowed to take screenshots. If you refused it, now or earlier, "
+               "the system remembers that answer.\n\nClick \"Ask Again\" to be asked once more."));
+        auto *button = m_permissionDialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok);
+        button->setText(tr("Ask Again"));
+        button->setEnabled(true);
+        button->setProperty("resetFirst", true);
+        m_permissionDialog->raise();
+        m_permissionDialog->activateWindow();
+        return;
+    }
+
+    // Still "busy" while asking, so no other capture starts meanwhile.
+    auto *dialog = new QDialog;
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowTitle(tr("Screenshot Permission"));
+    auto *label = new QLabel(
+        tr("The system has not allowed Glimpse to take screenshots yet.\n\n"
+           "Click \"Allow Screenshots\" and confirm in the system dialog that appears. "
+           "You only need to do this once."),
+        dialog);
+    label->setWordWrap(true);
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
+    buttons->button(QDialogButtonBox::Ok)->setText(tr("Allow Screenshots"));
+    auto *layout = new QVBoxLayout(dialog);
+    layout->addWidget(label);
+    layout->addWidget(buttons);
+    dialog->setMinimumWidth(420);
+
+    // Not accept(): the dialog has to stay open, and focused, while the system asks.
+    connect(buttons, &QDialogButtonBox::accepted, this, [this, buttons] {
+        QPushButton *button = buttons->button(QDialogButtonBox::Ok);
+        requestPermission(button->property("resetFirst").toBool());
+    });
+    connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+    connect(dialog, &QDialog::finished, this, &CaptureController::endCapture);
+
+    m_permissionDialog = dialog;
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
+}
+
+void CaptureController::closePermissionDialog()
+{
+    // Cleared first: the dialog is only deleted later, and it ends the capture as it closes.
+    if (QDialog *dialog = m_permissionDialog.data()) {
+        m_permissionDialog.clear();
+        dialog->close();
+    }
+}
+
+void CaptureController::requestPermission(bool resetFirst)
+{
+    if (!m_permissionDialog)
+        return;
+    if (resetFirst)
+        m_grabber->resetPermission();
+    m_permissionDialog->findChild<QLabel *>()->setText(tr("Waiting for the system dialog..."));
+    m_permissionDialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->setEnabled(false);
+    // From here, with our dialog focused, GNOME can show its own. The answer
+    // comes back as a snapshot (allowed) or permissionNeeded() (refused).
+    m_grabber->grab();
 }
 
 void CaptureController::endCapture()

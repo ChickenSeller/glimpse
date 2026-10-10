@@ -155,7 +155,7 @@
         <translation>识别二维码</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+520"/>
+        <location filename="../src/app/CaptureController.cpp" line="+611"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
@@ -196,7 +196,7 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-415"/>
+        <location filename="../src/app/CaptureController.cpp" line="-494"/>
         <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
@@ -234,18 +234,56 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+237"/>
+        <location line="+246"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <location line="+2"/>
         <source>Capture failed</source>
         <translation>截图失败</translation>
     </message>
     <message>
+        <location line="+8"/>
+        <source>Glimpse is still not allowed to take screenshots. If you refused it, now or earlier, the system remembers that answer.
+
+Click &quot;Ask Again&quot; to be asked once more.</source>
+        <translation>Glimpse 仍未获得截图权限。如果你现在或之前拒绝过，系统会记住这个选择。
+
+点击“重新询问”可以再询问一次。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ask Again</source>
+        <translation>重新询问</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Screenshot Permission</source>
+        <translation>截图权限</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The system has not allowed Glimpse to take screenshots yet.
+
+Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appears. You only need to do this once.</source>
+        <translation>系统尚未允许 Glimpse 截图。
+
+请点击“允许截图”，然后在弹出的系统对话框中确认。只需操作一次。</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Allow Screenshots</source>
+        <translation>允许截图</translation>
+    </message>
+    <message>
         <location line="+35"/>
+        <source>Waiting for the system dialog...</source>
+        <translation>正在等待系统对话框……</translation>
+    </message>
+    <message>
+        <location line="+39"/>
         <source>No text recognition engine is available in this build.</source>
         <translation>此版本中没有可用的文字识别引擎。</translation>
     </message>
@@ -923,7 +961,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>PinWindow</name>
     <message>
-        <location filename="../src/pin/PinWindow.cpp" line="+225"/>
+        <location filename="../src/pin/PinWindow.cpp" line="+231"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
@@ -994,12 +1032,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>截图门户（portal）出错：%1</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>The screenshot portal refused the request.</source>
-        <translation>截图门户（portal）拒绝了请求。</translation>
+        <translation type="vanished">截图门户（portal）拒绝了请求。</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+33"/>
         <source>Could not load the screenshot returned by the portal.</source>
         <translation>无法加载门户（portal）返回的截图。</translation>
     </message>

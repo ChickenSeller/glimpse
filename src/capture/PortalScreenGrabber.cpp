@@ -70,7 +70,10 @@ void PortalScreenGrabber::onResponse(uint response, const QVariantMap &results)
         return;
     }
     if (response != 0) {
-        emit failed(tr("The screenshot portal refused the request."));
+        // No permission yet, or the user said no. A non-interactive request
+        // needs the screenshot permission; without it GNOME asks, but only
+        // while we have the focus, which a hotkey or tray capture has not.
+        emit permissionNeeded();
         return;
     }
 
@@ -109,6 +112,20 @@ void PortalScreenGrabber::onResponse(uint response, const QVariantMap &results)
         snapshot.screens.append(shot);
     }
     emit captured(snapshot);
+}
+
+void PortalScreenGrabber::resetPermission()
+{
+    // The portal keeps the answer in the permission store, keyed by the app ID
+    // it derives from our desktop file (GNOME launches us in app-gnome-glimpse-*.scope).
+    QDBusMessage message = QDBusMessage::createMethodCall(
+        QStringLiteral("org.freedesktop.impl.portal.PermissionStore"),
+        QStringLiteral("/org/freedesktop/impl/portal/PermissionStore"),
+        QStringLiteral("org.freedesktop.impl.portal.PermissionStore"), QStringLiteral("DeletePermission"));
+    message << QStringLiteral("screenshot") << QStringLiteral("screenshot") << QGuiApplication::desktopFileName();
+    // Blocking but quick; the next grab must see the entry gone. Fails harmlessly
+    // when there is no entry.
+    QDBusConnection::sessionBus().call(message, QDBus::Block, 2000);
 }
 
 void PortalScreenGrabber::watchRequest(const QString &path)

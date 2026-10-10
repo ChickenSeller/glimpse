@@ -13,6 +13,7 @@ public:
     using ScreenGrabber::ScreenGrabber;
 
     void grab() override;
+    void resetPermission() override;
 
 private slots:
     void onResponse(uint response, const QVariantMap &results);
