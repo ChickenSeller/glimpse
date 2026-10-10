@@ -39,7 +39,12 @@ PinWindow::PinWindow(const QImage &image, const QRect &logicalRect)
     , m_image(image)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    setAttribute(Qt::WA_OpaquePaintEvent);
+    // A freehand capture is see-through outside its shape; so is its pin,
+    // instead of showing the window's background there.
+    if (m_image.hasAlphaChannel())
+        setAttribute(Qt::WA_TranslucentBackground);
+    else
+        setAttribute(Qt::WA_OpaquePaintEvent);
     setFocusPolicy(Qt::StrongFocus);
     setCursor(Qt::SizeAllCursor);
     setMouseTracking(true); // for the close button's hover state
@@ -103,7 +108,8 @@ QSize PinWindow::logicalSize(qreal zoom) const
 void PinWindow::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
-    p.fillRect(rect(), palette().window());
+    if (!testAttribute(Qt::WA_TranslucentBackground))
+        p.fillRect(rect(), palette().window());
 
     // Drawn in native pixels: at 100% on a screen of the capture's scale every
     // image pixel lands on one screen pixel, also at fractional scaling (150%),
