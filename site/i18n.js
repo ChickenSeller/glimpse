@@ -24,7 +24,7 @@
     'rel.pkg.rpm': 'Linux .rpm',
     'rel.note.deb': 'Debian、Ubuntu',
     'rel.note.rpm': 'Fedora、openSUSE、RHEL',
-    'rel.missing': '此版本没有',
+    'rel.missing': '该版本未提供',
     'rel.elsewhere': '也可以从这里下载：',
     'rel.loading': '正在读取版本列表...',
     'rel.none': '还没有发布任何版本。',
