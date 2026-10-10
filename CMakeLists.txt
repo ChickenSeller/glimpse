@@ -308,6 +308,21 @@ if(UNIX AND NOT APPLE)
     )
     target_link_libraries(glimpse PRIVATE Qt6::DBus)
     target_compile_definitions(glimpse PRIVATE GLIMPSE_HAVE_PORTAL)
+
+    # Wayland recordings with the pointer: the ScreenCast portal and PipeWire
+    # directly (libpipewire-0.3-dev). Without it, QScreenCapture records
+    # without the pointer.
+    find_package(PkgConfig)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(PIPEWIRE IMPORTED_TARGET libpipewire-0.3)
+    endif()
+    if(PIPEWIRE_FOUND)
+        target_sources(glimpse PRIVATE src/record/ScreenCastCapture.cpp src/record/ScreenCastCapture.h)
+        target_link_libraries(glimpse PRIVATE PkgConfig::PIPEWIRE)
+        target_compile_definitions(glimpse PRIVATE GLIMPSE_HAVE_PIPEWIRE)
+    else()
+        message(WARNING "libpipewire-0.3 not found: Wayland recordings will not show the pointer.")
+    endif()
 endif()
 
 set_target_properties(glimpse PROPERTIES
@@ -421,6 +436,11 @@ else()
 endif()
 target_include_directories(glimpse-record-test PRIVATE src)
 target_link_libraries(glimpse-record-test PRIVATE Qt6::Widgets Qt6::Multimedia)
+if(PIPEWIRE_FOUND)
+    target_sources(glimpse-record-test PRIVATE src/record/ScreenCastCapture.cpp src/record/ScreenCastCapture.h)
+    target_link_libraries(glimpse-record-test PRIVATE PkgConfig::PIPEWIRE Qt6::DBus)
+    target_compile_definitions(glimpse-record-test PRIVATE GLIMPSE_HAVE_PIPEWIRE)
+endif()
 
 # --- distribution -----------------------------------------------------------------
 # Everything a user needs goes into the "glimpse" install component; the

@@ -1,6 +1,9 @@
 #include "ScreenRecorder.h"
 
 #include "InputMonitor.h"
+#ifdef GLIMPSE_HAVE_PIPEWIRE
+#include "ScreenCastCapture.h"
+#endif
 #include "capture/CursorCapture.h"
 #include "capture/Platform.h"
 
@@ -94,14 +97,24 @@ ScreenRecorder::ScreenRecorder(QScreen *screen, const QRect &logicalRect, const 
     , m_rect(logicalRect.intersected(screen->geometry()))
     , m_options(options)
 {
-    m_capture = new QScreenCapture(this);
-    m_capture->setScreen(screen);
-    m_sink = new QVideoSink(this);
-    m_source.setScreenCapture(m_capture);
-    m_source.setVideoSink(m_sink);
-    connect(m_sink, &QVideoSink::videoFrameChanged, this, &ScreenRecorder::onFrame);
-    connect(m_capture, &QScreenCapture::errorOccurred, this,
-            [this](QScreenCapture::Error, const QString &message) { fail(message); });
+#ifdef GLIMPSE_HAVE_PIPEWIRE
+    // With the pointer in the frames, which QScreenCapture leaves out there.
+    if (Platform::displayServer() == Platform::DisplayServer::Wayland) {
+        m_screenCast = new ScreenCastCapture(this);
+        connect(m_screenCast, &ScreenCastCapture::frameReady, this, &ScreenRecorder::onImage);
+        connect(m_screenCast, &ScreenCastCapture::failed, this, &ScreenRecorder::fail);
+    }
+#endif
+    if (!m_screenCast) {
+        m_capture = new QScreenCapture(this);
+        m_capture->setScreen(screen);
+        m_sink = new QVideoSink(this);
+        m_source.setScreenCapture(m_capture);
+        m_source.setVideoSink(m_sink);
+        connect(m_sink, &QVideoSink::videoFrameChanged, this, &ScreenRecorder::onFrame);
+        connect(m_capture, &QScreenCapture::errorOccurred, this,
+                [this](QScreenCapture::Error, const QString &message) { fail(message); });
+    }
 
     m_frameTimer = new QTimer(this);
     m_frameTimer->setTimerType(Qt::PreciseTimer);
@@ -168,7 +181,7 @@ void ScreenRecorder::start()
     if (m_inputMonitor)
         m_inputMonitor->start();
     m_recorder->record();
-    m_capture->setActive(true);
+    setCaptureActive(true);
     m_frameTimer->start();
 }
 
@@ -178,7 +191,7 @@ void ScreenRecorder::stop()
         return;
     m_stopping = true;
     m_frameTimer->stop();
-    m_capture->setActive(false);
+    setCaptureActive(false);
     if (m_inputMonitor)
         m_inputMonitor->stop();
     m_recorder->stop();
@@ -211,7 +224,7 @@ void ScreenRecorder::fail(const QString &message)
         return;
     m_failed = true;
     m_frameTimer->stop();
-    m_capture->setActive(false);
+    setCaptureActive(false);
     if (m_inputMonitor)
         m_inputMonitor->stop();
     emit failed(message);
@@ -228,12 +241,29 @@ QPoint ScreenRecorder::cursorPos(qreal scale) const
     return local.toPoint();
 }
 
+void ScreenRecorder::setCaptureActive(bool active)
+{
+    if (m_capture)
+        m_capture->setActive(active);
+#ifdef GLIMPSE_HAVE_PIPEWIRE
+    if (m_screenCast) {
+        if (active)
+            m_screenCast->start();
+        else
+            m_screenCast->stop();
+    }
+#endif
+}
+
 void ScreenRecorder::onFrame(const QVideoFrame &frame)
 {
-    if (m_stopping || m_failed || !m_screen || !frame.isValid())
-        return;
-    QImage image = frame.toImage();
-    if (image.isNull())
+    if (frame.isValid())
+        onImage(frame.toImage());
+}
+
+void ScreenRecorder::onImage(const QImage &image)
+{
+    if (m_stopping || m_failed || !m_screen || image.isNull())
         return;
     const QRect screenRect = m_screen->geometry();
     m_scale = qreal(image.width()) / screenRect.width();

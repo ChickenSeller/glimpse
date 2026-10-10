@@ -70,9 +70,10 @@ All hotkeys can be changed in the settings.
 Windows has every feature. On Linux, the following are not available yet and
 are shown disabled: window capture, the pointer in captures, global hotkeys,
 and the mouse and keyboard overlays in recordings. Wayland also cannot offer
-window picking or the pointer at all. Glimpse runs through XWayland on a
-Wayland session (unless `QT_QPA_PLATFORM` is set), as Wayland windows cannot
-place themselves or stay on top. Windows OCR is Windows only, and the
+window picking or the pointer in screenshots; recordings there show the
+pointer. Glimpse runs through XWayland on a Wayland session (unless
+`QT_QPA_PLATFORM` is set), as Wayland windows cannot place themselves or
+stay on top. Windows OCR is Windows only, and the
 Firefox translation engine is built on Windows only so far.
 
 ## Building
@@ -83,6 +84,8 @@ Requirements:
   LinguistTools; DBus on Linux)
 - CMake 3.24 or later and a C++20 compiler (MinGW-w64 or MSVC on Windows,
   GCC or Clang on Linux)
+- On Linux, optionally libpipewire-0.3 (`libpipewire-0.3-dev`) for the
+  pointer in Wayland recordings
 - Git and Visual Studio 2022 on Windows for the Firefox translation engine,
   which is built with MSVC; without them the build skips it
 

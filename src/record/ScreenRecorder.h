@@ -13,6 +13,7 @@
 #include <QString>
 
 class InputMonitor;
+class ScreenCastCapture;
 class QMediaRecorder;
 class QScreen;
 class QScreenCapture;
@@ -22,9 +23,9 @@ class QVideoFrameInput;
 class QVideoSink;
 
 // Records one screen area to an MP4 (H.264) file. Frames come from
-// QScreenCapture, are cropped to the area, get the pointer highlight, click
-// ripples and key labels painted in (so they exist only in the video), and
-// go to QMediaRecorder through QVideoFrameInput.
+// QScreenCapture (ScreenCastCapture on Wayland), are cropped to the area,
+// get the pointer highlight, click ripples and key labels painted in (so they
+// exist only in the video), and go to QMediaRecorder through QVideoFrameInput.
 class ScreenRecorder : public QObject
 {
     Q_OBJECT
@@ -72,7 +73,10 @@ private:
         qint64 at;
     };
 
+    void setCaptureActive(bool active);
     void onFrame(const QVideoFrame &frame);
+    // A whole screen, physical pixels.
+    void onImage(const QImage &image);
     // Writes one video frame: the latest screen content with the pointer and
     // overlays as they are now. Runs at the frame rate, also while the screen
     // content does not change (the capture only delivers changed frames).
@@ -87,7 +91,8 @@ private:
 
     QMediaCaptureSession m_source;
     QMediaCaptureSession m_output;
-    QScreenCapture *m_capture = nullptr;
+    QScreenCapture *m_capture = nullptr;       // or:
+    ScreenCastCapture *m_screenCast = nullptr; // Wayland, with the pointer
     QVideoSink *m_sink = nullptr;
     QTimer *m_frameTimer = nullptr;
     QImage m_area;          // latest screen content of the area, physical
