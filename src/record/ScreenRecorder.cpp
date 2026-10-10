@@ -35,13 +35,34 @@ const QColor kRightClick(30, 136, 229);
 const QColor kMiddleClick(67, 160, 71);
 
 #ifndef Q_OS_WIN
+// BT.709, limited range.
+uchar lumaOf(int r, int g, int b)
+{
+    return uchar(16 + ((47 * r + 157 * g + 16 * b + 128) >> 8));
+}
+
+uchar cbOf(int r, int g, int b)
+{
+    return uchar(128 + ((-26 * r - 86 * g + 112 * b + 128) >> 8));
+}
+
+uchar crOf(int r, int g, int b)
+{
+    return uchar(128 + ((112 * r - 102 * g - 10 * b + 128) >> 8));
+}
+
 // From RGB frames FFmpeg encodes H.264 High 4:4:4 (12-bit for h264_nvenc,
 // which NVENC then rejects on every frame); many players and most hardware
 // decoders show 4:4:4 as black. 4:2:0 frames get plain High 4:2:0.
-// BT.709, limited range; the image has even dimensions.
-QVideoFrame toYuv420(const QImage &image)
+//
+// 4:2:0 keeps one color per 2x2 pixels, which smears thin colored lines
+// (charts, syntax highlighting). With `doubled`, the frame is twice the
+// size: every pixel becomes 2x2 luma samples with a color sample of its own,
+// as exact as 4:4:4 and still plain 4:2:0. The image has even dimensions.
+QVideoFrame toYuv420(const QImage &image, bool doubled)
 {
-    QVideoFrameFormat format(image.size(), QVideoFrameFormat::Format_YUV420P);
+    const int scale = doubled ? 2 : 1;
+    QVideoFrameFormat format(image.size() * scale, QVideoFrameFormat::Format_YUV420P);
     format.setColorSpace(QVideoFrameFormat::ColorSpace_BT709);
     format.setColorTransfer(QVideoFrameFormat::ColorTransfer_BT709);
     format.setColorRange(QVideoFrameFormat::ColorRange_Video);
@@ -54,25 +75,41 @@ QVideoFrame toYuv420(const QImage &image)
     const int yStride = frame.bytesPerLine(0);
     const int uStride = frame.bytesPerLine(1);
     const int vStride = frame.bytesPerLine(2);
-    for (int y = 0; y < image.height(); y += 2) {
-        const QRgb *rows[2] = {reinterpret_cast<const QRgb *>(image.constScanLine(y)),
-                               reinterpret_cast<const QRgb *>(image.constScanLine(y + 1))};
-        uchar *yRows[2] = {yPlane + y * yStride, yPlane + (y + 1) * yStride};
-        uchar *u = uPlane + y / 2 * uStride;
-        uchar *v = vPlane + y / 2 * vStride;
-        for (int x = 0; x < image.width(); x += 2) {
-            int r = 0, g = 0, b = 0; // sums over the 2x2 block
-            for (int dy = 0; dy < 2; ++dy) {
-                for (int dx = 0; dx < 2; ++dx) {
-                    const QRgb p = rows[dy][x + dx];
-                    yRows[dy][x + dx] = uchar(16 + ((47 * qRed(p) + 157 * qGreen(p) + 16 * qBlue(p) + 128) >> 8));
-                    r += qRed(p);
-                    g += qGreen(p);
-                    b += qBlue(p);
-                }
+    if (doubled) {
+        for (int y = 0; y < image.height(); ++y) {
+            const QRgb *row = reinterpret_cast<const QRgb *>(image.constScanLine(y));
+            uchar *yRows[2] = {yPlane + 2 * y * yStride, yPlane + (2 * y + 1) * yStride};
+            uchar *u = uPlane + y * uStride;
+            uchar *v = vPlane + y * vStride;
+            for (int x = 0; x < image.width(); ++x) {
+                const int r = qRed(row[x]), g = qGreen(row[x]), b = qBlue(row[x]);
+                const uchar luma = lumaOf(r, g, b);
+                yRows[0][2 * x] = yRows[0][2 * x + 1] = yRows[1][2 * x] = yRows[1][2 * x + 1] = luma;
+                u[x] = cbOf(r, g, b);
+                v[x] = crOf(r, g, b);
             }
-            u[x / 2] = uchar(128 + ((-26 * r - 87 * g + 112 * b + 512) >> 10));
-            v[x / 2] = uchar(128 + ((112 * r - 102 * g - 10 * b + 512) >> 10));
+        }
+    } else {
+        for (int y = 0; y < image.height(); y += 2) {
+            const QRgb *rows[2] = {reinterpret_cast<const QRgb *>(image.constScanLine(y)),
+                                   reinterpret_cast<const QRgb *>(image.constScanLine(y + 1))};
+            uchar *yRows[2] = {yPlane + y * yStride, yPlane + (y + 1) * yStride};
+            uchar *u = uPlane + y / 2 * uStride;
+            uchar *v = vPlane + y / 2 * vStride;
+            for (int x = 0; x < image.width(); x += 2) {
+                int r = 0, g = 0, b = 0; // averaged over the 2x2 block
+                for (int dy = 0; dy < 2; ++dy) {
+                    for (int dx = 0; dx < 2; ++dx) {
+                        const QRgb p = rows[dy][x + dx];
+                        yRows[dy][x + dx] = lumaOf(qRed(p), qGreen(p), qBlue(p));
+                        r += qRed(p);
+                        g += qGreen(p);
+                        b += qBlue(p);
+                    }
+                }
+                u[x / 2] = cbOf((r + 2) / 4, (g + 2) / 4, (b + 2) / 4);
+                v[x / 2] = crOf((r + 2) / 4, (g + 2) / 4, (b + 2) / 4);
+            }
         }
     }
     frame.unmap();
@@ -125,9 +162,6 @@ ScreenRecorder::ScreenRecorder(QScreen *screen, const QRect &logicalRect, const 
     m_recorder = new QMediaRecorder(this);
     m_output.setVideoFrameInput(m_input);
     m_output.setRecorder(m_recorder);
-    QMediaFormat format(QMediaFormat::MPEG4);
-    format.setVideoCodec(QMediaFormat::VideoCodec::H264);
-    m_recorder->setMediaFormat(format);
     m_recorder->setQuality(QMediaRecorder::HighQuality);
     m_recorder->setVideoFrameRate(m_options.frameRate);
     m_recorder->setOutputLocation(QUrl::fromLocalFile(m_options.filePath));
@@ -180,7 +214,9 @@ void ScreenRecorder::start()
     m_clock.start();
     if (m_inputMonitor)
         m_inputMonitor->start();
-    m_recorder->record();
+#ifdef Q_OS_WIN
+    beginRecording();
+#endif
     setCaptureActive(true);
     m_frameTimer->start();
 }
@@ -194,7 +230,29 @@ void ScreenRecorder::stop()
     setCaptureActive(false);
     if (m_inputMonitor)
         m_inputMonitor->stop();
+    if (!m_recording) {
+        // No screen content ever came (the portal was still asking).
+        fail(tr("Nothing was recorded: the screen content did not arrive."));
+        return;
+    }
     m_recorder->stop();
+}
+
+void ScreenRecorder::beginRecording()
+{
+    m_recording = true;
+    QMediaFormat format(QMediaFormat::MPEG4);
+    format.setVideoCodec(QMediaFormat::VideoCodec::H264);
+#ifndef Q_OS_WIN
+    // Twice the size: H.264 encoders take at most 4096 pixels a side, H.265
+    // ones 8192 (NVENC, VA-API).
+    const QSize doubled = m_area.size() * 2;
+    m_doubled = m_options.fullColor && doubled.width() <= 8192 && doubled.height() <= 8192;
+    if (m_doubled && (doubled.width() > 4096 || doubled.height() > 4096))
+        format.setVideoCodec(QMediaFormat::VideoCodec::H265);
+#endif
+    m_recorder->setMediaFormat(format);
+    m_recorder->record();
 }
 
 void ScreenRecorder::setPaused(bool paused)
@@ -280,6 +338,9 @@ void ScreenRecorder::onImage(const QImage &image)
     // ARGB32 is what the encoder path takes as is; RGB32 frames came out black.
     m_area = image.copy(crop).convertToFormat(QImage::Format_ARGB32);
     m_areaOrigin = crop.topLeft();
+    // The area's size in physical pixels is only known now.
+    if (!m_recording)
+        beginRecording();
 }
 
 void ScreenRecorder::writeFrame()
@@ -297,7 +358,7 @@ void ScreenRecorder::writeFrame()
 #ifdef Q_OS_WIN
     QVideoFrame video(out);
 #else
-    QVideoFrame video = toYuv420(out);
+    QVideoFrame video = toYuv420(out, m_doubled);
 #endif
     video.setStartTime(now * 1000);
     video.setEndTime((now + frameMs) * 1000);

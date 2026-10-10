@@ -695,7 +695,24 @@
          <item row="0" column="1">
           <widget class="QComboBox" name="recordFrameRateCombo"/>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="recordColorLabel">
+           <property name="text">
+            <string>&amp;Color detail:</string>
+           </property>
+           <property name="buddy">
+            <cstring>recordColorCombo</cstring>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="1">
+          <widget class="QComboBox" name="recordColorCombo">
+           <property name="toolTip">
+            <string>Standard videos keep one color for every 2×2 pixels, which smears thin colored lines such as charts and highlighted code. High keeps every pixel's color in a video twice the size (about three times the file size). Areas over 2048 pixels wide or high are then saved as H.265, which some players and browsers cannot play.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
           <widget class="QLabel" name="recordFolderHint">
            <property name="text">
             <string>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</string>

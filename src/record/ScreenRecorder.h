@@ -42,6 +42,9 @@ public:
         bool showClicks = true;
         bool showKeys = false;
         KeyStyle keyStyle = KeyStyle::Keyboard;
+        // Linux: color as exact as the pixels, in a video twice the size;
+        // H.265 where that is too large for H.264. See toYuv420().
+        bool fullColor = false;
     };
 
     ScreenRecorder(QScreen *screen, const QRect &logicalRect, const Options &options, QObject *parent = nullptr);
@@ -77,6 +80,8 @@ private:
     void onFrame(const QVideoFrame &frame);
     // A whole screen, physical pixels.
     void onImage(const QImage &image);
+    // Picks the codec for the area's real size and starts the encoder.
+    void beginRecording();
     // Writes one video frame: the latest screen content with the pointer and
     // overlays as they are now. Runs at the frame rate, also while the screen
     // content does not change (the capture only delivers changed frames).
@@ -106,6 +111,8 @@ private:
     qint64 m_pausedTotal = 0; // ms
     qint64 m_pausedSince = -1;
     bool m_paused = false;
+    bool m_recording = false; // the encoder is running
+    bool m_doubled = false;   // see Options::fullColor
     bool m_stopping = false;
     bool m_failed = false;
     int m_framesWritten = 0;

@@ -276,6 +276,16 @@ void setRecordFrameRate(int rate)
     QSettings().setValue(QStringLiteral("recording/frameRate"), rate);
 }
 
+bool recordFullColor()
+{
+    return QSettings().value(QStringLiteral("recording/fullColor"), false).toBool();
+}
+
+void setRecordFullColor(bool on)
+{
+    QSettings().setValue(QStringLiteral("recording/fullColor"), on);
+}
+
 QString defaultSaveFolder()
 {
     return QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("output"));

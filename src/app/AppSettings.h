@@ -72,6 +72,10 @@ void setRecordKeyStyle(int style);
 QList<int> recordFrameRates();
 int recordFrameRate();
 void setRecordFrameRate(int rate);
+// Linux: videos twice the size with every pixel's own color (see
+// ScreenRecorder::Options::fullColor).
+bool recordFullColor();
+void setRecordFullColor(bool on);
 
 // The one folder Glimpse saves into ("output" next to the program by default);
 // each kind of file has its own subfolder in it: "Save As..." for captures

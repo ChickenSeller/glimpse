@@ -1221,6 +1221,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
 </context>
 <context>
+    <name>ScreenRecorder</name>
+    <message>
+        <source>Nothing was recorded: the screen content did not arrive.</source>
+        <translation>未录到任何内容：没有收到屏幕画面。</translation>
+    </message>
+</context>
+<context>
     <name>ScrollCaptureSession</name>
     <message>
         <location filename="../src/capture/ScrollCaptureSession.cpp" line="+94"/>
@@ -1739,6 +1746,22 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="-265"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
+    </message>
+    <message>
+        <source>&amp;Color detail:</source>
+        <translation>颜色细节(&amp;C)：</translation>
+    </message>
+    <message>
+        <source>Standard videos keep one color for every 2×2 pixels, which smears thin colored lines such as charts and highlighted code. High keeps every pixel's color in a video twice the size (about three times the file size). Areas over 2048 pixels wide or high are then saved as H.265, which some players and browsers cannot play.</source>
+        <translation>标准视频每 2×2 个像素只保留一种颜色，会让图表、代码高亮等细的彩色线条变模糊。高会以两倍尺寸的视频保留每个像素的颜色（文件约为三倍大）。宽或高超过 2048 像素的区域会保存为 H.265，部分播放器和浏览器无法播放。</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>标准</translation>
+    </message>
+    <message>
+        <source>High (charts, colored text)</source>
+        <translation>高（图表、彩色文字）</translation>
     </message>
 </context>
 <context>

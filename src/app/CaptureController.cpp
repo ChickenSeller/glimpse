@@ -422,6 +422,9 @@ void CaptureController::startRecording(const QRect &rect)
     options.showClicks = AppSettings::recordShowClicks() && Platform::supportsInputOverlay();
     options.showKeys = AppSettings::recordShowKeys() && Platform::supportsInputOverlay();
     options.keyStyle = static_cast<ScreenRecorder::KeyStyle>(AppSettings::recordKeyStyle());
+#ifndef Q_OS_WIN
+    options.fullColor = AppSettings::recordFullColor();
+#endif
 
     auto *session = new RecordingSession(rect, options, this);
     m_recording = session;

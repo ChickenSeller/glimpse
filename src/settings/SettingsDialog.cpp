@@ -110,6 +110,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->recordFrameRateCombo->setCurrentIndex(
         std::max(0, ui->recordFrameRateCombo->findData(AppSettings::recordFrameRate())));
     connect(ui->recordFrameRateCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+    ui->recordColorCombo->addItem(tr("Standard"), false);
+    ui->recordColorCombo->addItem(tr("High (charts, colored text)"), true);
+    ui->recordColorCombo->setCurrentIndex(AppSettings::recordFullColor() ? 1 : 0);
+    connect(ui->recordColorCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
     setFreehandColor(AppSettings::freehandColor());
 
     for (CaptureMode mode : kAllCaptureModes)
@@ -325,6 +329,7 @@ bool SettingsDialog::apply()
     AppSettings::setRecordShowKeys(ui->recordKeysCheck->isChecked());
     AppSettings::setRecordKeyStyle(ui->recordKeyStyleCombo->currentIndex());
     AppSettings::setRecordFrameRate(ui->recordFrameRateCombo->currentData().toInt());
+    AppSettings::setRecordFullColor(ui->recordColorCombo->currentData().toBool());
 
     const QString language = selectedLanguage();
     if (language != AppSettings::language()) {
@@ -446,6 +451,11 @@ void SettingsDialog::applyPlatformLimits()
         ui->scrollHotkeyLabel->hide();
         ui->scrollHotkeyEdit->hide();
     }
+#ifdef Q_OS_WIN
+    // Windows records its own way (see ScreenRecorder::Options::fullColor).
+    ui->recordColorLabel->hide();
+    ui->recordColorCombo->hide();
+#endif
 
     // Features this platform lacks stay visible but disabled, with the reason.
     if (!Updater::isSupported()) {
@@ -564,6 +574,7 @@ void SettingsDialog::restoreDefaults()
     ui->recordKeysCheck->setChecked(false);
     ui->recordKeyStyleCombo->setCurrentIndex(1);
     ui->recordFrameRateCombo->setCurrentIndex(std::max(0, ui->recordFrameRateCombo->findData(30)));
+    ui->recordColorCombo->setCurrentIndex(0);
     if (m_freehandColor != QColor(Qt::white)) {
         setFreehandColor(Qt::white);
         setModified(true);

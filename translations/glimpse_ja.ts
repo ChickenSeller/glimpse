@@ -1221,6 +1221,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
 </context>
 <context>
+    <name>ScreenRecorder</name>
+    <message>
+        <source>Nothing was recorded: the screen content did not arrive.</source>
+        <translation>何も録画されませんでした：画面の内容が届きませんでした。</translation>
+    </message>
+</context>
+<context>
     <name>ScrollCaptureSession</name>
     <message>
         <location filename="../src/capture/ScrollCaptureSession.cpp" line="+94"/>
@@ -1739,6 +1746,22 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="-265"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
+    </message>
+    <message>
+        <source>&amp;Color detail:</source>
+        <translation>色の精細さ(&amp;C)：</translation>
+    </message>
+    <message>
+        <source>Standard videos keep one color for every 2×2 pixels, which smears thin colored lines such as charts and highlighted code. High keeps every pixel's color in a video twice the size (about three times the file size). Areas over 2048 pixels wide or high are then saved as H.265, which some players and browsers cannot play.</source>
+        <translation>標準の動画は 2×2 ピクセルごとに 1 色しか保持しないため、グラフやコードのハイライトなど細い色付きの線がにじみます。高では 2 倍の大きさの動画で各ピクセルの色を保持します（ファイルは約 3 倍）。幅または高さが 2048 ピクセルを超える範囲は H.265 で保存され、一部のプレーヤーやブラウザでは再生できません。</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>標準</translation>
+    </message>
+    <message>
+        <source>High (charts, colored text)</source>
+        <translation>高（グラフ、色付きの文字）</translation>
     </message>
 </context>
 <context>
