@@ -155,7 +155,7 @@
         <translation>QR コードを読み取る</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+507"/>
+        <location filename="../src/app/CaptureController.cpp" line="+520"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
@@ -196,18 +196,18 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-402"/>
-        <location line="+36"/>
+        <location filename="../src/app/CaptureController.cpp" line="-415"/>
+        <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
     </message>
     <message>
-        <location line="-35"/>
+        <location line="-45"/>
         <source>Already in use by another program: %1</source>
         <translation>他のプログラムが使用中です：%1</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+46"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>次のホットキーは他のプログラムが使用中のため、動作しません：
@@ -234,7 +234,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+234"/>
+        <location line="+237"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -299,7 +299,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Glimpse</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+25"/>
         <source>Drag to Move</source>
         <translation>ドラッグして移動</translation>
     </message>
@@ -425,8 +425,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+250"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+620"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+317"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+631"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -976,7 +976,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+129"/>
+        <location filename="../src/capture/Platform.cpp" line="+164"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 ではまだ利用できません。</translation>
     </message>
@@ -984,24 +984,29 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>PortalScreenGrabber</name>
     <message>
+        <location filename="../src/capture/PortalScreenGrabber.cpp" line="+26"/>
         <source>The session D-Bus is not available.</source>
-        <translation type="vanished">セッション D-Bus を利用できません。</translation>
+        <translation>セッション D-Bus を利用できません。</translation>
     </message>
     <message>
+        <location line="+26"/>
         <source>Screenshot portal error: %1</source>
-        <translation type="vanished">スクリーンショットポータルのエラー：%1</translation>
+        <translation>スクリーンショットポータルのエラー：%1</translation>
     </message>
     <message>
+        <location line="+21"/>
         <source>The screenshot portal refused the request.</source>
-        <translation type="vanished">スクリーンショットポータルが要求を拒否しました。</translation>
+        <translation>スクリーンショットポータルが要求を拒否しました。</translation>
     </message>
     <message>
+        <location line="+9"/>
         <source>Could not load the screenshot returned by the portal.</source>
-        <translation type="vanished">ポータルから返されたスクリーンショットを読み込めませんでした。</translation>
+        <translation>ポータルから返されたスクリーンショットを読み込めませんでした。</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>No screens are available.</source>
-        <translation type="vanished">利用可能な画面がありません。</translation>
+        <translation>利用可能な画面がありません。</translation>
     </message>
 </context>
 <context>
@@ -1123,7 +1128,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RecordingSession</name>
     <message>
-        <location filename="../src/record/RecordingSession.cpp" line="+89"/>
+        <location filename="../src/record/RecordingSession.cpp" line="+99"/>
         <source>Resume</source>
         <translation>再開</translation>
     </message>
@@ -1134,7 +1139,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+7"/>
-        <location line="+27"/>
+        <location line="+40"/>
         <source>%1 (paused)</source>
         <translation>%1（一時停止中）</translation>
     </message>
@@ -1142,12 +1147,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+389"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+433"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation>クリック：取得  ·  矢印キー：1 ピクセル移動</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+79"/>
         <source>Click: lock here  ·  Right-click: unlock</source>
         <translation>クリック：ここに固定  ·  右クリック：固定解除</translation>
     </message>
@@ -1162,7 +1167,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Ctrl+C：位置をコピー  ·  Ctrl+Shift+C：色をコピー  ·  Esc：終了</translation>
     </message>
     <message>
-        <location line="+224"/>
+        <location line="+228"/>
         <location line="+12"/>
         <source>Copied %1</source>
         <translation>%1 をコピーしました</translation>
@@ -1176,46 +1181,57 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScreenCastCapture</name>
     <message>
+        <location filename="../src/record/ScreenCastCapture.cpp" line="+136"/>
         <source>The session D-Bus is not available.</source>
         <translation>セッション D-Bus を利用できません。</translation>
     </message>
     <message>
+        <location line="+17"/>
         <source>Screen recording was not allowed.</source>
         <translation>画面の録画が許可されませんでした。</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>The screen cast portal refused the request (%1).</source>
         <translation>画面共有ポータルが要求を拒否しました（%1）。</translation>
     </message>
     <message>
+        <location line="+15"/>
         <source>Screen cast portal error: %1</source>
         <translation>画面共有ポータルのエラー：%1</translation>
     </message>
     <message>
+        <location line="+13"/>
         <source>The screen cast portal did not create a session.</source>
         <translation>画面共有ポータルがセッションを作成しませんでした。</translation>
     </message>
     <message>
+        <location line="+53"/>
         <source>No screen was picked.</source>
         <translation>画面が選択されませんでした。</translation>
     </message>
     <message>
+        <location line="+9"/>
         <source>Could not connect to PipeWire: %1</source>
         <translation>PipeWire に接続できませんでした：%1</translation>
     </message>
     <message>
+        <location line="+24"/>
         <source>Could not start PipeWire.</source>
         <translation>PipeWire を開始できませんでした。</translation>
     </message>
     <message>
+        <location line="+8"/>
         <source>Could not connect to PipeWire.</source>
         <translation>PipeWire に接続できませんでした。</translation>
     </message>
     <message>
+        <location line="+33"/>
         <source>Could not connect to the screen stream.</source>
         <translation>画面のストリームに接続できませんでした。</translation>
     </message>
     <message>
+        <location line="+7"/>
         <source>Screen stream error: %1</source>
         <translation>画面のストリームのエラー：%1</translation>
     </message>
@@ -1223,6 +1239,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScreenRecorder</name>
     <message>
+        <location filename="../src/record/ScreenRecorder.cpp" line="+235"/>
         <source>Nothing was recorded: the screen content did not arrive.</source>
         <translation>何も録画されませんでした：画面の内容が届きませんでした。</translation>
     </message>
@@ -1531,12 +1548,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="-628"/>
-        <location line="+843"/>
+        <location line="+860"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-853"/>
         <source>Cl&amp;ear</source>
         <translation>クリア(&amp;E)</translation>
     </message>
@@ -1566,7 +1583,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ツールバーのサイズ(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+174"/>
         <source>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</source>
         <translation>録画は「全般」ページで選んだフォルダーの Recordings サブフォルダーに保存されます。</translation>
     </message>
@@ -1651,7 +1668,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-543"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-554"/>
         <source>Screenshots</source>
         <translation>スクリーンショット</translation>
     </message>
@@ -1671,7 +1688,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1 fps</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+71"/>
         <source>Other GGUF model file...</source>
         <translation>その他の GGUF モデル ファイル...</translation>
     </message>
@@ -1691,12 +1708,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+97"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+93"/>
         <source>Global hotkeys: %1</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
@@ -1743,23 +1760,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-265"/>
+        <location line="-271"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
     <message>
+        <location filename="../src/settings/SettingsDialog.ui" line="-247"/>
         <source>&amp;Color detail:</source>
         <translation>色の精細さ(&amp;C)：</translation>
     </message>
     <message>
-        <source>Standard videos keep one color for every 2×2 pixels, which smears thin colored lines such as charts and highlighted code. High keeps every pixel's color in a video twice the size (about three times the file size). Areas over 2048 pixels wide or high are then saved as H.265, which some players and browsers cannot play.</source>
+        <location line="+10"/>
+        <source>Standard videos keep one color for every 2×2 pixels, which smears thin colored lines such as charts and highlighted code. High keeps every pixel&apos;s color in a video twice the size (about three times the file size). Areas over 2048 pixels wide or high are then saved as H.265, which some players and browsers cannot play.</source>
         <translation>標準の動画は 2×2 ピクセルごとに 1 色しか保持しないため、グラフやコードのハイライトなど細い色付きの線がにじみます。高では 2 倍の大きさの動画で各ピクセルの色を保持します（ファイルは約 3 倍）。幅または高さが 2048 ピクセルを超える範囲は H.265 で保存され、一部のプレーヤーやブラウザでは再生できません。</translation>
     </message>
     <message>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-172"/>
         <source>Standard</source>
         <translation>標準</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>High (charts, colored text)</source>
         <translation>高（グラフ、色付きの文字）</translation>
     </message>

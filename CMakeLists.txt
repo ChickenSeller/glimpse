@@ -267,6 +267,16 @@ target_compile_definitions(glimpse PRIVATE GLIMPSE_VERSION="${PROJECT_VERSION}"
 # files after changing UI strings with: cmake --build <dir> --target update_translations
 qt_add_translations(TARGETS glimpse
     SOURCE_TARGETS glimpse glimpse_ocr
+    # Platform-only sources with UI strings, scanned on every platform: else
+    # updating on one marks the other's translations obsolete, and they drop
+    # out of the .qm files.
+    SOURCES
+        src/capture/PortalScreenGrabber.cpp
+        src/capture/PortalScreenGrabber.h
+        src/ocr/WindowsOcrEngine.cpp
+        src/ocr/WindowsOcrEngine.h
+        src/record/ScreenCastCapture.cpp
+        src/record/ScreenCastCapture.h
     TS_FILES
         translations/glimpse_zh_CN.ts
         translations/glimpse_ja.ts

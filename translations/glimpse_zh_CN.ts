@@ -155,7 +155,7 @@
         <translation>识别二维码</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+507"/>
+        <location filename="../src/app/CaptureController.cpp" line="+520"/>
         <location filename="../src/app/CaptureMode.h" line="+1"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
@@ -196,18 +196,18 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-402"/>
-        <location line="+36"/>
+        <location filename="../src/app/CaptureController.cpp" line="-415"/>
+        <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
     </message>
     <message>
-        <location line="-35"/>
+        <location line="-45"/>
         <source>Already in use by another program: %1</source>
         <translation>已被其他程序占用：%1</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+46"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>以下快捷键已被其他程序占用，将无法使用：
@@ -234,7 +234,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+234"/>
+        <location line="+237"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -299,7 +299,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Glimpse</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+25"/>
         <source>Drag to Move</source>
         <translation>拖动以移动</translation>
     </message>
@@ -425,8 +425,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+250"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+620"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+317"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+631"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -976,7 +976,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+129"/>
+        <location filename="../src/capture/Platform.cpp" line="+164"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 上暂不支持。</translation>
     </message>
@@ -984,24 +984,29 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>PortalScreenGrabber</name>
     <message>
+        <location filename="../src/capture/PortalScreenGrabber.cpp" line="+26"/>
         <source>The session D-Bus is not available.</source>
-        <translation type="vanished">会话 D-Bus 不可用。</translation>
+        <translation>会话 D-Bus 不可用。</translation>
     </message>
     <message>
+        <location line="+26"/>
         <source>Screenshot portal error: %1</source>
-        <translation type="vanished">截图门户（portal）出错：%1</translation>
+        <translation>截图门户（portal）出错：%1</translation>
     </message>
     <message>
+        <location line="+21"/>
         <source>The screenshot portal refused the request.</source>
-        <translation type="vanished">截图门户（portal）拒绝了请求。</translation>
+        <translation>截图门户（portal）拒绝了请求。</translation>
     </message>
     <message>
+        <location line="+9"/>
         <source>Could not load the screenshot returned by the portal.</source>
-        <translation type="vanished">无法加载门户（portal）返回的截图。</translation>
+        <translation>无法加载门户（portal）返回的截图。</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>No screens are available.</source>
-        <translation type="vanished">没有可用的屏幕。</translation>
+        <translation>没有可用的屏幕。</translation>
     </message>
 </context>
 <context>
@@ -1123,7 +1128,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RecordingSession</name>
     <message>
-        <location filename="../src/record/RecordingSession.cpp" line="+89"/>
+        <location filename="../src/record/RecordingSession.cpp" line="+99"/>
         <source>Resume</source>
         <translation>继续</translation>
     </message>
@@ -1134,7 +1139,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+7"/>
-        <location line="+27"/>
+        <location line="+40"/>
         <source>%1 (paused)</source>
         <translation>%1（已暂停）</translation>
     </message>
@@ -1142,12 +1147,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+389"/>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+433"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation>单击：取色  ·  方向键：移动 1 像素</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+79"/>
         <source>Click: lock here  ·  Right-click: unlock</source>
         <translation>单击：锁定到此处  ·  右键：解除锁定</translation>
     </message>
@@ -1162,7 +1167,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Ctrl+C：复制位置  ·  Ctrl+Shift+C：复制颜色  ·  Esc：退出</translation>
     </message>
     <message>
-        <location line="+224"/>
+        <location line="+228"/>
         <location line="+12"/>
         <source>Copied %1</source>
         <translation>已复制 %1</translation>
@@ -1176,46 +1181,57 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScreenCastCapture</name>
     <message>
+        <location filename="../src/record/ScreenCastCapture.cpp" line="+136"/>
         <source>The session D-Bus is not available.</source>
         <translation>会话 D-Bus 不可用。</translation>
     </message>
     <message>
+        <location line="+17"/>
         <source>Screen recording was not allowed.</source>
         <translation>未获准录制屏幕。</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>The screen cast portal refused the request (%1).</source>
         <translation>屏幕共享门户拒绝了请求（%1）。</translation>
     </message>
     <message>
+        <location line="+15"/>
         <source>Screen cast portal error: %1</source>
         <translation>屏幕共享门户错误：%1</translation>
     </message>
     <message>
+        <location line="+13"/>
         <source>The screen cast portal did not create a session.</source>
         <translation>屏幕共享门户未能创建会话。</translation>
     </message>
     <message>
+        <location line="+53"/>
         <source>No screen was picked.</source>
         <translation>没有选择屏幕。</translation>
     </message>
     <message>
+        <location line="+9"/>
         <source>Could not connect to PipeWire: %1</source>
         <translation>无法连接 PipeWire：%1</translation>
     </message>
     <message>
+        <location line="+24"/>
         <source>Could not start PipeWire.</source>
         <translation>无法启动 PipeWire。</translation>
     </message>
     <message>
+        <location line="+8"/>
         <source>Could not connect to PipeWire.</source>
         <translation>无法连接 PipeWire。</translation>
     </message>
     <message>
+        <location line="+33"/>
         <source>Could not connect to the screen stream.</source>
         <translation>无法连接屏幕视频流。</translation>
     </message>
     <message>
+        <location line="+7"/>
         <source>Screen stream error: %1</source>
         <translation>屏幕视频流错误：%1</translation>
     </message>
@@ -1223,6 +1239,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScreenRecorder</name>
     <message>
+        <location filename="../src/record/ScreenRecorder.cpp" line="+235"/>
         <source>Nothing was recorded: the screen content did not arrive.</source>
         <translation>未录到任何内容：没有收到屏幕画面。</translation>
     </message>
@@ -1531,12 +1548,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="-628"/>
-        <location line="+843"/>
+        <location line="+860"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-853"/>
         <source>Cl&amp;ear</source>
         <translation>清空(&amp;E)</translation>
     </message>
@@ -1566,7 +1583,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>工具栏大小(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+174"/>
         <source>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</source>
         <translation>录像保存在“常规”页所选文件夹下的 Recordings 子文件夹中。</translation>
     </message>
@@ -1651,7 +1668,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-543"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-554"/>
         <source>Screenshots</source>
         <translation>截图</translation>
     </message>
@@ -1671,7 +1688,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1 帧/秒</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+71"/>
         <source>Other GGUF model file...</source>
         <translation>其他 GGUF 模型文件...</translation>
     </message>
@@ -1691,12 +1708,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+97"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+93"/>
         <source>Global hotkeys: %1</source>
         <translation>全局快捷键：%1</translation>
     </message>
@@ -1743,23 +1760,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-265"/>
+        <location line="-271"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
     <message>
+        <location filename="../src/settings/SettingsDialog.ui" line="-247"/>
         <source>&amp;Color detail:</source>
         <translation>颜色细节(&amp;C)：</translation>
     </message>
     <message>
-        <source>Standard videos keep one color for every 2×2 pixels, which smears thin colored lines such as charts and highlighted code. High keeps every pixel's color in a video twice the size (about three times the file size). Areas over 2048 pixels wide or high are then saved as H.265, which some players and browsers cannot play.</source>
+        <location line="+10"/>
+        <source>Standard videos keep one color for every 2×2 pixels, which smears thin colored lines such as charts and highlighted code. High keeps every pixel&apos;s color in a video twice the size (about three times the file size). Areas over 2048 pixels wide or high are then saved as H.265, which some players and browsers cannot play.</source>
         <translation>标准视频每 2×2 个像素只保留一种颜色，会让图表、代码高亮等细的彩色线条变模糊。高会以两倍尺寸的视频保留每个像素的颜色（文件约为三倍大）。宽或高超过 2048 像素的区域会保存为 H.265，部分播放器和浏览器无法播放。</translation>
     </message>
     <message>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-172"/>
         <source>Standard</source>
         <translation>标准</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>High (charts, colored text)</source>
         <translation>高（图表、彩色文字）</translation>
     </message>
