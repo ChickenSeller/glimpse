@@ -426,7 +426,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <location filename="../src/app/CaptureToolbar.cpp" line="+317"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+631"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+640"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -1668,7 +1668,17 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-554"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-590"/>
+        <source>Tell me about new versions</source>
+        <translation>有新版本时提醒我</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Never check</source>
+        <translation>从不检查</translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <source>Screenshots</source>
         <translation>截图</translation>
     </message>
@@ -1983,10 +1993,11 @@ Download them now? They are kept on this computer and used offline from then on.
 <context>
     <name>Updater</name>
     <message>
-        <location filename="../src/update/Updater.cpp" line="+117"/>
+        <location filename="../src/update/Updater.cpp" line="+131"/>
         <location line="+18"/>
-        <location line="+29"/>
-        <location line="+24"/>
+        <location line="+33"/>
+        <location line="+19"/>
+        <location line="+26"/>
         <location line="+2"/>
         <location line="+24"/>
         <location line="+12"/>
@@ -1998,7 +2009,7 @@ Download them now? They are kept on this computer and used offline from then on.
         <translation>Glimpse 更新</translation>
     </message>
     <message>
-        <location line="-170"/>
+        <location line="-195"/>
         <source>Could not check for updates:
 %1</source>
         <translation>无法检查更新：
@@ -2010,7 +2021,7 @@ Download them now? They are kept on this computer and used offline from then on.
         <translation>Glimpse %1 已是最新版本。</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+33"/>
         <source>Glimpse %1 is available; you have %2.
 Update now? Glimpse restarts when it is done.</source>
         <translation>Glimpse %1 已发布，当前版本是 %2。
@@ -2023,11 +2034,24 @@ Update now? Glimpse restarts when it is done.</source>
     </message>
     <message>
         <location line="+1"/>
+        <location line="+19"/>
         <source>Later</source>
         <translation>以后再说</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="-4"/>
+        <source>Glimpse %1 is available; you have %2.
+Install the package for your system from the download page.</source>
+        <translation>Glimpse %1 已发布，当前版本是 %2。
+请从下载页面下载适合你系统的安装包。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Open Download Page</source>
+        <translation>打开下载页面</translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Glimpse %1 is available, but the folder Glimpse runs from cannot be written to. Download it from the homepage and unpack it yourself.</source>
         <translation>Glimpse %1 已发布，但无法写入 Glimpse 所在的文件夹。请从主页下载并自行解压。</translation>
     </message>

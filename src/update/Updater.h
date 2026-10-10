@@ -26,7 +26,9 @@ class QSaveFile;
 //
 // Installing replaces the files of the folder glimpse.exe runs from (the
 // unpacked Windows package) once Glimpse has quit, then starts the new
-// version: resources/update.ps1 does that. Windows only.
+// version: resources/update.ps1 does that. Windows only: on Linux, where
+// Glimpse comes as a .deb or .rpm, a new version is only offered with a link
+// to the download page (and the automatic modes act as "ask").
 class Updater : public QObject
 {
     Q_OBJECT
@@ -42,7 +44,10 @@ public:
     explicit Updater(QObject *parent = nullptr);
     ~Updater() override;
 
+    // Whether Glimpse checks for updates here at all.
     static bool isSupported();
+    // Whether it installs them itself, rather than pointing to the download page.
+    static bool canInstall();
     static Mode mode();
     static void setMode(Mode mode);
 
@@ -73,6 +78,8 @@ private:
     void onManifest(QNetworkReply *reply, bool interactive);
     static bool parse(const QJsonObject &object, const QUrl &base, Release *release);
     void ask(const Release &release);
+    // Where Glimpse cannot install: offers the download page instead.
+    void offerDownload(const Release &release);
     void download(const Release &release, bool interactive);
     void onDownloaded(const Release &release, QNetworkReply *reply, bool interactive);
     void installWhenIdle(const QString &zipPath);

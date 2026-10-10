@@ -4,6 +4,7 @@
 
 #include <QApplication>
 #include <QCryptographicHash>
+#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -51,6 +52,15 @@ Updater::~Updater() = default;
 
 bool Updater::isSupported()
 {
+#if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool Updater::canInstall()
+{
 #ifdef Q_OS_WIN
     return true;
 #else
@@ -61,7 +71,11 @@ bool Updater::isSupported()
 Updater::Mode Updater::mode()
 {
     const int value = QSettings().value(kModeKey, int(Mode::Ask)).toInt();
-    return value >= 0 && value <= int(Mode::Never) ? Mode(value) : Mode::Ask;
+    const Mode mode = value >= 0 && value <= int(Mode::Never) ? Mode(value) : Mode::Ask;
+    // Without installing, there is only offering a new version or not.
+    if (!canInstall() && mode != Mode::Never)
+        return Mode::Ask;
+    return mode;
 }
 
 void Updater::setMode(Mode mode)
@@ -159,6 +173,10 @@ void Updater::onManifest(QNetworkReply *reply, bool interactive)
 
 void Updater::ask(const Release &release)
 {
+    if (!canInstall()) {
+        offerDownload(release);
+        return;
+    }
     QMessageBox box;
     box.setIcon(QMessageBox::Information);
     box.setWindowTitle(tr("Glimpse Update"));
@@ -174,6 +192,27 @@ void Updater::ask(const Release &release)
         download(release, true);
     else
         UsageStats::report(QStringLiteral("Update"), QStringLiteral("Declined"), release.version.toString());
+}
+
+void Updater::offerDownload(const Release &release)
+{
+    QMessageBox box;
+    box.setIcon(QMessageBox::Information);
+    box.setWindowTitle(tr("Glimpse Update"));
+    box.setText(tr("Glimpse %1 is available; you have %2.\nInstall the package for your system from the download page.")
+                    .arg(release.version.toString(), QStringLiteral(GLIMPSE_VERSION)));
+    box.setDetailedText(release.notes);
+    QPushButton *open = box.addButton(tr("Open Download Page"), QMessageBox::AcceptRole);
+    box.addButton(tr("Later"), QMessageBox::RejectRole);
+    box.setDefaultButton(open);
+    box.setWindowFlag(Qt::WindowStaysOnTopHint);
+    box.exec();
+    if (box.clickedButton() == open) {
+        QDesktopServices::openUrl(QUrl(QStringLiteral(GLIMPSE_HOMEPAGE_URL "releases.html")));
+        UsageStats::report(QStringLiteral("Update"), QStringLiteral("Download page"), release.version.toString());
+    } else {
+        UsageStats::report(QStringLiteral("Update"), QStringLiteral("Declined"), release.version.toString());
+    }
 }
 
 void Updater::download(const Release &release, bool interactive)

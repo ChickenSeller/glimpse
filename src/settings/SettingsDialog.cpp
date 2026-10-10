@@ -40,8 +40,17 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         ui->languageCombo->addItem(Language::nativeName(code), code);
     ui->languageCombo->setCurrentIndex(std::max(0, ui->languageCombo->findData(AppSettings::language())));
 
-    // Updates: the combo's rows are in Updater::Mode's order.
-    ui->updateModeCombo->setCurrentIndex(int(Updater::mode()));
+    // Updates: each row holds its Updater::Mode. Where Glimpse cannot install
+    // updates itself, it can only tell about them or not check.
+    for (int i = 0; i < ui->updateModeCombo->count(); ++i)
+        ui->updateModeCombo->setItemData(i, i);
+    if (!Updater::canInstall()) {
+        ui->updateModeCombo->removeItem(int(Updater::Mode::RequiredOnly));
+        ui->updateModeCombo->removeItem(int(Updater::Mode::Automatic));
+        ui->updateModeCombo->setItemText(ui->updateModeCombo->findData(int(Updater::Mode::Ask)), tr("Tell me about new versions"));
+        ui->updateModeCombo->setItemText(ui->updateModeCombo->findData(int(Updater::Mode::Never)), tr("Never check"));
+    }
+    ui->updateModeCombo->setCurrentIndex(std::max(0, ui->updateModeCombo->findData(int(Updater::mode()))));
     connect(ui->updateModeCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
     connect(ui->updateNowButton, &QPushButton::clicked, this, &SettingsDialog::updateNowRequested);
 
@@ -309,7 +318,7 @@ bool SettingsDialog::apply()
     AppSettings::setLocalModel(ui->translateModelCombo->currentData().toString());
     AppSettings::setLocalModelFile(QDir::fromNativeSeparators(ui->translateModelFileEdit->text().trimmed()));
     if (Updater::isSupported())
-        Updater::setMode(Updater::Mode(ui->updateModeCombo->currentIndex()));
+        Updater::setMode(Updater::Mode(ui->updateModeCombo->currentData().toInt()));
     ModelStore::setSourceOrder(ModelStore::SourceOrder(ui->downloadOrderCombo->currentIndex()));
     ModelStore::setMirror(ui->downloadMirrorEdit->text());
     AppSettings::setToolbarItems(toolbarItems());
@@ -559,7 +568,7 @@ void SettingsDialog::clearSavedFiles(bool screenshots, bool recordings)
 void SettingsDialog::restoreDefaults()
 {
     ui->languageCombo->setCurrentIndex(0); // system default
-    ui->updateModeCombo->setCurrentIndex(int(Updater::Mode::Ask));
+    ui->updateModeCombo->setCurrentIndex(ui->updateModeCombo->findData(int(Updater::Mode::Ask)));
     ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::SourceOrder::MirrorFirst));
     ui->downloadMirrorEdit->setText(ModelStore::defaultMirror());
     ui->saveFolderEdit->setText(QDir::toNativeSeparators(AppSettings::defaultSaveFolder()));
