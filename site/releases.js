@@ -68,35 +68,53 @@
   }
 
   // The button downloads the visitor's package; the arrow beside it drops
-  // down all of the release's packages.
+  // down every platform's. What a release lacks (older ones have no Linux
+  // packages) shows, disabled, rather than something for another system.
   function downloads(release, primary) {
     var group = el('div', 'dl-group');
-    var files = release.files.map(function (file) { return {file: file, kind: packageOf(file.name)}; });
-    var mine = files[0];
-    files.forEach(function (entry) { if (entry.kind.kind === visitorKind()) mine = entry; });
+    var byKind = {};
+    var others = [];
+    release.files.forEach(function (file) {
+      var kind = packageOf(file.name);
+      if (kind.kind) byKind[kind.kind] = file;
+      else others.push({kind: kind, file: file});
+    });
+    var entries = PACKAGES.map(function (kind) { return {kind: kind, file: byKind[kind.kind]}; }).concat(others);
 
+    var visitor = visitorKind();
+    var mine = entries.filter(function (entry) { return entry.kind.kind === visitor; })[0];
     var main = group.appendChild(el('a', 'btn' + (primary ? ' primary' : '')));
-    main.href = mine.file.url;
-    main.setAttribute('download', mine.file.name);
-    main.title = mine.file.name;
-    label(main, 'rel.dl.' + (mine.kind.kind || 'other'), mine.kind.main);
+    label(main, 'rel.dl.' + mine.kind.kind, mine.kind.main);
+    if (mine.file) {
+      main.href = mine.file.url;
+      main.setAttribute('download', mine.file.name);
+      main.title = mine.file.name;
+    } else {
+      main.classList.add('disabled');
+      main.setAttribute('aria-disabled', 'true');
+      main.title = 'Not in this release: pick another package from the list.';
+    }
 
-    if (files.length > 1) {
-      var more = group.appendChild(el('details', 'dropdown dl-more'));
-      var arrow = more.appendChild(el('summary', 'btn' + (primary ? ' primary' : '')));
-      arrow.setAttribute('aria-label', 'All packages');
-      arrow.title = 'All packages';
-      arrow.appendChild(el('span', 'arrow')).appendChild(el('i'));
-      var menu = more.appendChild(el('div', 'menu'));
-      files.forEach(function (entry) {
-        var item = menu.appendChild(el('a', 'btn'));
+    var more = group.appendChild(el('details', 'dropdown dl-more'));
+    var arrow = more.appendChild(el('summary', 'btn' + (primary ? ' primary' : '')));
+    arrow.setAttribute('aria-label', 'All packages');
+    arrow.title = 'All packages';
+    arrow.appendChild(el('span', 'arrow')).appendChild(el('i'));
+    var menu = more.appendChild(el('div', 'menu'));
+    entries.forEach(function (entry) {
+      var item = menu.appendChild(el('a', 'btn'));
+      label(item, 'rel.pkg.' + (entry.kind.kind || 'other'), entry.kind.item);
+      if (entry.file) {
         item.href = entry.file.url;
         item.setAttribute('download', entry.file.name);
         item.title = entry.file.name;
-        label(item, 'rel.pkg.' + (entry.kind.kind || 'other'), entry.kind.item);
         if (entry.kind.note) label(item, 'rel.note.' + entry.kind.kind, entry.kind.note).className = 'pkg-note';
-      });
-    }
+      } else {
+        item.classList.add('disabled');
+        item.setAttribute('aria-disabled', 'true');
+        label(item, 'rel.missing', 'not in this release').className = 'pkg-note';
+      }
+    });
     return group;
   }
 

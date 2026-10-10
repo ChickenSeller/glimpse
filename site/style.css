@@ -254,6 +254,8 @@ pre {
 .dl-more .menu { left: auto; right: 0; min-width: max-content; }
 .dl-more .menu .btn { justify-content: flex-start; gap: 10px; }
 .pkg-note { font-weight: 400; color: var(--muted); font-size: 14px; }
+.btn.disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+.menu .btn.disabled { opacity: 1; color: var(--muted); }
 .release-date { color: var(--muted); font-size: 14px; }
 .badge {
   font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
