@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Name=Glimpse
+GenericName=Screenshot Tool
+GenericName[zh_CN]=截图工具
+GenericName[ja]=スクリーンショットツール
+Comment=Screenshots, screen recording, text recognition and translation
+Comment[zh_CN]=截图、录屏、文字识别与翻译
+Comment[ja]=スクリーンショット、画面録画、文字認識と翻訳
+Exec=@GLIMPSE_PACKAGE_PREFIX@/bin/glimpse
+Icon=glimpse
+Terminal=false
+Categories=Graphics;
+Keywords=screenshot;capture;record;OCR;translate;
+StartupWMClass=Glimpse

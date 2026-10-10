@@ -119,6 +119,13 @@ cmake --install build/release --component glimpse --prefix <dir>
 cmake --build build/release --target package
 ```
 
+On Linux, `-DGLIMPSE_LINUX_PACKAGE=ON` at configure time makes `package`
+build a `.deb` and an `.rpm` instead (`dpkg-dev` and `rpm` needed): Glimpse
+with its Qt under `/opt/glimpse`, plus a menu entry, its icon and
+`/usr/bin/glimpse`. Qt's Linux build needs glibc 2.34, so packages built on
+Ubuntu 22.04, as the release ones are, also run on Debian 12, Fedora 35,
+RHEL 9 and later.
+
 ## License
 
 Glimpse is released under the [MIT License](LICENSE). It uses third-party

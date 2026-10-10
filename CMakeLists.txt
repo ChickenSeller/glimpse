@@ -479,7 +479,14 @@ if(GLIMPSE_BERGAMOT_LIBRARY)
 endif()
 set(_glimpse_extra_libs "")
 foreach(_lib IN LISTS GLIMPSE_ANNOTATOR_RUNTIME)
-    install(FILES "$<TARGET_FILE:${_lib}>" DESTINATION ${GLIMPSE_INSTALL_BINDIR} COMPONENT glimpse)
+    if(WIN32)
+        install(FILES "$<TARGET_FILE:${_lib}>" DESTINATION ${GLIMPSE_INSTALL_BINDIR} COMPONENT glimpse)
+    else()
+        # Into lib/ beside Qt, with the soname link the executable asks for;
+        # without it a copy installed in the system is found instead.
+        set_target_properties(${_lib} PROPERTIES INSTALL_RPATH "$ORIGIN")
+        install(TARGETS ${_lib} LIBRARY DESTINATION lib NAMELINK_SKIP COMPONENT glimpse)
+    endif()
     list(APPEND _glimpse_extra_libs "$<TARGET_FILE:${_lib}>")
 endforeach()
 if(GLIMPSE_ANNOTATOR_QM_DIR)
@@ -504,6 +511,16 @@ endif()
 set(_glimpse_deploy_options "")
 if(WIN32)
     set(_glimpse_deploy_options "DEPLOY_TOOL_OPTIONS --no-opengl-sw")
+else()
+    # The deployment finds libraries through the files' runpaths, and the
+    # installed executable's no longer leads to Qt: the Qt libraries only
+    # Glimpse itself uses (Multimedia, and with it the FFmpeg plugin; Svg)
+    # were left out. The built one still does; it is only scanned.
+    set(_glimpse_deploy_options "ADDITIONAL_EXECUTABLES \"$<TARGET_FILE:glimpse>\"")
+    # Not picked by the deployment: TLS through OpenSSL, for model downloads
+    # (libssl itself comes from the system).
+    install(FILES "${QT6_INSTALL_PREFIX}/${QT6_INSTALL_PLUGINS}/tls/libqopensslbackend.so"
+            DESTINATION plugins/tls COMPONENT glimpse)
 endif()
 qt_generate_deploy_script(
     TARGET glimpse
@@ -519,9 +536,26 @@ qt_deploy_runtime_dependencies(
 ")
 install(SCRIPT ${GLIMPSE_DEPLOY_SCRIPT} COMPONENT glimpse)
 
+# Linux packages (.deb, .rpm): Glimpse with its Qt under /opt/glimpse, plus a
+# menu entry, the icon and /usr/bin/glimpse outside it. Those go to absolute
+# paths, hence an option the package build turns on.
+option(GLIMPSE_LINUX_PACKAGE "Build the .deb and .rpm packages (installs to /opt/glimpse and /usr)" OFF)
+set(GLIMPSE_PACKAGE_PREFIX /opt/glimpse)
+if(GLIMPSE_LINUX_PACKAGE AND NOT WIN32)
+    configure_file(resources/glimpse.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/glimpse.desktop @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glimpse.desktop DESTINATION /usr/share/applications COMPONENT glimpse)
+    install(FILES resources/glimpse.svg DESTINATION /usr/share/icons/hicolor/scalable/apps COMPONENT glimpse)
+    install(CODE "
+        file(MAKE_DIRECTORY \"\$ENV{DESTDIR}/usr/bin\")
+        file(CREATE_LINK ${GLIMPSE_PACKAGE_PREFIX}/bin/glimpse \"\$ENV{DESTDIR}/usr/bin/glimpse\" SYMBOLIC)
+    " COMPONENT glimpse)
+endif()
+
 set(CPACK_PACKAGE_NAME "Glimpse")
 set(CPACK_PACKAGE_VENDOR "Glimpse")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Screenshots, screen recording, text recognition and translation")
+set(CPACK_PACKAGE_HOMEPAGE_URL "${GLIMPSE_HOMEPAGE_URL}")
 set(CPACK_GENERATOR ZIP)
 set(CPACK_COMPONENTS_ALL glimpse)
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
@@ -532,5 +566,46 @@ if(WIN32)
     set(CPACK_PACKAGE_FILE_NAME "Glimpse-${PROJECT_VERSION}-windows-x64")
 else()
     set(CPACK_PACKAGE_FILE_NAME "Glimpse-${PROJECT_VERSION}-linux-${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
+if(GLIMPSE_LINUX_PACKAGE AND NOT WIN32)
+    set(CPACK_GENERATOR DEB RPM)
+    # Installed with DESTDIR for the files outside the prefix, which then
+    # comes from CPACK_INSTALL_PREFIX.
+    set(CPACK_SET_DESTDIR ON)
+    set(CPACK_INSTALL_PREFIX ${GLIMPSE_PACKAGE_PREFIX})
+    set(CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+    # Only the "glimpse" component, in one package.
+    set(CPACK_DEB_COMPONENT_INSTALL ON)
+    set(CPACK_RPM_COMPONENT_INSTALL ON)
+    # The bundled Qt and engines are found by their runpaths; libssl is
+    # loaded at run time; gsettings and dconf set up the GNOME hotkeys.
+    set(CPACK_DEBIAN_PACKAGE_NAME glimpse)
+    set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Kaguya")
+    set(CPACK_DEBIAN_PACKAGE_SECTION graphics)
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS_PRIVATE_DIRS
+        ${GLIMPSE_PACKAGE_PREFIX}/lib ${GLIMPSE_PACKAGE_PREFIX}/bin)
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl3 | libssl3t64")
+    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "libglib2.0-bin, dconf-cli")
+    set(CPACK_RPM_PACKAGE_NAME glimpse)
+    set(CPACK_RPM_FILE_NAME RPM-DEFAULT)
+    set(CPACK_RPM_PACKAGE_LICENSE MIT)
+    set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
+    set(CPACK_RPM_PACKAGE_RELOCATABLE OFF)
+    set(CPACK_RPM_PACKAGE_REQUIRES "libssl.so.3()(64bit)")
+    set(CPACK_RPM_PACKAGE_SUGGESTS "glib2, dconf")
+    # The bundled libraries neither satisfy nor add requirements; the
+    # system's ones the package needs are still found automatically.
+    set(CPACK_RPM_SPEC_MORE_DEFINE "
+%global __provides_exclude_from ^${GLIMPSE_PACKAGE_PREFIX}/.*$
+%global __requires_exclude ^(libQt6.*|libicu(data|i18n|uc)|libav(codec|device|filter|format|util)|libsw(resample|scale)|libkImageAnnotator|libkColorPicker|libonnxruntime|libllama|libggml.*)\\\\.so.*$
+%define debug_package %{nil}
+%define _build_id_links none
+")
+    set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION
+        /opt /usr/share/applications /usr/share/icons /usr/share/icons/hicolor
+        /usr/share/icons/hicolor/scalable /usr/share/icons/hicolor/scalable/apps)
 endif()
 include(CPack)
