@@ -268,9 +268,12 @@ void ScreenRecorder::onImage(const QImage &image)
     const QRect screenRect = m_screen->geometry();
     m_scale = qreal(image.width()) / screenRect.width();
 
-    // H.264 (4:2:0) needs even dimensions.
-    QRect crop = QRectF(QPointF(m_rect.topLeft() - screenRect.topLeft()) * m_scale, QSizeF(m_rect.size()) * m_scale)
-                     .toAlignedRect()
+    // Only pixels wholly inside the area: the red frame sits right outside
+    // it, and a scaled frame window (XWayland at 150%) blends into the
+    // pixels it partly covers. H.264 (4:2:0) needs even dimensions.
+    const QRectF area(QPointF(m_rect.topLeft() - screenRect.topLeft()) * m_scale, QSizeF(m_rect.size()) * m_scale);
+    QRect crop = QRect(QPoint(int(std::ceil(area.left())), int(std::ceil(area.top()))),
+                       QPoint(int(std::floor(area.right())) - 1, int(std::floor(area.bottom())) - 1))
                      .intersected(image.rect());
     crop.setWidth(crop.width() & ~1);
     crop.setHeight(crop.height() & ~1);

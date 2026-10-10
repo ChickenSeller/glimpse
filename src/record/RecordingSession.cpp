@@ -14,6 +14,9 @@
 namespace {
 
 constexpr int kBorder = 3;
+// Between the area and the frame: a scaled frame window (XWayland at 150%)
+// blends into the pixels next to it.
+constexpr int kFrameGap = 1;
 const QColor kFrameColor(0xe5, 0x39, 0x35);
 
 QWidget *makeStrip(const QRect &geometry)
@@ -102,11 +105,20 @@ void RecordingSession::createChrome()
 {
     // The frame sits entirely outside the recorded area; it is also kept out
     // of the capture in case the area touches a screen edge.
-    const QRect outer = m_rect.adjusted(-kBorder, -kBorder, kBorder, kBorder);
-    m_frame.emplace_back(makeStrip(QRect(outer.left(), outer.top(), outer.width(), kBorder)));
-    m_frame.emplace_back(makeStrip(QRect(outer.left(), m_rect.bottom() + 1, outer.width(), kBorder)));
-    m_frame.emplace_back(makeStrip(QRect(outer.left(), m_rect.top(), kBorder, m_rect.height())));
-    m_frame.emplace_back(makeStrip(QRect(m_rect.right() + 1, m_rect.top(), kBorder, m_rect.height())));
+    const QRect inner = m_rect.adjusted(-kFrameGap, -kFrameGap, kFrameGap, kFrameGap);
+    const QRect outer = inner.adjusted(-kBorder, -kBorder, kBorder, kBorder);
+    const QRect strips[] = {
+        QRect(outer.left(), outer.top(), outer.width(), kBorder),
+        QRect(outer.left(), inner.bottom() + 1, outer.width(), kBorder),
+        QRect(outer.left(), inner.top(), kBorder, inner.height()),
+        QRect(inner.right() + 1, inner.top(), kBorder, inner.height()),
+    };
+    for (const QRect &strip : strips) {
+        // Past the screen edge the window system would push it back on
+        // screen, into the video where it cannot be kept out (Linux).
+        if (m_screen->geometry().contains(strip))
+            m_frame.emplace_back(makeStrip(strip));
+    }
     for (const auto &strip : m_frame) {
         strip->show();
         Platform::excludeFromCapture(strip.get());
@@ -163,7 +175,7 @@ void RecordingSession::placePanel()
     // Never under the taskbar: it is always on top as well and may cover it.
     const QRect screen = m_screen->availableGeometry();
     const QSize size = m_panel->size().expandedTo(m_panel->sizeHint());
-    const int gap = kBorder + 6;
+    const int gap = kFrameGap + kBorder + 6;
     const QList<QPoint> candidates = {
         {m_rect.right() - size.width() + 1, m_rect.bottom() + gap},
         {m_rect.right() - size.width() + 1, m_rect.top() - gap - size.height()},
