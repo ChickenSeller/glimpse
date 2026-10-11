@@ -57,15 +57,12 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
 
     m_modeButtons = {
         {CaptureMode::Window, ui->windowButton},
-        {CaptureMode::Region, ui->regionButton},
         {CaptureMode::Freehand, ui->freehandButton},
         {CaptureMode::FullScreen, ui->fullScreenButton},
         {CaptureMode::Pin, ui->pinButton},
         {CaptureMode::Recording, ui->recordButton},
         {CaptureMode::QrCode, ui->qrButton},
         {CaptureMode::Ocr, ui->ocrButton},
-        {CaptureMode::Translate, ui->translateButton},
-        {CaptureMode::ColorPicker, ui->colorButton},
         {CaptureMode::Crosshair, ui->crosshairButton},
         {CaptureMode::Scrolling, ui->scrollButton},
     };

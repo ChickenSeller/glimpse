@@ -21,7 +21,6 @@
 #include "ocr/ModelStore.h"
 #include "ocr/OcrResultDialog.h"
 #include "settings/SettingsDialog.h"
-#include "translate/TranslateResultDialog.h"
 #include "translate/FirefoxTranslation.h"
 #include "translate/LocalModel.h"
 #include "translate/Translator.h"
@@ -289,15 +288,14 @@ void CaptureController::startCapture(Mode mode, bool afterFade)
         m_toolbar->hide();
     // The pointer would sit right on top of the pixel being picked.
     m_grabber->setIncludeCursor(AppSettings::captureIncludesCursor() && Platform::supportsCursorCapture()
-                                && mode != Mode::ColorPicker && mode != Mode::Crosshair);
+                                && mode != Mode::Crosshair);
 
     // The delay comes first, then the screen is frozen for choosing the
     // area, so menus or tooltips opened meanwhile end up in the capture.
     // Picking a color or measuring has nothing to wait for; a recording
     // counts down once its area is chosen (see onSnapshot).
     m_probing = false;
-    if (AppSettings::captureDelay() > 0 && mode != Mode::Recording && mode != Mode::ColorPicker
-        && mode != Mode::Crosshair) {
+    if (AppSettings::captureDelay() > 0 && mode != Mode::Recording && mode != Mode::Crosshair) {
         // Asking for permission (Wayland) comes before the countdown, not
         // after it: one grab first settles it, and its picture is dropped.
         if (m_grabber->needsPermission() && !m_grabbedOnce) {
@@ -353,8 +351,6 @@ void CaptureController::deliver(const QImage &image)
         showQrResult(image);
     else if (m_mode == Mode::Ocr)
         showOcrResult(image);
-    else if (m_mode == Mode::Translate)
-        showTranslateResult(image);
     else if (m_mode == Mode::Pin) {
         if (AppSettings::copyCapturesToClipboard())
             ImageActions::copyToClipboard(image);
@@ -386,12 +382,13 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
         return;
     }
 
-    // Scrolling capture picks its area like Window / Object: hover a
-    // scrollable control and click, or drag a rectangle.
-    const auto selectorMode = m_mode == Mode::Window || m_mode == Mode::Scrolling || m_mode == Mode::Recording
-                                  ? RegionSelector::Mode::Window
+    // Scrolling capture picks its area like Window / Region: hover a
+    // scrollable control and click, or drag a rectangle. Where windows cannot
+    // be picked, these only drag a rectangle.
+    const bool picksWindows = (m_mode == Mode::Window || m_mode == Mode::Scrolling || m_mode == Mode::Recording)
+                              && Platform::supportsWindowPicking();
+    const auto selectorMode = picksWindows                                      ? RegionSelector::Mode::Window
                               : m_mode == Mode::Freehand                          ? RegionSelector::Mode::Freehand
-                              : m_mode == Mode::ColorPicker                       ? RegionSelector::Mode::Color
                               : m_mode == Mode::Crosshair                         ? RegionSelector::Mode::Crosshair
                                                                                   : RegionSelector::Mode::Region;
     auto *selector = new RegionSelector(snapshot, selectorMode, this);
@@ -574,7 +571,7 @@ void CaptureController::showQrResult(const QImage &image)
 void CaptureController::showColorResult(const QColor &color)
 {
     auto *dialog = new ColorResultDialog(color);
-    connect(dialog, &ColorResultDialog::pickAgainRequested, this, [this] { beginCaptureAfterFade(Mode::ColorPicker); });
+    connect(dialog, &ColorResultDialog::pickAgainRequested, this, [this] { beginCaptureAfterFade(Mode::Crosshair); });
     dialog->show();
     dialog->raise();
     dialog->activateWindow();
@@ -611,12 +608,17 @@ void CaptureController::showOcrResult(const QImage &image)
     if (image.isNull() || !prepareOcr(tr("Recognize Text"), &engine, &languages))
         return;
     auto *dialog = new OcrResultDialog(image, engine, languages);
+    connect(dialog, &OcrResultDialog::translateRequested, this, [this, dialog] {
+        if (prepareTranslation())
+            dialog->translate();
+    });
+    connect(dialog, &OcrResultDialog::translatedImageReady, this, &CaptureController::openEditor);
     dialog->show();
     dialog->raise();
     dialog->activateWindow();
 }
 
-void CaptureController::showTranslateResult(const QImage &image)
+bool CaptureController::prepareTranslation()
 {
     const QString title = tr("Translate");
     // Without a key every engine fails; offer the settings instead.
@@ -626,14 +628,14 @@ void CaptureController::showTranslateResult(const QImage &image)
         const QString reason = FirefoxTranslation::unavailableReason();
         if (!reason.isEmpty()) {
             QMessageBox::warning(nullptr, title, reason);
-            return;
+            return false;
         }
     } else if (translator == QLatin1String("local")) {
         // The local model: the runtime must be there, and the model downloaded or chosen.
         const QString reason = LocalModel::unavailableReason();
         if (!reason.isEmpty()) {
             QMessageBox::warning(nullptr, title, reason);
-            return;
+            return false;
         }
         if (const std::optional<LocalModel::Preset> missing = LocalModel::missingPreset()) {
             const auto answer = QMessageBox::question(
@@ -642,13 +644,13 @@ void CaptureController::showTranslateResult(const QImage &image)
                    "computer and used offline from then on.")
                     .arg(missing->name));
             if (answer != QMessageBox::Yes || !ModelStore::download({missing->file}, nullptr))
-                return;
+                return false;
         } else if (!QFileInfo::exists(LocalModel::modelPath())) {
             const auto answer = QMessageBox::question(
                 nullptr, title, tr("The chosen GGUF model file does not exist. Open Settings > Translation to choose one?"));
             if (answer == QMessageBox::Yes)
                 showSettings();
-            return;
+            return false;
         }
     } else if (Translate::needsKey(translator) && AppSettings::translateKey(translator).trimmed().isEmpty()) {
         const auto answer = QMessageBox::question(
@@ -656,17 +658,9 @@ void CaptureController::showTranslateResult(const QImage &image)
             tr("%1 needs an API key. Open Settings > Translation to enter one?").arg(Translate::engineName(translator)));
         if (answer == QMessageBox::Yes)
             showSettings();
-        return;
+        return false;
     }
-    QString engine;
-    QStringList languages;
-    if (image.isNull() || !prepareOcr(title, &engine, &languages))
-        return;
-    auto *dialog = new TranslateResultDialog(image, engine, languages);
-    connect(dialog, &TranslateResultDialog::translatedImageReady, this, &CaptureController::openEditor);
-    dialog->show();
-    dialog->raise();
-    dialog->activateWindow();
+    return true;
 }
 
 void CaptureController::pinToScreen(const QImage &image, const QRect &where)

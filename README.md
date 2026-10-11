@@ -9,9 +9,10 @@ Homepage: <https://pages.yanlei.org/kaguya/glimpse/>
 
 ## Features
 
-- **Capture**: active window, rectangular region, freehand region or full
-  screen, with an optional delay. The area outside a freehand region can be
-  filled with a color or left transparent.
+- **Capture**: a window or control (click it) or a rectangle (drag it), a
+  freehand region, the full screen, or a scrolling page, with an optional
+  delay. The area outside a freehand region can be filled with a color or left
+  transparent.
 - **Pin to the screen**: keep a captured region floating on top of all
   windows, right where it was taken; drag, zoom and fade it.
 - **Annotate**: arrows, shapes, text, highlighting, blur and more, in the
@@ -23,14 +24,15 @@ Homepage: <https://pages.yanlei.org/kaguya/glimpse/>
   can show the keys pressed, or a full on-screen keyboard, at the bottom of the
   video.
 - **Text recognition (OCR)** with Windows OCR, Tesseract or PaddleOCR.
-- **Screenshot translation**: recognize the text in a region and translate it.
+- **Screenshot translation**: translate the recognized text from the same
+  window, or paint the translation over the capture.
   - Offline: Firefox's translation engine (Bergamot), or a local language
     model through llama.cpp (Hy-MT2, Qwen3), which uses the GPU through Vulkan
     and falls back to the CPU.
   - Online: Google Translate (free), DeepL, Google Cloud Translation,
     Microsoft Translator or Claude, with your own API key where one is needed.
 - **QR code and barcode** reading (ZXing-C++).
-- **Screen color picker** and **screen crosshair**.
+- **Screen crosshair**, which also picks colors: double-click a pixel.
 - Global hotkeys and a small floating toolbar.
 
 Models for OCR and offline translation are downloaded on first use, not
@@ -51,28 +53,27 @@ fill a web server's directory with `python tools/mirror-downloads.py list.tsv
 
 | Hotkey | Action |
 |---|---|
-| Ctrl+Alt+1 | Window |
-| Ctrl+Alt+2 | Region |
+| Ctrl+Alt+1 | Window or region |
 | Ctrl+Alt+3 | Full screen |
 | Ctrl+Alt+P | Pin region to screen |
 | Ctrl+Alt+4 | QR code |
-| Ctrl+Alt+5 | Text recognition (OCR) |
+| Ctrl+Alt+5 | Recognize and translate text |
 | Ctrl+Alt+6 | Freehand region |
-| Ctrl+Alt+7 | Color picker |
-| Ctrl+Alt+8 | Crosshair |
+| Ctrl+Alt+8 | Crosshair and color picker |
+| Ctrl+Alt+9 | Scrolling capture (Windows, experimental) |
 | Ctrl+Alt+V | Screen recording |
-| Ctrl+Alt+T | Translate |
 
 All hotkeys can be changed in the settings.
 
 ### Platform support
 
 Windows has every feature. On Linux, the following are not available yet and
-are shown disabled: window capture, the pointer in captures, global hotkeys
+are shown disabled: scrolling capture, the pointer in captures, global hotkeys
 outside GNOME, and the mouse and keyboard overlays in recordings. On GNOME the
 hotkeys become custom keyboard shortcuts in GNOME's settings, which also
-start Glimpse when it is not running. Wayland also cannot offer
-window picking or the pointer in screenshots; recordings there show the
+start Glimpse when it is not running. Picking a window is Windows only too;
+elsewhere window capture drags a rectangle. Wayland also cannot offer the
+pointer in screenshots; recordings there show the
 pointer. Glimpse runs through XWayland on a Wayland session (unless
 `QT_QPA_PLATFORM` is set), as Wayland windows cannot place themselves or
 stay on top. Windows OCR is Windows only, and the

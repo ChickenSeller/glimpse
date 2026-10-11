@@ -120,11 +120,7 @@ public:
         setAttribute(Qt::WA_NoSystemBackground);
         setMouseTracking(true);
         // The crosshair itself marks the pointer.
-        // So does the color picker's where the arrow keys cannot move the
-        // real pointer (Wayland): its own one moves with them.
-        const bool ownPointer = selector->mode() == RegionSelector::Mode::Crosshair
-                                || (selector->mode() == RegionSelector::Mode::Color && !Platform::canMoveCursor());
-        setCursor(ownPointer ? hiddenCursor() : QCursor(Qt::CrossCursor));
+        setCursor(selector->mode() == RegionSelector::Mode::Crosshair ? hiddenCursor() : QCursor(Qt::CrossCursor));
         if (QScreen *screen = findScreen(shot.name))
             setScreen(screen);
         setGeometry(shot.geometry);
@@ -137,11 +133,6 @@ protected:
     {
         QPainter p(this);
         p.drawImage(QPointF(0, 0), m_image);
-        if (m_selector->mode() == RegionSelector::Mode::Color) {
-            // Undimmed: the colors on screen are the ones being picked.
-            drawMagnifier(p);
-            return;
-        }
         if (m_selector->mode() == RegionSelector::Mode::Crosshair) {
             drawCrosshair(p);
             return;
@@ -152,18 +143,23 @@ protected:
             return;
         }
 
+        // A rectangle being dragged; next to the pointer, where the eye is,
+        // its position (for a pixel-exact corner) and the rectangle's size.
         const QRect sel = m_selector->selection().translated(-m_origin);
         if (!sel.isEmpty()) {
             drawHighlight(p, sel, 1);
-            if (sel.intersects(rect()))
-                drawTag(p, rect(), sel.topLeft(), sizeText(sel));
+            drawGuides(p, true, sizeText(sel));
             return;
         }
 
+        // The window under the pointer is what a click takes; a drag from
+        // the pressed point makes a rectangle instead, so its position shows
+        // once pressed.
         if (m_selector->mode() == RegionSelector::Mode::Window) {
             const CaptureTarget target = m_selector->hoverTarget();
             const QRect local = target.geometry.translated(-m_origin);
             drawHighlight(p, local, 2);
+            drawGuides(p, m_selector->isPressed());
             if (local.intersects(rect())) {
                 drawTag(p, rect(), local.intersected(rect()).topLeft(), windowLabel(p.fontMetrics(), target, sizeText(local), rect().width()));
             }
@@ -171,19 +167,31 @@ protected:
         }
 
         p.fillRect(rect(), kDim);
+        drawGuides(p, true);
+    }
+
+    // Guides through the native pixel under the pointer, one native pixel
+    // wide, and optionally that pixel's position followed by `extra`.
+    void drawGuides(QPainter &p, bool withPosition, const QString &extra = {})
+    {
         const QPointF c = m_selector->preciseCursor() - QPointF(m_origin);
         if (!QRectF(rect()).contains(c))
             return;
-        // Guides through the native pixel under the pointer, one native pixel wide.
         const qreal dpr = m_image.devicePixelRatio();
         const QPoint pixel(int(std::floor(c.x() * dpr)), int(std::floor(c.y() * dpr)));
         p.save();
+        clipOutPixels(p, {pixel});
         useNativePixels(p);
         p.setPen(QPen(kAccent, 1, Qt::DashLine));
         p.drawLine(QPointF(0, pixel.y() + 0.5), QPointF(m_image.width(), pixel.y() + 0.5));
         p.drawLine(QPointF(pixel.x() + 0.5, 0), QPointF(pixel.x() + 0.5, m_image.height()));
         p.restore();
-        drawTag(p, rect(), c.toPoint() + QPoint(12, 0), QStringLiteral("%1, %2").arg(pixel.x()).arg(pixel.y()));
+        if (!withPosition)
+            return;
+        QString text = QStringLiteral("%1, %2").arg(pixel.x()).arg(pixel.y());
+        if (!extra.isEmpty())
+            text += QStringLiteral("  ·  ") + extra;
+        drawTag(p, rect(), c.toPoint() + QPoint(12, 0), text);
     }
 
     void mousePressEvent(QMouseEvent *event) override
@@ -221,6 +229,18 @@ protected:
             m_selector->release(toGlobal(event));
     }
 
+    void mouseDoubleClickEvent(QMouseEvent *event) override
+    {
+        // Its first click has locked the crosshair there; the second picks
+        // that pixel's color and ends.
+        if (m_selector->mode() == RegionSelector::Mode::Crosshair && event->button() == Qt::LeftButton) {
+            m_selector->setPreciseCursor(preciseGlobal(event));
+            m_selector->pickColor();
+            return;
+        }
+        QWidget::mouseDoubleClickEvent(event);
+    }
+
     void wheelEvent(QWheelEvent *event) override
     {
         const int delta = event->angleDelta().y();
@@ -249,20 +269,8 @@ protected:
             case Qt::Key_Up: m_selector->nudgeBy(0, -1); return;
             case Qt::Key_Down: m_selector->nudgeBy(0, 1); return;
             case Qt::Key_Return:
-            case Qt::Key_Enter:
+            case Qt::Key_Enter: m_selector->pickColor(); return;
             case Qt::Key_Space: m_selector->lockAtCursor(); return;
-            default: break;
-            }
-        }
-        if (m_selector->mode() == RegionSelector::Mode::Color) {
-            switch (event->key()) {
-            case Qt::Key_Left: m_selector->nudgeBy(-1, 0); return;
-            case Qt::Key_Right: m_selector->nudgeBy(1, 0); return;
-            case Qt::Key_Up: m_selector->nudgeBy(0, -1); return;
-            case Qt::Key_Down: m_selector->nudgeBy(0, 1); return;
-            case Qt::Key_Return:
-            case Qt::Key_Enter:
-            case Qt::Key_Space: m_selector->pickColor(); return;
             default: break;
             }
         }
@@ -302,6 +310,22 @@ private:
     {
         const qreal scale = 1.0 / m_image.devicePixelRatio();
         p.setWorldTransform(QTransform::fromScale(scale, scale));
+    }
+
+    // Keeps what is painted next off these native pixels of this screen, so
+    // they stay in sight under crosshairs. A clip rather than shorter lines:
+    // an aliased line also paints the pixel at its end.
+    void clipOutPixels(QPainter &p, const QList<QPoint> &pixels) const
+    {
+        const qreal size = 1.0 / m_image.devicePixelRatio();
+        QPainterPath area;
+        area.addRect(QRectF(rect()));
+        for (const QPoint &pixel : pixels) {
+            QPainterPath hole;
+            hole.addRect(QRectF(pixel.x() * size, pixel.y() * size, size, size));
+            area = area.subtracted(hole);
+        }
+        p.setClipPath(area);
     }
 
     QString sizeText(const QRect &r) const
@@ -413,44 +437,6 @@ private:
         }
     }
 
-    // Color mode: the panel for the pixel under the cursor, on its screen only.
-    void drawMagnifier(QPainter &p)
-    {
-        const RegionSelector::Sample sample = m_selector->sampleAtCursor();
-        if (sample.screen != m_name)
-            return;
-        QPointF near = m_selector->preciseCursor() - QPointF(m_origin);
-        if (!Platform::canMoveCursor()) {
-            // The real pointer is hidden (see the constructor); this one sits
-            // on the sampled pixel, also when the arrow keys moved it.
-            drawPointer(p, sample.pixel);
-            near = pixelCenter(sample.pixel);
-        }
-        const QColor color = m_image.pixelColor(sample.pixel);
-        drawPanel(p, m_image, sample.pixel, near,
-                  {color.name(QColor::HexRgb).toUpper(),
-                   QStringLiteral("%1, %2, %3").arg(color.red()).arg(color.green()).arg(color.blue())},
-                  {RegionSelector::tr("Click: pick  ·  Arrows: 1 px")});
-    }
-
-    // A cross pointer around one native pixel, which it leaves uncovered;
-    // dark under light, so it shows on any background.
-    void drawPointer(QPainter &p, const QPoint &pixel)
-    {
-        const QPointF c = pixelCenter(pixel);
-        const qreal gap = 0.5 / m_image.devicePixelRatio() + 1; // just clear of the pixel
-        const qreal arm = 10;
-        p.save();
-        for (const auto &[color, width] : {std::pair{QColor(0, 0, 0, 200), 3.0}, std::pair{QColor(Qt::white), 1.0}}) {
-            p.setPen(QPen(color, width, Qt::SolidLine, Qt::FlatCap));
-            p.drawLine(QPointF(c.x() - gap - arm, c.y()), QPointF(c.x() - gap, c.y()));
-            p.drawLine(QPointF(c.x() + gap, c.y()), QPointF(c.x() + gap + arm, c.y()));
-            p.drawLine(QPointF(c.x(), c.y() - gap - arm), QPointF(c.x(), c.y() - gap));
-            p.drawLine(QPointF(c.x(), c.y() + gap), QPointF(c.x(), c.y() + gap + arm));
-        }
-        p.restore();
-    }
-
     // Center of a native pixel of this screen, in local logical coordinates.
     QPointF pixelCenter(const QPoint &pixel) const
     {
@@ -466,14 +452,27 @@ private:
         const std::optional<RegionSelector::Sample> lock = m_selector->lockedSample();
         const RegionSelector::Sample target = lock ? *lock : live;
 
+        // The target pixel and the one under the pointer are left clear to
+        // be seen; nothing below is drawn over them.
+        QList<QPoint> clear;
+        for (const RegionSelector::Sample &sample : {target, live}) {
+            if (sample.screen == m_name)
+                clear << sample.pixel;
+        }
+        p.save();
+        clipOutPixels(p, clear);
         if (target.screen == m_name) {
-            const QPointF c = pixelCenter(target.pixel);
+            // One native pixel wide, right through the target pixel.
+            const QPoint px = target.pixel;
+            p.save();
+            useNativePixels(p);
             // Dark under light, so the lines show on any background.
             for (const auto &[color, offset] : {std::pair{QColor(0, 0, 0, 150), 1.0}, std::pair{kCrosshair, 0.0}}) {
                 p.setPen(QPen(color, 1));
-                p.drawLine(QPointF(0, c.y() + offset), QPointF(width(), c.y() + offset));
-                p.drawLine(QPointF(c.x() + offset, 0), QPointF(c.x() + offset, height()));
+                p.drawLine(QPointF(0, px.y() + 0.5 + offset), QPointF(m_image.width(), px.y() + 0.5 + offset));
+                p.drawLine(QPointF(px.x() + 0.5 + offset, 0), QPointF(px.x() + 0.5 + offset, m_image.height()));
             }
+            p.restore();
         }
         if (lock && live.screen == m_name) {
             const QPointF cursor = pixelCenter(live.pixel);
@@ -485,8 +484,8 @@ private:
             p.setPen(QPen(kCrosshair, 1.5));
             p.drawLine(cursor - QPointF(6, 0), cursor + QPointF(6, 0));
             p.drawLine(cursor - QPointF(0, 6), cursor + QPointF(0, 6));
-            p.setRenderHint(QPainter::Antialiasing, false);
         }
+        p.restore();
         if (live.screen != m_name)
             return;
 
@@ -509,8 +508,8 @@ private:
         if (!m_selector->message().isEmpty()) {
             hints << m_selector->message();
         } else {
-            hints << (lock ? RegionSelector::tr("Click: lock here  ·  Right-click: unlock")
-                           : RegionSelector::tr("Click: lock  ·  Arrows: 1 px"))
+            hints << (lock ? RegionSelector::tr("Click: lock here  ·  Double-click: pick color  ·  Right-click: unlock")
+                           : RegionSelector::tr("Click: lock  ·  Double-click: pick color  ·  Arrows: 1 px"))
                   << RegionSelector::tr("Ctrl+C: position  ·  Ctrl+Shift+C: color  ·  Esc: exit");
         }
         drawPanel(p, targetShot->image, target.pixel, m_selector->preciseCursor() - QPointF(m_origin), lines, hints);
@@ -580,10 +579,6 @@ CaptureTarget RegionSelector::hoverTarget() const
 
 void RegionSelector::press(const QPoint &pos)
 {
-    if (m_mode == Mode::Color) {
-        pickColor();
-        return;
-    }
     m_anchor = m_cursor = pos;
     m_pressed = true;
     m_dragging = m_mode != Mode::Window;

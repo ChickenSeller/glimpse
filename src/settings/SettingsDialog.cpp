@@ -376,16 +376,13 @@ HotkeyEdit *SettingsDialog::hotkeyEdit(CaptureMode mode) const
 {
     switch (mode) {
     case CaptureMode::Window: return ui->windowHotkeyEdit;
-    case CaptureMode::Region: return ui->regionHotkeyEdit;
     case CaptureMode::FullScreen: return ui->fullScreenHotkeyEdit;
     case CaptureMode::QrCode: return ui->qrHotkeyEdit;
     case CaptureMode::Ocr: return ui->ocrHotkeyEdit;
     case CaptureMode::Scrolling: return ui->scrollHotkeyEdit;
     case CaptureMode::Freehand: return ui->freehandHotkeyEdit;
-    case CaptureMode::ColorPicker: return ui->colorHotkeyEdit;
     case CaptureMode::Crosshair: return ui->crosshairHotkeyEdit;
     case CaptureMode::Recording: return ui->recordHotkeyEdit;
-    case CaptureMode::Translate: return ui->translateHotkeyEdit;
     case CaptureMode::Pin: return ui->pinHotkeyEdit;
     }
     return nullptr;

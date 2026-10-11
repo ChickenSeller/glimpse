@@ -299,7 +299,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="windowHotkeyLabel">
            <property name="text">
-            <string>Capture &amp;Window / Object:</string>
+            <string>Capture &amp;Window / Region:</string>
            </property>
            <property name="buddy">
             <cstring>windowHotkeyEdit</cstring>
@@ -310,32 +310,19 @@
           <widget class="HotkeyEdit" name="windowHotkeyEdit"/>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="regionHotkeyLabel">
-           <property name="text">
-            <string>Capture &amp;Rectangular Region:</string>
-           </property>
-           <property name="buddy">
-            <cstring>regionHotkeyEdit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="HotkeyEdit" name="regionHotkeyEdit"/>
-         </item>
-         <item row="2" column="0">
           <widget class="QLabel" name="scrollHotkeyLabel">
            <property name="text">
-            <string>&amp;Scrolling Capture:</string>
+            <string>&amp;Scrolling Capture (experimental):</string>
            </property>
            <property name="buddy">
             <cstring>scrollHotkeyEdit</cstring>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="1" column="1">
           <widget class="HotkeyEdit" name="scrollHotkeyEdit"/>
          </item>
-         <item row="3" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="freehandHotkeyLabel">
            <property name="text">
             <string>Capture Free&amp;hand Region:</string>
@@ -345,10 +332,10 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="2" column="1">
           <widget class="HotkeyEdit" name="freehandHotkeyEdit"/>
          </item>
-         <item row="4" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="fullScreenHotkeyLabel">
            <property name="text">
             <string>Capture &amp;Full Screen:</string>
@@ -358,10 +345,10 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="3" column="1">
           <widget class="HotkeyEdit" name="fullScreenHotkeyEdit"/>
          </item>
-         <item row="5" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="pinHotkeyLabel">
            <property name="text">
             <string>P&amp;in Region to Screen:</string>
@@ -371,10 +358,10 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="4" column="1">
           <widget class="HotkeyEdit" name="pinHotkeyEdit"/>
          </item>
-         <item row="6" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="recordHotkeyLabel">
            <property name="text">
             <string>Recor&amp;d Screen:</string>
@@ -384,10 +371,10 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="5" column="1">
           <widget class="HotkeyEdit" name="recordHotkeyEdit"/>
          </item>
-         <item row="7" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="qrHotkeyLabel">
            <property name="text">
             <string>Scan &amp;QR Code:</string>
@@ -397,59 +384,33 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="6" column="1">
           <widget class="HotkeyEdit" name="qrHotkeyEdit"/>
          </item>
-         <item row="8" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="ocrHotkeyLabel">
            <property name="text">
-            <string>Recognize &amp;Text:</string>
+            <string>Recognize and &amp;Translate Text:</string>
            </property>
            <property name="buddy">
             <cstring>ocrHotkeyEdit</cstring>
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
+         <item row="7" column="1">
           <widget class="HotkeyEdit" name="ocrHotkeyEdit"/>
          </item>
-         <item row="9" column="0">
-          <widget class="QLabel" name="translateHotkeyLabel">
-           <property name="text">
-            <string>Tra&amp;nslate Screenshot:</string>
-           </property>
-           <property name="buddy">
-            <cstring>translateHotkeyEdit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="1">
-          <widget class="HotkeyEdit" name="translateHotkeyEdit"/>
-         </item>
-         <item row="10" column="0">
-          <widget class="QLabel" name="colorHotkeyLabel">
-           <property name="text">
-            <string>&amp;Pick Screen Color:</string>
-           </property>
-           <property name="buddy">
-            <cstring>colorHotkeyEdit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="1">
-          <widget class="HotkeyEdit" name="colorHotkeyEdit"/>
-         </item>
-         <item row="11" column="0">
+         <item row="8" column="0">
           <widget class="QLabel" name="crosshairHotkeyLabel">
            <property name="text">
-            <string>Screen Cr&amp;osshair:</string>
+            <string>Cr&amp;osshair / Color Picker:</string>
            </property>
            <property name="buddy">
             <cstring>crosshairHotkeyEdit</cstring>
            </property>
           </widget>
          </item>
-         <item row="11" column="1">
+         <item row="8" column="1">
           <widget class="HotkeyEdit" name="crosshairHotkeyEdit"/>
          </item>
         </layout>

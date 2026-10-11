@@ -57,14 +57,12 @@
           <span class="h tl"></span><span class="h tr"></span><span class="h bl"></span><span class="h br"></span>
         </div>
         <div class="toolbar">
-          <span class="ico" style="--i:url(icons/select_window.svg)"></span>
           <span class="ico on" style="--i:url(icons/screenshot_region.svg)"></span>
+          <span class="ico" style="--i:url(icons/fit_page_height.svg)"></span>
           <span class="ico" style="--i:url(icons/lasso_select.svg)"></span>
           <span class="ico" style="--i:url(icons/screenshot_monitor.svg)"></span>
           <span class="ico" style="--i:url(icons/videocam.svg)"></span>
           <span class="ico" style="--i:url(icons/document_scanner.svg)"></span>
-          <span class="ico" style="--i:url(icons/translate.svg)"></span>
-          <span class="ico" style="--i:url(icons/colorize.svg)"></span>
         </div>
       </div>
     </div>
@@ -98,7 +96,7 @@
       <article class="card">
         <span class="ico big" style="--i:url(icons/translate.svg)"></span>
         <h3 data-i18n="f.tr.t">Translate</h3>
-        <p data-i18n="f.tr.d">Select some text on screen and read it in your language, online or fully offline.</p>
+        <p data-i18n="f.tr.d">Translate the recognized text, or paint the translation over the capture, online or fully offline.</p>
       </article>
       <article class="card">
         <span class="ico big" style="--i:url(icons/qr_code_scanner.svg)"></span>
@@ -108,7 +106,7 @@
       <article class="card">
         <span class="ico big" style="--i:url(icons/colorize.svg)"></span>
         <h3 data-i18n="f.color.t">Color picker</h3>
-        <p data-i18n="f.color.d">Pick any pixel on screen and copy it as HEX, RGB or HSL.</p>
+        <p data-i18n="f.color.d">Double-click any pixel under the crosshair and copy its color as HEX, RGB or HSL.</p>
       </article>
       <article class="card">
         <span class="ico big" style="--i:url(icons/my_location.svg)"></span>
@@ -144,17 +142,15 @@
     <h2 data-i18n="hk.title">Hotkeys</h2>
     <p class="sub" data-i18n="hk.lead">Every action has a global hotkey; all of them can be changed in the settings.</p>
     <div class="keys">
-      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd><span data-i18n="hk.window">Window</span></div>
-      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>2</kbd><span data-i18n="hk.region">Region</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd><span data-i18n="hk.window">Window or region</span></div>
       <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>3</kbd><span data-i18n="hk.full">Full screen</span></div>
       <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>P</kbd><span data-i18n="hk.pin">Pin to screen</span></div>
       <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>4</kbd><span data-i18n="hk.qr">QR code</span></div>
-      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>5</kbd><span data-i18n="hk.ocr">Recognize text</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>5</kbd><span data-i18n="hk.ocr">Recognize and translate text</span></div>
       <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>6</kbd><span data-i18n="hk.free">Freehand region</span></div>
-      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>7</kbd><span data-i18n="hk.color">Color picker</span></div>
-      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>8</kbd><span data-i18n="hk.cross">Crosshair</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>8</kbd><span data-i18n="hk.cross">Crosshair and color picker</span></div>
+      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>9</kbd><span data-i18n="hk.scroll">Scrolling capture (experimental)</span></div>
       <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>V</kbd><span data-i18n="hk.rec">Screen recording</span></div>
-      <div><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>T</kbd><span data-i18n="hk.tr">Translate</span></div>
     </div>
   </div>
 </section>
@@ -166,8 +162,9 @@
       <table>
         <thead><tr><th></th><th>Windows</th><th>X11</th><th>Wayland</th></tr></thead>
         <tbody>
-          <tr><td data-i18n="pf.capture">Region, freehand and full screen</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-          <tr><td data-i18n="pf.window">Window capture, pointer in captures</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n">—</td></tr>
+          <tr><td data-i18n="pf.capture">Rectangle, freehand and full screen</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+          <tr><td data-i18n="pf.window">Picking a window, pointer in captures</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n">—</td></tr>
+          <tr><td data-i18n="pf.scroll">Scrolling capture (experimental)</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n" data-i18n="pf.planned">Planned</td></tr>
           <tr><td data-i18n="pf.hotkeys">Global hotkeys</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n" data-i18n="pf.planned">Planned</td></tr>
           <tr><td data-i18n="pf.overlay">Click and key overlays in recordings</td><td class="y">✓</td><td class="n" data-i18n="pf.planned">Planned</td><td class="n">—</td></tr>
           <tr><td data-i18n="pf.ocr">Tesseract and PaddleOCR</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>

@@ -4,7 +4,6 @@
         <file>update.ps1</file>
         <file>icons/block.svg</file>
         <file>icons/check.svg</file>
-        <file>icons/colorize.svg</file>
         <file>icons/aspect_ratio.svg</file>
         <file>icons/content_copy.svg</file>
         <file>icons/content_cut.svg</file>
@@ -27,11 +26,9 @@
         <file>icons/rotate_right.svg</file>
         <file>icons/save.svg</file>
         <file>icons/screenshot_region.svg</file>
-        <file>icons/select_window.svg</file>
         <file>icons/settings.svg</file>
         <file>icons/fit_page_height.svg</file>
         <file>icons/timer.svg</file>
-        <file>icons/translate.svg</file>
         <file>icons/screenshot_monitor.svg</file>
     </qresource>
 </RCC>

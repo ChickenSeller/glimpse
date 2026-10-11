@@ -25,17 +25,17 @@ class SelectionOverlay;
 // walks out to parents and back in), click takes it; dragging still works.
 // Freehand mode: drag to draw an outline; releasing closes it. selected()
 // then carries its bounding box and shape() the outline itself.
-// Color mode: a magnifier follows the cursor; arrow keys move by one native
-// pixel; a click (or Enter) emits colorPicked() instead of selected().
-// Crosshair mode: full-screen crosshair with position and color. A click locks
-// it (arrow keys then move the lock) and distances are shown from there;
-// Ctrl+C copies the position, Ctrl+Shift+C the color. Only Esc ends it.
+// Crosshair mode: full-screen crosshair with position and color. A click (or
+// Space) locks it (arrow keys then move the lock) and distances are shown from
+// there; Ctrl+C copies the position, Ctrl+Shift+C the color. A double-click
+// (or Enter) emits colorPicked() for the pixel under it; otherwise only Esc
+// ends it.
 class RegionSelector : public QObject
 {
     Q_OBJECT
 
 public:
-    enum class Mode { Region, Window, Freehand, Color, Crosshair };
+    enum class Mode { Region, Window, Freehand, Crosshair };
 
     // A native pixel on one monitor.
     struct Sample {
@@ -63,6 +63,7 @@ private:
 
     QRect selection() const;
     bool isDragging() const { return m_dragging; }
+    bool isPressed() const { return m_pressed; }
     QPoint cursor() const { return m_cursor; }
     QPointF preciseCursor() const { return m_preciseCursor; }
     QPoint nudge() const { return m_nudge; }

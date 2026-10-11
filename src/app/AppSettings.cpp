@@ -18,16 +18,13 @@ QString hotkeySettingsKey(CaptureMode mode)
 {
     switch (mode) {
     case CaptureMode::Window: return QStringLiteral("hotkeys/window");
-    case CaptureMode::Region: return QStringLiteral("hotkeys/region");
     case CaptureMode::FullScreen: return QStringLiteral("hotkeys/fullScreen");
     case CaptureMode::QrCode: return QStringLiteral("hotkeys/qrCode");
     case CaptureMode::Ocr: return QStringLiteral("hotkeys/ocr");
     case CaptureMode::Scrolling: return QStringLiteral("hotkeys/scrolling");
     case CaptureMode::Freehand: return QStringLiteral("hotkeys/freehand");
-    case CaptureMode::ColorPicker: return QStringLiteral("hotkeys/colorPicker");
     case CaptureMode::Crosshair: return QStringLiteral("hotkeys/crosshair");
     case CaptureMode::Recording: return QStringLiteral("hotkeys/recording");
-    case CaptureMode::Translate: return QStringLiteral("hotkeys/translate");
     case CaptureMode::Pin: return QStringLiteral("hotkeys/pin");
     }
     return {};
@@ -44,17 +41,14 @@ QKeySequence defaultHotkey(CaptureMode mode)
 {
     switch (mode) {
     case CaptureMode::Window: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_1);
-    case CaptureMode::Region: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_2);
     case CaptureMode::FullScreen: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_3);
     case CaptureMode::QrCode: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_4);
     case CaptureMode::Ocr: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_5);
     case CaptureMode::Freehand: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_6);
-    case CaptureMode::ColorPicker: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_7);
     case CaptureMode::Crosshair: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_8);
     // V for video; Ctrl+Alt+R is taken by the NVIDIA overlay (performance overlay visibility).
     case CaptureMode::Recording: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_V);
     case CaptureMode::Scrolling: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_9);
-    case CaptureMode::Translate: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T); // T for translate
     case CaptureMode::Pin: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_P); // P for pin
     }
     return {};

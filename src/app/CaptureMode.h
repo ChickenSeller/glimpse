@@ -5,24 +5,20 @@
 #include <QtGlobal>
 
 enum class CaptureMode {
-    Window,
-    Region,
+    Window, // hover and click a window or control, or drag a rectangle
     FullScreen,
     QrCode, // select a region, decode the QR codes / barcodes in it
-    Ocr,    // select a region, recognize the text in it
+    Ocr,    // select a region, recognize the text in it (and translate it if asked)
     Scrolling, // pick a scrollable area, scroll it and stitch a tall image
     Freehand,  // draw any outline; the outside of it is left transparent
-    ColorPicker, // pick a pixel's color from the frozen screen
-    Crosshair,   // full-screen crosshair with position, color and distances
+    Crosshair,   // full-screen crosshair with position, color and distances; picks a color too
     Recording,   // record a screen area to an MP4 video
-    Translate,   // select a region, recognize its text and translate it
     Pin,         // select a region and pin it to the screen, on top of everything
 };
 
 // The modes offered in the UI (tray menu, hotkeys, settings).
 inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::Window,
-    CaptureMode::Region,
     CaptureMode::Scrolling,
     CaptureMode::Freehand,
     CaptureMode::FullScreen,
@@ -30,8 +26,6 @@ inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::Recording,
     CaptureMode::QrCode,
     CaptureMode::Ocr,
-    CaptureMode::Translate,
-    CaptureMode::ColorPicker,
     CaptureMode::Crosshair,
 };
 
@@ -39,7 +33,6 @@ inline constexpr CaptureMode kAllCaptureModes[] = {
 inline bool captureModeSupported(CaptureMode mode)
 {
     switch (mode) {
-    case CaptureMode::Window: return Platform::supportsWindowPicking();
     case CaptureMode::Scrolling: return Platform::supportsScrollingCapture();
     default: return true;
     }
@@ -50,17 +43,14 @@ inline bool captureModeSupported(CaptureMode mode)
 inline const char *captureModeLabel(CaptureMode mode)
 {
     switch (mode) {
-    case CaptureMode::Window: return QT_TRANSLATE_NOOP("CaptureController", "Capture Window / Object");
-    case CaptureMode::Region: return QT_TRANSLATE_NOOP("CaptureController", "Capture Rectangular Region");
+    case CaptureMode::Window: return QT_TRANSLATE_NOOP("CaptureController", "Capture Window / Region");
     case CaptureMode::FullScreen: return QT_TRANSLATE_NOOP("CaptureController", "Capture Full Screen");
     case CaptureMode::QrCode: return QT_TRANSLATE_NOOP("CaptureController", "Scan QR Code");
-    case CaptureMode::Ocr: return QT_TRANSLATE_NOOP("CaptureController", "Recognize Text");
-    case CaptureMode::Scrolling: return QT_TRANSLATE_NOOP("CaptureController", "Scrolling Capture");
+    case CaptureMode::Ocr: return QT_TRANSLATE_NOOP("CaptureController", "Recognize and Translate Text");
+    case CaptureMode::Scrolling: return QT_TRANSLATE_NOOP("CaptureController", "Scrolling Capture (Experimental)");
     case CaptureMode::Freehand: return QT_TRANSLATE_NOOP("CaptureController", "Capture Freehand Region");
-    case CaptureMode::ColorPicker: return QT_TRANSLATE_NOOP("CaptureController", "Pick Screen Color");
-    case CaptureMode::Crosshair: return QT_TRANSLATE_NOOP("CaptureController", "Screen Crosshair");
+    case CaptureMode::Crosshair: return QT_TRANSLATE_NOOP("CaptureController", "Crosshair / Color Picker");
     case CaptureMode::Recording: return QT_TRANSLATE_NOOP("CaptureController", "Record Screen");
-    case CaptureMode::Translate: return QT_TRANSLATE_NOOP("CaptureController", "Translate Screenshot");
     case CaptureMode::Pin: return QT_TRANSLATE_NOOP("CaptureController", "Pin Region to Screen");
     }
     return "";
@@ -70,17 +60,14 @@ inline const char *captureModeLabel(CaptureMode mode)
 inline const char *captureModeIcon(CaptureMode mode)
 {
     switch (mode) {
-    case CaptureMode::Window: return ":/icons/select_window.svg";
-    case CaptureMode::Region: return ":/icons/screenshot_region.svg";
+    case CaptureMode::Window: return ":/icons/screenshot_region.svg";
     case CaptureMode::FullScreen: return ":/icons/screenshot_monitor.svg";
     case CaptureMode::QrCode: return ":/icons/qr_code_scanner.svg";
     case CaptureMode::Ocr: return ":/icons/document_scanner.svg";
     case CaptureMode::Scrolling: return ":/icons/fit_page_height.svg";
     case CaptureMode::Freehand: return ":/icons/lasso_select.svg";
-    case CaptureMode::ColorPicker: return ":/icons/colorize.svg";
     case CaptureMode::Crosshair: return ":/icons/my_location.svg";
     case CaptureMode::Recording: return ":/icons/videocam.svg";
-    case CaptureMode::Translate: return ":/icons/translate.svg";
     case CaptureMode::Pin: return ":/icons/push_pin.svg";
     }
     return "";

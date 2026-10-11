@@ -249,9 +249,6 @@ qt_add_executable(glimpse
     src/translate/FirefoxTranslation.h
     src/translate/LocalModel.cpp
     src/translate/LocalModel.h
-    src/translate/TranslateResultDialog.cpp
-    src/translate/TranslateResultDialog.h
-    src/translate/TranslateResultDialog.ui
     src/translate/Translator.cpp
     src/translate/Translator.h
 

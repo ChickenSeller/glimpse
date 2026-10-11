@@ -28,7 +28,7 @@ QString displayServerName();
 bool windowsCanPlaceThemselves();
 
 // Features implemented only on some platforms so far; the UI disables the rest.
-bool supportsWindowPicking(); // "Capture Window / Object" hit-testing
+bool supportsWindowPicking(); // "Capture Window / Region" hit-testing
 bool supportsCursorCapture(); // mouse pointer in captures
 bool supportsGlobalHotkeys();
 bool supportsScrollingCapture(); // needs wheel input injection

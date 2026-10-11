@@ -135,17 +135,15 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="+55"/>
         <source>Capture Window / Object</source>
-        <translation>ウィンドウ／オブジェクトをキャプチャ</translation>
+        <translation type="vanished">ウィンドウ／オブジェクトをキャプチャ</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Capture Rectangular Region</source>
-        <translation>矩形領域をキャプチャ</translation>
+        <translation type="vanished">矩形領域をキャプチャ</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location filename="../src/app/CaptureMode.h" line="+47"/>
         <source>Capture Full Screen</source>
         <translation>全画面をキャプチャ</translation>
     </message>
@@ -155,30 +153,46 @@
         <translation>QR コードを読み取る</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+611"/>
-        <location filename="../src/app/CaptureMode.h" line="+1"/>
+        <location line="+2"/>
+        <source>Scrolling Capture (Experimental)</source>
+        <translation>スクロールキャプチャ（試験的）</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureController.cpp" line="+608"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="+1"/>
-        <source>Scrolling Capture</source>
-        <translation>スクロールキャプチャ</translation>
+        <location filename="../src/app/CaptureMode.h" line="-4"/>
+        <source>Capture Window / Region</source>
+        <translation>ウィンドウ／領域をキャプチャ</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
+        <source>Recognize and Translate Text</source>
+        <translation>文字認識・翻訳</translation>
+    </message>
+    <message>
+        <source>Scrolling Capture</source>
+        <translation type="vanished">スクロールキャプチャ</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Capture Freehand Region</source>
         <translation>フリーハンド領域をキャプチャ</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Pick Screen Color</source>
-        <translation>画面の色を取得</translation>
+        <source>Crosshair / Color Picker</source>
+        <translation>クロスヘア／色の取得</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <source>Pick Screen Color</source>
+        <translation type="vanished">画面の色を取得</translation>
+    </message>
+    <message>
         <source>Screen Crosshair</source>
-        <translation>画面クロスヘア</translation>
+        <translation type="vanished">画面クロスヘア</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -186,9 +200,8 @@
         <translation>画面を録画</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Translate Screenshot</source>
-        <translation>スクリーンショット翻訳</translation>
+        <translation type="vanished">スクリーンショット翻訳</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -196,7 +209,7 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-494"/>
+        <location filename="../src/app/CaptureController.cpp" line="-492"/>
         <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
@@ -234,7 +247,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+246"/>
+        <location line="+243"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -283,7 +296,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>システムダイアログを待っています…</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+40"/>
         <source>No text recognition engine is available in this build.</source>
         <translation>このビルドでは利用できる文字認識エンジンがありません。</translation>
     </message>
@@ -301,7 +314,7 @@ Download them now?</source>
 今すぐダウンロードしますか？</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+27"/>
         <source>Translate</source>
         <translation>翻訳</translation>
     </message>
@@ -342,27 +355,24 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ドラッグして移動</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Capture Window / Object (mouse wheel: parent / child)</source>
-        <translation>ウィンドウ／オブジェクトをキャプチャ（マウスホイール：親／子を切り替え）</translation>
+        <translation type="vanished">ウィンドウ／オブジェクトをキャプチャ（マウスホイール：親／子を切り替え）</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+26"/>
         <source>Window</source>
         <translation>ウィンドウ</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Capture Rectangular Region</source>
-        <translation>矩形領域をキャプチャ</translation>
+        <translation type="vanished">矩形領域をキャプチャ</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Region</source>
-        <translation>領域</translation>
+        <translation type="vanished">領域</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+49"/>
         <source>Capture Freehand Region</source>
         <translation>フリーハンド領域をキャプチャ</translation>
     </message>
@@ -402,9 +412,23 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>録画</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+49"/>
+        <source>Recognize Text in a Region, to copy or translate it</source>
+        <translation>領域内の文字を認識してコピーまたは翻訳</translation>
+    </message>
+    <message>
         <source>Scrolling Capture (Esc to stop)</source>
-        <translation>スクロールキャプチャ（Esc で停止）</translation>
+        <translation type="vanished">スクロールキャプチャ（Esc で停止）</translation>
+    </message>
+    <message>
+        <location line="-182"/>
+        <source>Capture Window / Region (click a window or drag a rectangle; mouse wheel: parent / child)</source>
+        <translation>ウィンドウ／領域をキャプチャ（ウィンドウをクリック、または矩形をドラッグ。マウスホイール：親／子を切り替え）</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Scrolling Capture, experimental (Esc to stop)</source>
+        <translation>スクロールキャプチャ・試験的（Esc で停止）</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -412,7 +436,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>スクロール</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+127"/>
         <source>Scan QR Code in a Region</source>
         <translation>領域内の QR コードを読み取る</translation>
     </message>
@@ -422,39 +446,38 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>QR コード</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Recognize Text in a Region</source>
-        <translation>領域内のテキストを認識</translation>
+        <translation type="vanished">領域内のテキストを認識</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+26"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Translate the Text in a Region</source>
-        <translation>領域内の文字を翻訳</translation>
+        <translation type="vanished">領域内の文字を翻訳</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Translate</source>
-        <translation>翻訳</translation>
+        <translation type="vanished">翻訳</translation>
     </message>
     <message>
         <location line="+23"/>
+        <source>Crosshair / Color Picker: position, color and distance (double-click: pick the color)</source>
+        <translation>クロスヘア／色の取得：位置・色・距離（ダブルクリック：色を取得）</translation>
+    </message>
+    <message>
         <source>Pick a Color from the Screen</source>
-        <translation>画面から色を取得</translation>
+        <translation type="vanished">画面から色を取得</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Color</source>
-        <translation>色</translation>
+        <translation type="vanished">色</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Screen Crosshair: position, color and distance</source>
-        <translation>画面クロスヘア：位置・色・距離</translation>
+        <translation type="vanished">画面クロスヘア：位置・色・距離</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -463,8 +486,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+317"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+640"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+310"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+633"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -933,17 +956,57 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>OcrResultDialog</name>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.ui" line="+14"/>
         <source>Recognize Text</source>
-        <translation>テキストを認識</translation>
+        <translation type="vanished">テキストを認識</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location filename="../src/ocr/OcrResultDialog.ui" line="+14"/>
+        <source>Recognize and Translate Text</source>
+        <translation>文字認識・翻訳</translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Recognized text (editable; paragraphs separated by blank lines)</source>
+        <translation>認識した文字（編集可。段落は空行で区切ります）</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>&amp;Copy</source>
         <translation>コピー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+75"/>
+        <location line="+36"/>
+        <source>Translate &amp;into:</source>
+        <translation>翻訳先(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Translate the recognized text, with the engine and language from the settings</source>
+        <translation>認識した文字を設定の翻訳エンジンと言語で翻訳</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Translate</source>
+        <translation>翻訳(&amp;T)</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Copy Tra&amp;nslation</source>
+        <translation>訳文をコピー(&amp;N)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+315"/>
+        <source>Paint the translation over the capture, where the text was</source>
+        <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Translated Ima&amp;ge</source>
+        <translation>翻訳画像(&amp;G)</translation>
+    </message>
+    <message>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-27"/>
         <source>Recognizing text with %1...</source>
         <translation>%1 でテキストを認識しています...</translation>
     </message>
@@ -954,8 +1017,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+2"/>
+        <source>Translating with %1...</source>
+        <translation>%1 で翻訳しています...</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Translated with %1.</source>
+        <translation>%1 で翻訳しました。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Recognized with %1. You can edit the text before copying or translating.</source>
+        <translation>%1 で認識しました。コピーや翻訳の前にテキストを編集できます。</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Translate the text as recognized, unedited, to paint it over the capture.</source>
+        <translation>キャプチャに訳文を描くには、認識したままの文字を翻訳してください。</translation>
+    </message>
+    <message>
         <source>Recognized with %1. You can edit the text before copying.</source>
-        <translation>%1 で認識しました。コピーする前にテキストを編集できます。</translation>
+        <translation type="vanished">%1 で認識しました。コピーする前にテキストを編集できます。</translation>
     </message>
 </context>
 <context>
@@ -1184,19 +1266,26 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+433"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
-        <translation>クリック：取得  ·  矢印キー：1 ピクセル移動</translation>
+        <translation type="vanished">クリック：取得  ·  矢印キー：1 ピクセル移動</translation>
     </message>
     <message>
-        <location line="+79"/>
         <source>Click: lock here  ·  Right-click: unlock</source>
-        <translation>クリック：ここに固定  ·  右クリック：固定解除</translation>
+        <translation type="vanished">クリック：ここに固定  ·  右クリック：固定解除</translation>
+    </message>
+    <message>
+        <source>Click: lock  ·  Arrows: 1 px</source>
+        <translation type="vanished">クリック：固定  ·  矢印キー：1 ピクセル移動</translation>
+    </message>
+    <message>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+511"/>
+        <source>Click: lock here  ·  Double-click: pick color  ·  Right-click: unlock</source>
+        <translation>クリック：ここに固定  ·  ダブルクリック：色を取得  ·  右クリック：固定解除</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Click: lock  ·  Arrows: 1 px</source>
-        <translation>クリック：固定  ·  矢印キー：1 ピクセル移動</translation>
+        <source>Click: lock  ·  Double-click: pick color  ·  Arrows: 1 px</source>
+        <translation>クリック：固定  ·  ダブルクリック：色を取得  ·  矢印キー：1 ピクセル移動</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1204,7 +1293,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Ctrl+C：位置をコピー  ·  Ctrl+Shift+C：色をコピー  ·  Esc：終了</translation>
     </message>
     <message>
-        <location line="+228"/>
+        <location line="+224"/>
         <location line="+12"/>
         <source>Copied %1</source>
         <translation>%1 をコピーしました</translation>
@@ -1436,17 +1525,15 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ホットキー</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Capture &amp;Window / Object:</source>
-        <translation>ウィンドウ／オブジェクトをキャプチャ(&amp;W)：</translation>
+        <translation type="vanished">ウィンドウ／オブジェクトをキャプチャ(&amp;W)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Capture &amp;Rectangular Region:</source>
-        <translation>矩形領域をキャプチャ(&amp;R)：</translation>
+        <translation type="vanished">矩形領域をキャプチャ(&amp;R)：</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+34"/>
         <source>Capture Free&amp;hand Region:</source>
         <translation>フリーハンド領域をキャプチャ(&amp;H)：</translation>
     </message>
@@ -1471,32 +1558,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>QR コードを読み取る(&amp;Q)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Recognize &amp;Text:</source>
-        <translation>テキストを認識(&amp;T)：</translation>
+        <translation type="vanished">テキストを認識(&amp;T)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Tra&amp;nslate Screenshot:</source>
-        <translation>スクリーンショット翻訳(&amp;N)：</translation>
+        <translation type="vanished">スクリーンショット翻訳(&amp;N)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>&amp;Pick Screen Color:</source>
-        <translation>画面の色を取得(&amp;P)：</translation>
+        <translation type="vanished">画面の色を取得(&amp;P)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Screen Cr&amp;osshair:</source>
-        <translation>画面クロスヘア(&amp;O)：</translation>
+        <translation type="vanished">画面クロスヘア(&amp;O)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>&amp;Scrolling Capture:</source>
-        <translation>スクロールキャプチャ(&amp;S)：</translation>
+        <translation type="vanished">スクロールキャプチャ(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+41"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>入力欄をクリックして新しいキーの組み合わせを押してください。入力欄を空にするとそのホットキーは無効になります。このウィンドウを開いている間、ホットキーは一時停止します。</translation>
     </message>
@@ -1584,13 +1666,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存先フォルダー(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-628"/>
-        <location line="+860"/>
+        <location line="-589"/>
+        <location line="+821"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-853"/>
+        <location line="-814"/>
         <source>Cl&amp;ear</source>
         <translation>クリア(&amp;E)</translation>
     </message>
@@ -1615,7 +1697,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>起動後、Glimpse は通知領域で待機します。</translation>
     </message>
     <message>
-        <location line="+452"/>
+        <location line="+210"/>
+        <source>Capture &amp;Window / Region:</source>
+        <translation>ウィンドウ／領域をキャプチャ(&amp;W)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&amp;Scrolling Capture (experimental):</source>
+        <translation>スクロールキャプチャ（試験的）(&amp;S)：</translation>
+    </message>
+    <message>
+        <location line="+78"/>
+        <source>Recognize and &amp;Translate Text:</source>
+        <translation>文字認識・翻訳(&amp;T)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Cr&amp;osshair / Color Picker:</source>
+        <translation>クロスヘア／色の取得(&amp;O)：</translation>
+    </message>
+    <message>
+        <location line="+99"/>
         <source>Toolbar &amp;size:</source>
         <translation>ツールバーのサイズ(&amp;S)：</translation>
     </message>
@@ -1705,7 +1807,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-590"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-583"/>
         <source>Tell me about new versions</source>
         <translation>新しいバージョンを知らせる</translation>
     </message>
@@ -1755,12 +1857,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+94"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+89"/>
         <source>Global hotkeys: %1</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
@@ -1807,7 +1909,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-271"/>
+        <location line="-264"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
@@ -1956,75 +2058,60 @@ Download them now? They are kept on this computer and used offline from then on.
 <context>
     <name>TranslateResultDialog</name>
     <message>
-        <location filename="../src/translate/TranslateResultDialog.ui" line="+14"/>
         <source>Translate</source>
-        <translation>翻訳</translation>
+        <translation type="vanished">翻訳</translation>
     </message>
     <message>
-        <location line="+35"/>
         <source>Recognized text (editable; paragraphs separated by blank lines)</source>
-        <translation>認識した文字（編集可。段落は空行で区切ります）</translation>
+        <translation type="vanished">認識した文字（編集可。段落は空行で区切ります）</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Translation</source>
-        <translation>翻訳</translation>
+        <translation type="vanished">翻訳</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>&amp;Into:</source>
-        <translation>翻訳先(&amp;I)：</translation>
+        <translation type="vanished">翻訳先(&amp;I)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>&amp;Translate Again</source>
-        <translation>もう一度翻訳(&amp;T)</translation>
+        <translation type="vanished">もう一度翻訳(&amp;T)</translation>
     </message>
     <message>
-        <location line="+14"/>
         <source>&amp;Copy Translation</source>
-        <translation>訳文をコピー(&amp;C)</translation>
+        <translation type="vanished">訳文をコピー(&amp;C)</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../src/translate/TranslateResultDialog.cpp" line="+261"/>
         <source>Paint the translation over the capture, where the text was</source>
-        <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
+        <translation type="vanished">訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Translated &amp;Image</source>
-        <translation>翻訳画像(&amp;I)</translation>
+        <translation type="vanished">翻訳画像(&amp;I)</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Close</source>
-        <translation>閉じる</translation>
+        <translation type="vanished">閉じる</translation>
     </message>
     <message>
-        <location filename="../src/translate/TranslateResultDialog.cpp" line="-78"/>
         <source>No text was found in the selected area.</source>
-        <translation>選択した領域に文字が見つかりませんでした。</translation>
+        <translation type="vanished">選択した領域に文字が見つかりませんでした。</translation>
     </message>
     <message>
-        <location line="+61"/>
         <source>Recognizing text...</source>
-        <translation>文字を認識しています...</translation>
+        <translation type="vanished">文字を認識しています...</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Translating with %1...</source>
-        <translation>%1 で翻訳しています...</translation>
+        <translation type="vanished">%1 で翻訳しています...</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Translated with %1.</source>
-        <translation>%1 で翻訳しました。</translation>
+        <translation type="vanished">%1 で翻訳しました。</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>Keep the paragraphs as recognized (same number) to paint them over the capture.</source>
-        <translation>訳文をキャプチャに描くには、段落の数を認識結果と同じにしてください。</translation>
+        <translation type="vanished">訳文をキャプチャに描くには、段落の数を認識結果と同じにしてください。</translation>
     </message>
 </context>
 <context>

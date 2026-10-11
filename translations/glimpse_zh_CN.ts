@@ -135,17 +135,15 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="+55"/>
         <source>Capture Window / Object</source>
-        <translation>捕捉窗口/对象</translation>
+        <translation type="vanished">捕捉窗口/对象</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Capture Rectangular Region</source>
-        <translation>捕捉矩形区域</translation>
+        <translation type="vanished">捕捉矩形区域</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location filename="../src/app/CaptureMode.h" line="+47"/>
         <source>Capture Full Screen</source>
         <translation>捕捉全屏</translation>
     </message>
@@ -155,30 +153,46 @@
         <translation>识别二维码</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+611"/>
-        <location filename="../src/app/CaptureMode.h" line="+1"/>
+        <location line="+2"/>
+        <source>Scrolling Capture (Experimental)</source>
+        <translation>滚动截图（实验性）</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureController.cpp" line="+608"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="+1"/>
-        <source>Scrolling Capture</source>
-        <translation>滚动截图</translation>
+        <location filename="../src/app/CaptureMode.h" line="-4"/>
+        <source>Capture Window / Region</source>
+        <translation>捕捉窗口/区域</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
+        <source>Recognize and Translate Text</source>
+        <translation>文字识别和翻译</translation>
+    </message>
+    <message>
+        <source>Scrolling Capture</source>
+        <translation type="vanished">滚动截图</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Capture Freehand Region</source>
         <translation>捕捉手绘区域</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Pick Screen Color</source>
-        <translation>屏幕取色</translation>
+        <source>Crosshair / Color Picker</source>
+        <translation>十字线/取色</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <source>Pick Screen Color</source>
+        <translation type="vanished">屏幕取色</translation>
+    </message>
+    <message>
         <source>Screen Crosshair</source>
-        <translation>屏幕十字线</translation>
+        <translation type="vanished">屏幕十字线</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -186,9 +200,8 @@
         <translation>录制屏幕</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Translate Screenshot</source>
-        <translation>截图翻译</translation>
+        <translation type="vanished">截图翻译</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -196,7 +209,7 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-494"/>
+        <location filename="../src/app/CaptureController.cpp" line="-492"/>
         <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
@@ -234,7 +247,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+246"/>
+        <location line="+243"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -283,7 +296,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>正在等待系统对话框……</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+40"/>
         <source>No text recognition engine is available in this build.</source>
         <translation>此版本中没有可用的文字识别引擎。</translation>
     </message>
@@ -301,7 +314,7 @@ Download them now?</source>
 现在下载吗？</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+27"/>
         <source>Translate</source>
         <translation>翻译</translation>
     </message>
@@ -342,27 +355,24 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>拖动以移动</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Capture Window / Object (mouse wheel: parent / child)</source>
-        <translation>捕捉窗口/对象（鼠标滚轮：切换父级/子级）</translation>
+        <translation type="vanished">捕捉窗口/对象（鼠标滚轮：切换父级/子级）</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+26"/>
         <source>Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Capture Rectangular Region</source>
-        <translation>捕捉矩形区域</translation>
+        <translation type="vanished">捕捉矩形区域</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Region</source>
-        <translation>区域</translation>
+        <translation type="vanished">区域</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+49"/>
         <source>Capture Freehand Region</source>
         <translation>捕捉手绘区域</translation>
     </message>
@@ -402,9 +412,23 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>录屏</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+49"/>
+        <source>Recognize Text in a Region, to copy or translate it</source>
+        <translation>识别区域中的文字，可复制或翻译</translation>
+    </message>
+    <message>
         <source>Scrolling Capture (Esc to stop)</source>
-        <translation>滚动截图（按 Esc 停止）</translation>
+        <translation type="vanished">滚动截图（按 Esc 停止）</translation>
+    </message>
+    <message>
+        <location line="-182"/>
+        <source>Capture Window / Region (click a window or drag a rectangle; mouse wheel: parent / child)</source>
+        <translation>捕捉窗口/区域（点击窗口，或拖出矩形；鼠标滚轮：切换父级/子级）</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Scrolling Capture, experimental (Esc to stop)</source>
+        <translation>滚动截图，实验性（按 Esc 停止）</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -412,7 +436,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>滚动</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+127"/>
         <source>Scan QR Code in a Region</source>
         <translation>框选区域识别二维码</translation>
     </message>
@@ -422,39 +446,38 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>二维码</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Recognize Text in a Region</source>
-        <translation>框选区域识别文字</translation>
+        <translation type="vanished">框选区域识别文字</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+26"/>
         <source>Text</source>
         <translation>文字</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Translate the Text in a Region</source>
-        <translation>翻译区域中的文字</translation>
+        <translation type="vanished">翻译区域中的文字</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Translate</source>
-        <translation>翻译</translation>
+        <translation type="vanished">翻译</translation>
     </message>
     <message>
         <location line="+23"/>
+        <source>Crosshair / Color Picker: position, color and distance (double-click: pick the color)</source>
+        <translation>十字线/取色：位置、颜色和距离（双击：取色）</translation>
+    </message>
+    <message>
         <source>Pick a Color from the Screen</source>
-        <translation>从屏幕上取色</translation>
+        <translation type="vanished">从屏幕上取色</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Color</source>
-        <translation>取色</translation>
+        <translation type="vanished">取色</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Screen Crosshair: position, color and distance</source>
-        <translation>屏幕十字线：位置、颜色和距离</translation>
+        <translation type="vanished">屏幕十字线：位置、颜色和距离</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -463,8 +486,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+317"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+640"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+310"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+633"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -933,17 +956,57 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>OcrResultDialog</name>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.ui" line="+14"/>
         <source>Recognize Text</source>
-        <translation>识别文字</translation>
+        <translation type="vanished">识别文字</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location filename="../src/ocr/OcrResultDialog.ui" line="+14"/>
+        <source>Recognize and Translate Text</source>
+        <translation>文字识别和翻译</translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Recognized text (editable; paragraphs separated by blank lines)</source>
+        <translation>识别出的文字（可编辑；段落之间用空行分隔）</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>&amp;Copy</source>
         <translation>复制(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+75"/>
+        <location line="+36"/>
+        <source>Translate &amp;into:</source>
+        <translation>翻译为(&amp;I)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Translate the recognized text, with the engine and language from the settings</source>
+        <translation>用设置中的翻译引擎和目标语言翻译识别出的文字</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Translate</source>
+        <translation>翻译(&amp;T)</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Copy Tra&amp;nslation</source>
+        <translation>复制译文(&amp;N)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+315"/>
+        <source>Paint the translation over the capture, where the text was</source>
+        <translation>把译文画在截图中原文的位置上</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Translated Ima&amp;ge</source>
+        <translation>翻译图片(&amp;G)</translation>
+    </message>
+    <message>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-27"/>
         <source>Recognizing text with %1...</source>
         <translation>正在使用 %1 识别文字...</translation>
     </message>
@@ -954,8 +1017,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+2"/>
+        <source>Translating with %1...</source>
+        <translation>正在用 %1 翻译...</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Translated with %1.</source>
+        <translation>已用 %1 翻译。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Recognized with %1. You can edit the text before copying or translating.</source>
+        <translation>已使用 %1 识别。复制或翻译前可以修改文字。</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Translate the text as recognized, unedited, to paint it over the capture.</source>
+        <translation>要把译文画在截图上，请翻译未经修改的识别结果。</translation>
+    </message>
+    <message>
         <source>Recognized with %1. You can edit the text before copying.</source>
-        <translation>已使用 %1 识别。复制前可以修改文字。</translation>
+        <translation type="vanished">已使用 %1 识别。复制前可以修改文字。</translation>
     </message>
 </context>
 <context>
@@ -1184,19 +1266,26 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+433"/>
         <source>Click: pick  ·  Arrows: 1 px</source>
-        <translation>单击：取色  ·  方向键：移动 1 像素</translation>
+        <translation type="vanished">单击：取色  ·  方向键：移动 1 像素</translation>
     </message>
     <message>
-        <location line="+79"/>
         <source>Click: lock here  ·  Right-click: unlock</source>
-        <translation>单击：锁定到此处  ·  右键：解除锁定</translation>
+        <translation type="vanished">单击：锁定到此处  ·  右键：解除锁定</translation>
+    </message>
+    <message>
+        <source>Click: lock  ·  Arrows: 1 px</source>
+        <translation type="vanished">单击：锁定  ·  方向键：移动 1 像素</translation>
+    </message>
+    <message>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+511"/>
+        <source>Click: lock here  ·  Double-click: pick color  ·  Right-click: unlock</source>
+        <translation>单击：锁定到此处  ·  双击：取色  ·  右键：解除锁定</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Click: lock  ·  Arrows: 1 px</source>
-        <translation>单击：锁定  ·  方向键：移动 1 像素</translation>
+        <source>Click: lock  ·  Double-click: pick color  ·  Arrows: 1 px</source>
+        <translation>单击：锁定  ·  双击：取色  ·  方向键：移动 1 像素</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1204,7 +1293,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Ctrl+C：复制位置  ·  Ctrl+Shift+C：复制颜色  ·  Esc：退出</translation>
     </message>
     <message>
-        <location line="+228"/>
+        <location line="+224"/>
         <location line="+12"/>
         <source>Copied %1</source>
         <translation>已复制 %1</translation>
@@ -1436,17 +1525,15 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>快捷键</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Capture &amp;Window / Object:</source>
-        <translation>捕捉窗口/对象(&amp;W)：</translation>
+        <translation type="vanished">捕捉窗口/对象(&amp;W)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Capture &amp;Rectangular Region:</source>
-        <translation>捕捉矩形区域(&amp;R)：</translation>
+        <translation type="vanished">捕捉矩形区域(&amp;R)：</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+34"/>
         <source>Capture Free&amp;hand Region:</source>
         <translation>捕捉手绘区域(&amp;H)：</translation>
     </message>
@@ -1471,32 +1558,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>识别二维码(&amp;Q)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Recognize &amp;Text:</source>
-        <translation>识别文字(&amp;T)：</translation>
+        <translation type="vanished">识别文字(&amp;T)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Tra&amp;nslate Screenshot:</source>
-        <translation>截图翻译(&amp;N)：</translation>
+        <translation type="vanished">截图翻译(&amp;N)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>&amp;Pick Screen Color:</source>
-        <translation>屏幕取色(&amp;P)：</translation>
+        <translation type="vanished">屏幕取色(&amp;P)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Screen Cr&amp;osshair:</source>
-        <translation>屏幕十字线(&amp;O)：</translation>
+        <translation type="vanished">屏幕十字线(&amp;O)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>&amp;Scrolling Capture:</source>
-        <translation>滚动截图(&amp;S)：</translation>
+        <translation type="vanished">滚动截图(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+41"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>点击输入框后按下新的组合键。清空输入框即可禁用该快捷键。此窗口打开期间，快捷键暂停生效。</translation>
     </message>
@@ -1584,13 +1666,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存文件夹(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-628"/>
-        <location line="+860"/>
+        <location line="-589"/>
+        <location line="+821"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-853"/>
+        <location line="-814"/>
         <source>Cl&amp;ear</source>
         <translation>清空(&amp;E)</translation>
     </message>
@@ -1615,7 +1697,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>启动后 Glimpse 在通知区域（托盘）中待命。</translation>
     </message>
     <message>
-        <location line="+452"/>
+        <location line="+210"/>
+        <source>Capture &amp;Window / Region:</source>
+        <translation>捕捉窗口/区域(&amp;W)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&amp;Scrolling Capture (experimental):</source>
+        <translation>滚动截图（实验性）(&amp;S)：</translation>
+    </message>
+    <message>
+        <location line="+78"/>
+        <source>Recognize and &amp;Translate Text:</source>
+        <translation>文字识别和翻译(&amp;T)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Cr&amp;osshair / Color Picker:</source>
+        <translation>十字线/取色(&amp;O)：</translation>
+    </message>
+    <message>
+        <location line="+99"/>
         <source>Toolbar &amp;size:</source>
         <translation>工具栏大小(&amp;S)：</translation>
     </message>
@@ -1705,7 +1807,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-590"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-583"/>
         <source>Tell me about new versions</source>
         <translation>有新版本时提醒我</translation>
     </message>
@@ -1755,12 +1857,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+94"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+89"/>
         <source>Global hotkeys: %1</source>
         <translation>全局快捷键：%1</translation>
     </message>
@@ -1807,7 +1909,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-271"/>
+        <location line="-264"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
@@ -1956,75 +2058,60 @@ Download them now? They are kept on this computer and used offline from then on.
 <context>
     <name>TranslateResultDialog</name>
     <message>
-        <location filename="../src/translate/TranslateResultDialog.ui" line="+14"/>
         <source>Translate</source>
-        <translation>翻译</translation>
+        <translation type="vanished">翻译</translation>
     </message>
     <message>
-        <location line="+35"/>
         <source>Recognized text (editable; paragraphs separated by blank lines)</source>
-        <translation>识别出的文字（可编辑；段落之间用空行分隔）</translation>
+        <translation type="vanished">识别出的文字（可编辑；段落之间用空行分隔）</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Translation</source>
-        <translation>翻译</translation>
+        <translation type="vanished">翻译</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>&amp;Into:</source>
-        <translation>翻译为(&amp;I)：</translation>
+        <translation type="vanished">翻译为(&amp;I)：</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>&amp;Translate Again</source>
-        <translation>重新翻译(&amp;T)</translation>
+        <translation type="vanished">重新翻译(&amp;T)</translation>
     </message>
     <message>
-        <location line="+14"/>
         <source>&amp;Copy Translation</source>
-        <translation>复制译文(&amp;C)</translation>
+        <translation type="vanished">复制译文(&amp;C)</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../src/translate/TranslateResultDialog.cpp" line="+261"/>
         <source>Paint the translation over the capture, where the text was</source>
-        <translation>把译文画在截图中原文的位置上</translation>
+        <translation type="vanished">把译文画在截图中原文的位置上</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Translated &amp;Image</source>
-        <translation>翻译图片(&amp;I)</translation>
+        <translation type="vanished">翻译图片(&amp;I)</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Close</source>
-        <translation>关闭</translation>
+        <translation type="vanished">关闭</translation>
     </message>
     <message>
-        <location filename="../src/translate/TranslateResultDialog.cpp" line="-78"/>
         <source>No text was found in the selected area.</source>
-        <translation>所选区域中没有找到文字。</translation>
+        <translation type="vanished">所选区域中没有找到文字。</translation>
     </message>
     <message>
-        <location line="+61"/>
         <source>Recognizing text...</source>
-        <translation>正在识别文字...</translation>
+        <translation type="vanished">正在识别文字...</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Translating with %1...</source>
-        <translation>正在用 %1 翻译...</translation>
+        <translation type="vanished">正在用 %1 翻译...</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Translated with %1.</source>
-        <translation>已用 %1 翻译。</translation>
+        <translation type="vanished">已用 %1 翻译。</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>Keep the paragraphs as recognized (same number) to paint them over the capture.</source>
-        <translation>段落数量需与识别结果一致，才能把译文画到截图上。</translation>
+        <translation type="vanished">段落数量需与识别结果一致，才能把译文画到截图上。</translation>
     </message>
 </context>
 <context>
