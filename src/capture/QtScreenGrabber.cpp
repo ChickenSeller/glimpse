@@ -7,6 +7,8 @@
 #include <QPixmap>
 #include <QScreen>
 
+#include <cmath>
+
 void QtScreenGrabber::grab()
 {
     DesktopSnapshot snapshot;
@@ -20,9 +22,14 @@ void QtScreenGrabber::grab()
         shot.name = screen->name();
         shot.geometry = screen->geometry();
         shot.image = pixmap.toImage();
-        // Derive the ratio from the actual pixel count rather than trusting
-        // whatever the platform plugin stamped on the pixmap.
-        shot.image.setDevicePixelRatio(shot.image.width() / qreal(shot.geometry.width()));
+        // The screen's own ratio, which windows are placed with. Derived from
+        // the pixel count instead where the two disagree: at 150% a 2560 px
+        // screen is 1706.67 logical px wide, reported as 1707, and a ratio
+        // derived from that would put crops a pixel off.
+        const qreal stated = screen->devicePixelRatio();
+        const qreal derived = shot.image.width() / qreal(shot.geometry.width());
+        const bool fits = std::abs(shot.image.width() - shot.geometry.width() * stated) <= 1.0;
+        shot.image.setDevicePixelRatio(fits ? stated : derived);
         snapshot.screens.append(shot);
     }
 

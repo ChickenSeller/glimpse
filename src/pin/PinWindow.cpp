@@ -98,11 +98,12 @@ PinWindow::PinWindow(const QImage &image, const QRect &logicalRect)
 }
 
 // The window's size for `zoom`: the image's own logical size (its pixels
-// over the scale of the screen it was captured on), rounded up.
+// over the scale of the screen it was captured on), rounded the way Qt
+// rounds it back to native pixels, so a pin cut to its window fits it.
 QSize PinWindow::logicalSize(qreal zoom) const
 {
     const QSizeF size = QSizeF(m_image.size()) * zoom / m_image.devicePixelRatio();
-    return QSize(std::max(1, int(std::ceil(size.width() - 1e-6))), std::max(1, int(std::ceil(size.height() - 1e-6))));
+    return QSize(std::max(1, qRound(size.width())), std::max(1, qRound(size.height())));
 }
 
 void PinWindow::paintEvent(QPaintEvent *)
@@ -125,12 +126,32 @@ void PinWindow::paintEvent(QPaintEvent *)
     p.setRenderHint(QPainter::SmoothPixmapTransform, std::abs(scale - std::round(scale)) > 1e-6);
     p.drawImage(target, source);
 
-    // While pointed at: one screen pixel over the image's outermost pixels,
+    // The window is whole logical pixels, so at fractional scaling (150%) it
+    // can be a screen pixel or two larger than the image: its last column and
+    // row are drawn on into that gap rather than leave a strip of background.
+    const QSizeF window(std::ceil(width() * dpr), std::ceil(height() * dpr));
+    const qreal lastX = source.width() - 1;
+    const qreal lastY = source.height() - 1;
+    if (target.right() < window.width()) {
+        p.drawImage(QRectF(target.right(), 0, window.width() - target.right(), target.height()), source,
+                    QRectF(lastX, 0, 1, source.height()));
+    }
+    if (target.bottom() < window.height()) {
+        p.drawImage(QRectF(0, target.bottom(), target.width(), window.height() - target.bottom()), source,
+                    QRectF(0, lastY, source.width(), 1));
+    }
+    if (target.right() < window.width() && target.bottom() < window.height()) {
+        p.drawImage(QRectF(target.right(), target.bottom(), window.width() - target.right(), window.height() - target.bottom()),
+                    source, QRectF(lastX, lastY, 1, 1));
+    }
+
+    // While pointed at: one screen pixel just inside the window's edge,
     // showing where the pin ends against whatever is behind it.
     if (m_hovered) {
         p.setPen(QPen(kAccent, 1));
         p.setBrush(Qt::NoBrush);
-        p.drawRect(QRectF(target.topLeft(), target.size()).adjusted(0.5, 0.5, -0.5, -0.5));
+        const QSizeF edge(std::round(width() * dpr), std::round(height() * dpr));
+        p.drawRect(QRectF(QPointF(0, 0), edge).adjusted(0.5, 0.5, -0.5, -0.5));
     }
     p.restore();
 

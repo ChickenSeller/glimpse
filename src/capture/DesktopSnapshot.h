@@ -50,6 +50,11 @@ public:
     // The area inside a logical outline, cropped to its bounding box; pixels
     // outside the outline are `outside` (transparent by default).
     QImage crop(const QPainterPath &logicalShape, const QColor &outside = Qt::transparent) const;
+    // The native pixels a window placed over `logicalRect` covers: Qt rounds
+    // a window's position and size to native pixels, where crop() takes every
+    // pixel the rect touches. At fractional scaling (150%) the two differ by
+    // a pixel; a pin shown where it was taken needs this one.
+    QImage cropAsWindow(const QRect &logicalRect) const;
 
     // The windows/controls under `pos`, from the top-level window inward.
     QList<CaptureTarget> targetsAt(const QPoint &pos) const;

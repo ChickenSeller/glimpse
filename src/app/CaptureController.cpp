@@ -407,6 +407,11 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
         selector->deleteLater();
         const QPainterPath shape = selector->shape();
         m_pinRect = rect;
+        if (m_mode == Mode::Pin && shape.isEmpty()) {
+            // Exactly the pixels its window will cover, so it seems to stay put.
+            deliver(selector->snapshot().cropAsWindow(rect));
+            return;
+        }
         deliver(shape.isEmpty() ? selector->snapshot().crop(rect)
                                 : selector->snapshot().crop(shape, AppSettings::freehandFill()));
     });

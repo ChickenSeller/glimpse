@@ -12,6 +12,21 @@ QRect DesktopSnapshot::virtualGeometry() const
     return result;
 }
 
+QImage DesktopSnapshot::cropAsWindow(const QRect &logicalRect) const
+{
+    for (const ScreenImage &screen : screens) {
+        if (!screen.geometry.contains(logicalRect))
+            continue;
+        const qreal dpr = screen.image.devicePixelRatio();
+        const QRect local = logicalRect.translated(-screen.geometry.topLeft());
+        const QRect source(qRound(local.x() * dpr), qRound(local.y() * dpr), qRound(local.width() * dpr),
+                           qRound(local.height() * dpr));
+        return screen.image.copy(source.intersected(screen.image.rect()));
+    }
+    // Across monitors there is no one scale to place it by.
+    return crop(logicalRect);
+}
+
 QImage DesktopSnapshot::crop(const QRect &logicalRect) const
 {
     const QRect area = logicalRect.intersected(virtualGeometry());
