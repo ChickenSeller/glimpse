@@ -1345,12 +1345,55 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RulerWindow</name>
     <message>
-        <location filename="../src/ruler/RulerWindow.cpp" line="+249"/>
+        <location filename="../src/ruler/RulerWindow.cpp" line="+334"/>
         <location line="+3"/>
         <location line="+8"/>
         <location line="+7"/>
         <source>%1 px</source>
         <translation>%1 px</translation>
+    </message>
+    <message>
+        <location line="+113"/>
+        <source>Δx %1  Δy %2  ·  %3 px</source>
+        <translation>Δx %1  Δy %2  ·  %3 px</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>On the cross: no angle</source>
+        <translation>在交叉点上：没有角度</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>To the x-axis %1</source>
+        <translation>与 X 轴 %1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>To the y-axis %1</source>
+        <translation>与 Y 轴 %1</translation>
+    </message>
+    <message>
+        <location line="+120"/>
+        <source>Angles in &amp;Degrees</source>
+        <translation>角度制(&amp;D)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Angles in &amp;Radians (× π)</source>
+        <translation>弧度制，以 π 为单位(&amp;R)</translation>
+    </message>
+    <message>
+        <source>To the x-axis %1°</source>
+        <translation type="vanished">与 X 轴 %1°</translation>
+    </message>
+    <message>
+        <source>To the y-axis %1°</source>
+        <translation type="vanished">与 Y 轴 %1°</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity  ·  Hold Ctrl: angle</source>
+        <translation>拖动两端：长度  ·  方向键：移动  ·  Ctrl+方向键：长度  ·  Ctrl+滚轮：不透明度  ·  按住 Ctrl：角度</translation>
     </message>
     <message>
         <source>Vertical</source>
@@ -1361,17 +1404,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">水平</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="-45"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
     <message>
-        <location line="+31"/>
         <source>Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity</source>
-        <translation>拖动两端：长度  ·  方向键：移动  ·  Ctrl+方向键：长度  ·  Ctrl+滚轮：不透明度</translation>
+        <translation type="vanished">拖动两端：长度  ·  方向键：移动  ·  Ctrl+方向键：长度  ·  Ctrl+滚轮：不透明度</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+75"/>
         <source>Screen Ruler</source>
         <translation>屏幕标尺</translation>
     </message>

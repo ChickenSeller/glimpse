@@ -6,6 +6,7 @@
 #include <optional>
 
 class QAction;
+class RulerAngleOverlay;
 
 // An on-screen ruler in screen pixels: a horizontal and a vertical arm in a
 // cross, see-through, on top of everything. Only the arms' measuring edges,
@@ -14,7 +15,9 @@ class QAction;
 // wherever on the screen the pointer is, and tells how far it is from the
 // cross. Drag the ruler to move it, drag an arm's end to change its
 // length; arrows nudge it, Ctrl+arrows change the arms' lengths.
-// Ctrl+scroll makes it fainter; double-click or Esc closes it.
+// Ctrl+scroll makes it fainter; double-click or Esc closes it. Holding Ctrl
+// shows the line from the cross to the pointer, its angles to the x- and
+// y-axes and their sines, cosines and tangents.
 class RulerWindow : public QWidget
 {
     Q_OBJECT
@@ -55,6 +58,7 @@ private:
     void setLayout(const QRect &geometry, const QPoint &cross);
     void keepOnScreen();
     void pollPointer();
+    void updateAngle(const Measure &m);
     void setHovered(bool hovered);
     void showHint(const QString &text);
     void retranslate();
@@ -70,4 +74,6 @@ private:
     QTimer m_hintTimer;
     QTimer m_pointerTimer;
     QAction *m_closeAction;
+    RulerAngleOverlay *m_angle = nullptr; // while Ctrl is held
+    bool m_radians = false;               // angles in radians (as multiples of π), not degrees
 };

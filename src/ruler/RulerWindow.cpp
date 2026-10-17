@@ -3,6 +3,7 @@
 #include "capture/Platform.h"
 
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QContextMenuEvent>
@@ -19,11 +20,14 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
+#include <tuple>
 
 namespace {
 
 const QString kSizeKey = QStringLiteral("ruler/size");
 const QString kCrossKey = QStringLiteral("ruler/cross");
+const QString kRadiansKey = QStringLiteral("ruler/radians");
 
 // Dark marks with a light halo, to show on light and dark backgrounds alike.
 const QColor kInk(0x20, 0x20, 0x20);
@@ -75,6 +79,86 @@ void drawReadout(QPainter &p, const QRectF &box, const QString &text)
 
 } // namespace
 
+// While Ctrl is held: the line from the ruler's cross to the pointer, arcs
+// for its angles to the axes, and the figures beside the pointer. Over the
+// whole screen, see-through, and never in the mouse's way.
+class RulerAngleOverlay : public QWidget
+{
+public:
+    explicit RulerAngleOverlay(QWidget *ruler)
+        : QWidget(ruler, Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint
+                             | Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus)
+    {
+        setAttribute(Qt::WA_TranslucentBackground);
+        setAttribute(Qt::WA_ShowWithoutActivating);
+    }
+
+    // Local logical positions, and the text beside the pointer.
+    void set(const QPointF &cross, const QPointF &pointer, const QStringList &lines)
+    {
+        if (cross == m_cross && pointer == m_pointer && lines == m_lines)
+            return;
+        m_cross = cross;
+        m_pointer = pointer;
+        m_lines = lines;
+        update();
+    }
+
+protected:
+    void paintEvent(QPaintEvent *) override
+    {
+        QPainter p(this);
+        p.setRenderHint(QPainter::Antialiasing);
+        const QLineF line(m_cross, m_pointer);
+        if (line.length() >= 1) {
+            for (const auto &[color, width] : {std::pair{kHalo, 3.5}, std::pair{kPointer, 1.5}}) {
+                p.setPen(QPen(color, width, Qt::SolidLine, Qt::RoundCap));
+                p.drawLine(line);
+            }
+            // The angle to the x-axis, and the one to the y-axis further out,
+            // each from the nearer half of its axis.
+            const QPointF d = m_pointer - m_cross;
+            const qreal angle = std::atan2(-d.y(), d.x()) * 180 / std::numbers::pi; // counterclockwise, as drawArc
+            const qreal fromX = d.x() >= 0 ? 0 : 180;
+            const qreal fromY = d.y() <= 0 ? 90 : -90;
+            const auto span = [angle](qreal from) { return std::remainder(angle - from, 360.0); };
+            const qreal reach = std::min(line.length(), 24.0);
+            for (const auto &[from, radius, style] : {std::tuple{fromX, reach * 0.65, Qt::SolidLine},
+                                                      std::tuple{fromY, reach, Qt::DashLine}}) {
+                const QRectF box(m_cross - QPointF(radius, radius), QSizeF(2 * radius, 2 * radius));
+                p.setPen(QPen(kHalo, 3));
+                p.drawArc(box, qRound(from * 16), qRound(span(from) * 16));
+                p.setPen(QPen(kPointer, 1.2, style));
+                p.drawArc(box, qRound(from * 16), qRound(span(from) * 16));
+            }
+        }
+
+        // Beside the pointer, kept on the screen.
+        const QFontMetrics fm = p.fontMetrics();
+        int width = 0;
+        for (const QString &text : std::as_const(m_lines))
+            width = std::max(width, fm.horizontalAdvance(text));
+        const QSizeF size(width + 16, m_lines.size() * fm.height() + 10);
+        QPointF topLeft = m_pointer + QPointF(18, 18);
+        if (topLeft.x() + size.width() > this->width())
+            topLeft.setX(m_pointer.x() - 18 - size.width());
+        if (topLeft.y() + size.height() > height())
+            topLeft.setY(m_pointer.y() - 18 - size.height());
+        const QRectF box(topLeft, size);
+        p.setPen(Qt::NoPen);
+        p.setBrush(QColor(0, 0, 0, 200));
+        p.drawRoundedRect(box, 4, 4);
+        p.setPen(Qt::white);
+        for (qsizetype i = 0; i < m_lines.size(); ++i)
+            p.drawText(QPointF(box.left() + 8, box.top() + 5 + fm.ascent() + i * fm.height()), m_lines.at(i));
+    }
+
+private:
+    QPointF m_cross;
+    QPointF m_pointer;
+    QStringList m_lines;
+};
+
 RulerWindow::RulerWindow()
     : QWidget(nullptr, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool)
 {
@@ -116,6 +200,7 @@ RulerWindow::RulerWindow()
     const QSize size = settings.value(kSizeKey, kDefaultSize).toSize().expandedTo(QSize(2, 2) * kThickness);
     const QPoint middle(size.width() / 2, size.height() / 2);
     const QPoint cross = settings.value(kCrossKey, middle).toPoint();
+    m_radians = settings.value(kRadiansKey, false).toBool();
     setLayout(QRect(screen->geometry().center() - cross, size), cross);
     keepOnScreen();
 }
@@ -351,6 +436,55 @@ void RulerWindow::pollPointer()
     const Measure m = measure();
     if (pointerAlong(m.size, m.pointer) != m_paintedPointer)
         update();
+    updateAngle(m);
+}
+
+// Shown while Ctrl is held anywhere, figured in screen pixels like the
+// arms' readouts.
+void RulerWindow::updateAngle(const Measure &m)
+{
+    const bool held = QGuiApplication::queryKeyboardModifiers() & Qt::ControlModifier;
+    if (!held || m_resizing != End::None || !isVisible()) {
+        if (m_angle)
+            m_angle->hide();
+        return;
+    }
+    if (!m_angle)
+        m_angle = new RulerAngleOverlay(this);
+    const QScreen *screen = this->screen();
+    if (m_angle->geometry() != screen->geometry())
+        m_angle->setGeometry(screen->geometry());
+
+    const qreal dpr = devicePixelRatioF();
+    const QPoint cross(qRound(m_cross.x() * dpr), qRound(m_cross.y() * dpr));
+    const QPoint d = m.pointer - cross; // right and down are positive, as on the arms
+    const QPointF crossAt = QPointF(geometry().topLeft() - screen->geometry().topLeft())
+                            + (QPointF(cross) + QPointF(0.5, 0.5)) / dpr;
+
+    QStringList lines;
+    lines << tr("Δx %1  Δy %2  ·  %3 px").arg(d.x()).arg(d.y()).arg(std::hypot(d.x(), d.y()), 0, 'f', 1);
+    if (d.isNull()) {
+        lines << tr("On the cross: no angle");
+    } else {
+        // The acute angles to the axes, which add up to 90° (π/2).
+        const qreal toX = std::atan2(std::abs(d.y()), std::abs(d.x()));
+        const auto angleText = [this](qreal angle) {
+            return m_radians ? QString::number(angle / std::numbers::pi, 'f', 4) + QStringLiteral("π")
+                             : QString::number(angle * 180 / std::numbers::pi, 'f', 2) + QStringLiteral("°");
+        };
+        const auto figures = [](qreal angle) {
+            const QString tan = std::abs(std::cos(angle)) < 1e-12 ? QStringLiteral("∞")
+                                                                 : QString::number(std::tan(angle), 'f', 4);
+            return QStringLiteral("sin %1   cos %2   tan %3")
+                .arg(QString::number(std::sin(angle), 'f', 4), QString::number(std::cos(angle), 'f', 4), tan);
+        };
+        const qreal toY = std::numbers::pi / 2 - toX;
+        lines << tr("To the x-axis %1").arg(angleText(toX)) + QStringLiteral("   ") + figures(toX);
+        lines << tr("To the y-axis %1").arg(angleText(toY)) + QStringLiteral("   ") + figures(toY);
+    }
+    m_angle->set(crossAt, crossAt + QPointF(d) / dpr, lines);
+    if (!m_angle->isVisible())
+        m_angle->show();
 }
 
 void RulerWindow::mousePressEvent(QMouseEvent *event)
@@ -464,9 +598,23 @@ void RulerWindow::keyPressEvent(QKeyEvent *event)
 void RulerWindow::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu menu(this);
+    // The unit of the angles shown while Ctrl is held.
+    auto *units = new QActionGroup(&menu);
+    QAction *degrees = menu.addAction(tr("Angles in &Degrees"));
+    QAction *radians = menu.addAction(tr("Angles in &Radians (× π)"));
+    for (QAction *action : {degrees, radians}) {
+        action->setCheckable(true);
+        units->addAction(action);
+    }
+    (m_radians ? radians : degrees)->setChecked(true);
+    connect(units, &QActionGroup::triggered, this, [this, radians](QAction *action) {
+        m_radians = action == radians;
+        QSettings().setValue(kRadiansKey, m_radians);
+    });
+    menu.addSeparator();
     menu.addAction(m_closeAction);
     menu.addSeparator();
-    QAction *help = menu.addAction(tr("Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity"));
+    QAction *help = menu.addAction(tr("Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity  ·  Hold Ctrl: angle"));
     help->setEnabled(false);
     menu.exec(event->globalPos());
 }
