@@ -81,6 +81,9 @@ int main(int argc, char *argv[])
 
     // The app lives in the tray / floating toolbar; closing an editor must not quit it.
     QApplication::setQuitOnLastWindowClosed(false);
+    // Qt's own slide-down for combo box lists, on top of the window system's
+    // animation of the popup, makes a list drop down and then jump.
+    QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false);
 #ifdef Q_OS_LINUX
     QGuiApplication::setDesktopFileName(QStringLiteral("glimpse"));
 #endif
