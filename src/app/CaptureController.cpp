@@ -15,6 +15,7 @@
 #include "overlay/RegionSelector.h"
 #include "pin/PinWindow.h"
 #include "ruler/RulerWindow.h"
+#include "whiteboard/WhiteboardCanvas.h"
 #include "qr/BarcodeScanner.h"
 #include "record/RecordingDoneDialog.h"
 #include "record/RecordingSession.h"
@@ -29,6 +30,7 @@
 #include "update/UsageStats.h"
 
 #include <QApplication>
+#include <QCursor>
 #include <QDateTime>
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -38,6 +40,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScreen>
 #include <QSystemTrayIcon>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -286,6 +289,22 @@ void CaptureController::startCapture(Mode mode, bool afterFade)
         ruler->show();
         ruler->raise();
         ruler->activateWindow();
+        return;
+    }
+    if (mode == Mode::Whiteboard) {
+        // Again while one is open: from drawing to working the programs
+        // below it, and back.
+        if (m_whiteboard) {
+            m_whiteboard->setPassThrough(!m_whiteboard->passThrough());
+            return;
+        }
+        QScreen *screen = QGuiApplication::screenAt(QCursor::pos());
+        if (!screen)
+            screen = QGuiApplication::primaryScreen();
+        m_whiteboard = new WhiteboardCanvas(screen);
+        m_whiteboard->show();
+        m_whiteboard->raise();
+        m_whiteboard->activateWindow();
         return;
     }
     m_busy = true;

@@ -27,6 +27,7 @@ QString hotkeySettingsKey(CaptureMode mode)
     case CaptureMode::Recording: return QStringLiteral("hotkeys/recording");
     case CaptureMode::Pin: return QStringLiteral("hotkeys/pin");
     case CaptureMode::Ruler: return QStringLiteral("hotkeys/ruler");
+    case CaptureMode::Whiteboard: return QStringLiteral("hotkeys/whiteboard");
     }
     return {};
 }
@@ -52,6 +53,8 @@ QKeySequence defaultHotkey(CaptureMode mode)
     case CaptureMode::Scrolling: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_9);
     case CaptureMode::Pin: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_P); // P for pin
     case CaptureMode::Ruler: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_7); // beside the crosshair
+    // Not W: WeChat has Ctrl+Alt+W.
+    case CaptureMode::Whiteboard: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_2);
     }
     return {};
 }

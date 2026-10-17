@@ -31,5 +31,20 @@
         <file>icons/fit_page_height.svg</file>
         <file>icons/timer.svg</file>
         <file>icons/screenshot_monitor.svg</file>
+        <file>icons/arrow_selector_tool.svg</file>
+        <file>icons/circle.svg</file>
+        <file>icons/close.svg</file>
+        <file>icons/delete.svg</file>
+        <file>icons/draw.svg</file>
+        <file>icons/horizontal_rule.svg</file>
+        <file>icons/ink_eraser.svg</file>
+        <file>icons/ink_highlighter.svg</file>
+        <file>icons/line_weight.svg</file>
+        <file>icons/north_east.svg</file>
+        <file>icons/rectangle.svg</file>
+        <file>icons/redo.svg</file>
+        <file>icons/stylus.svg</file>
+        <file>icons/undo.svg</file>
+        <file>icons/wallpaper.svg</file>
     </qresource>
 </RCC>

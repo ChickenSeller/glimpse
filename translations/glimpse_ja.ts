@@ -143,7 +143,7 @@
         <translation type="vanished">矩形領域をキャプチャ</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="+49"/>
+        <location filename="../src/app/CaptureMode.h" line="+51"/>
         <source>Capture Full Screen</source>
         <translation>全画面をキャプチャ</translation>
     </message>
@@ -163,12 +163,17 @@
         <translation>スクリーンルーラー</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+622"/>
+        <location line="+1"/>
+        <source>Screen Whiteboard</source>
+        <translation>スクリーンペン</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureController.cpp" line="+641"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="-9"/>
+        <location filename="../src/app/CaptureMode.h" line="-10"/>
         <source>Capture Window / Region</source>
         <translation>ウィンドウ／領域をキャプチャ</translation>
     </message>
@@ -214,7 +219,7 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-505"/>
+        <location filename="../src/app/CaptureController.cpp" line="-521"/>
         <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
@@ -252,7 +257,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+256"/>
+        <location line="+272"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -427,11 +432,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>スクリーンルーラー：ピクセル単位で水平・垂直に測る</translation>
     </message>
     <message>
+        <location line="+26"/>
+        <source>Screen Whiteboard: draw over the live screen, a frozen one, or a whiteboard</source>
+        <translation>スクリーンペン：ライブの画面、静止した画面、ホワイトボードに描く</translation>
+    </message>
+    <message>
         <source>Scrolling Capture (Esc to stop)</source>
         <translation type="vanished">スクロールキャプチャ（Esc で停止）</translation>
     </message>
     <message>
-        <location line="-234"/>
+        <location line="-260"/>
         <source>Capture Window / Region (click a window or drag a rectangle; mouse wheel: parent / child)</source>
         <translation>ウィンドウ／領域をキャプチャ（ウィンドウをクリック、または矩形をドラッグ。マウスホイール：親／子を切り替え）</translation>
     </message>
@@ -504,9 +514,18 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ルーラー</translation>
     </message>
     <message>
+        <source>Screen Whiteboard: draw over the live screen, a frozen one, or a white or black board</source>
+        <translation type="vanished">スクリーンペン：ライブの画面、静止した画面、ホワイトボードやブラックボードに描く</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Whiteboard</source>
+        <translation>ペン</translation>
+    </message>
+    <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+314"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+634"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+315"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+635"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -1115,7 +1134,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+176"/>
+        <location filename="../src/capture/Platform.cpp" line="+177"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 ではまだ利用できません。</translation>
     </message>
@@ -1326,7 +1345,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RulerWindow</name>
     <message>
-        <location filename="../src/ruler/RulerWindow.cpp" line="+241"/>
+        <location filename="../src/ruler/RulerWindow.cpp" line="+249"/>
         <location line="+3"/>
         <location line="+8"/>
         <location line="+7"/>
@@ -1352,7 +1371,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>端をドラッグ：長さ  ·  矢印キー：移動  ·  Ctrl+矢印キー：長さ  ·  Ctrl+スクロール：不透明度</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+30"/>
         <source>Screen Ruler</source>
         <translation>スクリーンルーラー</translation>
     </message>
@@ -1644,7 +1663,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">スクロールキャプチャ(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+67"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>入力欄をクリックして新しいキーの組み合わせを押してください。入力欄を空にするとそのホットキーは無効になります。このウィンドウを開いている間、ホットキーは一時停止します。</translation>
     </message>
@@ -1732,13 +1751,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存先フォルダー(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-602"/>
-        <location line="+834"/>
+        <location line="-615"/>
+        <location line="+847"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-827"/>
+        <location line="-840"/>
         <source>Cl&amp;ear</source>
         <translation>クリア(&amp;E)</translation>
     </message>
@@ -1786,6 +1805,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+13"/>
         <source>Screen R&amp;uler:</source>
         <translation>スクリーンルーラー(&amp;U):</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Screen White&amp;board:</source>
+        <translation>スクリーンペン(&amp;B):</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -1878,7 +1902,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-584"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-585"/>
         <source>Tell me about new versions</source>
         <translation>新しいバージョンを知らせる</translation>
     </message>
@@ -1928,7 +1952,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+96"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -1980,7 +2004,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-265"/>
+        <location line="-266"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
@@ -2286,6 +2310,238 @@ Install the package for your system from the download page.</source>
         <location line="+22"/>
         <source>Could not start the update.</source>
         <translation>更新を開始できませんでした。</translation>
+    </message>
+</context>
+<context>
+    <name>WhiteboardCanvas</name>
+    <message>
+        <location filename="../src/whiteboard/WhiteboardCanvas.cpp" line="+74"/>
+        <location line="+410"/>
+        <source>Screen Whiteboard</source>
+        <translation>スクリーンペン</translation>
+    </message>
+    <message>
+        <location line="-332"/>
+        <source>The mouse works the programs below; the drawing stays</source>
+        <translation>マウスで下のプログラムを操作できます。描いた内容は残ります</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Drawing</source>
+        <translation>描画</translation>
+    </message>
+    <message>
+        <location line="+430"/>
+        <source>Copied</source>
+        <translation>コピーしました</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Saved</source>
+        <translation>保存しました</translation>
+    </message>
+</context>
+<context>
+    <name>WhiteboardToolbar</name>
+    <message>
+        <location filename="../src/whiteboard/WhiteboardToolbar.ui" line="+6"/>
+        <source>Screen Whiteboard</source>
+        <translation>スクリーンペン</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Drag to Move</source>
+        <translation>ドラッグして移動</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Move</source>
+        <translation>移動</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Pen (P)</source>
+        <translation>ペン (P)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pen</source>
+        <translation>ペン</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Highlighter (H)</source>
+        <translation>蛍光ペン (H)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Highlighter</source>
+        <translation>蛍光ペン</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Line (L, Shift: 45° steps)</source>
+        <translation>直線（L、Shift：45° 単位）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Line</source>
+        <translation>直線</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Arrow (A, Shift: 45° steps)</source>
+        <translation>矢印（A、Shift：45° 単位）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Arrow</source>
+        <translation>矢印</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Rectangle (R, Shift: square)</source>
+        <translation>四角形（R、Shift：正方形）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Rectangle</source>
+        <translation>四角形</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Ellipse (O, Shift: circle)</source>
+        <translation>楕円（O、Shift：正円）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ellipse</source>
+        <translation>楕円</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Eraser: removes whole strokes (E)</source>
+        <translation>消しゴム：ひと筆ごと消す (E)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Eraser</source>
+        <translation>消しゴム</translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Line Width ([ and ])</source>
+        <translation>線の太さ（[ と ]）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Width</source>
+        <translation>太さ</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <location line="+3"/>
+        <source>Background</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Pass-Through: the mouse works the programs below, the drawing stays (hotkey again: toggle)</source>
+        <translation>クリックスルー：マウスで下のプログラムを操作でき、描いた内容は残ります（ホットキーをもう一度：切り替え）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pass-Through</source>
+        <translation>クリックスルー</translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>Undo (Ctrl+Z)</source>
+        <translation>元に戻す (Ctrl+Z)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Redo (Ctrl+Y)</source>
+        <translation>やり直し (Ctrl+Y)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Redo</source>
+        <translation>やり直し</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Clear (Delete)</source>
+        <translation>すべて消去 (Delete)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Clear</source>
+        <translation>すべて消去</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Copy (Ctrl+C)</source>
+        <translation>コピー (Ctrl+C)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Copy</source>
+        <translation>コピー</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Save As (Ctrl+S)</source>
+        <translation>名前を付けて保存 (Ctrl+S)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Close (Esc)</source>
+        <translation>閉じる (Esc)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <location filename="../src/whiteboard/WhiteboardToolbar.cpp" line="+165"/>
+        <source>Color (%1)</source>
+        <translation>色 (%1)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>%1 px</source>
+        <translation>%1 px</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Live Screen</source>
+        <translation>ライブの画面(&amp;L)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Frozen Screen</source>
+        <translation>静止した画面(&amp;F)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Whiteboard</source>
+        <translation>ホワイトボード(&amp;W)</translation>
+    </message>
+    <message>
+        <source>&amp;Blackboard</source>
+        <translation type="vanished">ブラックボード(&amp;B)</translation>
     </message>
 </context>
 </TS>

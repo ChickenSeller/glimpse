@@ -385,6 +385,7 @@ HotkeyEdit *SettingsDialog::hotkeyEdit(CaptureMode mode) const
     case CaptureMode::Recording: return ui->recordHotkeyEdit;
     case CaptureMode::Pin: return ui->pinHotkeyEdit;
     case CaptureMode::Ruler: return ui->rulerHotkeyEdit;
+    case CaptureMode::Whiteboard: return ui->whiteboardHotkeyEdit;
     }
     return nullptr;
 }

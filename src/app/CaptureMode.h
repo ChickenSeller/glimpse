@@ -14,7 +14,8 @@ enum class CaptureMode {
     Crosshair,   // full-screen crosshair with position, color and distances; picks a color too
     Recording,   // record a screen area to an MP4 video
     Pin,         // select a region and pin it to the screen, on top of everything
-    Ruler,       // an on-screen ruler in pixels, horizontal or vertical; nothing is captured
+    Ruler,       // an on-screen ruler in pixels, horizontal and vertical; nothing is captured
+    Whiteboard,  // draw on the screen, live or frozen, or on a whiteboard
 };
 
 // The modes offered in the UI (tray menu, hotkeys, settings).
@@ -29,6 +30,7 @@ inline constexpr CaptureMode kAllCaptureModes[] = {
     CaptureMode::Ocr,
     CaptureMode::Crosshair,
     CaptureMode::Ruler,
+    CaptureMode::Whiteboard,
 };
 
 // Whether this platform can do `mode` (the UI disables the others).
@@ -55,6 +57,7 @@ inline const char *captureModeLabel(CaptureMode mode)
     case CaptureMode::Recording: return QT_TRANSLATE_NOOP("CaptureController", "Record Screen");
     case CaptureMode::Pin: return QT_TRANSLATE_NOOP("CaptureController", "Pin Region to Screen");
     case CaptureMode::Ruler: return QT_TRANSLATE_NOOP("CaptureController", "Screen Ruler");
+    case CaptureMode::Whiteboard: return QT_TRANSLATE_NOOP("CaptureController", "Screen Whiteboard");
     }
     return "";
 }
@@ -73,6 +76,7 @@ inline const char *captureModeIcon(CaptureMode mode)
     case CaptureMode::Recording: return ":/icons/videocam.svg";
     case CaptureMode::Pin: return ":/icons/push_pin.svg";
     case CaptureMode::Ruler: return ":/icons/square_foot.svg";
+    case CaptureMode::Whiteboard: return ":/icons/draw.svg";
     }
     return "";
 }

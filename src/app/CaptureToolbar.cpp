@@ -68,6 +68,7 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
         {CaptureMode::Ocr, ui->ocrButton},
         {CaptureMode::Crosshair, ui->crosshairButton},
         {CaptureMode::Ruler, ui->rulerButton},
+        {CaptureMode::Whiteboard, ui->whiteboardButton},
         {CaptureMode::Scrolling, ui->scrollButton},
     };
     for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it) {

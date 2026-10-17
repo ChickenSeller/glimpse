@@ -22,6 +22,7 @@ class ScreenGrabber;
 class AboutDialog;
 class Updater;
 class SettingsDialog;
+class WhiteboardCanvas;
 
 // Owns the toolbar and tray icon and runs one capture at a time:
 // hide our UI -> grab the desktop -> (select) -> open the result.
@@ -105,5 +106,6 @@ private:
     bool m_probing = false; // a grab only to settle permission before a delay
     QPointer<RecordingSession> m_recording; // while a recording runs
     QRect m_pinRect; // where the region being pinned was chosen
+    QPointer<WhiteboardCanvas> m_whiteboard;
     bool m_restoreToolbar = false;
 };

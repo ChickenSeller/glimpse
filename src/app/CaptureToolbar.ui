@@ -309,6 +309,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="whiteboardButton">
+     <property name="toolTip">
+      <string>Screen Whiteboard: draw over the live screen, a frozen one, or a whiteboard</string>
+     </property>
+     <property name="text">
+      <string>Whiteboard</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/draw.svg</normaloff>:/icons/draw.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="delayButton">
      <property name="toolTip">
       <string>Delay Before Capture</string>

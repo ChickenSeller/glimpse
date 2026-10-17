@@ -143,7 +143,7 @@
         <translation type="vanished">捕捉矩形区域</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="+49"/>
+        <location filename="../src/app/CaptureMode.h" line="+51"/>
         <source>Capture Full Screen</source>
         <translation>捕捉全屏</translation>
     </message>
@@ -163,12 +163,17 @@
         <translation>屏幕标尺</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+622"/>
+        <location line="+1"/>
+        <source>Screen Whiteboard</source>
+        <translation>屏幕白板</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureController.cpp" line="+641"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="-9"/>
+        <location filename="../src/app/CaptureMode.h" line="-10"/>
         <source>Capture Window / Region</source>
         <translation>捕捉窗口/区域</translation>
     </message>
@@ -214,7 +219,7 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-505"/>
+        <location filename="../src/app/CaptureController.cpp" line="-521"/>
         <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
@@ -252,7 +257,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+256"/>
+        <location line="+272"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -427,11 +432,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>屏幕标尺：以像素水平和垂直测量</translation>
     </message>
     <message>
+        <location line="+26"/>
+        <source>Screen Whiteboard: draw over the live screen, a frozen one, or a whiteboard</source>
+        <translation>屏幕白板：在实时屏幕、冻结的屏幕或白板上画</translation>
+    </message>
+    <message>
         <source>Scrolling Capture (Esc to stop)</source>
         <translation type="vanished">滚动截图（按 Esc 停止）</translation>
     </message>
     <message>
-        <location line="-234"/>
+        <location line="-260"/>
         <source>Capture Window / Region (click a window or drag a rectangle; mouse wheel: parent / child)</source>
         <translation>捕捉窗口/区域（点击窗口，或拖出矩形；鼠标滚轮：切换父级/子级）</translation>
     </message>
@@ -504,9 +514,18 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>标尺</translation>
     </message>
     <message>
+        <source>Screen Whiteboard: draw over the live screen, a frozen one, or a white or black board</source>
+        <translation type="vanished">屏幕白板：在实时屏幕、冻结的屏幕或白板、黑板上画</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Whiteboard</source>
+        <translation>白板</translation>
+    </message>
+    <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+314"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+634"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+315"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+635"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -1115,7 +1134,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+176"/>
+        <location filename="../src/capture/Platform.cpp" line="+177"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 上暂不支持。</translation>
     </message>
@@ -1326,7 +1345,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RulerWindow</name>
     <message>
-        <location filename="../src/ruler/RulerWindow.cpp" line="+241"/>
+        <location filename="../src/ruler/RulerWindow.cpp" line="+249"/>
         <location line="+3"/>
         <location line="+8"/>
         <location line="+7"/>
@@ -1352,7 +1371,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>拖动两端：长度  ·  方向键：移动  ·  Ctrl+方向键：长度  ·  Ctrl+滚轮：不透明度</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+30"/>
         <source>Screen Ruler</source>
         <translation>屏幕标尺</translation>
     </message>
@@ -1644,7 +1663,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">滚动截图(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+67"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>点击输入框后按下新的组合键。清空输入框即可禁用该快捷键。此窗口打开期间，快捷键暂停生效。</translation>
     </message>
@@ -1732,13 +1751,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存文件夹(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-602"/>
-        <location line="+834"/>
+        <location line="-615"/>
+        <location line="+847"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-827"/>
+        <location line="-840"/>
         <source>Cl&amp;ear</source>
         <translation>清空(&amp;E)</translation>
     </message>
@@ -1786,6 +1805,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+13"/>
         <source>Screen R&amp;uler:</source>
         <translation>屏幕标尺(&amp;U)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Screen White&amp;board:</source>
+        <translation>屏幕白板(&amp;B)：</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -1878,7 +1902,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-584"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-585"/>
         <source>Tell me about new versions</source>
         <translation>有新版本时提醒我</translation>
     </message>
@@ -1928,7 +1952,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+96"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -1980,7 +2004,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-265"/>
+        <location line="-266"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
@@ -2286,6 +2310,238 @@ Install the package for your system from the download page.</source>
         <location line="+22"/>
         <source>Could not start the update.</source>
         <translation>无法开始更新。</translation>
+    </message>
+</context>
+<context>
+    <name>WhiteboardCanvas</name>
+    <message>
+        <location filename="../src/whiteboard/WhiteboardCanvas.cpp" line="+74"/>
+        <location line="+410"/>
+        <source>Screen Whiteboard</source>
+        <translation>屏幕白板</translation>
+    </message>
+    <message>
+        <location line="-332"/>
+        <source>The mouse works the programs below; the drawing stays</source>
+        <translation>鼠标可以操作下面的程序，画的内容保留</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Drawing</source>
+        <translation>绘画</translation>
+    </message>
+    <message>
+        <location line="+430"/>
+        <source>Copied</source>
+        <translation>已复制</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Saved</source>
+        <translation>已保存</translation>
+    </message>
+</context>
+<context>
+    <name>WhiteboardToolbar</name>
+    <message>
+        <location filename="../src/whiteboard/WhiteboardToolbar.ui" line="+6"/>
+        <source>Screen Whiteboard</source>
+        <translation>屏幕白板</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Drag to Move</source>
+        <translation>拖动以移动</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Move</source>
+        <translation>移动</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Pen (P)</source>
+        <translation>画笔 (P)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pen</source>
+        <translation>画笔</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Highlighter (H)</source>
+        <translation>荧光笔 (H)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Highlighter</source>
+        <translation>荧光笔</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Line (L, Shift: 45° steps)</source>
+        <translation>直线（L，Shift：按 45° 吸附）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Line</source>
+        <translation>直线</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Arrow (A, Shift: 45° steps)</source>
+        <translation>箭头（A，Shift：按 45° 吸附）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Arrow</source>
+        <translation>箭头</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Rectangle (R, Shift: square)</source>
+        <translation>矩形（R，Shift：正方形）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Ellipse (O, Shift: circle)</source>
+        <translation>椭圆（O，Shift：正圆）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ellipse</source>
+        <translation>椭圆</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Eraser: removes whole strokes (E)</source>
+        <translation>橡皮擦：整笔擦除 (E)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Eraser</source>
+        <translation>橡皮擦</translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Line Width ([ and ])</source>
+        <translation>线宽（[ 和 ]）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Width</source>
+        <translation>线宽</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <location line="+3"/>
+        <source>Background</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Pass-Through: the mouse works the programs below, the drawing stays (hotkey again: toggle)</source>
+        <translation>鼠标穿透：鼠标可以操作下面的程序，画的内容保留（再按一次热键：切换）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pass-Through</source>
+        <translation>鼠标穿透</translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>Undo (Ctrl+Z)</source>
+        <translation>撤销 (Ctrl+Z)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Undo</source>
+        <translation>撤销</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Redo (Ctrl+Y)</source>
+        <translation>重做 (Ctrl+Y)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Redo</source>
+        <translation>重做</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Clear (Delete)</source>
+        <translation>清空 (Delete)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Clear</source>
+        <translation>清空</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Copy (Ctrl+C)</source>
+        <translation>复制 (Ctrl+C)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Copy</source>
+        <translation>复制</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Save As (Ctrl+S)</source>
+        <translation>另存为 (Ctrl+S)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Close (Esc)</source>
+        <translation>关闭 (Esc)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../src/whiteboard/WhiteboardToolbar.cpp" line="+165"/>
+        <source>Color (%1)</source>
+        <translation>颜色 (%1)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>%1 px</source>
+        <translation>%1 px</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Live Screen</source>
+        <translation>实时屏幕(&amp;L)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Frozen Screen</source>
+        <translation>冻结屏幕(&amp;F)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Whiteboard</source>
+        <translation>白板(&amp;W)</translation>
+    </message>
+    <message>
+        <source>&amp;Blackboard</source>
+        <translation type="vanished">黑板(&amp;B)</translation>
     </message>
 </context>
 </TS>

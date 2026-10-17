@@ -119,14 +119,15 @@ bool supportsPointerHighlight()
     return displayServer() == DisplayServer::Windows || displayServer() == DisplayServer::X11;
 }
 
-void excludeFromCapture(QWidget *window)
+void excludeFromCapture(QWidget *window, bool exclude)
 {
 #ifdef Q_OS_WIN
     // WDA_EXCLUDEFROMCAPTURE (Windows 10 2004+); older systems ignore it.
     constexpr DWORD kExcludeFromCapture = 0x11;
-    SetWindowDisplayAffinity(reinterpret_cast<HWND>(window->winId()), kExcludeFromCapture);
+    SetWindowDisplayAffinity(reinterpret_cast<HWND>(window->winId()), exclude ? kExcludeFromCapture : WDA_NONE);
 #else
     Q_UNUSED(window);
+    Q_UNUSED(exclude);
 #endif
 }
 

@@ -200,6 +200,12 @@ qt_add_executable(glimpse
     src/ruler/RulerWindow.cpp
     src/ruler/RulerWindow.h
 
+    src/whiteboard/WhiteboardCanvas.cpp
+    src/whiteboard/WhiteboardCanvas.h
+    src/whiteboard/WhiteboardToolbar.cpp
+    src/whiteboard/WhiteboardToolbar.h
+    src/whiteboard/WhiteboardToolbar.ui
+
     src/update/Updater.cpp
     src/update/Updater.h
     src/update/UsageStats.cpp

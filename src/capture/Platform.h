@@ -62,8 +62,9 @@ bool moveCursorBy(int dx, int dy);
 bool canMoveCursor();
 
 // Keeps a window out of screen captures and recordings (it stays visible on
-// screen). Does nothing where unsupported.
-void excludeFromCapture(QWidget *window);
+// screen), or with `exclude` false lets it back in. Does nothing where
+// unsupported.
+void excludeFromCapture(QWidget *window, bool exclude = true);
 
 // Short explanation shown on disabled controls.
 QString unsupportedHint();

@@ -35,6 +35,11 @@ Homepage: <https://pages.yanlei.org/kaguya/glimpse/>
 - **Screen crosshair**, which also picks colors: double-click a pixel.
 - **Screen ruler** in pixels: a horizontal and a vertical arm in a cross,
   see-through and on top, showing how far the pointer is along each.
+- **Screen whiteboard**: draw over the live screen, which goes on updating
+  underneath, over a frozen picture of it, or on a whiteboard;
+  pass-through lets the mouse work the programs below while the drawing
+  stays. Pen, highlighter, lines, arrows, shapes and an eraser; copy or save
+  the result.
 - Global hotkeys and a small floating toolbar.
 
 Models for OCR and offline translation are downloaded on first use, not
@@ -56,6 +61,7 @@ fill a web server's directory with `python tools/mirror-downloads.py list.tsv
 | Hotkey | Action |
 |---|---|
 | Ctrl+Alt+1 | Window or region |
+| Ctrl+Alt+2 | Screen whiteboard (again: pass-through on or off) |
 | Ctrl+Alt+3 | Full screen |
 | Ctrl+Alt+P | Pin region to screen |
 | Ctrl+Alt+4 | QR code |
