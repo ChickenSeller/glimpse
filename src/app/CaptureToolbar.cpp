@@ -54,6 +54,9 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
     , ui(std::make_unique<Ui::CaptureToolbar>())
 {
     ui->setupUi(this);
+    // Qt shows tooltips only in the active window by default; the bar is
+    // mostly pointed at while another program has the focus.
+    setAttribute(Qt::WA_AlwaysShowToolTips);
 
     m_modeButtons = {
         {CaptureMode::Window, ui->windowButton},
