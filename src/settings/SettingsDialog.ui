@@ -413,6 +413,19 @@
          <item row="8" column="1">
           <widget class="HotkeyEdit" name="crosshairHotkeyEdit"/>
          </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="rulerHotkeyLabel">
+           <property name="text">
+            <string>Screen R&amp;uler:</string>
+           </property>
+           <property name="buddy">
+            <cstring>rulerHotkeyEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="HotkeyEdit" name="rulerHotkeyEdit"/>
+         </item>
         </layout>
        </item>
        <item>

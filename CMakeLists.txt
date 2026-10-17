@@ -197,6 +197,9 @@ qt_add_executable(glimpse
     src/pin/PinWindow.cpp
     src/pin/PinWindow.h
 
+    src/ruler/RulerWindow.cpp
+    src/ruler/RulerWindow.h
+
     src/update/Updater.cpp
     src/update/Updater.h
     src/update/UsageStats.cpp

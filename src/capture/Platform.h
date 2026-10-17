@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QPoint>
+#include <QRect>
 #include <QString>
 
 #include <optional>
@@ -51,6 +52,9 @@ void flushCompositor();
 // exactly. Qt's logical positions are rounded on fractional scale factors
 // (e.g. 150%), which is off by a pixel for pixel-exact tools.
 std::optional<QPoint> nativeCursorPos();
+// A top-level window's place on the desktop in physical pixels, where the
+// platform reports it exactly (the same coordinates as nativeCursorPos()).
+std::optional<QRect> nativeWindowRect(const QWidget *window);
 // Moves the pointer by whole physical pixels. False where windows may not
 // move the pointer (Wayland).
 bool moveCursorBy(int dx, int dy);

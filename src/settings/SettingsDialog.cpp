@@ -384,6 +384,7 @@ HotkeyEdit *SettingsDialog::hotkeyEdit(CaptureMode mode) const
     case CaptureMode::Crosshair: return ui->crosshairHotkeyEdit;
     case CaptureMode::Recording: return ui->recordHotkeyEdit;
     case CaptureMode::Pin: return ui->pinHotkeyEdit;
+    case CaptureMode::Ruler: return ui->rulerHotkeyEdit;
     }
     return nullptr;
 }

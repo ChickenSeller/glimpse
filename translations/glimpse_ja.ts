@@ -143,7 +143,7 @@
         <translation type="vanished">矩形領域をキャプチャ</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="+47"/>
+        <location filename="../src/app/CaptureMode.h" line="+49"/>
         <source>Capture Full Screen</source>
         <translation>全画面をキャプチャ</translation>
     </message>
@@ -158,12 +158,17 @@
         <translation>スクロールキャプチャ（試験的）</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+608"/>
+        <location line="+5"/>
+        <source>Screen Ruler</source>
+        <translation>スクリーンルーラー</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureController.cpp" line="+622"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="-4"/>
+        <location filename="../src/app/CaptureMode.h" line="-9"/>
         <source>Capture Window / Region</source>
         <translation>ウィンドウ／領域をキャプチャ</translation>
     </message>
@@ -209,7 +214,7 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-492"/>
+        <location filename="../src/app/CaptureController.cpp" line="-505"/>
         <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
@@ -247,7 +252,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+256"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -417,11 +422,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>領域内の文字を認識してコピーまたは翻訳</translation>
     </message>
     <message>
+        <location line="+52"/>
+        <source>Screen Ruler: measure in pixels, horizontally and vertically</source>
+        <translation>スクリーンルーラー：ピクセル単位で水平・垂直に測る</translation>
+    </message>
+    <message>
         <source>Scrolling Capture (Esc to stop)</source>
         <translation type="vanished">スクロールキャプチャ（Esc で停止）</translation>
     </message>
     <message>
-        <location line="-182"/>
+        <location line="-234"/>
         <source>Capture Window / Region (click a window or drag a rectangle; mouse wheel: parent / child)</source>
         <translation>ウィンドウ／領域をキャプチャ（ウィンドウをクリック、または矩形をドラッグ。マウスホイール：親／子を切り替え）</translation>
     </message>
@@ -485,9 +495,18 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>クロスヘア</translation>
     </message>
     <message>
+        <source>Screen Ruler: measure in pixels, horizontally or vertically (double-click: turn)</source>
+        <translation type="vanished">スクリーンルーラー：ピクセル単位で水平・垂直に測る（ダブルクリック：回転）</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Ruler</source>
+        <translation>ルーラー</translation>
+    </message>
+    <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+310"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+633"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+314"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+634"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
@@ -1043,7 +1062,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>PinWindow</name>
     <message>
-        <location filename="../src/pin/PinWindow.cpp" line="+231"/>
+        <location filename="../src/pin/PinWindow.cpp" line="+252"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
@@ -1096,7 +1115,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+164"/>
+        <location filename="../src/capture/Platform.cpp" line="+176"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 ではまだ利用できません。</translation>
     </message>
@@ -1161,7 +1180,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>QtScreenGrabber</name>
     <message>
-        <location filename="../src/capture/QtScreenGrabber.cpp" line="+37"/>
+        <location filename="../src/capture/QtScreenGrabber.cpp" line="+44"/>
         <source>Could not read the screen contents.</source>
         <translation>画面の内容を読み取れませんでした。</translation>
     </message>
@@ -1302,6 +1321,53 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+51"/>
         <source>Screen %1</source>
         <translation>画面 %1</translation>
+    </message>
+</context>
+<context>
+    <name>RulerWindow</name>
+    <message>
+        <location filename="../src/ruler/RulerWindow.cpp" line="+241"/>
+        <location line="+3"/>
+        <location line="+8"/>
+        <location line="+7"/>
+        <source>%1 px</source>
+        <translation>%1 px</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation type="vanished">垂直</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation type="vanished">水平</translation>
+    </message>
+    <message>
+        <location line="+171"/>
+        <source>Opacity %1%</source>
+        <translation>不透明度 %1%</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity</source>
+        <translation>端をドラッグ：長さ  ·  矢印キー：移動  ·  Ctrl+矢印キー：長さ  ·  Ctrl+スクロール：不透明度</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Screen Ruler</source>
+        <translation>スクリーンルーラー</translation>
+    </message>
+    <message>
+        <source>Turn &amp;Horizontal</source>
+        <translation type="vanished">水平にする(&amp;H)</translation>
+    </message>
+    <message>
+        <source>Turn &amp;Vertical</source>
+        <translation type="vanished">垂直にする(&amp;V)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>C&amp;lose</source>
+        <translation>閉じる(&amp;L)</translation>
     </message>
 </context>
 <context>
@@ -1578,7 +1644,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">スクロールキャプチャ(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+54"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>入力欄をクリックして新しいキーの組み合わせを押してください。入力欄を空にするとそのホットキーは無効になります。このウィンドウを開いている間、ホットキーは一時停止します。</translation>
     </message>
@@ -1666,13 +1732,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存先フォルダー(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-589"/>
-        <location line="+821"/>
+        <location line="-602"/>
+        <location line="+834"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-814"/>
+        <location line="-827"/>
         <source>Cl&amp;ear</source>
         <translation>クリア(&amp;E)</translation>
     </message>
@@ -1715,6 +1781,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+13"/>
         <source>Cr&amp;osshair / Color Picker:</source>
         <translation>クロスヘア／色の取得(&amp;O)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Screen R&amp;uler:</source>
+        <translation>スクリーンルーラー(&amp;U):</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -1807,7 +1878,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-583"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-584"/>
         <source>Tell me about new versions</source>
         <translation>新しいバージョンを知らせる</translation>
     </message>
@@ -1857,7 +1928,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+95"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -1909,7 +1980,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 px）</translation>
     </message>
     <message>
-        <location line="-264"/>
+        <location line="-265"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

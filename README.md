@@ -33,6 +33,8 @@ Homepage: <https://pages.yanlei.org/kaguya/glimpse/>
     Microsoft Translator or Claude, with your own API key where one is needed.
 - **QR code and barcode** reading (ZXing-C++).
 - **Screen crosshair**, which also picks colors: double-click a pixel.
+- **Screen ruler** in pixels: a horizontal and a vertical arm in a cross,
+  see-through and on top, showing how far the pointer is along each.
 - Global hotkeys and a small floating toolbar.
 
 Models for OCR and offline translation are downloaded on first use, not
@@ -59,6 +61,7 @@ fill a web server's directory with `python tools/mirror-downloads.py list.tsv
 | Ctrl+Alt+4 | QR code |
 | Ctrl+Alt+5 | Recognize and translate text |
 | Ctrl+Alt+6 | Freehand region |
+| Ctrl+Alt+7 | Screen ruler |
 | Ctrl+Alt+8 | Crosshair and color picker |
 | Ctrl+Alt+9 | Scrolling capture (Windows, experimental) |
 | Ctrl+Alt+V | Screen recording |

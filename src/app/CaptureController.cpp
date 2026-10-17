@@ -14,6 +14,7 @@
 #include "hotkey/GlobalHotkeys.h"
 #include "overlay/RegionSelector.h"
 #include "pin/PinWindow.h"
+#include "ruler/RulerWindow.h"
 #include "qr/BarcodeScanner.h"
 #include "record/RecordingDoneDialog.h"
 #include "record/RecordingSession.h"
@@ -279,6 +280,14 @@ void CaptureController::startCapture(Mode mode, bool afterFade)
     }
     if (m_busy || !captureModeSupported(mode))
         return;
+    // Nothing to grab: the ruler measures the live screen.
+    if (mode == Mode::Ruler) {
+        auto *ruler = new RulerWindow;
+        ruler->show();
+        ruler->raise();
+        ruler->activateWindow();
+        return;
+    }
     m_busy = true;
     m_mode = mode;
 

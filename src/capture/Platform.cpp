@@ -140,6 +140,18 @@ std::optional<QPoint> nativeCursorPos()
     return std::nullopt;
 }
 
+std::optional<QRect> nativeWindowRect(const QWidget *window)
+{
+#ifdef Q_OS_WIN
+    RECT rect;
+    if (GetWindowRect(reinterpret_cast<HWND>(window->winId()), &rect))
+        return QRect(QPoint(rect.left, rect.top), QPoint(rect.right - 1, rect.bottom - 1));
+#else
+    Q_UNUSED(window);
+#endif
+    return std::nullopt;
+}
+
 bool canMoveCursor()
 {
     return displayServer() == DisplayServer::Windows || displayServer() == DisplayServer::X11;

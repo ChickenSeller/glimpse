@@ -26,6 +26,7 @@ QString hotkeySettingsKey(CaptureMode mode)
     case CaptureMode::Crosshair: return QStringLiteral("hotkeys/crosshair");
     case CaptureMode::Recording: return QStringLiteral("hotkeys/recording");
     case CaptureMode::Pin: return QStringLiteral("hotkeys/pin");
+    case CaptureMode::Ruler: return QStringLiteral("hotkeys/ruler");
     }
     return {};
 }
@@ -50,6 +51,7 @@ QKeySequence defaultHotkey(CaptureMode mode)
     case CaptureMode::Recording: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_V);
     case CaptureMode::Scrolling: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_9);
     case CaptureMode::Pin: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_P); // P for pin
+    case CaptureMode::Ruler: return QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_7); // beside the crosshair
     }
     return {};
 }

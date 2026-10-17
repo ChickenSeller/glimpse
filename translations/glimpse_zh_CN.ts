@@ -143,7 +143,7 @@
         <translation type="vanished">捕捉矩形区域</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="+47"/>
+        <location filename="../src/app/CaptureMode.h" line="+49"/>
         <source>Capture Full Screen</source>
         <translation>捕捉全屏</translation>
     </message>
@@ -158,12 +158,17 @@
         <translation>滚动截图（实验性）</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+608"/>
+        <location line="+5"/>
+        <source>Screen Ruler</source>
+        <translation>屏幕标尺</translation>
+    </message>
+    <message>
+        <location filename="../src/app/CaptureController.cpp" line="+622"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureMode.h" line="-4"/>
+        <location filename="../src/app/CaptureMode.h" line="-9"/>
         <source>Capture Window / Region</source>
         <translation>捕捉窗口/区域</translation>
     </message>
@@ -209,7 +214,7 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-492"/>
+        <location filename="../src/app/CaptureController.cpp" line="-505"/>
         <location line="+46"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
@@ -247,7 +252,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+256"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -417,11 +422,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>识别区域中的文字，可复制或翻译</translation>
     </message>
     <message>
+        <location line="+52"/>
+        <source>Screen Ruler: measure in pixels, horizontally and vertically</source>
+        <translation>屏幕标尺：以像素水平和垂直测量</translation>
+    </message>
+    <message>
         <source>Scrolling Capture (Esc to stop)</source>
         <translation type="vanished">滚动截图（按 Esc 停止）</translation>
     </message>
     <message>
-        <location line="-182"/>
+        <location line="-234"/>
         <source>Capture Window / Region (click a window or drag a rectangle; mouse wheel: parent / child)</source>
         <translation>捕捉窗口/区域（点击窗口，或拖出矩形；鼠标滚轮：切换父级/子级）</translation>
     </message>
@@ -485,9 +495,18 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>十字线</translation>
     </message>
     <message>
+        <source>Screen Ruler: measure in pixels, horizontally or vertically (double-click: turn)</source>
+        <translation type="vanished">屏幕标尺：以像素水平或垂直测量（双击：旋转）</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Ruler</source>
+        <translation>标尺</translation>
+    </message>
+    <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+310"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+633"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+314"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+634"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
@@ -1043,7 +1062,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>PinWindow</name>
     <message>
-        <location filename="../src/pin/PinWindow.cpp" line="+231"/>
+        <location filename="../src/pin/PinWindow.cpp" line="+252"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
@@ -1096,7 +1115,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+164"/>
+        <location filename="../src/capture/Platform.cpp" line="+176"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 上暂不支持。</translation>
     </message>
@@ -1161,7 +1180,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>QtScreenGrabber</name>
     <message>
-        <location filename="../src/capture/QtScreenGrabber.cpp" line="+37"/>
+        <location filename="../src/capture/QtScreenGrabber.cpp" line="+44"/>
         <source>Could not read the screen contents.</source>
         <translation>无法读取屏幕内容。</translation>
     </message>
@@ -1302,6 +1321,53 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+51"/>
         <source>Screen %1</source>
         <translation>屏幕 %1</translation>
+    </message>
+</context>
+<context>
+    <name>RulerWindow</name>
+    <message>
+        <location filename="../src/ruler/RulerWindow.cpp" line="+241"/>
+        <location line="+3"/>
+        <location line="+8"/>
+        <location line="+7"/>
+        <source>%1 px</source>
+        <translation>%1 px</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation type="vanished">垂直</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation type="vanished">水平</translation>
+    </message>
+    <message>
+        <location line="+171"/>
+        <source>Opacity %1%</source>
+        <translation>不透明度 %1%</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity</source>
+        <translation>拖动两端：长度  ·  方向键：移动  ·  Ctrl+方向键：长度  ·  Ctrl+滚轮：不透明度</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Screen Ruler</source>
+        <translation>屏幕标尺</translation>
+    </message>
+    <message>
+        <source>Turn &amp;Horizontal</source>
+        <translation type="vanished">转为水平(&amp;H)</translation>
+    </message>
+    <message>
+        <source>Turn &amp;Vertical</source>
+        <translation type="vanished">转为垂直(&amp;V)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>C&amp;lose</source>
+        <translation>关闭(&amp;L)</translation>
     </message>
 </context>
 <context>
@@ -1578,7 +1644,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">滚动截图(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+54"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>点击输入框后按下新的组合键。清空输入框即可禁用该快捷键。此窗口打开期间，快捷键暂停生效。</translation>
     </message>
@@ -1666,13 +1732,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">保存文件夹(&amp;U)：</translation>
     </message>
     <message>
-        <location line="-589"/>
-        <location line="+821"/>
+        <location line="-602"/>
+        <location line="+834"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-814"/>
+        <location line="-827"/>
         <source>Cl&amp;ear</source>
         <translation>清空(&amp;E)</translation>
     </message>
@@ -1715,6 +1781,11 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+13"/>
         <source>Cr&amp;osshair / Color Picker:</source>
         <translation>十字线/取色(&amp;O)：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Screen R&amp;uler:</source>
+        <translation>屏幕标尺(&amp;U)：</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -1807,7 +1878,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-583"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-584"/>
         <source>Tell me about new versions</source>
         <translation>有新版本时提醒我</translation>
     </message>
@@ -1857,7 +1928,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>请至少为文字识别选择一种语言。</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+95"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -1909,7 +1980,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation type="vanished">%1（%2 像素）</translation>
     </message>
     <message>
-        <location line="-264"/>
+        <location line="-265"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
