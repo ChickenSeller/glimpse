@@ -62,8 +62,9 @@ QString toolbarItemId(CaptureMode mode)
 QList<ToolbarItem> defaultToolbarItems()
 {
     QList<ToolbarItem> items;
+    // Full screen is a hotkey's job more than a button's.
     for (CaptureMode mode : kAllCaptureModes)
-        items.append({toolbarItemId(mode), true});
+        items.append({toolbarItemId(mode), mode != CaptureMode::FullScreen});
     items.append({kDelayItemId, true});
     return items;
 }
@@ -88,7 +89,7 @@ QList<ToolbarItem> toolbarItems()
     }
     for (const ToolbarItem &item : defaults) {
         if (!seen.contains(item.id))
-            items.append({item.id, !hidden.contains(item.id)});
+            items.append({item.id, item.visible && !hidden.contains(item.id)});
     }
     return items;
 }
