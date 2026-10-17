@@ -4,6 +4,8 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QSettings>
 
 #include "translate/LocalModel.h"
@@ -35,6 +37,41 @@ QString hotkeySettingsKey(CaptureMode mode)
 } // namespace
 
 namespace AppSettings {
+
+void useProgramFolder()
+{
+    // Where QSettings puts an INI file for the user scope under `dir`.
+    const QString dir = QCoreApplication::applicationDirPath();
+    const QString file = QDir(dir).filePath(QCoreApplication::organizationName() + QLatin1Char('/')
+                                            + QCoreApplication::applicationName() + QStringLiteral(".ini"));
+    const bool existed = QFileInfo::exists(file);
+    if (existed) {
+        if (!QFileInfo(file).isWritable())
+            return;
+    } else {
+        // Can the folder take it? Tried by making the (empty) file.
+        const QString folder = QFileInfo(file).path();
+        const bool madeFolder = !QFileInfo::exists(folder);
+        QFile probe(file);
+        if (!QDir().mkpath(folder) || !probe.open(QIODevice::WriteOnly)) {
+            if (madeFolder)
+                QDir().rmdir(folder);
+            return;
+        }
+    }
+
+    const QSettings system; // still the system's: the default changes below
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, dir);
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    // The first time, everything set so far comes along; the system's copy
+    // stays, for an older Glimpse.
+    if (!existed) {
+        QSettings settings;
+        const QStringList keys = system.allKeys();
+        for (const QString &key : keys)
+            settings.setValue(key, system.value(key));
+    }
+}
 
 // Ctrl+Alt+1..9: reachable with the left hand alone, and
 // clear of common global hotkeys (WeChat Ctrl+Alt+W, QQ Ctrl+Alt+A/Z/O) and of

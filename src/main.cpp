@@ -58,6 +58,9 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName(QStringLiteral("Glimpse"));
     QApplication::setOrganizationName(QStringLiteral("Glimpse"));
     QApplication::setApplicationVersion(QStringLiteral(GLIMPSE_VERSION));
+    // After the application/organization names, which name the file, and
+    // before anything reads a setting.
+    AppSettings::useProgramFolder();
     QApplication::setWindowIcon(appIcon());
 
     const QStringList args = QApplication::arguments();

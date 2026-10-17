@@ -8,9 +8,18 @@
 #include <QString>
 #include <QStringList>
 
-// Typed access to the persisted settings (QSettings: registry on Windows,
+// Typed access to the persisted settings (QSettings: a file beside the
+// program, see useProgramFolder(); else the registry on Windows and
 // ~/.config/Glimpse/Glimpse.conf on Linux).
 namespace AppSettings {
+
+// Keeps every QSettings in Glimpse/Glimpse.ini in the program's folder,
+// where that can be written (a portable copy, a build), carrying over the
+// settings the system has kept so far the first time. Elsewhere (installed
+// read-only, as on Linux) they stay with the system. Call once at start,
+// after the application and organization names are set and before any
+// setting is read.
+void useProgramFolder();
 
 QKeySequence defaultHotkey(CaptureMode mode);
 // The configured global hotkey; empty when the user disabled it.
