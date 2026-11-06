@@ -32,6 +32,12 @@ constexpr int kHoverPollMs = 30;
 constexpr int kCloseSize = 22;
 constexpr int kCloseMargin = 6;
 
+QList<PinWindow *> &pins()
+{
+    static QList<PinWindow *> list;
+    return list;
+}
+
 } // namespace
 
 PinWindow::PinWindow(const QImage &image, const QRect &logicalRect)
@@ -39,6 +45,7 @@ PinWindow::PinWindow(const QImage &image, const QRect &logicalRect)
     , m_image(image)
 {
     setAttribute(Qt::WA_DeleteOnClose);
+    pins().append(this);
     // A freehand capture is see-through outside its shape; so is its pin,
     // instead of showing the window's background there.
     if (m_image.hasAlphaChannel())
@@ -83,7 +90,10 @@ PinWindow::PinWindow(const QImage &image, const QRect &logicalRect)
     m_closeAction = new QAction(this);
     m_closeAction->setShortcut(QKeySequence(Qt::Key_Escape));
     connect(m_closeAction, &QAction::triggered, this, &QWidget::close);
-    addActions({m_copyAction, m_saveAction, m_editAction, m_actualSizeAction, m_closeAction});
+    m_closeAllAction = new QAction(this);
+    m_closeAllAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_Escape));
+    connect(m_closeAllAction, &QAction::triggered, this, &PinWindow::closeAll);
+    addActions({m_copyAction, m_saveAction, m_editAction, m_actualSizeAction, m_closeAction, m_closeAllAction});
     retranslate();
 
     resize(logicalSize(m_zoom));
@@ -95,6 +105,24 @@ PinWindow::PinWindow(const QImage &image, const QRect &logicalRect)
             screen = QGuiApplication::primaryScreen();
         move(screen->availableGeometry().center() - rect().center());
     }
+}
+
+PinWindow::~PinWindow()
+{
+    pins().removeOne(this);
+}
+
+int PinWindow::count()
+{
+    return int(pins().size());
+}
+
+void PinWindow::closeAll()
+{
+    // A copy: each close takes its pin off the list.
+    const QList<PinWindow *> open = pins();
+    for (PinWindow *pin : open)
+        pin->close();
 }
 
 // The window's size for `zoom`: the image's own logical size (its pixels
@@ -289,6 +317,8 @@ void PinWindow::contextMenuEvent(QContextMenuEvent *event)
     m_actualSizeAction->setEnabled(std::abs(m_zoom - 1.0) > 1e-9);
     menu.addSeparator();
     menu.addAction(m_closeAction);
+    menu.addAction(m_closeAllAction);
+    m_closeAllAction->setEnabled(count() > 1);
     menu.addSeparator();
     QAction *help = menu.addAction(tr("Scroll: zoom  ·  Ctrl+scroll: opacity  ·  Double-click: close"));
     help->setEnabled(false);
@@ -324,6 +354,7 @@ void PinWindow::retranslate()
     m_editAction->setText(tr("Open in &Editor"));
     m_actualSizeAction->setText(tr("&Actual Size"));
     m_closeAction->setText(tr("C&lose"));
+    m_closeAllAction->setText(tr("Close All &Pins"));
 }
 
 void PinWindow::copy()

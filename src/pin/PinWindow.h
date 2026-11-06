@@ -18,6 +18,11 @@ public:
     // Placed over `logicalRect` (where the image was captured), or centered
     // on the screen under the pointer when that is empty.
     explicit PinWindow(const QImage &image, const QRect &logicalRect = {});
+    ~PinWindow() override;
+
+    // The pins on the screen now, and closing them all.
+    static int count();
+    static void closeAll();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -55,4 +60,5 @@ private:
     QAction *m_editAction;
     QAction *m_actualSizeAction;
     QAction *m_closeAction;
+    QAction *m_closeAllAction;
 };

@@ -135,6 +135,10 @@
 <context>
     <name>CaptureController</name>
     <message>
+        <source>Close All Pins</source>
+        <translation>すべてのピン留めを閉じる</translation>
+    </message>
+    <message>
         <source>Capture Window / Object</source>
         <translation type="vanished">ウィンドウ／オブジェクトをキャプチャ</translation>
     </message>
@@ -1080,6 +1084,10 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>PinWindow</name>
+    <message>
+        <source>Close All &amp;Pins</source>
+        <translation>すべてのピン留めを閉じる(&amp;P)</translation>
+    </message>
     <message>
         <location filename="../src/pin/PinWindow.cpp" line="+252"/>
         <source>Opacity %1%</source>

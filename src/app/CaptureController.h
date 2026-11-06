@@ -96,6 +96,7 @@ private:
     QAction *m_trayShowToolbar = nullptr;
     QAction *m_traySettings = nullptr;
     QAction *m_trayAbout = nullptr;
+    QAction *m_trayClosePins = nullptr;
     QAction *m_trayExit = nullptr;
     QPointer<SettingsDialog> m_settings;
     QPointer<AboutDialog> m_about;

@@ -200,6 +200,8 @@ void CaptureController::setupTray()
         m_trayCaptureActions.insert(mode, item);
     }
     m_trayMenu->addSeparator();
+    m_trayClosePins = m_trayMenu->addAction(QString(), this, [] { PinWindow::closeAll(); });
+    connect(m_trayMenu.get(), &QMenu::aboutToShow, this, [this] { m_trayClosePins->setEnabled(PinWindow::count() > 0); });
     m_trayShowToolbar = m_trayMenu->addAction(QString(), this, &CaptureController::showToolbar);
     m_traySettings = m_trayMenu->addAction(QString(), this, &CaptureController::showSettings);
     m_trayAbout = m_trayMenu->addAction(QString(), this, &CaptureController::showAbout);
@@ -222,6 +224,7 @@ void CaptureController::retranslate()
     for (auto it = m_trayCaptureActions.cbegin(); it != m_trayCaptureActions.cend(); ++it)
         it.value()->setText(tr(captureModeLabel(it.key())));
     if (m_trayShowToolbar) {
+        m_trayClosePins->setText(tr("Close All Pins"));
         m_trayShowToolbar->setText(tr("Show Toolbar"));
         m_traySettings->setText(tr("Settings..."));
         m_trayAbout->setText(tr("About Glimpse..."));
