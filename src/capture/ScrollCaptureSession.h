@@ -70,6 +70,7 @@ signals:
     void elevationNeeded();
 
 private:
+    void showClickHint();
     // After the click that picks where to scroll.
     void beginScrolling(const QPoint &scrollPoint);
     void step();
@@ -103,6 +104,7 @@ private:
     QPushButton *m_undo = nullptr;
     std::unique_ptr<QWidget> m_preview;
     QPointer<QWidget> m_clickCatcher; // over the area until the click
+    std::unique_ptr<QWidget> m_clickHint; // says to click, until then
     GlobalHotkeys *m_hotkeys = nullptr;
     bool m_panelOverlaps = false; // no room outside: hidden while grabbing
 
