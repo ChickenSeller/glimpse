@@ -1,5 +1,7 @@
 #pragma once
 
+#include "KeyboardOverlay.h"
+
 #include <QObject>
 #include <QString>
 
@@ -24,10 +26,17 @@ signals:
     // A key with the modifiers held, e.g. "Ctrl + Shift + S"; plain typing
     // reports single keys ("A", "Space").
     void keyPressed(const QString &combination);
-    // Every key going down or up, by Windows virtual-key code (left/right
-    // modifiers distinguished); auto-repeat reports "pressed" again.
-    void keyState(int virtualKey, bool pressed);
+    // Every key going down or up, by where it is on the keyboard (the ids of
+    // KeyboardOverlay); auto-repeat reports "pressed" again.
+    void keyState(int key, bool pressed);
 
 protected:
     using QObject::QObject;
 };
+
+// The keyboard layout of the window being typed into, and the arrangement
+// of keys that goes with it. Cheap to call again: it is read once per layout.
+KeyboardLayout currentKeyboardLayout();
+// The same for a given layout ("0000040C": French), loaded without making it
+// the one in use; for tests. The US one where there is no such layout.
+KeyboardLayout keyboardLayoutNamed(const QString &name);

@@ -1,5 +1,6 @@
 #include "InputMonitor.h"
 
+#include <QHash>
 #include <QMetaObject>
 #include <QStringList>
 
@@ -52,6 +53,16 @@ QString keyName(const KBDLLHOOKSTRUCT &key)
     if (GetKeyNameTextW(lParam, name, 64) > 0)
         return QString::fromWCharArray(name);
     return QStringLiteral("0x%1").arg(vk, 2, 16, QLatin1Char('0'));
+}
+
+// Where the key is: its scan code, 0xE000 added for extended keys.
+int keyId(const KBDLLHOOKSTRUCT &key)
+{
+    if (key.vkCode == VK_PAUSE)
+        return 0xE11D;
+    if (key.scanCode == 0) // made up by software: where it would be
+        return int(MapVirtualKeyW(key.vkCode, MAPVK_VK_TO_VSC_EX));
+    return int(key.scanCode) | ((key.flags & LLKHF_EXTENDED) ? 0xE000 : 0);
 }
 
 bool held(int vk)
@@ -118,10 +129,10 @@ private:
         if (code == HC_ACTION && g_monitor) {
             const auto *key = reinterpret_cast<const KBDLLHOOKSTRUCT *>(lParam);
             const bool down = wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN;
-            const int vk = int(key->vkCode);
-            QMetaObject::invokeMethod(g_monitor, [vk, down] {
+            const int id = keyId(*key);
+            QMetaObject::invokeMethod(g_monitor, [id, down] {
                 if (g_monitor)
-                    emit g_monitor->keyState(vk, down);
+                    emit g_monitor->keyState(id, down);
             }, Qt::QueuedConnection);
         }
         if (code == HC_ACTION && g_monitor && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)) {
@@ -152,6 +163,91 @@ private:
 };
 
 } // namespace
+
+namespace {
+
+// What a key types, on its own or with Shift.
+QString typedBy(UINT vk, int scan, HKL layout, bool shift)
+{
+    BYTE state[256] = {};
+    if (shift)
+        state[VK_SHIFT] = 0x80;
+    wchar_t text[8] = {};
+    // 0x4: leave the keyboard state (dead keys) as it is (Windows 10 1607+).
+    int n = ToUnicodeEx(vk, UINT(scan), state, text, 8, 0x4, layout);
+    if (n < 0)
+        n = 1; // a dead key: its accent
+    const QString typed = QString::fromWCharArray(text, std::max(0, n)).trimmed();
+    if (typed.isEmpty() || !typed.at(0).isPrint())
+        return {};
+    return typed;
+}
+
+// A key's label: what it types on its own; letters, as on key caps, in
+// upper case, which is what they type with Shift (é on a French number key
+// types 2 with Shift: it stays é).
+QString labelOf(int scan, HKL layout)
+{
+    const UINT vk = MapVirtualKeyExW(UINT(scan), MAPVK_VSC_TO_VK_EX, layout);
+    if (vk == 0)
+        return {};
+    const QString plain = typedBy(vk, scan, layout, false);
+    const QString upper = plain.toUpper();
+    return upper != plain && typedBy(vk, scan, layout, true) == upper ? upper : plain;
+}
+
+KeyboardLayout layoutOf(HKL hkl)
+{
+    static QHash<quintptr, KeyboardLayout> known;
+    const auto id = quintptr(hkl);
+    if (const auto it = known.constFind(id); it != known.constEnd())
+        return *it;
+
+    KeyboardLayout layout;
+    layout.id = id;
+    // The character keys: the rows from ` to / and the extra ones of ISO and JIS.
+    QList<int> scans;
+    for (int scan = 0x02; scan <= 0x0D; ++scan) scans << scan;
+    for (int scan = 0x10; scan <= 0x1B; ++scan) scans << scan;
+    for (int scan = 0x1E; scan <= 0x29; ++scan) scans << scan;
+    for (int scan = 0x2B; scan <= 0x35; ++scan) scans << scan;
+    scans << 0x56 << 0x73;
+    for (int scan : std::as_const(scans)) {
+        const QString typed = labelOf(scan, hkl);
+        if (!typed.isEmpty())
+            layout.labels.insert(scan, typed);
+    }
+
+    // A Japanese keyboard (type 7) is JIS, whatever the layout: the Japanese
+    // layout on another keyboard types as the US one. ISO keyboards have a key
+    // left of Z typing something other than the key above Enter; on ANSI
+    // ones both are a backslash.
+    if (GetKeyboardType(0) == 7)
+        layout.physical = KeyboardLayout::Physical::Jis;
+    else if (layout.labels.contains(0x56) && layout.labels.value(0x56) != layout.labels.value(0x2B))
+        layout.physical = KeyboardLayout::Physical::Iso;
+    known.insert(id, layout);
+    return layout;
+}
+
+} // namespace
+
+KeyboardLayout currentKeyboardLayout()
+{
+    DWORD thread = 0;
+    if (const HWND window = GetForegroundWindow())
+        thread = GetWindowThreadProcessId(window, nullptr);
+    HKL hkl = GetKeyboardLayout(thread);
+    if (!hkl)
+        hkl = GetKeyboardLayout(0);
+    return layoutOf(hkl);
+}
+
+KeyboardLayout keyboardLayoutNamed(const QString &name)
+{
+    const HKL hkl = LoadKeyboardLayoutW(reinterpret_cast<LPCWSTR>(name.utf16()), KLF_NOTELLSHELL);
+    return layoutOf(hkl ? hkl : GetKeyboardLayout(0));
+}
 
 InputMonitor *InputMonitor::create(QObject *parent)
 {

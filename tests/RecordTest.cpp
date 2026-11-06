@@ -4,8 +4,10 @@
 //
 //   glimpse-record-test [seconds] [--rect x,y,w,h] [--out file.mp4]
 //   glimpse-record-test --probe file.mp4 [ms]   (only reads a file back)
-//   glimpse-record-test --keyboard-preview out.png   (draws the key overlay)
+//   glimpse-record-test --keyboard-preview out.png [layout...]   (draws the key
+//       overlay under the layout in use, or under each named one: 0000040C)
 
+#include "record/InputMonitor.h"
 #include "record/KeyboardOverlay.h"
 #include "record/ScreenRecorder.h"
 
@@ -60,19 +62,25 @@ int main(int argc, char *argv[])
     // Draws the on-video keyboard with Ctrl+Shift+S held and Space just
     // released over a sample background, without touching real input.
     if (args.size() >= 3 && args[1] == QLatin1String("--keyboard-preview")) {
-        QImage image(1200, 800, QImage::Format_ARGB32);
-        image.fill(QColor(0xf0, 0xf0, 0xf0));
-        KeyboardOverlay keyboard;
-        for (int vk : {0xA2, 0xA0, int('S')}) // left Ctrl, left Shift, S
-            keyboard.setKey(vk, true, 0);
-        keyboard.setKey(0x20, true, 0);
-        keyboard.setKey(0x20, false, 1000); // Space, released 150 ms ago
-        QPainter painter(&image);
-        const qreal unit = std::min({image.width() * 0.6 / 19.1, image.height() / 3.0 / 7.1, 34.0 * 1.5});
+        QList<KeyboardLayout> layouts;
+        for (const QString &name : args.mid(3))
+            layouts << keyboardLayoutNamed(name);
+        if (layouts.isEmpty())
+            layouts << currentKeyboardLayout();
+        const qreal unit = 34.0 * 1.5;
         const QSize size = KeyboardOverlay::sizeFor(unit);
-        keyboard.paint(painter, QRectF((image.width() - size.width()) / 2.0, image.height() - 24 - size.height(),
-                                       size.width(), size.height()),
-                       1150);
+        QImage image(size.width() + 48, int(layouts.size()) * (size.height() + 24) + 24, QImage::Format_ARGB32);
+        image.fill(QColor(0xf0, 0xf0, 0xf0));
+        QPainter painter(&image);
+        for (int i = 0; i < layouts.size(); ++i) {
+            KeyboardOverlay keyboard;
+            keyboard.setLayout(layouts.at(i));
+            for (int key : {0x1D, 0x2A, 0x1F}) // left Ctrl, left Shift, the key of S on US keyboards
+                keyboard.setKey(key, true, 0);
+            keyboard.setKey(0x39, true, 0);
+            keyboard.setKey(0x39, false, 1000); // Space, released 150 ms ago
+            keyboard.paint(painter, QRectF(24, 24 + i * (size.height() + 24), size.width(), size.height()), 1150);
+        }
         painter.end();
         image.save(args[2]);
         std::printf("keyboard %dx%d -> %s\n", size.width(), size.height(), qPrintable(args[2]));

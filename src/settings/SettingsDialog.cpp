@@ -115,13 +115,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         auto *combo = ui->recordKeyPositionCombo;
         const auto add = [combo](const QString &text, Position position) { combo->addItem(text, int(position)); };
         add(tr("In the picture, bottom"), Position::Bottom);
-        add(tr("In the picture, bottom left"), Position::BottomLeft);
-        add(tr("In the picture, bottom right"), Position::BottomRight);
         add(tr("In the picture, top"), Position::Top);
-        add(tr("In the picture, top left"), Position::TopLeft);
-        add(tr("In the picture, top right"), Position::TopRight);
         add(tr("In the picture, left"), Position::Left);
-        add(tr("In the picture, middle"), Position::Center);
         add(tr("In the picture, right"), Position::Right);
         combo->insertSeparator(combo->count());
         add(tr("Outside the picture, below"), Position::OutsideBottom);

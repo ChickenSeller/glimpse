@@ -1,83 +1,143 @@
 #include "KeyboardOverlay.h"
 
 #include <QFont>
+#include <QList>
 #include <QPainter>
 #include <QPainterPath>
 
 #include <algorithm>
-#include <iterator>
 
 namespace {
 
-// Windows virtual-key codes (kept here so this file needs no windows.h).
-enum : int {
-    VkBack = 0x08, VkTab = 0x09, VkReturn = 0x0D, VkPause = 0x13, VkCapital = 0x14, VkEscape = 0x1B,
-    VkSpace = 0x20, VkPrior = 0x21, VkNext = 0x22, VkEnd = 0x23, VkHome = 0x24,
-    VkLeft = 0x25, VkUp = 0x26, VkRight = 0x27, VkDown = 0x28, VkSnapshot = 0x2C, VkInsert = 0x2D, VkDelete = 0x2E,
-    VkLWin = 0x5B, VkRWin = 0x5C, VkApps = 0x5D, VkF1 = 0x70, VkScroll = 0x91,
-    VkLShift = 0xA0, VkRShift = 0xA1, VkLControl = 0xA2, VkRControl = 0xA3, VkLMenu = 0xA4, VkRMenu = 0xA5,
-    VkOem1 = 0xBA, VkOemPlus = 0xBB, VkOemComma = 0xBC, VkOemMinus = 0xBD, VkOemPeriod = 0xBE, VkOem2 = 0xBF,
-    VkOem3 = 0xC0, VkOem4 = 0xDB, VkOem5 = 0xDC, VkOem6 = 0xDD, VkOem7 = 0xDE,
-};
-
 struct KeyCap {
-    const char *label;
-    int vk;
-    qreal x, y, w; // in key units; every key is one unit high
+    const char *label; // fixed, or for character keys the US one, used when the layout gives none
+    int id;            // scan code; 0xE000 + scan code for extended keys
+    qreal x, y, w;     // in key units; every key is one unit high
+    bool character = false; // labeled by the layout in use
+    bool unlabeled = false; // the lower part of a tall Enter
 };
 
 constexpr qreal kWidth = 18.5;
 constexpr qreal kHeight = 6.5;
 constexpr qint64 kFadeMs = 300;
 
-// A US layout, the most widely recognized one.
-const KeyCap kKeys[] = {
-    // Function row
-    {"Esc", VkEscape, 0, 0, 1},
-    {"F1", VkF1 + 0, 2, 0, 1}, {"F2", VkF1 + 1, 3, 0, 1}, {"F3", VkF1 + 2, 4, 0, 1}, {"F4", VkF1 + 3, 5, 0, 1},
-    {"F5", VkF1 + 4, 6.5, 0, 1}, {"F6", VkF1 + 5, 7.5, 0, 1}, {"F7", VkF1 + 6, 8.5, 0, 1}, {"F8", VkF1 + 7, 9.5, 0, 1},
-    {"F9", VkF1 + 8, 11, 0, 1}, {"F10", VkF1 + 9, 12, 0, 1}, {"F11", VkF1 + 10, 13, 0, 1}, {"F12", VkF1 + 11, 14, 0, 1},
-    {"PrtSc", VkSnapshot, 15.5, 0, 1}, {"ScrLk", VkScroll, 16.5, 0, 1}, {"Pause", VkPause, 17.5, 0, 1},
-    // Number row
-    {"`", VkOem3, 0, 1.5, 1},
-    {"1", '1', 1, 1.5, 1}, {"2", '2', 2, 1.5, 1}, {"3", '3', 3, 1.5, 1}, {"4", '4', 4, 1.5, 1}, {"5", '5', 5, 1.5, 1},
-    {"6", '6', 6, 1.5, 1}, {"7", '7', 7, 1.5, 1}, {"8", '8', 8, 1.5, 1}, {"9", '9', 9, 1.5, 1}, {"0", '0', 10, 1.5, 1},
-    {"-", VkOemMinus, 11, 1.5, 1}, {"=", VkOemPlus, 12, 1.5, 1}, {"Backspace", VkBack, 13, 1.5, 2},
-    {"Ins", VkInsert, 15.5, 1.5, 1}, {"Home", VkHome, 16.5, 1.5, 1}, {"PgUp", VkPrior, 17.5, 1.5, 1},
-    // Top letter row
-    {"Tab", VkTab, 0, 2.5, 1.5},
-    {"Q", 'Q', 1.5, 2.5, 1}, {"W", 'W', 2.5, 2.5, 1}, {"E", 'E', 3.5, 2.5, 1}, {"R", 'R', 4.5, 2.5, 1},
-    {"T", 'T', 5.5, 2.5, 1}, {"Y", 'Y', 6.5, 2.5, 1}, {"U", 'U', 7.5, 2.5, 1}, {"I", 'I', 8.5, 2.5, 1},
-    {"O", 'O', 9.5, 2.5, 1}, {"P", 'P', 10.5, 2.5, 1}, {"[", VkOem4, 11.5, 2.5, 1}, {"]", VkOem6, 12.5, 2.5, 1},
-    {"\\", VkOem5, 13.5, 2.5, 1.5},
-    {"Del", VkDelete, 15.5, 2.5, 1}, {"End", VkEnd, 16.5, 2.5, 1}, {"PgDn", VkNext, 17.5, 2.5, 1},
-    // Home row
-    {"Caps", VkCapital, 0, 3.5, 1.75},
-    {"A", 'A', 1.75, 3.5, 1}, {"S", 'S', 2.75, 3.5, 1}, {"D", 'D', 3.75, 3.5, 1}, {"F", 'F', 4.75, 3.5, 1},
-    {"G", 'G', 5.75, 3.5, 1}, {"H", 'H', 6.75, 3.5, 1}, {"J", 'J', 7.75, 3.5, 1}, {"K", 'K', 8.75, 3.5, 1},
-    {"L", 'L', 9.75, 3.5, 1}, {";", VkOem1, 10.75, 3.5, 1}, {"'", VkOem7, 11.75, 3.5, 1},
-    {"Enter", VkReturn, 12.75, 3.5, 2.25},
-    // Bottom letter row
-    {"Shift", VkLShift, 0, 4.5, 2.25},
-    {"Z", 'Z', 2.25, 4.5, 1}, {"X", 'X', 3.25, 4.5, 1}, {"C", 'C', 4.25, 4.5, 1}, {"V", 'V', 5.25, 4.5, 1},
-    {"B", 'B', 6.25, 4.5, 1}, {"N", 'N', 7.25, 4.5, 1}, {"M", 'M', 8.25, 4.5, 1}, {",", VkOemComma, 9.25, 4.5, 1},
-    {".", VkOemPeriod, 10.25, 4.5, 1}, {"/", VkOem2, 11.25, 4.5, 1}, {"Shift", VkRShift, 12.25, 4.5, 2.75},
-    {"↑", VkUp, 16.5, 4.5, 1},
-    // Space row
-    {"Ctrl", VkLControl, 0, 5.5, 1.25}, {"Win", VkLWin, 1.25, 5.5, 1.25}, {"Alt", VkLMenu, 2.5, 5.5, 1.25},
-    {"", VkSpace, 3.75, 5.5, 6.25},
-    {"Alt", VkRMenu, 10, 5.5, 1.25}, {"Win", VkRWin, 11.25, 5.5, 1.25}, {"Menu", VkApps, 12.5, 5.5, 1.25},
-    {"Ctrl", VkRControl, 13.75, 5.5, 1.25},
-    {"←", VkLeft, 15.5, 5.5, 1}, {"↓", VkDown, 16.5, 5.5, 1}, {"→", VkRight, 17.5, 5.5, 1},
-};
+KeyCap chr(const char *label, int id, qreal x, qreal y, qreal w = 1)
+{
+    return {label, id, x, y, w, true};
+}
+
+KeyCap fixed(const char *label, int id, qreal x, qreal y, qreal w = 1)
+{
+    return {label, id, x, y, w};
+}
+
+// Function row, editing block and arrows: the same on every keyboard.
+void addCommon(QList<KeyCap> &keys)
+{
+    keys << fixed("Esc", 0x01, 0, 0);
+    const char *f[] = {"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"};
+    const int fScan[] = {0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x42, 0x43, 0x44, 0x57, 0x58};
+    const qreal fX[] = {2, 3, 4, 5, 6.5, 7.5, 8.5, 9.5, 11, 12, 13, 14};
+    for (int i = 0; i < 12; ++i)
+        keys << fixed(f[i], fScan[i], fX[i], 0);
+    keys << fixed("PrtSc", 0xE037, 15.5, 0) << fixed("ScrLk", 0x46, 16.5, 0) << fixed("Pause", 0xE11D, 17.5, 0);
+    keys << fixed("Ins", 0xE052, 15.5, 1.5) << fixed("Home", 0xE047, 16.5, 1.5) << fixed("PgUp", 0xE049, 17.5, 1.5);
+    keys << fixed("Del", 0xE053, 15.5, 2.5) << fixed("End", 0xE04F, 16.5, 2.5) << fixed("PgDn", 0xE051, 17.5, 2.5);
+    keys << fixed("↑", 0xE048, 16.5, 4.5);
+    keys << fixed("←", 0xE04B, 15.5, 5.5) << fixed("↓", 0xE050, 16.5, 5.5) << fixed("→", 0xE04D, 17.5, 5.5);
+}
+
+// Number row from 1 to =, letters and the punctuation among them: the keys
+// all three arrangements share, at the same places.
+void addShared(QList<KeyCap> &keys)
+{
+    const char *digits[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="};
+    for (int i = 0; i < 12; ++i)
+        keys << chr(digits[i], 0x02 + i, 1 + i, 1.5);
+    const char *top[] = {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"};
+    for (int i = 0; i < 12; ++i)
+        keys << chr(top[i], 0x10 + i, 1.5 + i, 2.5);
+    const char *home[] = {"A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"};
+    for (int i = 0; i < 11; ++i)
+        keys << chr(home[i], 0x1E + i, 1.75 + i, 3.5);
+    const char *bottom[] = {"Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"};
+    for (int i = 0; i < 10; ++i)
+        keys << chr(bottom[i], 0x2C + i, 2.25 + i, 4.5);
+    keys << fixed("Tab", 0x0F, 0, 2.5, 1.5) << fixed("Caps", 0x3A, 0, 3.5, 1.75);
+}
+
+QList<KeyCap> ansiKeys()
+{
+    QList<KeyCap> keys;
+    addCommon(keys);
+    addShared(keys);
+    keys << chr("`", 0x29, 0, 1.5) << fixed("Backspace", 0x0E, 13, 1.5, 2);
+    keys << chr("\\", 0x2B, 13.5, 2.5, 1.5);
+    keys << fixed("Enter", 0x1C, 12.75, 3.5, 2.25);
+    keys << fixed("Shift", 0x2A, 0, 4.5, 2.25) << fixed("Shift", 0x36, 12.25, 4.5, 2.75);
+    keys << fixed("Ctrl", 0x1D, 0, 5.5, 1.25) << fixed("Win", 0xE05B, 1.25, 5.5, 1.25) << fixed("Alt", 0x38, 2.5, 5.5, 1.25)
+         << fixed("", 0x39, 3.75, 5.5, 6.25) << fixed("Alt", 0xE038, 10, 5.5, 1.25) << fixed("Win", 0xE05C, 11.25, 5.5, 1.25)
+         << fixed("Menu", 0xE05D, 12.5, 5.5, 1.25) << fixed("Ctrl", 0xE01D, 13.75, 5.5, 1.25);
+    return keys;
+}
+
+QList<KeyCap> isoKeys()
+{
+    QList<KeyCap> keys;
+    addCommon(keys);
+    addShared(keys);
+    keys << chr("`", 0x29, 0, 1.5) << fixed("Backspace", 0x0E, 13, 1.5, 2);
+    // The tall Enter: its upper part beside ], its lower one beside the key
+    // that takes \'s place.
+    keys << fixed("Enter", 0x1C, 13.5, 2.5, 1.5) << KeyCap{"", 0x1C, 13.75, 3.5, 1.25, false, true};
+    keys << chr("#", 0x2B, 12.75, 3.5);
+    keys << fixed("Shift", 0x2A, 0, 4.5, 1.25) << chr("\\", 0x56, 1.25, 4.5) << fixed("Shift", 0x36, 12.25, 4.5, 2.75);
+    keys << fixed("Ctrl", 0x1D, 0, 5.5, 1.25) << fixed("Win", 0xE05B, 1.25, 5.5, 1.25) << fixed("Alt", 0x38, 2.5, 5.5, 1.25)
+         << fixed("", 0x39, 3.75, 5.5, 6.25) << fixed("AltGr", 0xE038, 10, 5.5, 1.25) << fixed("Win", 0xE05C, 11.25, 5.5, 1.25)
+         << fixed("Menu", 0xE05D, 12.5, 5.5, 1.25) << fixed("Ctrl", 0xE01D, 13.75, 5.5, 1.25);
+    return keys;
+}
+
+QList<KeyCap> jisKeys()
+{
+    QList<KeyCap> keys;
+    addCommon(keys);
+    addShared(keys);
+    keys << fixed("半/全", 0x29, 0, 1.5) << fixed("¥", 0x7D, 13, 1.5) << fixed("Back", 0x0E, 14, 1.5);
+    keys << fixed("Enter", 0x1C, 13.5, 2.5, 1.5) << KeyCap{"", 0x1C, 13.75, 3.5, 1.25, false, true};
+    keys << chr("]", 0x2B, 12.75, 3.5);
+    keys << fixed("Shift", 0x2A, 0, 4.5, 2.25) << chr("\\", 0x73, 12.25, 4.5) << fixed("Shift", 0x36, 13.25, 4.5, 1.75);
+    keys << fixed("Ctrl", 0x1D, 0, 5.5, 1.25) << fixed("Win", 0xE05B, 1.25, 5.5, 1.25) << fixed("Alt", 0x38, 2.5, 5.5, 1.25)
+         << fixed("無変換", 0x7B, 3.75, 5.5, 1.25) << fixed("", 0x39, 5, 5.5, 3.5) << fixed("変換", 0x79, 8.5, 5.5, 1.25)
+         << fixed("かな", 0x70, 9.75, 5.5, 1.25) << fixed("Alt", 0xE038, 11, 5.5) << fixed("Win", 0xE05C, 12, 5.5)
+         << fixed("Menu", 0xE05D, 13, 5.5) << fixed("Ctrl", 0xE01D, 14, 5.5);
+    return keys;
+}
+
+const QList<KeyCap> &keysFor(KeyboardLayout::Physical physical)
+{
+    static const QList<KeyCap> ansi = ansiKeys();
+    static const QList<KeyCap> iso = isoKeys();
+    static const QList<KeyCap> jis = jisKeys();
+    switch (physical) {
+    case KeyboardLayout::Physical::Iso: return iso;
+    case KeyboardLayout::Physical::Jis: return jis;
+    default: return ansi;
+    }
+}
 
 const QColor kAccent(0x2d, 0x9c, 0xff);
 
 } // namespace
 
-void KeyboardOverlay::setKey(int virtualKey, bool pressed, qint64 nowMs)
+void KeyboardOverlay::setLayout(const KeyboardLayout &layout)
 {
-    State &state = m_keys[virtualKey];
+    m_layout = layout;
+}
+
+void KeyboardOverlay::setKey(int key, bool pressed, qint64 nowMs)
+{
+    State &state = m_keys[key];
     if (pressed == state.pressed)
         return; // auto-repeat
     state.pressed = pressed;
@@ -113,12 +173,12 @@ void KeyboardOverlay::paint(QPainter &p, const QRectF &area, qint64 nowMs) const
     bold.setBold(true);
     const qreal gap = unit * 0.08;
 
-    for (const KeyCap &key : kKeys) {
+    for (const KeyCap &key : keysFor(m_layout.physical)) {
         const QRectF cap(board.left() + margin + key.x * unit + gap, board.top() + margin + key.y * unit + gap,
                          key.w * unit - 2 * gap, unit - 2 * gap);
         // How lit the key is: 1 while held, fading to 0 after release.
         qreal lit = 0;
-        const auto it = m_keys.constFind(key.vk);
+        const auto it = m_keys.constFind(key.id);
         if (it != m_keys.constEnd()) {
             if (it->pressed)
                 lit = 1;
@@ -134,9 +194,17 @@ void KeyboardOverlay::paint(QPainter &p, const QRectF &area, qint64 nowMs) const
         p.setPen(QPen(QColor(255, 255, 255, lit > 0 ? 220 : 70), std::max(1.0, unit * 0.03)));
         p.drawRoundedRect(cap, unit * 0.12, unit * 0.12);
 
+        if (key.unlabeled)
+            continue;
+        QString label = QString::fromUtf8(key.label);
+        if (key.character) {
+            const auto own = m_layout.labels.constFind(key.id);
+            if (own != m_layout.labels.constEnd() && !own->isEmpty())
+                label = *own;
+        }
         p.setFont(lit > 0 ? bold : font);
         p.setPen(QColor(255, 255, 255, lit > 0 ? 255 : 200));
-        p.drawText(cap, Qt::AlignCenter, QString::fromUtf8(key.label));
+        p.drawText(cap, Qt::AlignCenter, label);
     }
     p.restore();
 }

@@ -34,9 +34,10 @@ public:
     // How pressed keys are shown: text labels ("Ctrl + S"), a full keyboard
     // with the held keys lit, or both.
     enum class KeyStyle { Labels, Keyboard, Both };
-    // Where they are shown: at a place in the picture, or on a band added
+    // Where they are shown: at an edge of the picture, or on a band added
     // to the video beside the picture, so they cover nothing. Stored as
-    // numbers in the settings: only append.
+    // numbers in the settings: only append. The corners and the middle are
+    // no longer offered (see AppSettings::recordKeyPosition()).
     enum class KeyPosition {
         Bottom, BottomLeft, BottomRight, Top, TopLeft, TopRight, Left, Center, Right,
         OutsideBottom, OutsideTop, OutsideLeft, OutsideRight,

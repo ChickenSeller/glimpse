@@ -294,8 +294,18 @@ void setRecordKeyStyle(int style)
 int recordKeyPosition()
 {
     const int position = SettingsStore::open().value(QStringLiteral("recording/keyPosition"), 0).toInt();
-    constexpr int kPositions = 13; // ScreenRecorder::kKeyPositionCount, without pulling in Qt Multimedia
-    return position >= 0 && position < kPositions ? position : 0;
+    // ScreenRecorder::KeyPosition, without pulling in Qt Multimedia. Places
+    // no longer offered go to the edge they were at: the corners at the
+    // bottom (1, 2) to the bottom, those at the top (4, 5) to the top, the
+    // middle (7) to the bottom.
+    constexpr int kPositions = 13;
+    if (position < 0 || position >= kPositions)
+        return 0;
+    switch (position) {
+    case 1: case 2: case 7: return 0;
+    case 4: case 5: return 3;
+    default: return position;
+    }
 }
 
 void setRecordKeyPosition(int position)

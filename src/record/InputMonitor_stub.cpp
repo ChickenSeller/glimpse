@@ -13,6 +13,16 @@ public:
 
 } // namespace
 
+KeyboardLayout currentKeyboardLayout()
+{
+    return {};
+}
+
+KeyboardLayout keyboardLayoutNamed(const QString &)
+{
+    return {};
+}
+
 InputMonitor *InputMonitor::create(QObject *parent)
 {
     return new StubInputMonitor(parent);

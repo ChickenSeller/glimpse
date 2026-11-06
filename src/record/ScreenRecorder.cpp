@@ -184,9 +184,13 @@ ScreenRecorder::ScreenRecorder(QScreen *screen, const QRect &logicalRect, const 
                 m_clicks.append({cursorPos(scale), button, m_clock.elapsed()});
             }
         });
-        connect(m_inputMonitor, &InputMonitor::keyState, this, [this](int virtualKey, bool pressed) {
-            if (m_options.showKeys)
-                m_keyboard.setKey(virtualKey, pressed, m_clock.elapsed());
+        connect(m_inputMonitor, &InputMonitor::keyState, this, [this](int key, bool pressed) {
+            if (!m_options.showKeys)
+                return;
+            // The layout may be switched while recording, or differ per window.
+            if (pressed)
+                m_keyboard.setLayout(currentKeyboardLayout());
+            m_keyboard.setKey(key, pressed, m_clock.elapsed());
         });
         connect(m_inputMonitor, &InputMonitor::keyPressed, this, [this](const QString &text) {
             if (!m_options.showKeys)
@@ -213,6 +217,8 @@ ScreenRecorder::~ScreenRecorder()
 void ScreenRecorder::start()
 {
     m_clock.start();
+    if (m_options.showKeys)
+        m_keyboard.setLayout(currentKeyboardLayout());
     if (m_inputMonitor)
         m_inputMonitor->start();
 #ifdef Q_OS_WIN

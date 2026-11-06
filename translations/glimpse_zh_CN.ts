@@ -2267,32 +2267,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>画面内，下方</translation>
     </message>
     <message>
-        <source>In the picture, bottom left</source>
-        <translation>画面内，左下</translation>
-    </message>
-    <message>
-        <source>In the picture, bottom right</source>
-        <translation>画面内，右下</translation>
-    </message>
-    <message>
         <source>In the picture, top</source>
         <translation>画面内，上方</translation>
     </message>
     <message>
-        <source>In the picture, top left</source>
-        <translation>画面内，左上</translation>
-    </message>
-    <message>
-        <source>In the picture, top right</source>
-        <translation>画面内，右上</translation>
-    </message>
-    <message>
         <source>In the picture, left</source>
         <translation>画面内，左侧</translation>
-    </message>
-    <message>
-        <source>In the picture, middle</source>
-        <translation>画面内，中央</translation>
     </message>
     <message>
         <source>In the picture, right</source>
