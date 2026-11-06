@@ -20,6 +20,7 @@
 #include "AbstractAnnotationCurve.h"
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 
 namespace kImageAnnotator {
@@ -89,6 +90,30 @@ int AbstractAnnotationCurve::bendCount() const
 	return int(mNodes.size()) - 2;
 }
 
+bool AbstractAnnotationCurve::hasActiveNode() const
+{
+	return mActiveNode >= 1 && mActiveNode < mNodes.size() - 1;
+}
+
+int AbstractAnnotationCurve::firstHandleIndex() const
+{
+	return 2 + bendCount();
+}
+
+int AbstractAnnotationCurve::pointCount() const
+{
+	return firstHandleIndex() + (hasActiveNode() ? 2 : 0);
+}
+
+void AbstractAnnotationCurve::takeHoldOf(int index)
+{
+	if (index < 2) {
+		mActiveNode = -1;
+	} else if (index < firstHandleIndex()) {
+		mActiveNode = index - 1;
+	}
+}
+
 AbstractAnnotationCurve::Nodes AbstractAnnotationCurve::bends() const
 {
 	return mNodes;
@@ -100,6 +125,15 @@ void AbstractAnnotationCurve::setBends(const Nodes &nodes)
 		return;
 	}
 	prepareGeometryChange();
+	// A point just added becomes the active one, to bend it by its handles.
+	mActiveNode = -1;
+	if (nodes.size() == mNodes.size() + 1) {
+		int added = 1;
+		while (added < mNodes.size() - 1 && nodes[added].point == mNodes[added].point) {
+			++added;
+		}
+		mActiveNode = added;
+	}
 	mNodes = nodes;
 	updateShape();
 }
@@ -184,9 +218,38 @@ void AbstractAnnotationCurve::setPointAt(const QPointF &point, int index, bool s
 		AbstractAnnotationLine::setPointAt(point, index, snapToAngle);
 		return;
 	}
-	const int node = index - 1;
 	const std::optional<QPointF> relative = toRelative(point);
-	if (node >= mNodes.size() - 1 || !relative) {
+	if (!relative) {
+		return;
+	}
+	if (index >= firstHandleIndex()) {
+		// A handle of the active node.
+		if (!hasActiveNode() || index > firstHandleIndex() + 1) {
+			return;
+		}
+		Node &node = mNodes[mActiveNode];
+		const bool isIn = index == firstHandleIndex();
+		QPointF &dragged = isIn ? node.in : node.out;
+		QPointF &other = isIn ? node.out : node.in;
+		// Smooth: the handles point opposite ways. Judged before the move, so
+		// that undoing a drag that made a corner restores it exactly.
+		const QPointF draggedArm = dragged - node.point;
+		const QPointF otherArm = other - node.point;
+		const qreal cross = draggedArm.x() * otherArm.y() - draggedArm.y() * otherArm.x();
+		const qreal scale = std::hypot(draggedArm.x(), draggedArm.y()) * std::hypot(otherArm.x(), otherArm.y());
+		const bool smooth = std::abs(cross) <= 1e-6 * scale + 1e-12 && dot(draggedArm, otherArm) <= 0;
+		prepareGeometryChange();
+		dragged = *relative;
+		const QPointF newArm = dragged - node.point;
+		const qreal newLength = std::hypot(newArm.x(), newArm.y());
+		if (smooth && !snapToAngle && newLength > 1e-9) {
+			other = node.point - newArm * (std::hypot(otherArm.x(), otherArm.y()) / newLength);
+		}
+		updateShape();
+		return;
+	}
+	const int node = index - 1;
+	if (node >= mNodes.size() - 1) {
 		return;
 	}
 	// The point takes its handles along.
@@ -202,6 +265,13 @@ QPointF AbstractAnnotationCurve::pointAt(int index) const
 {
 	if (index < 2) {
 		return AbstractAnnotationLine::pointAt(index);
+	}
+	if (index >= firstHandleIndex()) {
+		if (!hasActiveNode()) {
+			return mLine->center();
+		}
+		const Node &node = mNodes[mActiveNode];
+		return toPoint(index == firstHandleIndex() ? node.in : node.out);
 	}
 	const int node = std::clamp(index - 1, 0, int(mNodes.size()) - 1);
 	return toPoint(mNodes[node].point);

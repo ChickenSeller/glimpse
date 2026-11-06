@@ -49,7 +49,10 @@ only when needed, and listed below.
   curves through its nodes, each node with a handle on either side; a bend
   point added splits the curve exactly where it is (de Casteljau), so the
   shape does not change until the point is dragged, and a dragged point
-  takes its handles along. Nodes are kept relative to the two ends, so they
+  takes its handles along. The bend point last taken hold of or added shows
+  its two handles (round, with lines to the point,
+  `src/annotations/modifiers/AnnotationItemResizer.*`); dragging one keeps
+  the other in line, unless the node is a corner or the drag holds Ctrl. Nodes are kept relative to the two ends, so they
   follow them. Its shaft
   is stroked only and its heads stroked and filled, since kImageAnnotator's
   own painting would fill the area under a curve. Added last to the `Tools`

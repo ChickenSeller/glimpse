@@ -40,12 +40,23 @@ AnnotationItemResizer::~AnnotationItemResizer()
 QRectF AnnotationItemResizer::boundingRect() const
 {
     auto size = mResizeHandles->handleSize() / 2;
-    return mAnnotationItem->boundingRect().normalized().adjusted(-size, -size, size, size);
+    auto rect = mAnnotationItem->boundingRect().normalized().adjusted(-size, -size, size, size);
+    // A curve's handles may stick out of it.
+    const auto handles = mResizeHandles->handles();
+    for (const auto &handle : handles) {
+        rect |= handle;
+    }
+    return rect;
 }
 
 void AnnotationItemResizer::grabHandle(const QPointF &pos)
 {
     mCurrentHandle = mResizeHandles->indexOfHandleAt(pos);
+    // A curve's point taken hold of shows its handles (or hides them).
+    if (auto curve = dynamic_cast<AbstractAnnotationCurve *>(mAnnotationItem); curve != nullptr && mCurrentHandle != -1) {
+        curve->takeHoldOf(mCurrentHandle);
+        refresh();
+    }
     if (mCurrentHandle != -1) {
         mClickOffset = pos - mResizeHandles->handle(mCurrentHandle).anchor();
     }
@@ -94,8 +105,27 @@ void AnnotationItemResizer::paint(QPainter *painter, const QStyleOptionGraphicsI
     painter->setPen(QPen(Qt::white, 1.0 / mZoomValueProvider->zoomValue()));
     painter->setBrush(Qt::gray);
     auto handles = mResizeHandles->handles();
-    for (auto &handle : handles) {
-        painter->drawRect(handle);
+    // A curve's active point: a line to each of its handles, drawn round.
+    auto curve = dynamic_cast<AbstractAnnotationCurve *>(mAnnotationItem);
+    const int firstHandle = curve != nullptr && curve->hasActiveNode() ? curve->firstHandleIndex() : int(handles.size());
+    if (firstHandle + 1 < handles.size()) {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(QPen(Qt::gray, 1.0 / mZoomValueProvider->zoomValue()));
+        const QPointF node = curve->pointAt(curve->activePointIndex());
+        painter->drawLine(node, curve->pointAt(firstHandle));
+        painter->drawLine(node, curve->pointAt(firstHandle + 1));
+        painter->restore();
+    }
+    for (int i = 0; i < handles.size(); ++i) {
+        if (i >= firstHandle) {
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->drawEllipse(handles[i]);
+            painter->restore();
+        } else {
+            painter->drawRect(handles[i]);
+        }
     }
 }
 

@@ -35,8 +35,12 @@ namespace kImageAnnotator {
 // end, the start, both or neither.
 //
 // Points by index: 0 the start, 1 the end, 2 and up the bend points from the
-// start on. Nodes are kept relative to the two ends, so they follow them
-// when they are moved, and the whole item when it is moved or scaled.
+// start on, then, while a bend point is active (the one last taken hold of or
+// added), its two handles: in, then out. Dragging a handle keeps the other
+// in line with it (a smooth node, which stays so), unless the node is a
+// corner already or the drag holds Ctrl, which moves the one handle alone.
+// Nodes are kept relative to the two ends, so they follow them when they
+// are moved, and the whole item when it is moved or scaled.
 class AbstractAnnotationCurve : public AbstractAnnotationLine
 {
 public:
@@ -59,6 +63,16 @@ public:
 	void setProperties(const PropertiesPtr &properties) override;
 
 	int bendCount() const;
+	// All points by index: the ends, the bend points, the active one's handles.
+	int pointCount() const;
+	// Index of the first handle point; meaningful while hasActiveNode().
+	int firstHandleIndex() const;
+	bool hasActiveNode() const;
+	// The active bend point's index.
+	int activePointIndex() const { return mActiveNode + 1; }
+	// The point taken hold of: a bend point becomes the active one, an end
+	// leaves none, a handle changes nothing.
+	void takeHoldOf(int index);
 	// All nodes, ends included, to restore them.
 	Nodes bends() const;
 	void setBends(const Nodes &nodes);
@@ -74,6 +88,7 @@ protected:
 
 private:
 	Nodes mNodes; // the start, the bend points, the end
+	int mActiveNode = -1; // a bend point's node, or -1
 	QPainterPath mCurve; // stroked only
 	QPainterPath mHeads; // stroked and filled
 

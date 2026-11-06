@@ -32,7 +32,7 @@ void CurveResizeHandles::update()
 {
 	// One handle per bend point besides the ends; bend points come and go.
 	// New ones copy an end's handle, which has the size for the zoom.
-	const int count = 2 + mCurveItem->bendCount();
+	const int count = mCurveItem->pointCount();
 	while (mHandles.size() < count) {
 		mHandles.append(mHandles.first());
 	}
@@ -49,7 +49,7 @@ void CurveResizeHandles::update()
 	mHandles[0].setAnchor(line.p1());
 	mHandles[1].moveCenter(outerLine.p2());
 	mHandles[1].setAnchor(line.p2());
-	// The bend points right on the curve.
+	// The bend points right on the curve, and the active one's handles.
 	for (int i = 2; i < count; ++i) {
 		const QPointF point = mCurveItem->pointAt(i);
 		mHandles[i].moveCenter(point);
