@@ -42,12 +42,12 @@ void AboutDialog::updateTexts()
                                            "&nbsp;&nbsp;%1")
                                 .arg(tr("Version %1").arg(QStringLiteral(GLIMPSE_VERSION)).toHtmlEscaped()));
 #ifdef GLIMPSE_FORUM_BUILD
-    // No links (see CMakeLists.txt); the license and notices are beside glimpse.exe.
+    // No links (see CMakeLists.txt), so no pointer to the third-party notices
+    // either: they and the license are beside glimpse.exe.
     ui->linksLabel->hide();
     ui->licenseLabel->setText(
-        tr("Copyright © 2026 Kaguya. Released under the %1; built with Qt %2 and other open-source components (%3).")
-            .arg(tr("MIT License").toHtmlEscaped(), QString::fromLatin1(qVersion()),
-                 tr("third-party notices").toHtmlEscaped()));
+        tr("Copyright © 2026 Kaguya. Released under the %1; built with Qt %2 and other open-source components.")
+            .arg(tr("MIT License").toHtmlEscaped(), QString::fromLatin1(qVersion())));
     return;
 #endif
     ui->linksLabel->setText(QStringLiteral("%1: %2<br>%3: %4")

@@ -43,6 +43,10 @@
         <source>third-party notices</source>
         <translation>第三方声明</translation>
     </message>
+    <message>
+        <source>Copyright © 2026 Kaguya. Released under the %1; built with Qt %2 and other open-source components.</source>
+        <translation>Copyright © 2026 Kaguya。以 %1 发布；基于 Qt %2 及其他开源组件构建。</translation>
+    </message>
 </context>
 <context>
     <name>AnnotatorWindow</name>
