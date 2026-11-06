@@ -70,7 +70,11 @@ int main(int argc, char *argv[])
             std::fflush(stdout);
             QApplication::quit();
         });
-        QTimer::singleShot(0, session, &ScrollCaptureSession::start);
+        QTimer::singleShot(0, session, [session, rect] {
+            session->start();
+            // Automatic scrolling begins with a click: in the middle of the area.
+            session->clickAt(rect.center());
+        });
         QApplication::exec();
         return 0;
     }
@@ -152,8 +156,11 @@ int main(int argc, char *argv[])
             QApplication::quit();
         });
         session->start();
-        if (!manual)
+        if (!manual) {
+            // Automatic scrolling begins with a click: in the view, near its right edge.
+            session->clickAt(QPoint(viewport.right() - 24, viewport.center().y()));
             return;
+        }
         // Steps no larger than the view minus some overlap, slower than the
         // session grabs, and one back up. Even, so that at 150% scaling they
         // move whole device pixels, as applications scroll.

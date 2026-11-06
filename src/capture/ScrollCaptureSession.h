@@ -4,6 +4,7 @@
 
 #include <QImage>
 #include <QObject>
+#include <QPointer>
 #include <QPoint>
 #include <QRect>
 
@@ -18,6 +19,9 @@ class QWidget;
 // Scrolling capture of one screen area, FastStone style: the pointer is put
 // over the area and the wheel is turned step by step; after each step the area
 // is grabbed and stitched. Stops at the end of the content, on Esc or Stop.
+// It begins once the user clicks in the area: where, is where the wheel turns
+// (a window may hold several scrolling panes). The click is caught, so it
+// does not reach the application below.
 // The area is marked by a frame drawn just outside it, with a small panel
 // showing progress.
 //
@@ -44,6 +48,9 @@ public:
     // Before start().
     void setPreviewOpacity(qreal opacity) { m_previewOpacity = opacity; }
     void start();
+    // As if the user clicked at `point` (global, logical) to begin automatic
+    // scrolling; for tests, which cannot click.
+    void clickAt(const QPoint &point);
     // Ends the capture with what it has, as Stop does.
     void stop() { m_stopRequested = true; }
     // Ends it without a result.
@@ -63,6 +70,8 @@ signals:
     void elevationNeeded();
 
 private:
+    // After the click that picks where to scroll.
+    void beginScrolling(const QPoint &scrollPoint);
     void step();
     void manualStep();
     void finish();
@@ -93,6 +102,7 @@ private:
     QLabel *m_status = nullptr;
     QPushButton *m_undo = nullptr;
     std::unique_ptr<QWidget> m_preview;
+    QPointer<QWidget> m_clickCatcher; // over the area until the click
     GlobalHotkeys *m_hotkeys = nullptr;
     bool m_panelOverlaps = false; // no room outside: hidden while grabbing
 

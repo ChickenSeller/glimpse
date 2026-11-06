@@ -6,16 +6,21 @@
 
 #include <QCursor>
 #include <QDir>
+#include <QEnterEvent>
 #include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLoggingCategory>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPushButton>
 #include <QScreen>
 #include <QTimer>
+#include <QToolTip>
 #include <QWidget>
+
+#include <functional>
 
 #include <algorithm>
 #include <cmath>
@@ -91,6 +96,62 @@ private:
     qreal m_opacity;
 };
 
+// Over the area until the user clicks where to scroll: catches that click
+// (so it opens no link below), and says what to do in a tooltip by the
+// pointer. Nearly transparent: a fully transparent window lets clicks through.
+class ClickCatcher : public QWidget
+{
+public:
+    ClickCatcher(const QRect &geometry, std::function<void(const QPoint &)> clicked, std::function<void()> canceled)
+        : QWidget(nullptr, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool)
+        , m_clicked(std::move(clicked))
+        , m_canceled(std::move(canceled))
+    {
+        setAttribute(Qt::WA_TranslucentBackground);
+        setAttribute(Qt::WA_DeleteOnClose);
+        setMouseTracking(true);
+        setCursor(Qt::PointingHandCursor);
+        setFocusPolicy(Qt::StrongFocus);
+        setGeometry(geometry);
+    }
+
+    static QString hint()
+    {
+        return ScrollCaptureSession::tr("Click where to scroll to begin\nEsc to cancel");
+    }
+
+    void showHint(const QPoint &global) { QToolTip::showText(global + QPoint(14, 18), hint(), this); }
+
+protected:
+    void paintEvent(QPaintEvent *) override { QPainter(this).fillRect(rect(), QColor(0, 0, 0, 1)); }
+    void enterEvent(QEnterEvent *event) override { showHint(event->globalPosition().toPoint()); }
+    void mouseMoveEvent(QMouseEvent *event) override { showHint(event->globalPosition().toPoint()); }
+    void leaveEvent(QEvent *) override { QToolTip::hideText(); }
+    void mousePressEvent(QMouseEvent *event) override
+    {
+        if (event->button() != Qt::LeftButton)
+            return;
+        QToolTip::hideText();
+        const QPoint at = event->globalPosition().toPoint();
+        hide();
+        close();
+        m_clicked(at);
+    }
+    void keyPressEvent(QKeyEvent *event) override
+    {
+        if (event->key() == Qt::Key_Escape) {
+            QToolTip::hideText();
+            hide();
+            close();
+            m_canceled();
+        }
+    }
+
+private:
+    std::function<void(const QPoint &)> m_clicked;
+    std::function<void()> m_canceled;
+};
+
 QWidget *makeStrip(const QRect &geometry)
 {
     auto *strip = new QWidget(nullptr, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool
@@ -135,7 +196,9 @@ void ScrollCaptureSession::start()
     // Glimpse cannot otherwise see.
     m_hotkeys = GlobalHotkeys::create(this);
     connect(m_hotkeys, &GlobalHotkeys::activated, this, [this](int id) {
-        if (id == kUndoHotkey)
+        if (m_clickCatcher && id == kStopHotkey)
+            abort(); // nothing captured yet
+        else if (id == kUndoHotkey)
             undo();
         else if (id == kStopHotkey)
             stop();
@@ -145,9 +208,41 @@ void ScrollCaptureSession::start()
         QTimer::singleShot(kStartDelayMs, this, &ScrollCaptureSession::manualStep);
         return;
     }
+    // Automatic scrolling begins with a click where to scroll.
+    m_clickCatcher = new ClickCatcher(
+        m_rect, [this](const QPoint &at) { beginScrolling(at); }, [this] { abort(); });
+    Platform::disableWindowAnimations(m_clickCatcher);
+    m_clickCatcher->show();
+    m_clickCatcher->raise();
+    m_clickCatcher->activateWindow();
+    m_clickCatcher->setFocus();
+    if (m_rect.contains(QCursor::pos()))
+        static_cast<ClickCatcher *>(m_clickCatcher.data())->showHint(QCursor::pos());
+    updatePanel();
+}
+
+void ScrollCaptureSession::clickAt(const QPoint &point)
+{
+    if (!m_clickCatcher)
+        return;
+    QToolTip::hideText();
+    m_clickCatcher->close();
+    beginScrolling(point);
+}
+
+void ScrollCaptureSession::beginScrolling(const QPoint &scrollPoint)
+{
+    if (m_done)
+        return;
+    m_scrollPoint = QPoint(std::clamp(scrollPoint.x(), m_rect.left(), m_rect.right()),
+                           std::clamp(scrollPoint.y(), m_rect.top(), m_rect.bottom()));
+    qCDebug(lcScroll) << "scrolling at" << m_scrollPoint;
+    updatePanel();
     m_restoreCursor = QCursor::pos();
     QCursor::setPos(m_screen, m_scrollPoint);
+    ScrollInput::escapePressed(); // forget an Esc pressed while waiting
     ScrollInput::watchUser(true);
+    // The catcher is gone by the first grab.
     QTimer::singleShot(kStartDelayMs, this, &ScrollCaptureSession::step);
 }
 
@@ -259,6 +354,7 @@ void ScrollCaptureSession::createChrome()
     // Room for the longest status, so the panel never cuts one off.
     int widest = 0;
     for (const QString &text : {tr("Scrolling capture: %1 px  ·  Turn the wheel to scroll yourself  ·  Esc to stop").arg(99999),
+                                tr("Click in the area where to scroll  ·  Esc to cancel"),
                                 tr("Not lined up: scroll back a little  ·  Esc to stop"),
                                 tr("Scroll the area yourself: %1 px  ·  Esc to stop").arg(99999)})
         widest = std::max(widest, m_status->fontMetrics().horizontalAdvance(text));
@@ -343,7 +439,9 @@ void ScrollCaptureSession::updatePanel()
     if (!m_status)
         return;
     m_undo->setEnabled(m_stitcher.canUndo());
-    if (m_scrolling == Scrolling::Automatic)
+    if (m_clickCatcher)
+        m_status->setText(tr("Click in the area where to scroll  ·  Esc to cancel"));
+    else if (m_scrolling == Scrolling::Automatic)
         m_status->setText(tr("Scrolling capture: %1 px  ·  Turn the wheel to scroll yourself  ·  Esc to stop")
                               .arg(m_stitcher.height()));
     else if (m_lost)
@@ -501,6 +599,10 @@ void ScrollCaptureSession::finish()
         return;
     qCDebug(lcScroll) << "finished after" << m_steps << "steps, height" << m_stitcher.height();
     m_done = true;
+    if (m_clickCatcher) {
+        QToolTip::hideText();
+        m_clickCatcher->close();
+    }
     ScrollInput::watchUser(false);
     if (m_hotkeys)
         m_hotkeys->clear();

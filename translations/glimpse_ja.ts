@@ -1673,6 +1673,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <source>Scroll the area yourself: %1 px  ·  Esc to stop</source>
         <translation>この範囲を自分でスクロール：%1 ピクセル  ·  Esc で停止</translation>
     </message>
+    <message>
+        <source>Click where to scroll to begin
+Esc to cancel</source>
+        <translation>スクロールする位置をクリックして開始
+Esc でキャンセル</translation>
+    </message>
+    <message>
+        <source>Click in the area where to scroll  ·  Esc to cancel</source>
+        <translation>範囲内のスクロールする位置をクリック  ·  Esc でキャンセル</translation>
+    </message>
 </context>
 <context>
     <name>SettingsDialog</name>
