@@ -25,6 +25,11 @@ class SelectionOverlay;
 // walks out to parents and back in), click takes it; dragging still works.
 // Freehand mode: drag to draw an outline; releasing closes it. selected()
 // then carries its bounding box and shape() the outline itself.
+// Adjustable (Region and Window modes): a rectangle or window, once picked,
+// stays selected with handles; drag them or the inside, or use the arrow keys
+// (Shift: 10 px, Ctrl: resize), then Enter or a double-click takes it and
+// Ctrl+C takes it to be copied. A press outside starts a new one.
+// While dragging out a rectangle, holding Space moves it instead.
 // Crosshair mode: full-screen crosshair with position and color. A click (or
 // Space) locks it (arrow keys then move the lock) and distances are shown from
 // there; Ctrl+C copies the position, Ctrl+Shift+C the color. A double-click
@@ -49,11 +54,14 @@ public:
     const DesktopSnapshot &snapshot() const { return m_snapshot; }
 
     void start();
+    void setAdjustable(bool on) { m_adjustable = on; }
 
     // The drawn outline after a Freehand selection; empty in the other modes.
     QPainterPath shape() const { return m_shape; }
     // Whether Ctrl was held when the selection was made.
     bool controlHeld() const { return m_controlHeld; }
+    // Whether the selection was taken with Ctrl+C, to be copied and done.
+    bool copyRequested() const { return m_copy; }
 
 signals:
     void selected(const QRect &logicalRect);
@@ -63,7 +71,17 @@ signals:
 private:
     friend class detail::SelectionOverlay;
 
+    // Where a press on the adjustable selection takes hold of it.
+    enum class Handle { None, Move, Left, Top, Right, Bottom, TopLeft, TopRight, BottomLeft, BottomRight };
+
     QRect selection() const;
+    bool isAdjusting() const { return m_adjusting; }
+    Handle handleAt(const QPoint &pos) const;
+    // The pointer's shape over `pos` (logical, global) in Region / Window mode.
+    Qt::CursorShape cursorShapeAt(const QPoint &pos) const;
+    void adjustBy(int dx, int dy, bool resize);
+    void confirm(bool copy);
+    void setSpaceHeld(bool held) { m_spaceHeld = held; }
     bool isDragging() const { return m_dragging; }
     bool isPressed() const { return m_pressed; }
     QPoint cursor() const { return m_cursor; }
@@ -97,6 +115,8 @@ private:
     void resetSelection();
     void cancel();
     void finish(const QRect &rect);
+    void beginAdjusting(const QRect &rect);
+    QRect boundedMove(const QRect &rect, const QPoint &delta) const;
     void updateHover();
     void closeOverlays();
     void updateOverlays();
@@ -115,6 +135,14 @@ private:
     QString m_message;            // Crosshair: feedback after copying
     QPainterPath m_shape; // Freehand: the finished outline
     bool m_controlHeld = false;
+    bool m_adjustable = false;
+    bool m_adjusting = false;
+    QRect m_adjustRect;          // the selection being adjusted
+    Handle m_grab = Handle::None; // what a press is dragging
+    QPoint m_grabOrigin;
+    QRect m_grabRect;
+    bool m_spaceHeld = false;
+    bool m_copy = false;
 
     QList<CaptureTarget> m_hoverChain; // outermost window first
     qsizetype m_hoverLevel = -1;       // index into m_hoverChain

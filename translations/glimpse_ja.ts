@@ -1304,6 +1304,10 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
+        <source>Enter or double-click: take it  ·  Ctrl+C: copy  ·  Arrows: move (Shift: 10 px, Ctrl: resize)  ·  Right-click: select again</source>
+        <translation>Enter またはダブルクリック：取り込む  ·  Ctrl+C：コピー  ·  矢印キー：移動（Shift：10 ピクセル、Ctrl：サイズ変更）  ·  右クリック：選択し直す</translation>
+    </message>
+    <message>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation type="vanished">クリック：取得  ·  矢印キー：1 ピクセル移動</translation>
     </message>
@@ -1522,6 +1526,14 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>SettingsDialog</name>
+    <message>
+        <source>Ad&amp;just the selected area before taking it</source>
+        <translation>範囲を選んだあと、取り込む前に調整する(&amp;J)</translation>
+    </message>
+    <message>
+        <source>Handles and the arrow keys move and resize it; Enter or a double-click takes it, Ctrl+C copies it and is done</source>
+        <translation>ハンドルや矢印キーで移動・サイズ変更できます。Enter またはダブルクリックで取り込み、Ctrl+C でコピーして終了します</translation>
+    </message>
     <message>
         <location filename="../src/settings/SettingsDialog.ui" line="+14"/>
         <source>Glimpse Settings</source>

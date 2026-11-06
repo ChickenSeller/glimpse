@@ -425,7 +425,18 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
                               : m_mode == Mode::Crosshair                         ? RegionSelector::Mode::Crosshair
                                                                                   : RegionSelector::Mode::Region;
     auto *selector = new RegionSelector(snapshot, selectorMode, this);
+    // Areas that become a picture; scrolling and recording go on to the live screen.
+    selector->setAdjustable(AppSettings::adjustSelection()
+                            && (m_mode == Mode::Window || m_mode == Mode::Pin || m_mode == Mode::Ocr
+                                || m_mode == Mode::QrCode));
     connect(selector, &RegionSelector::selected, this, [this, selector](const QRect &rect) {
+        if (selector->copyRequested()) {
+            // Ctrl+C: copied, and that is all.
+            selector->deleteLater();
+            ImageActions::copyToClipboard(selector->snapshot().crop(rect));
+            endCapture();
+            return;
+        }
         if (m_mode == Mode::Scrolling) {
             selector->deleteLater();
             startScrollingCapture(rect, selector->controlHeld());

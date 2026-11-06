@@ -1304,6 +1304,10 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
+        <source>Enter or double-click: take it  ·  Ctrl+C: copy  ·  Arrows: move (Shift: 10 px, Ctrl: resize)  ·  Right-click: select again</source>
+        <translation>Enter 或双击：截取  ·  Ctrl+C：复制  ·  方向键：移动（Shift：10 像素，Ctrl：调整大小）  ·  右键：重新选择</translation>
+    </message>
+    <message>
         <source>Click: pick  ·  Arrows: 1 px</source>
         <translation type="vanished">单击：取色  ·  方向键：移动 1 像素</translation>
     </message>
@@ -1522,6 +1526,14 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>SettingsDialog</name>
+    <message>
+        <source>Ad&amp;just the selected area before taking it</source>
+        <translation>选好区域后先调整再截取(&amp;J)</translation>
+    </message>
+    <message>
+        <source>Handles and the arrow keys move and resize it; Enter or a double-click takes it, Ctrl+C copies it and is done</source>
+        <translation>可以拖动手柄、用方向键移动和调整大小；Enter 或双击截取，Ctrl+C 复制后直接结束</translation>
+    </message>
     <message>
         <location filename="../src/settings/SettingsDialog.ui" line="+14"/>
         <source>Glimpse Settings</source>

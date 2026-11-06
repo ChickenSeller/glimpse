@@ -98,6 +98,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->captureToolbarCheck->setChecked(AppSettings::captureIncludesToolbar());
     ui->captureCursorCheck->setChecked(AppSettings::captureIncludesCursor());
     ui->captureClipboardCheck->setChecked(AppSettings::copyCapturesToClipboard());
+    ui->adjustSelectionCheck->setChecked(AppSettings::adjustSelection());
     ui->freehandTransparentCheck->setChecked(AppSettings::freehandTransparent());
 
     ui->recordHighlightCheck->setChecked(AppSettings::recordHighlightCursor());
@@ -241,7 +242,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     applyPlatformLimits();
     updateOcrEngineNote();
-    for (QCheckBox *check : {ui->autostartCheck, ui->usageStatsCheck, ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->freehandTransparentCheck,
+    for (QCheckBox *check : {ui->autostartCheck, ui->usageStatsCheck, ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->adjustSelectionCheck,
+                             ui->freehandTransparentCheck,
                              ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck,
                              ui->ocrChineseCheck, ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
@@ -331,6 +333,7 @@ bool SettingsDialog::apply()
     AppSettings::setCaptureIncludesToolbar(ui->captureToolbarCheck->isChecked());
     AppSettings::setCaptureIncludesCursor(ui->captureCursorCheck->isChecked());
     AppSettings::setCopyCapturesToClipboard(ui->captureClipboardCheck->isChecked());
+    AppSettings::setAdjustSelection(ui->adjustSelectionCheck->isChecked());
     AppSettings::setFreehandTransparent(ui->freehandTransparentCheck->isChecked());
     AppSettings::setFreehandColor(m_freehandColor);
     AppSettings::setRecordHighlightCursor(ui->recordHighlightCheck->isChecked());
@@ -572,6 +575,7 @@ void SettingsDialog::restoreDefaults()
     ui->captureToolbarCheck->setChecked(false);
     ui->captureCursorCheck->setChecked(false);
     ui->captureClipboardCheck->setChecked(false);
+    ui->adjustSelectionCheck->setChecked(false);
     ui->freehandTransparentCheck->setChecked(true);
     ui->recordHighlightCheck->setChecked(true);
     ui->recordClicksCheck->setChecked(true);

@@ -123,6 +123,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="adjustSelectionCheck">
+            <property name="toolTip">
+             <string>Handles and the arrow keys move and resize it; Enter or a double-click takes it, Ctrl+C copies it and is done</string>
+            </property>
+            <property name="text">
+             <string>Ad&amp;just the selected area before taking it</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="freehandFillLayout">
             <item>
              <widget class="QLabel" name="freehandFillLabel">

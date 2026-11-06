@@ -146,6 +146,20 @@ protected:
         // A rectangle being dragged; next to the pointer, where the eye is,
         // its position (for a pixel-exact corner) and the rectangle's size.
         const QRect sel = m_selector->selection().translated(-m_origin);
+        if (m_selector->isAdjusting()) {
+            drawHighlight(p, sel, 1);
+            drawHandles(p, sel);
+            if (sel.intersects(rect())) {
+                const QRect shown = sel.intersected(rect());
+                drawTag(p, rect(), shown.topLeft(), sizeText(sel));
+                // Just below the selection, or inside it at the screen's bottom.
+                const int tagHeight = p.fontMetrics().height() + 6;
+                drawTag(p, rect(), QPoint(shown.left(), shown.bottom() + tagHeight + 8),
+                        RegionSelector::tr("Enter or double-click: take it  ·  Ctrl+C: copy  ·  "
+                                           "Arrows: move (Shift: 10 px, Ctrl: resize)  ·  Right-click: select again"));
+            }
+            return;
+        }
         if (!sel.isEmpty()) {
             drawHighlight(p, sel, 1);
             drawGuides(p, true, sizeText(sel));
@@ -210,7 +224,7 @@ protected:
             m_selector->press(toGlobal(event));
         } else if (event->button() == Qt::RightButton) {
             // Right-click drops an in-progress selection first, then cancels.
-            if (m_selector->isDragging())
+            if (m_selector->isDragging() || m_selector->isAdjusting())
                 m_selector->resetSelection();
             else
                 m_selector->cancel();
@@ -221,6 +235,11 @@ protected:
     {
         m_selector->setPreciseCursor(preciseGlobal(event));
         m_selector->move(toGlobal(event));
+        if (m_selector->mode() != RegionSelector::Mode::Crosshair) {
+            const Qt::CursorShape shape = m_selector->cursorShapeAt(toGlobal(event));
+            if (cursor().shape() != shape)
+                setCursor(shape);
+        }
     }
 
     void mouseReleaseEvent(QMouseEvent *event) override
@@ -236,6 +255,11 @@ protected:
         if (m_selector->mode() == RegionSelector::Mode::Crosshair && event->button() == Qt::LeftButton) {
             m_selector->setPreciseCursor(preciseGlobal(event));
             m_selector->pickColor();
+            return;
+        }
+        if (m_selector->isAdjusting() && event->button() == Qt::LeftButton
+            && m_selector->selection().contains(toGlobal(event))) {
+            m_selector->confirm(false);
             return;
         }
         QWidget::mouseDoubleClickEvent(event);
@@ -274,7 +298,39 @@ protected:
             default: break;
             }
         }
+        if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+            m_selector->setSpaceHeld(true);
+            return;
+        }
+        if (m_selector->isAdjusting()) {
+            const bool control = event->modifiers().testFlag(Qt::ControlModifier);
+            const int step = event->modifiers().testFlag(Qt::ShiftModifier) ? 10 : 1;
+            switch (event->key()) {
+            case Qt::Key_Left: m_selector->adjustBy(-step, 0, control); return;
+            case Qt::Key_Right: m_selector->adjustBy(step, 0, control); return;
+            case Qt::Key_Up: m_selector->adjustBy(0, -step, control); return;
+            case Qt::Key_Down: m_selector->adjustBy(0, step, control); return;
+            case Qt::Key_Return:
+            case Qt::Key_Enter: m_selector->confirm(false); return;
+            case Qt::Key_C:
+                if (control) {
+                    m_selector->confirm(true);
+                    return;
+                }
+                break;
+            default: break;
+            }
+        }
         QWidget::keyPressEvent(event);
+    }
+
+    void keyReleaseEvent(QKeyEvent *event) override
+    {
+        if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+            m_selector->setSpaceHeld(false);
+            return;
+        }
+        QWidget::keyReleaseEvent(event);
     }
 
 private:
@@ -353,6 +409,22 @@ private:
         p.setPen(QPen(kAccent, width));
         p.setBrush(Qt::NoBrush);
         p.drawRect(QRectF(native).adjusted(inset, inset, -inset, -inset));
+        p.restore();
+    }
+
+    // Small squares at the corners and edge middles of `r` (local) to drag.
+    void drawHandles(QPainter &p, const QRect &r)
+    {
+        const int right = r.x() + r.width();
+        const int bottom = r.y() + r.height();
+        const int midX = r.x() + r.width() / 2;
+        const int midY = r.y() + r.height() / 2;
+        p.save();
+        p.setPen(QPen(kAccent, 1));
+        p.setBrush(Qt::white);
+        for (const QPoint &c : {QPoint(r.x(), r.y()), QPoint(midX, r.y()), QPoint(right, r.y()), QPoint(right, midY),
+                                QPoint(right, bottom), QPoint(midX, bottom), QPoint(r.x(), bottom), QPoint(r.x(), midY)})
+            p.drawRect(QRect(c - QPoint(3, 3), QSize(6, 6)));
         p.restore();
     }
 
@@ -561,6 +633,8 @@ void RegionSelector::start()
 
 QRect RegionSelector::selection() const
 {
+    if (m_adjusting)
+        return m_adjustRect;
     if (!m_dragging || m_mode == Mode::Freehand)
         return {};
     const int left = std::min(m_anchor.x(), m_cursor.x());
@@ -579,6 +653,19 @@ CaptureTarget RegionSelector::hoverTarget() const
 
 void RegionSelector::press(const QPoint &pos)
 {
+    if (m_adjusting) {
+        m_grab = handleAt(pos);
+        if (m_grab != Handle::None) {
+            m_grabOrigin = pos;
+            m_grabRect = m_adjustRect;
+            m_cursor = pos;
+            return;
+        }
+        // Outside it: a new selection, or in window mode the window there.
+        m_adjusting = false;
+        m_cursor = pos;
+        updateHover();
+    }
     m_anchor = m_cursor = pos;
     m_pressed = true;
     m_dragging = m_mode != Mode::Window;
@@ -590,6 +677,34 @@ void RegionSelector::press(const QPoint &pos)
 
 void RegionSelector::move(const QPoint &pos)
 {
+    if (m_adjusting) {
+        m_cursor = pos;
+        if (m_grab == Handle::None)
+            return;
+        const QPoint d = pos - m_grabOrigin;
+        if (m_grab == Handle::Move) {
+            m_adjustRect = boundedMove(m_grabRect, d);
+        } else {
+            int left = m_grabRect.x(), top = m_grabRect.y();
+            int right = left + m_grabRect.width(), bottom = top + m_grabRect.height();
+            if (m_grab == Handle::Left || m_grab == Handle::TopLeft || m_grab == Handle::BottomLeft)
+                left += d.x();
+            if (m_grab == Handle::Right || m_grab == Handle::TopRight || m_grab == Handle::BottomRight)
+                right += d.x();
+            if (m_grab == Handle::Top || m_grab == Handle::TopLeft || m_grab == Handle::TopRight)
+                top += d.y();
+            if (m_grab == Handle::Bottom || m_grab == Handle::BottomLeft || m_grab == Handle::BottomRight)
+                bottom += d.y();
+            // Dragged past the opposite edge, it turns over.
+            const QRect r(std::min(left, right), std::min(top, bottom), std::abs(right - left), std::abs(bottom - top));
+            m_adjustRect = r.intersected(m_snapshot.virtualGeometry());
+        }
+        updateOverlays();
+        return;
+    }
+    // Space held: the rectangle being dragged out moves with the pointer.
+    if (m_spaceHeld && m_dragging && m_mode != Mode::Freehand)
+        m_anchor += pos - m_cursor;
     m_cursor = pos;
     if (m_mode == Mode::Freehand && m_dragging && m_path.last() != pos)
         m_path.append(pos);
@@ -602,6 +717,12 @@ void RegionSelector::move(const QPoint &pos)
 
 void RegionSelector::release(const QPoint &pos)
 {
+    if (m_adjusting) {
+        m_grab = Handle::None;
+        m_cursor = pos;
+        updateOverlays();
+        return;
+    }
     if (!m_pressed)
         return;
     m_pressed = false;
@@ -611,7 +732,7 @@ void RegionSelector::release(const QPoint &pos)
         // A click: in window mode it takes the highlighted target.
         const QRect target = hoverTarget().geometry;
         if (!target.isEmpty())
-            finish(target);
+            beginAdjusting(target);
         return;
     }
 
@@ -635,6 +756,101 @@ void RegionSelector::release(const QPoint &pos)
         resetSelection();
         return;
     }
+    beginAdjusting(rect);
+}
+
+// Takes `rect` right away, or first lets it be adjusted.
+void RegionSelector::beginAdjusting(const QRect &rect)
+{
+    if (!m_adjustable) {
+        finish(rect);
+        return;
+    }
+    m_dragging = false;
+    m_adjusting = true;
+    m_adjustRect = rect;
+    m_grab = Handle::None;
+    updateOverlays();
+}
+
+// `rect` moved by `delta`, kept on the desktop.
+QRect RegionSelector::boundedMove(const QRect &rect, const QPoint &delta) const
+{
+    const QRect bounds = m_snapshot.virtualGeometry();
+    QRect r = rect.translated(delta);
+    r.moveLeft(std::clamp(r.left(), bounds.left(), std::max(bounds.left(), bounds.x() + bounds.width() - r.width())));
+    r.moveTop(std::clamp(r.top(), bounds.top(), std::max(bounds.top(), bounds.y() + bounds.height() - r.height())));
+    return r;
+}
+
+RegionSelector::Handle RegionSelector::handleAt(const QPoint &pos) const
+{
+    if (!m_adjusting)
+        return Handle::None;
+    constexpr int reach = 6;
+    const QRect &r = m_adjustRect;
+    const int right = r.x() + r.width();
+    const int bottom = r.y() + r.height();
+    const bool withinX = pos.x() >= r.x() - reach && pos.x() <= right + reach;
+    const bool withinY = pos.y() >= r.y() - reach && pos.y() <= bottom + reach;
+    if (!withinX || !withinY)
+        return Handle::None;
+    const bool left = std::abs(pos.x() - r.x()) <= reach;
+    const bool rightEdge = std::abs(pos.x() - right) <= reach;
+    const bool top = std::abs(pos.y() - r.y()) <= reach;
+    const bool bottomEdge = std::abs(pos.y() - bottom) <= reach;
+    if (top && left) return Handle::TopLeft;
+    if (top && rightEdge) return Handle::TopRight;
+    if (bottomEdge && left) return Handle::BottomLeft;
+    if (bottomEdge && rightEdge) return Handle::BottomRight;
+    if (left) return Handle::Left;
+    if (rightEdge) return Handle::Right;
+    if (top) return Handle::Top;
+    if (bottomEdge) return Handle::Bottom;
+    return r.contains(pos) ? Handle::Move : Handle::None;
+}
+
+Qt::CursorShape RegionSelector::cursorShapeAt(const QPoint &pos) const
+{
+    switch (m_grab != Handle::None ? m_grab : handleAt(pos)) {
+    case Handle::Move: return Qt::SizeAllCursor;
+    case Handle::Left:
+    case Handle::Right: return Qt::SizeHorCursor;
+    case Handle::Top:
+    case Handle::Bottom: return Qt::SizeVerCursor;
+    case Handle::TopLeft:
+    case Handle::BottomRight: return Qt::SizeFDiagCursor;
+    case Handle::TopRight:
+    case Handle::BottomLeft: return Qt::SizeBDiagCursor;
+    case Handle::None: break;
+    }
+    return Qt::CrossCursor;
+}
+
+// Arrow keys: moves the selection, or with `resize` its right and bottom edges.
+void RegionSelector::adjustBy(int dx, int dy, bool resize)
+{
+    if (!m_adjusting)
+        return;
+    if (resize) {
+        QRect r = m_adjustRect;
+        r.setWidth(std::max(2, r.width() + dx));
+        r.setHeight(std::max(2, r.height() + dy));
+        m_adjustRect = r.intersected(m_snapshot.virtualGeometry());
+    } else {
+        m_adjustRect = boundedMove(m_adjustRect, QPoint(dx, dy));
+    }
+    updateOverlays();
+}
+
+void RegionSelector::confirm(bool copy)
+{
+    if (!m_adjusting || m_adjustRect.width() < 2 || m_adjustRect.height() < 2)
+        return;
+    const QRect rect = m_adjustRect;
+    m_adjusting = false;
+    m_grab = Handle::None;
+    m_copy = copy;
     finish(rect);
 }
 
@@ -766,6 +982,8 @@ void RegionSelector::resetSelection()
 {
     m_pressed = false;
     m_dragging = false;
+    m_adjusting = false;
+    m_grab = Handle::None;
     m_path.clear();
     updateHover();
     updateOverlays();
@@ -775,6 +993,7 @@ void RegionSelector::cancel()
 {
     m_pressed = false;
     m_dragging = false;
+    m_adjusting = false;
     closeOverlays();
     emit canceled();
 }

@@ -194,6 +194,16 @@ void setCopyCapturesToClipboard(bool copy)
     SettingsStore::open().setValue(QStringLiteral("capture/copyToClipboard"), copy);
 }
 
+bool adjustSelection()
+{
+    return SettingsStore::open().value(QStringLiteral("capture/adjustSelection"), false).toBool();
+}
+
+void setAdjustSelection(bool adjust)
+{
+    SettingsStore::open().setValue(QStringLiteral("capture/adjustSelection"), adjust);
+}
+
 bool freehandTransparent()
 {
     return SettingsStore::open().value(QStringLiteral("capture/freehandTransparent"), true).toBool();

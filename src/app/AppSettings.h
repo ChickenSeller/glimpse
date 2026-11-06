@@ -48,6 +48,10 @@ void setCaptureIncludesCursor(bool include);
 // Whether each capture also goes to the clipboard right away.
 bool copyCapturesToClipboard();
 void setCopyCapturesToClipboard(bool copy);
+// Whether a region or window, once picked, waits to be adjusted (handles,
+// arrow keys) and confirmed with Enter or a double-click, or Ctrl+C to copy.
+bool adjustSelection();
+void setAdjustSelection(bool adjust);
 // What fills a freehand capture outside the drawn outline: transparent by
 // default, or a solid color (kept while transparency is switched on).
 bool freehandTransparent();
