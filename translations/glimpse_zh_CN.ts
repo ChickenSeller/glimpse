@@ -47,6 +47,14 @@
 <context>
     <name>AnnotatorWindow</name>
     <message>
+        <source>Undo</source>
+        <translation>撤销</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>重做</translation>
+    </message>
+    <message>
         <location filename="../src/editor/AnnotatorWindow.ui" line="+14"/>
         <source>Glimpse Editor</source>
         <translation>Glimpse 编辑器</translation>

@@ -48,6 +48,11 @@ AnnotatorWindow::AnnotatorWindow(const QImage &image, QWidget *parent)
     connect(m_annotator, &kImageAnnotator::KImageAnnotator::imageChanged, this, [this] { m_modified = true; });
 
     connect(ui->actionDone, &QAction::triggered, this, &AnnotatorWindow::done);
+    // kImageAnnotator's own undo and redo, with their keys window-wide: it
+    // handles them itself only while its view has the focus.
+    connect(ui->actionUndo, &QAction::triggered, m_annotator->undoAction(), &QAction::trigger);
+    connect(ui->actionRedo, &QAction::triggered, m_annotator->redoAction(), &QAction::trigger);
+    ui->actionRedo->setShortcuts({QKeySequence(Qt::CTRL | Qt::Key_Y), QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Z)});
     connect(ui->actionSaveAs, &QAction::triggered, this, &AnnotatorWindow::saveAs);
     connect(ui->actionCopy, &QAction::triggered, this, &AnnotatorWindow::copyToClipboard);
     // Image-wide operations are modes of the annotator, not tools in its side bar.
@@ -58,8 +63,8 @@ AnnotatorWindow::AnnotatorWindow(const QImage &image, QWidget *parent)
     connect(ui->actionCanvas, &QAction::triggered, m_annotator,
             &kImageAnnotator::KImageAnnotator::showCanvasModifier);
 
-    for (QAction *action : {ui->actionDone, ui->actionSaveAs, ui->actionCopy, ui->actionCrop, ui->actionCut,
-                            ui->actionResize, ui->actionRotate, ui->actionCanvas})
+    for (QAction *action : {ui->actionDone, ui->actionSaveAs, ui->actionCopy, ui->actionUndo, ui->actionRedo,
+                            ui->actionCrop, ui->actionCut, ui->actionResize, ui->actionRotate, ui->actionCanvas})
         m_icons.add(action);
     m_icons.apply(palette().color(QPalette::ButtonText));
     updateToolTips();
@@ -194,7 +199,7 @@ void AnnotatorWindow::copyToClipboard()
 
 void AnnotatorWindow::updateToolTips()
 {
-    for (QAction *action : {ui->actionDone, ui->actionSaveAs, ui->actionCopy}) {
+    for (QAction *action : {ui->actionDone, ui->actionSaveAs, ui->actionCopy, ui->actionUndo, ui->actionRedo}) {
         QString text = action->toolTip();
         text.remove(QStringLiteral("..."));
         action->setToolTip(QStringLiteral("%1  (%2)").arg(text, action->shortcut().toString(QKeySequence::NativeText)));

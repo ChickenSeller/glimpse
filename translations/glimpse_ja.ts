@@ -47,6 +47,14 @@
 <context>
     <name>AnnotatorWindow</name>
     <message>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>やり直し</translation>
+    </message>
+    <message>
         <location filename="../src/editor/AnnotatorWindow.ui" line="+14"/>
         <source>Glimpse Editor</source>
         <translation>Glimpse エディター</translation>

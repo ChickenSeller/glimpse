@@ -41,6 +41,9 @@
    <addaction name="actionSaveAs"/>
    <addaction name="actionCopy"/>
    <addaction name="separator"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
+   <addaction name="separator"/>
    <addaction name="actionCrop"/>
    <addaction name="actionCut"/>
    <addaction name="separator"/>
@@ -85,6 +88,30 @@
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/undo.svg</normaloff>:/icons/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/redo.svg</normaloff>:/icons/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+Y</string>
    </property>
   </action>
   <action name="actionCrop">
