@@ -351,10 +351,11 @@ void ScreenRecorder::onImage(const QImage &image)
     m_area = image.copy(crop).convertToFormat(QImage::Format_ARGB32);
     m_areaOrigin = crop.topLeft();
     // The area's size in physical pixels is only known now.
-    if (!m_recording) {
+    // (On Windows the encoder starts with the recording, before any frame.)
+    if (m_frameSize.isEmpty())
         layOutFrame();
+    if (!m_recording)
         beginRecording();
-    }
 }
 
 void ScreenRecorder::writeFrame()
@@ -407,16 +408,18 @@ qreal ScreenRecorder::keyboardUnit(qreal scale) const
     case KeyPosition::OutsideBottom:
     case KeyPosition::OutsideTop:
         // The band makes room: only as wide as on the picture.
-        return std::min(area.width() * 0.6 / 19.1, 34.0 * scale);
+        return std::min(area.width() * 0.6 / KeyboardOverlay::kUnitsWide, 34.0 * scale);
     case KeyPosition::OutsideLeft:
     case KeyPosition::OutsideRight:
         // A keyboard is wide: smaller beside the picture, or the band
         // would be wider than the picture.
-        return std::min({area.height() / 2.0 / 7.1, area.width() * 0.5 / 19.1, 26.0 * scale});
+        return std::min({area.height() / 2.0 / KeyboardOverlay::kUnitsHigh, area.width() * 0.5 / KeyboardOverlay::kUnitsWide,
+                         26.0 * scale});
     default:
         // At most 60% of the width and a third of the height, and no
         // bigger than a comfortable size on a large recording.
-        return std::min({area.width() * 0.6 / 19.1, area.height() / 3.0 / 7.1, 34.0 * scale});
+        return std::min({area.width() * 0.6 / KeyboardOverlay::kUnitsWide, area.height() / 3.0 / KeyboardOverlay::kUnitsHigh,
+                         34.0 * scale});
     }
 }
 

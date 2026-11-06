@@ -19,7 +19,8 @@ struct KeyboardLayout {
     quintptr id = 0; // the platform's layout handle, to notice a change
 };
 
-// An on-video keyboard (function row, main block, editing block and arrows)
+// An on-video full-size keyboard (function row, main block, editing block,
+// arrows and numeric keypad)
 // whose held keys light up and fade out shortly after release. Keys are
 // identified by where they are, not what they type: their scan code, with
 // 0xE000 added for extended ones (0xE11D for Pause), so a key lights up in
@@ -27,6 +28,10 @@ struct KeyboardLayout {
 class KeyboardOverlay
 {
 public:
+    // Its size in key units, margins included.
+    static constexpr double kUnitsWide = 23.6;
+    static constexpr double kUnitsHigh = 7.1;
+
     void setLayout(const KeyboardLayout &layout);
     void setKey(int key, bool pressed, qint64 nowMs);
     // The size the keyboard takes for a key unit of `unit` pixels.

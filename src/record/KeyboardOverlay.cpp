@@ -15,10 +15,11 @@ struct KeyCap {
     qreal x, y, w;     // in key units; every key is one unit high
     bool character = false; // labeled by the layout in use
     bool unlabeled = false; // the lower part of a tall Enter
+    qreal h = 1;            // the keypad's + and Enter are two high
 };
 
-constexpr qreal kWidth = 18.5;
-constexpr qreal kHeight = 6.5;
+constexpr qreal kWidth = KeyboardOverlay::kUnitsWide - 0.6;
+constexpr qreal kHeight = KeyboardOverlay::kUnitsHigh - 0.6;
 constexpr qint64 kFadeMs = 300;
 
 KeyCap chr(const char *label, int id, qreal x, qreal y, qreal w = 1)
@@ -45,6 +46,16 @@ void addCommon(QList<KeyCap> &keys)
     keys << fixed("Del", 0xE053, 15.5, 2.5) << fixed("End", 0xE04F, 16.5, 2.5) << fixed("PgDn", 0xE051, 17.5, 2.5);
     keys << fixed("↑", 0xE048, 16.5, 4.5);
     keys << fixed("←", 0xE04B, 15.5, 5.5) << fixed("↓", 0xE050, 16.5, 5.5) << fixed("→", 0xE04D, 17.5, 5.5);
+
+    // Numeric keypad: the same scan codes with Num Lock on or off.
+    keys << fixed("Num", 0xE045, 19, 1.5) << fixed("/", 0xE035, 20, 1.5) << fixed("*", 0x37, 21, 1.5)
+         << fixed("-", 0x4A, 22, 1.5);
+    keys << fixed("7", 0x47, 19, 2.5) << fixed("8", 0x48, 20, 2.5) << fixed("9", 0x49, 21, 2.5);
+    keys << KeyCap{"+", 0x4E, 22, 2.5, 1, false, false, 2};
+    keys << fixed("4", 0x4B, 19, 3.5) << fixed("5", 0x4C, 20, 3.5) << fixed("6", 0x4D, 21, 3.5);
+    keys << fixed("1", 0x4F, 19, 4.5) << fixed("2", 0x50, 20, 4.5) << fixed("3", 0x51, 21, 4.5);
+    keys << KeyCap{"Enter", 0xE01C, 22, 4.5, 1, false, false, 2};
+    keys << fixed("0", 0x52, 19, 5.5, 2) << fixed(".", 0x53, 21, 5.5);
 }
 
 // Number row from 1 to =, letters and the punctuation among them: the keys
@@ -175,7 +186,7 @@ void KeyboardOverlay::paint(QPainter &p, const QRectF &area, qint64 nowMs) const
 
     for (const KeyCap &key : keysFor(m_layout.physical)) {
         const QRectF cap(board.left() + margin + key.x * unit + gap, board.top() + margin + key.y * unit + gap,
-                         key.w * unit - 2 * gap, unit - 2 * gap);
+                         key.w * unit - 2 * gap, key.h * unit - 2 * gap);
         // How lit the key is: 1 while held, fading to 0 after release.
         qreal lit = 0;
         const auto it = m_keys.constFind(key.id);

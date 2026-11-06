@@ -2,7 +2,8 @@
 // to an MP4 with every overlay on, then opens the file again and reports its
 // duration and frame size and saves one decoded frame as a PNG.
 //
-//   glimpse-record-test [seconds] [--rect x,y,w,h] [--out file.mp4]
+//   glimpse-record-test [seconds] [--rect x,y,w,h] [--out file.mp4] [--keys n]
+//       (n: ScreenRecorder::KeyPosition as a number, 9 for below the picture)
 //   glimpse-record-test --probe file.mp4 [ms]   (only reads a file back)
 //   glimpse-record-test --keyboard-preview out.png [layout...]   (draws the key
 //       overlay under the layout in use, or under each named one: 0000040C)
@@ -96,6 +97,7 @@ int main(int argc, char *argv[])
     QRect rect = QRect(QPoint(0, 0), QSize(800, 600));
     rect.moveCenter(screen->geometry().center());
     QString out = QDir::temp().filePath(QStringLiteral("glimpse-record-test.mp4"));
+    int keyPosition = 0;
     for (int i = 1; i < args.size(); ++i) {
         if (args[i] == QLatin1String("--rect") && i + 1 < args.size()) {
             const QStringList v = args[++i].split(QLatin1Char(','));
@@ -103,6 +105,8 @@ int main(int argc, char *argv[])
                 rect = QRect(v[0].toInt(), v[1].toInt(), v[2].toInt(), v[3].toInt());
         } else if (args[i] == QLatin1String("--out") && i + 1 < args.size()) {
             out = args[++i];
+        } else if (args[i] == QLatin1String("--keys") && i + 1 < args.size()) {
+            keyPosition = args[++i].toInt();
         } else {
             seconds = std::max(1, args[i].toInt());
         }
@@ -112,6 +116,7 @@ int main(int argc, char *argv[])
     ScreenRecorder::Options options;
     options.filePath = out;
     options.showKeys = true;
+    options.keyPosition = static_cast<ScreenRecorder::KeyPosition>(keyPosition);
     auto *recorder = new ScreenRecorder(screen, rect, options);
 
     QObject::connect(recorder, &ScreenRecorder::failed, [](const QString &message) {
