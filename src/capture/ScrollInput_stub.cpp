@@ -12,4 +12,13 @@ bool escapePressed()
     return false;
 }
 
+void watchUser(bool)
+{
+}
+
+bool userScrolled()
+{
+    return false;
+}
+
 } // namespace ScrollInput

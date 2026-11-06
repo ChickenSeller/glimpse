@@ -124,7 +124,10 @@ ScrollStitcher::Result ScrollStitcher::addFrame(const QImage &input)
     m_lastShift = shift;
     if (revealed <= 0)
         return Result::Moved;
+    if (revealed > contentHeight())
+        return Result::Gap; // only after undoLast(): rows in between were never seen here
     appendRows(frame, h - m_footer - revealed, revealed);
+    m_segments.push_back(revealed);
     m_footerRows = frame.copy(0, h - m_footer, frame.width(), m_footer);
     m_maxPosition = m_position;
     ++m_frames;
@@ -211,6 +214,20 @@ void ScrollStitcher::appendRows(const QImage &source, int first, int count)
     m_bodyHeight += count;
 }
 
+bool ScrollStitcher::undoLast()
+{
+    if (m_segments.empty())
+        return false;
+    const int rows = m_segments.back();
+    m_segments.pop_back();
+    m_bodyHeight -= rows;
+    // The view has not moved: once it is lined up again, what lies below the
+    // stitched part is appended anew. When scrolling down by program
+    // (revealed = shift), this would leave a gap, so it is only for Tracking.
+    m_maxPosition -= rows;
+    return true;
+}
+
 int ScrollStitcher::height() const
 {
     return m_bodyHeight + std::max(0, m_footer);
@@ -229,11 +246,46 @@ QImage ScrollStitcher::image() const
     result.setDevicePixelRatio(m_body.devicePixelRatio());
     for (int y = 0; y < m_bodyHeight; ++y)
         std::memcpy(result.scanLine(y), m_body.constScanLine(y), size_t(result.width()) * 4);
-    // Until a second frame lined up, the footer is still the first frame's.
-    const QImage footer = m_footerRows.isNull() && m_footer > 0
-                              ? m_previous.copy(0, m_previous.height() - m_footer, m_previous.width(), m_footer)
-                              : m_footerRows;
+    const QImage footer = footerImage();
     for (int y = 0; y < footer.height(); ++y)
         std::memcpy(result.scanLine(m_bodyHeight + y), footer.constScanLine(y), size_t(result.width()) * 4);
     return result;
+}
+
+QImage ScrollStitcher::footerImage() const
+{
+    // Until a second frame lined up, the footer is still the first frame's.
+    return m_footerRows.isNull() && m_footer > 0
+               ? m_previous.copy(0, m_previous.height() - m_footer, m_previous.width(), m_footer)
+               : m_footerRows;
+}
+
+const uchar *ScrollStitcher::rowAt(int y, const QImage &footer) const
+{
+    if (y < m_bodyHeight)
+        return m_body.constScanLine(y);
+    y -= m_bodyHeight;
+    return y < footer.height() ? footer.constScanLine(y) : nullptr;
+}
+
+QImage ScrollStitcher::preview(const QSize &maxSize) const
+{
+    const int w = m_body.width();
+    const int h = height();
+    if (m_frames == 0 || w <= 0 || h <= 0 || maxSize.isEmpty())
+        return {};
+    const double scale = std::min({double(maxSize.width()) / w, double(maxSize.height()) / h, 1.0});
+    const QSize target(std::max(1, int(w * scale)), std::max(1, int(h * scale)));
+    // Picked rows and columns at twice the size, then smoothed down: text
+    // turns grey instead of breaking up.
+    const QSize sampled(std::min(w, target.width() * 2), std::min(h, target.height() * 2));
+    QImage out(sampled, QImage::Format_RGB32);
+    const QImage footer = footerImage();
+    for (int y = 0; y < sampled.height(); ++y) {
+        const auto *src = reinterpret_cast<const quint32 *>(rowAt(int(qint64(y) * h / sampled.height()), footer));
+        auto *dst = reinterpret_cast<quint32 *>(out.scanLine(y));
+        for (int x = 0; x < sampled.width(); ++x)
+            dst[x] = src ? src[qint64(x) * w / sampled.width()] : 0xff000000;
+    }
+    return sampled == target ? out : out.scaled(target, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 }

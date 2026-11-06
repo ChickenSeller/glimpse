@@ -9,7 +9,9 @@
 
 #include <memory>
 
+class GlobalHotkeys;
 class QLabel;
+class QPushButton;
 class QScreen;
 class QWidget;
 
@@ -22,7 +24,12 @@ class QWidget;
 // Manual scrolling (an area picked with Ctrl held, as in FastStone) leaves the
 // scrolling to the user, by wheel, keyboard or scroll bar; the area is grabbed
 // every so often and whatever scrolled into view is stitched on. Stops on
-// Esc or Stop.
+// Esc or Stop. Turning the wheel during automatic scrolling switches to
+// manual scrolling from there on.
+//
+// Beside the area, where there is room, a preview shows the stitched image so
+// far. Ctrl+Z or Undo takes back the last rows stitched on (and switches to
+// manual scrolling: scrolling back up a little picks up from there).
 class ScrollCaptureSession : public QObject
 {
     Q_OBJECT
@@ -46,7 +53,12 @@ private:
     void manualStep();
     void finish();
     void createChrome();
+    void placePreview(const QRect &panel);
     void updatePanel();
+    void updatePreview();
+    // From automatic to manual scrolling: the user scrolls from here on.
+    void takeOver();
+    void undo();
 
     Scrolling m_scrolling;
     QScreen *m_screen = nullptr;
@@ -58,6 +70,9 @@ private:
     std::vector<std::unique_ptr<QWidget>> m_frame; // four border strips
     std::unique_ptr<QWidget> m_panel;
     QLabel *m_status = nullptr;
+    QPushButton *m_undo = nullptr;
+    std::unique_ptr<QWidget> m_preview;
+    GlobalHotkeys *m_hotkeys = nullptr;
     bool m_panelOverlaps = false; // no room outside: hidden while grabbing
 
     int m_notches = 2;

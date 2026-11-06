@@ -1518,8 +1518,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+41"/>
-        <source>Scrolling capture: %1 px  ·  Esc to stop</source>
-        <translation>滚动截图：%1 像素  ·  按 Esc 停止</translation>
+        <source>Scrolling capture: %1 px  ·  Turn the wheel to scroll yourself  ·  Esc to stop</source>
+        <translation>滚动截图：%1 像素  ·  自己转动滚轮可接手滚动  ·  按 Esc 停止</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>撤销</translation>
+    </message>
+    <message>
+        <source>Take back the last part stitched on (Ctrl+Z)</source>
+        <translation>撤回最后拼上的一段（Ctrl+Z）</translation>
     </message>
     <message>
         <location line="+2"/>

@@ -2,6 +2,7 @@
 
 #include "Platform.h"
 #include "ScrollInput.h"
+#include "hotkey/GlobalHotkeys.h"
 
 #include <QCursor>
 #include <QDir>
@@ -9,6 +10,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLoggingCategory>
+#include <QPainter>
 #include <QPushButton>
 #include <QScreen>
 #include <QTimer>
@@ -33,6 +35,51 @@ constexpr int kMaxSteps = 400;
 constexpr int kMaxNotches = 15;
 constexpr int kBorder = 3;
 const QColor kFrameColor(0xe5, 0x39, 0x35);
+constexpr int kUndoHotkey = 1000; // apart from the capture hotkeys' ids
+// The preview beside the area: at most this size, and not shown in less room.
+constexpr int kPreviewMaxWidth = 220;
+constexpr int kPreviewMaxHeight = 560;
+constexpr int kPreviewMinWidth = 100;
+constexpr int kPreviewPad = 4;
+
+// The stitched image so far, shrunk to fit; the mouse goes through it.
+class PreviewWindow : public QWidget
+{
+public:
+    PreviewWindow()
+        : QWidget(nullptr, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool
+                               | Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus)
+    {
+        setAttribute(Qt::WA_ShowWithoutActivating);
+        setAttribute(Qt::WA_TranslucentBackground);
+    }
+
+    void setImage(const QImage &image)
+    {
+        m_image = image;
+        update();
+    }
+
+protected:
+    void paintEvent(QPaintEvent *) override
+    {
+        if (m_image.isNull())
+            return;
+        // Only as wide as the image, centered; it narrows as it grows longer.
+        const QSizeF size = m_image.deviceIndependentSize();
+        const QRectF image(QPointF((width() - size.width()) / 2, kPreviewPad), size);
+        const QRectF box = image.adjusted(-kPreviewPad, -kPreviewPad, kPreviewPad, kPreviewPad);
+        QPainter p(this);
+        p.setRenderHint(QPainter::Antialiasing);
+        p.setPen(QPen(kFrameColor, 1));
+        p.setBrush(QColor(0x20, 0x20, 0x20, 220));
+        p.drawRoundedRect(box.adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
+        p.drawImage(image, m_image);
+    }
+
+private:
+    QImage m_image;
+};
 
 QWidget *makeStrip(const QRect &geometry)
 {
@@ -73,13 +120,48 @@ void ScrollCaptureSession::start()
     }
     ScrollInput::escapePressed(); // forget an Esc from before (e.g. a canceled selection)
     createChrome();
+    // A hotkey, so the scrolled application does not undo something itself.
+    m_hotkeys = GlobalHotkeys::create(this);
+    m_hotkeys->add(kUndoHotkey, QKeySequence(Qt::CTRL | Qt::Key_Z), tr("Undo"));
+    connect(m_hotkeys, &GlobalHotkeys::activated, this, [this](int id) {
+        if (id == kUndoHotkey)
+            undo();
+    });
     if (m_scrolling == Scrolling::Manual) {
         QTimer::singleShot(kStartDelayMs, this, &ScrollCaptureSession::manualStep);
         return;
     }
     m_restoreCursor = QCursor::pos();
     QCursor::setPos(m_screen, m_scrollPoint);
+    ScrollInput::watchUser(true);
     QTimer::singleShot(kStartDelayMs, this, &ScrollCaptureSession::step);
+}
+
+void ScrollCaptureSession::takeOver()
+{
+    if (m_scrolling == Scrolling::Manual)
+        return;
+    qCDebug(lcScroll) << "the user took over the scrolling";
+    m_scrolling = Scrolling::Manual;
+    m_stitcher.setScrolling(ScrollStitcher::Scrolling::Tracking);
+    ScrollInput::watchUser(false);
+    m_restoreCursor = {}; // the pointer is the user's now; leave it where they put it
+    if (m_panelOverlaps)
+        m_panel->hide(); // manual scrolling grabs too often to show it in between
+    updatePanel();
+    QTimer::singleShot(kManualIntervalMs, this, &ScrollCaptureSession::manualStep);
+}
+
+void ScrollCaptureSession::undo()
+{
+    if (m_done || !m_stitcher.canUndo())
+        return;
+    // Taking rows back only lines up again when following the view.
+    takeOver();
+    m_stitcher.undoLast();
+    m_lost = false;
+    updatePanel();
+    updatePreview();
 }
 
 void ScrollCaptureSession::createChrome()
@@ -99,11 +181,23 @@ void ScrollCaptureSession::createChrome()
     auto *layout = new QHBoxLayout(m_panel.get());
     layout->setContentsMargins(10, 6, 6, 6);
     m_status = new QLabel;
+    m_undo = new QPushButton(tr("Undo"));
+    m_undo->setFocusPolicy(Qt::NoFocus);
+    m_undo->setToolTip(tr("Take back the last part stitched on (Ctrl+Z)"));
+    connect(m_undo, &QPushButton::clicked, this, &ScrollCaptureSession::undo);
     auto *stop = new QPushButton(tr("Stop"));
     stop->setFocusPolicy(Qt::NoFocus);
     connect(stop, &QPushButton::clicked, this, &ScrollCaptureSession::stop);
     layout->addWidget(m_status);
+    layout->addWidget(m_undo);
     layout->addWidget(stop);
+    // Room for the longest status, so the panel never cuts one off.
+    int widest = 0;
+    for (const QString &text : {tr("Scrolling capture: %1 px  ·  Turn the wheel to scroll yourself  ·  Esc to stop").arg(99999),
+                                tr("Not lined up: scroll back a little  ·  Esc to stop"),
+                                tr("Scroll the area yourself: %1 px  ·  Esc to stop").arg(99999)})
+        widest = std::max(widest, m_status->fontMetrics().horizontalAdvance(text));
+    m_status->setMinimumWidth(widest);
     updatePanel();
     m_panel->adjustSize();
     Platform::disableWindowAnimations(m_panel.get());
@@ -135,14 +229,56 @@ void ScrollCaptureSession::createChrome()
     // Manual scrolling grabs too often to hide it each time: then it stays hidden.
     if (!m_panelOverlaps)
         m_panel->show();
+    placePreview(m_panelOverlaps ? QRect() : placed);
+}
+
+// Beside the area, its bottom level with the area's, on the side with room
+// and clear of the panel; not at all if there is no such room.
+void ScrollCaptureSession::placePreview(const QRect &panel)
+{
+    const QRect screen = m_screen->geometry();
+    const int gap = kBorder + 6;
+    const int height = std::min(kPreviewMaxHeight, std::max(m_rect.height(), 160));
+    const int top = std::max(screen.top(), m_rect.bottom() - height + 1);
+    const int rightRoom = screen.right() - (m_rect.right() + gap);
+    const int leftRoom = (m_rect.left() - gap) - screen.left();
+    QList<QRect> candidates;
+    if (rightRoom >= kPreviewMinWidth)
+        candidates << QRect(m_rect.right() + gap, top, std::min(kPreviewMaxWidth, rightRoom), height);
+    if (leftRoom >= kPreviewMinWidth) {
+        const int width = std::min(kPreviewMaxWidth, leftRoom);
+        candidates << QRect(m_rect.left() - gap - width, top, width, height);
+    }
+    for (const QRect &r : std::as_const(candidates)) {
+        if (panel.intersects(r))
+            continue;
+        m_preview = std::make_unique<PreviewWindow>();
+        m_preview->setGeometry(r);
+        Platform::disableWindowAnimations(m_preview.get());
+        m_preview->show();
+        return;
+    }
+}
+
+void ScrollCaptureSession::updatePreview()
+{
+    if (!m_preview)
+        return;
+    const qreal dpr = m_preview->devicePixelRatioF();
+    const QSize room = m_preview->size() - QSize(2 * kPreviewPad, 2 * kPreviewPad);
+    QImage image = m_stitcher.preview(room * dpr);
+    image.setDevicePixelRatio(dpr);
+    static_cast<PreviewWindow *>(m_preview.get())->setImage(image);
 }
 
 void ScrollCaptureSession::updatePanel()
 {
     if (!m_status)
         return;
+    m_undo->setEnabled(m_stitcher.canUndo());
     if (m_scrolling == Scrolling::Automatic)
-        m_status->setText(tr("Scrolling capture: %1 px  ·  Esc to stop").arg(m_stitcher.height()));
+        m_status->setText(tr("Scrolling capture: %1 px  ·  Turn the wheel to scroll yourself  ·  Esc to stop")
+                              .arg(m_stitcher.height()));
     else if (m_lost)
         m_status->setText(tr("Not lined up: scroll back a little  ·  Esc to stop"));
     else
@@ -173,9 +309,11 @@ void ScrollCaptureSession::manualStep()
                           << m_stitcher.lastShift() << "height" << m_stitcher.height();
     if (result == ScrollStitcher::Result::Added || result == ScrollStitcher::Result::Moved)
         m_lost = false;
-    else if (result == ScrollStitcher::Result::NoOverlap)
+    else if (result == ScrollStitcher::Result::NoOverlap || result == ScrollStitcher::Result::Gap)
         m_lost = true;
     updatePanel();
+    if (result == ScrollStitcher::Result::Added)
+        updatePreview();
     if (m_stitcher.height() >= kMaxHeight) {
         finish();
         return;
@@ -185,11 +323,16 @@ void ScrollCaptureSession::manualStep()
 
 void ScrollCaptureSession::step()
 {
-    if (m_done)
+    // Also a step still on its way after the user took over.
+    if (m_done || m_scrolling == Scrolling::Manual)
         return;
     if (m_stopRequested || ScrollInput::escapePressed()) {
         qCDebug(lcScroll) << (m_stopRequested ? "stopped by the Stop button" : "stopped by Esc");
         finish();
+        return;
+    }
+    if (ScrollInput::userScrolled()) {
+        takeOver();
         return;
     }
 
@@ -212,9 +355,12 @@ void ScrollCaptureSession::step()
     qCDebug(lcScroll) << "step" << m_steps << "result" << int(result) << "(0 added, 1 unchanged, 2 no overlap)"
                       << "shift" << m_stitcher.lastShift() << "notches" << notchesUsed << "height"
                       << m_stitcher.height() << "content" << m_stitcher.contentHeight();
+    if (result == ScrollStitcher::Result::Added)
+        updatePreview();
     switch (result) {
     case ScrollStitcher::Result::Added:
     case ScrollStitcher::Result::Moved: // only when Tracking
+    case ScrollStitcher::Result::Gap:   // only when Tracking
         m_unchanged = 0;
         m_retrying = false;
         if (m_stitcher.lastShift() > 0) {
@@ -268,8 +414,12 @@ void ScrollCaptureSession::finish()
         return;
     qCDebug(lcScroll) << "finished after" << m_steps << "steps, height" << m_stitcher.height();
     m_done = true;
+    ScrollInput::watchUser(false);
+    if (m_hotkeys)
+        m_hotkeys->clear();
     m_frame.clear();
     m_panel.reset();
+    m_preview.reset();
     if (!m_restoreCursor.isNull())
         QCursor::setPos(m_restoreCursor);
     const QImage image = m_stitcher.image();

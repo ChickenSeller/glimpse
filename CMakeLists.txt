@@ -418,6 +418,8 @@ if(WIN32)
         src/capture/ScrollCaptureSession.cpp
         src/capture/ScrollInput_win.cpp
         src/capture/ScrollStitcher.cpp
+        src/hotkey/GlobalHotkeys.h
+        src/hotkey/GlobalHotkeys_win.cpp
     )
     target_include_directories(glimpse-scroll-test PRIVATE src)
     target_link_libraries(glimpse-scroll-test PRIVATE Qt6::Widgets dwmapi)

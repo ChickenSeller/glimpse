@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 
 namespace {
 
@@ -167,6 +168,44 @@ int main(int argc, char *argv[])
     ok &= runCase("tracking, up and down", {120, 77, -150, 201, 33, -300, 180, 260, 160, -60, 199, 64, 150, -400, 211,
                                             90, 360, 170, 188, 140, 205, 120, 175, 166, 200, 210, 190},
                   false, ScrollStitcher::Scrolling::Tracking);
+    // Undo while the user scrolls: the rows come back once the view moves on,
+    // and after undoing past the view, only once it is back within reach.
+    {
+        const QImage page = makePage(3000, false);
+        ScrollStitcher stitcher(ScrollStitcher::Scrolling::Tracking);
+        using R = ScrollStitcher::Result;
+        bool ok2 = true;
+        for (int scroll : {0, 120, 240})
+            stitcher.addFrame(frameAt(page, scroll));
+        const int before = stitcher.height();
+        ok2 &= stitcher.undoLast() && stitcher.height() == before - 120;
+        ok2 &= stitcher.addFrame(frameAt(page, 260)) == R::Added; // 120 back, 20 new
+        ok2 &= stitcher.undoLast() && stitcher.undoLast() && stitcher.canUndo() == false;
+        ok2 &= !stitcher.undoLast(); // the first frame stays
+        ok2 &= stitcher.addFrame(frameAt(page, 560)) == R::Gap; // rows 420..560 never seen together
+        ok2 &= stitcher.addFrame(frameAt(page, 380)) == R::Added;
+        ok2 &= stitcher.addFrame(frameAt(page, 380)) == R::NoChange;
+        // As if scrolled straight to 380.
+        QImage expected(kWidth, kHeader + 380 + kContent + kFooter, QImage::Format_RGB32);
+        {
+            QPainter p(&expected);
+            const QImage first = frameAt(page, 0);
+            p.drawImage(0, 0, first, 0, 0, kWidth, kHeader);
+            p.drawImage(0, kHeader, page, 0, 0, kWidth, 380 + kContent);
+            p.drawImage(0, kHeader + 380 + kContent, first, 0, kHeader + kContent, kWidth, kFooter);
+        }
+        ok2 &= stitcher.image() == expected;
+        std::printf("%-28s %s\n", "undo, then scroll on", ok2 ? "PASS" : "FAIL");
+        ok &= ok2;
+
+        // The preview fits the size asked for and keeps the proportions.
+        const QImage preview = stitcher.preview(QSize(200, 300));
+        const QImage full = stitcher.image();
+        const bool fits = preview.width() <= 200 && preview.height() == 300
+                          && std::abs(preview.width() - full.width() * 300 / full.height()) <= 1;
+        std::printf("%-28s %s  (%dx%d)\n", "preview fits", fits ? "PASS" : "FAIL", preview.width(), preview.height());
+        ok &= fits;
+    }
     // Overshooting step: the stitcher must refuse it rather than stitch garbage.
     {
         const QImage page = makePage(3000, false);

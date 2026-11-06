@@ -11,4 +11,9 @@ void wheel(int notches);
 // has the focus (the scrolled application usually does).
 bool escapePressed();
 
+// Watches for the user turning the wheel themselves (not wheel()) while on.
+void watchUser(bool on);
+// Whether the user turned the wheel since the last call while watching.
+bool userScrolled();
+
 } // namespace ScrollInput

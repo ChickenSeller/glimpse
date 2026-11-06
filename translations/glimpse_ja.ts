@@ -1518,8 +1518,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+41"/>
-        <source>Scrolling capture: %1 px  ·  Esc to stop</source>
-        <translation>スクロールキャプチャ：%1 ピクセル  ·  Esc で停止</translation>
+        <source>Scrolling capture: %1 px  ·  Turn the wheel to scroll yourself  ·  Esc to stop</source>
+        <translation>スクロールキャプチャ：%1 ピクセル  ·  ホイールを回すと手動に切り替え  ·  Esc で停止</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
+    </message>
+    <message>
+        <source>Take back the last part stitched on (Ctrl+Z)</source>
+        <translation>最後につなげた部分を取り消す（Ctrl+Z）</translation>
     </message>
     <message>
         <location line="+2"/>
