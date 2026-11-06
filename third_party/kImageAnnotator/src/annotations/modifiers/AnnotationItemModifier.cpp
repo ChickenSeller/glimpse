@@ -154,6 +154,9 @@ void AnnotationItemModifier::clear()
 void AnnotationItemModifier::updateSelection()
 {
 	mItemSelector->update();
+	// The outline's bounds follow items turned or moved, or parts of it go
+	// unpainted.
+	mItemSelector->refresh();
 	mItemResizer->update();
 	mItemResizer->refresh();
 }

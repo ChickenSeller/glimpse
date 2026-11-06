@@ -66,6 +66,7 @@ private:
     qreal mStartPointerAngle = 0;
 
     void applyZoomValue(double value);
+    void followItem();
     QPointF rotateHandleCenter() const;
     qreal rotateHandleRadius() const;
 };

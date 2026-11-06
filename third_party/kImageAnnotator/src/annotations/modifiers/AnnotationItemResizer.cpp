@@ -33,7 +33,7 @@ AnnotationItemResizer::AnnotationItemResizer(AbstractAnnotationItem *item, ZoomV
     mResizeHandles = ResizeHandlesFactory::createResizeHandles(item, zoomValueProvider->zoomValue());
     connect(zoomValueProvider, &ZoomValueProvider::zoomValueChanged, this, &AnnotationItemResizer::applyZoomValue);
     prepareGeometryChange();
-    setTransform(item->sceneTransform());
+    followItem();
 }
 
 AnnotationItemResizer::~AnnotationItemResizer()
@@ -126,8 +126,18 @@ void AnnotationItemResizer::refresh()
 {
     prepareGeometryChange();
     mResizeHandles->update();
-    // Turned with the item: the handles are in its coordinates.
-    setTransform(mAnnotationItem->sceneTransform());
+    followItem();
+}
+
+// Turned and placed with the item, since the handles are in its
+// coordinates: its scene transform, less the parent's. Joining a group moves
+// the translation into the position (to keep the place), so the position is
+// reset here, or the translation would count twice.
+void AnnotationItemResizer::followItem()
+{
+    const auto parent = parentItem();
+    setPos(0, 0);
+    setTransform(mAnnotationItem->sceneTransform() * (parent != nullptr ? parent->sceneTransform().inverted() : QTransform()));
 }
 
 bool AnnotationItemResizer::isItemVisible() const

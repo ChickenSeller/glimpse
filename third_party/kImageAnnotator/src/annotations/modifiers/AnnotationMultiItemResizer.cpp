@@ -30,8 +30,9 @@ AnnotationMultiItemResizer::AnnotationMultiItemResizer(ZoomValueProvider *zoomVa
 QRectF AnnotationMultiItemResizer::boundingRect() const
 {
     QRectF rect;
+    // In this group's coordinates: resizers turn with their items.
     for (auto resizer : childItems()) {
-        rect = rect.united(resizer->boundingRect());
+        rect = rect.united(resizer->mapRectToParent(resizer->boundingRect()));
     }
     return rect;
 }
