@@ -1673,6 +1673,16 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <source>Scroll the area yourself: %1 px  ·  Esc to stop</source>
         <translation>请自行滚动该区域：%1 像素  ·  按 Esc 停止</translation>
     </message>
+    <message>
+        <source>Click where to scroll to begin
+Esc to cancel</source>
+        <translation>点击要滚动的位置开始
+Esc 取消</translation>
+    </message>
+    <message>
+        <source>Click in the area where to scroll  ·  Esc to cancel</source>
+        <translation>在选区内点击要滚动的位置  ·  Esc 取消</translation>
+    </message>
 </context>
 <context>
     <name>SettingsDialog</name>
