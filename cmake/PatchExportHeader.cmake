@@ -1,5 +1,6 @@
-# Run by FetchContent in kColorPicker's and kImageAnnotator's source
-# directories, for the export header named by EXPORT_HEADER. On Windows they
+# Run by FetchContent in kColorPicker's source directory, for the export
+# header named by EXPORT_HEADER (kImageAnnotator, in third_party, has the
+# same change made in its source). On Windows they
 # define their export macro as nothing, leaving MinGW to export everything on
 # its own; users then take a class's member functions from import stubs,
 # whose addresses differ from the library's own. Qt finds a signal by

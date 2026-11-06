@@ -2,6 +2,10 @@
 # annotation editor behind "Edit". Built as shared libraries so the LGPL
 # components stay replaceable.
 #
+# kImageAnnotator is kept in third_party/kImageAnnotator with Glimpse's own
+# changes and tools (see UPSTREAM.md there), so an installed one cannot stand
+# in for it. kColorPicker is fetched as published.
+#
 # Defines GLIMPSE_ANNOTATOR_TARGET, GLIMPSE_ANNOTATOR_RUNTIME (target files to
 # ship next to the executable) and GLIMPSE_ANNOTATOR_QM_DIR (its .qm files).
 
@@ -11,14 +15,7 @@ set(GLIMPSE_ANNOTATOR_TARGET "")
 set(GLIMPSE_ANNOTATOR_RUNTIME "")
 set(GLIMPSE_ANNOTATOR_QM_DIR "")
 
-find_package(kImageAnnotator-Qt6 QUIET)
-if(kImageAnnotator-Qt6_FOUND)
-    message(STATUS "Glimpse: using installed kImageAnnotator")
-    set(GLIMPSE_ANNOTATOR_TARGET kImageAnnotator::kImageAnnotator)
-    return()
-endif()
-
-message(STATUS "Glimpse: building kImageAnnotator from source")
+message(STATUS "Glimpse: building kImageAnnotator from third_party")
 
 set(BUILD_WITH_QT6 ON CACHE BOOL "" FORCE)
 set(BUILD_EXAMPLE OFF CACHE BOOL "" FORCE)
@@ -48,18 +45,11 @@ if(NOT TARGET kColorPicker::kColorPicker)
 endif()
 ")
 
-FetchContent_Declare(kImageAnnotator
-    URL https://github.com/ksnip/kImageAnnotator/archive/refs/tags/v0.7.2.tar.gz
-    URL_HASH SHA256=7eb593d975b1590a184354ef68dbc3c26479d58eaea00de461d73695176f623c
-    # Its exports, settings file and canvas painting (checkerboard, frame of
-    # the saved area). The revision makes existing build trees fetch and patch
-    # it afresh.
-    PATCH_COMMAND ${CMAKE_COMMAND} -DGLIMPSE_PATCH_REVISION=8 -P "${CMAKE_CURRENT_LIST_DIR}/PatchImageAnnotator.cmake"
-)
-FetchContent_MakeAvailable(kImageAnnotator)
+set(_glimpse_annotator_build "${CMAKE_BINARY_DIR}/kimageannotator")
+add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/kImageAnnotator" "${_glimpse_annotator_build}")
 
 set(BUILD_SHARED_LIBS ${_glimpse_shared_libs})
 
 set(GLIMPSE_ANNOTATOR_TARGET kImageAnnotator::kImageAnnotator)
 set(GLIMPSE_ANNOTATOR_RUNTIME kImageAnnotator kColorPicker)
-set(GLIMPSE_ANNOTATOR_QM_DIR "${kimageannotator_BINARY_DIR}/translations")
+set(GLIMPSE_ANNOTATOR_QM_DIR "${_glimpse_annotator_build}/translations")

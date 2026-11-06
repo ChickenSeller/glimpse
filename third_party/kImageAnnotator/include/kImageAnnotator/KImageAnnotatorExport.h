@@ -22,7 +22,7 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(_WIN32)
+#if 0 // Glimpse: dllexport/dllimport on Windows too
 	#   define KIMAGEANNOTATOR_EXPORT
 #else 
 	#if defined(KIMAGEANNOTATOR_LIB)

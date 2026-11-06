@@ -1,3 +1,4 @@
+#include <QCoreApplication>
 /*
  * Copyright (C) 2022 Damir Porobic <damir.porobic@gmx.com>
  *
@@ -34,6 +35,14 @@ void SettingsAdapter::setValue(const QString &key, const QVariant &value)
 QVariant SettingsAdapter::value(const QString &key, const QVariant &defaultValue) const
 {
 	return mSettings.value(key, defaultValue);
+}
+
+QSettings SettingsAdapter::glimpseSettings()
+{
+	const QString file = qApp ? qApp->property("glimpseSettingsFile").toString() : QString();
+	if (file.isEmpty())
+		return QSettings();
+	return QSettings(file, QSettings::IniFormat);
 }
 
 } // namespace kImageAnnotator

@@ -36,7 +36,10 @@ public:
 	QVariant value(const QString &key, const QVariant &defaultValue) const override;
 
 private:
-	QSettings mSettings;
+	// Glimpse: the file named by the application's "glimpseSettingsFile"
+	// property, when it names one.
+	QSettings mSettings = glimpseSettings();
+	static QSettings glimpseSettings();
 };
 
 } // namespace kImageAnnotator

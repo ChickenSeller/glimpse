@@ -10,7 +10,7 @@ are in the `licenses/` folder next to this file.
 |---|---|---|---|---|
 | [Qt](https://www.qt.io/) (Core, Gui, Widgets, Svg, Network, Concurrent, Multimedia) | 6.12.0 | LGPL-3.0 | `Qt-GPL-3.0-and-LGPL-3.0.txt` | Shared libraries (DLLs) |
 | [FFmpeg](https://ffmpeg.org/), shipped with Qt Multimedia | as in Qt 6.12.0 | LGPL-2.1-or-later | `FFmpeg-LGPL-2.1.txt` | Shared libraries (DLLs) |
-| [kImageAnnotator](https://github.com/ksnip/kImageAnnotator) | 0.7.2 | LGPL-3.0 | `kImageAnnotator-LGPL-3.0.txt` | Shared library (annotation editor), with three changes (see below) |
+| [kImageAnnotator](https://github.com/ksnip/kImageAnnotator) | 0.7.2 | LGPL-3.0 | `kImageAnnotator-LGPL-3.0.txt` | Shared library (annotation editor), changed by Glimpse; source in `third_party/kImageAnnotator` (see below) |
 | [kColorPicker](https://github.com/ksnip/kColorPicker) | 0.3.1 | LGPL-3.0 | `kColorPicker-LGPL-3.0.txt` | Shared library (annotation editor), with one change (see below) |
 | [ZXing-C++](https://github.com/zxing-cpp/zxing-cpp) | 3.1.1 | Apache-2.0 | `ZXing-cpp-Apache-2.0.txt` | Linked statically (QR codes) |
 | [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) | 1.2.1 | MIT | `KDSingleApplication-MIT.txt` | Linked statically (single instance) |
@@ -55,17 +55,20 @@ builds of compatible versions; Glimpse will use them. Their source code is
 available from their projects (links above) and, for Qt, from
 <https://download.qt.io/official_releases/qt/>.
 
-Glimpse modifies none of them except kImageAnnotator and kColorPicker. In
-kImageAnnotator: how it paints the canvas and the view around it
-(`src/annotations/misc/CanvasPainter.cpp`), which get Glimpse's checkerboard
-and a frame around the area that is saved; and where it keeps its settings
-(`src/backend/SettingsAdapter.*`), which go to Glimpse's settings file. In
-both: their export headers (`include/*/K*Export.h`), which declare their
-classes exported on Windows too, so that their signals can be connected to.
-The changes are applied at build time by `cmake/PatchImageAnnotator.cmake` and
-`cmake/PatchExportHeader.cmake` in Glimpse's source code, to kImageAnnotator
-0.7.2 and kColorPicker 0.3.1 as published. Qt itself
-contains further third-party code; see
+Glimpse modifies none of them except kImageAnnotator and kColorPicker.
+
+kImageAnnotator is kept in Glimpse's source code, in
+`third_party/kImageAnnotator`, under its own LGPL-3.0: kImageAnnotator 0.7.2
+as published, with Glimpse's changes on top. `third_party/kImageAnnotator/UPSTREAM.md`
+lists them, and the repository's history shows each one against the
+published release.
+
+kColorPicker 0.3.1 is fetched as published, with one change applied at build
+time by `cmake/PatchExportHeader.cmake`: its export header
+(`include/kColorPicker/KColorPickerExport.h`) declares its classes exported on
+Windows too, so that its signals can be connected to.
+
+Qt itself contains further third-party code; see
 <https://doc.qt.io/qt-6/licenses-used-in-qt.html>.
 
 ## Downloaded on first use (not bundled)

@@ -31,7 +31,9 @@ QRectF DevicePixelRatioScaler::scale(const QRectF &rect) const
 
 qreal DevicePixelRatioScaler::scaleFactor() const
 {
-	return qGuiApp->devicePixelRatio();
+	// Glimpse: images are loaded pixel for pixel, so the scene is in image
+	// pixels already.
+	return 1.0;
 }
 
 } // namespace kImageAnnotator
