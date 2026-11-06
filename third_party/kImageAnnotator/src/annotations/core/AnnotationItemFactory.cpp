@@ -135,6 +135,12 @@ AbstractAnnotationItem *AnnotationItemFactory::createItem(const QPointF &initPos
 		case Tools::DoubleArrow:
 			newItem = new AnnotationDoubleArrow(initPosition, properties);
 			break;
+		case Tools::Curve:
+			newItem = new AnnotationCurve(initPosition, properties);
+			break;
+		case Tools::CurveArrow:
+			newItem = new AnnotationCurveArrow(initPosition, properties);
+			break;
 		case Tools::Number:
 			newItem = new AnnotationNumber(initPosition, properties.staticCast<AnnotationTextProperties>());
 			mNumberManager->addItem(dynamic_cast<AnnotationNumber *>(newItem));
@@ -210,6 +216,12 @@ AbstractAnnotationItem *AnnotationItemFactory::cloneItem(const AbstractAnnotatio
 			break;
 		case Tools::DoubleArrow:
 			newItem = new AnnotationDoubleArrow(*(dynamic_cast<const AnnotationArrow *>(item)));
+			break;
+		case Tools::Curve:
+			newItem = new AnnotationCurve(*(dynamic_cast<const AnnotationCurve *>(item)));
+			break;
+		case Tools::CurveArrow:
+			newItem = new AnnotationCurveArrow(*(dynamic_cast<const AnnotationCurveArrow *>(item)));
 			break;
 		case Tools::Number:
 			newItem = new AnnotationNumber(*(dynamic_cast<const AnnotationNumber *>(item)));

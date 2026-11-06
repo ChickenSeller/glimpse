@@ -40,6 +40,8 @@ Config::Config(const QSharedPointer<ISettings> &settings) :
 		Tools::Line,
 		Tools::Arrow,
 		Tools::DoubleArrow,
+		Tools::Curve,
+		Tools::CurveArrow,
 		Tools::Rect,
 		Tools::Ellipse,
 		Tools::Triangle,
@@ -566,6 +568,7 @@ QColor Config::defaultToolColor(Tools toolType)
 		case Tools::MarkerEllipse:
 			return { Qt::yellow };
 		case Tools::Line:
+		case Tools::Curve:
 			return { Qt::blue };
 		case Tools::Rect:
 			return { Qt::gray };
@@ -603,6 +606,7 @@ int Config::defaultToolWidth(Tools toolType)
 			return 30;
 		case Tools::Arrow:
 		case Tools::DoubleArrow:
+		case Tools::CurveArrow:
 			return 6;
 		case Tools::Number:
 			return 5;
@@ -623,6 +627,7 @@ FillModes Config::defaultToolFillMode(Tools toolType)
 	switch (toolType) {
 		case Tools::Arrow:
 		case Tools::DoubleArrow:
+		case Tools::CurveArrow:
 		case Tools::Rect:
 		case Tools::Number:
 		case Tools::NumberPointer:
@@ -682,6 +687,8 @@ bool Config::defaultShadowEnabled(Tools tool)
 		case Tools::NumberArrow:
 		case Tools::Arrow:
 		case Tools::DoubleArrow:
+		case Tools::Curve:
+		case Tools::CurveArrow:
 		case Tools::Rect:
 		case Tools::Ellipse:
 		case Tools::Triangle:

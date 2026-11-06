@@ -44,6 +44,11 @@ AbstractItemResizeHandles *ResizeHandlesFactory::createResizeHandles(AbstractAnn
 
 AbstractItemResizeHandles *ResizeHandlesFactory::GetLineResizeHandles(AbstractAnnotationItem *item, double zoomValue)
 {
+    // A curve is a line too, with its bend point besides.
+    auto curveItem = dynamic_cast<AbstractAnnotationCurve *>(item);
+    if (curveItem != nullptr) {
+        return new CurveResizeHandles(curveItem, zoomValue);
+    }
     auto lineItem = dynamic_cast<AbstractAnnotationLine *>(item);
     if (lineItem != nullptr) {
         return new LineResizeHandles(lineItem, zoomValue);

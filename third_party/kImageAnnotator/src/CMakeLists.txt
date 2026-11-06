@@ -67,6 +67,7 @@ set(KIMAGEANNOTATOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/modifiers/resizeHandles/AbstractItemResizeHandles.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/modifiers/resizeHandles/AbstractRectResizeHandles.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/modifiers/resizeHandles/LineResizeHandles.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/annotations/modifiers/resizeHandles/CurveResizeHandles.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/modifiers/resizeHandles/RectResizeHandles.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/modifiers/resizeHandles/PathResizeHandles.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/modifiers/resizeHandles/PointerRectResizeHandles.cpp
@@ -74,6 +75,7 @@ set(KIMAGEANNOTATOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/modifiers/resizeHandles/ResizeHandlesFactory.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AbstractAnnotationItem.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AbstractAnnotationLine.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AbstractAnnotationCurve.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AbstractAnnotationObfuscate.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AbstractAnnotationRect.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AbstractAnnotationPointerRect.cpp
@@ -83,6 +85,8 @@ set(KIMAGEANNOTATOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationMarkerPen.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationMarkerRect.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationArrow.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationCurve.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationCurveArrow.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationDoubleArrow.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationRect.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationEllipse.cpp

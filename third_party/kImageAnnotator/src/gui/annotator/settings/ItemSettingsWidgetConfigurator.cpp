@@ -215,6 +215,8 @@ void ItemSettingsWidgetConfigurator::updateVisibility() const
 		case Tools::Line:
 		case Tools::Arrow:
 		case Tools::DoubleArrow:
+		case Tools::Curve:
+		case Tools::CurveArrow:
 			setColorWidgetVisible(true);
 			setTextColorWidgetVisible(false);
 			setWidthWidgetVisible(true);

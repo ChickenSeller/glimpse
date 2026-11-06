@@ -63,6 +63,10 @@ void ToolPicker::initGui()
 	menu->addAction(action);
 	action = createAction(tr("Line"), IconLoader::load(QLatin1String("line.svg")), Qt::Key_L, Tools::Line);
 	menu->addAction(action);
+	action = createAction(tr("Curved Arrow"), IconLoader::load(QLatin1String("curveArrow.svg")), Qt::Key_Y, Tools::CurveArrow);
+	menu->addAction(action);
+	action = createAction(tr("Curve"), IconLoader::load(QLatin1String("curve.svg")), Qt::Key_V, Tools::Curve);
+	menu->addAction(action);
 	createButton(menu);
 
 	action = createAction(tr("Pen"), IconLoader::load(QLatin1String("pen.svg")), Qt::Key_P, Tools::Pen);

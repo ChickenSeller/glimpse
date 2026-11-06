@@ -39,3 +39,13 @@ only when needed, and listed below.
   rectangle, its apex on the edge where the drag started, so dragging
   upwards draws it pointing down. Same settings as the rectangle. Added last
   to the `Tools` enum, since tool settings are stored by the tool's number.
+- **Curve and Curved Arrow** (`src/annotations/items/AbstractAnnotationCurve.*`,
+  `AnnotationCurve.*`, `AnnotationCurveArrow.*`,
+  `src/annotations/modifiers/resizeHandles/CurveResizeHandles.*`; shortcuts V
+  and Y, with Arrow and Line): drawn straight like a line; once selected, a
+  third handle halfway along bends it, the curve (a quadratic Bezier curve)
+  passing through that handle. The bend is kept relative to the two ends, so
+  it follows them. The curved arrow's head points along the curve at its
+  end; its shaft is stroked only, its head stroked and filled, since
+  kImageAnnotator's own painting would fill the area under the curve. Added
+  last to the `Tools` enum.

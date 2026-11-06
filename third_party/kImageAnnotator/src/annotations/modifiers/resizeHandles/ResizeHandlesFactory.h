@@ -21,6 +21,7 @@
 #define KIMAGEANNOTATOR_RESIZEHANDLESFACTORY_H
 
 #include "LineResizeHandles.h"
+#include "CurveResizeHandles.h"
 #include "RectResizeHandles.h"
 #include "PathResizeHandles.h"
 #include "PointerRectResizeHandles.h"

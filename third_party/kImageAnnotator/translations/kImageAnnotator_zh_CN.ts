@@ -486,6 +486,14 @@ Rotating by non 90° multipliers might introduce loss of quality.</source>
         <translation>三角形</translation>
     </message>
     <message>
+        <source>Curve</source>
+        <translation>曲线</translation>
+    </message>
+    <message>
+        <source>Curved Arrow</source>
+        <translation>曲线箭头</translation>
+    </message>
+    <message>
         <source>Number Pointer</source>
         <translation>数字标注</translation>
     </message>
