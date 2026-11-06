@@ -43,7 +43,7 @@ namespace Ocr {
 // Language codes, partly shared with the UI languages: "zh_CN", "zh_TW",
 // "en", "ja", "fr".
 QStringList supportedLanguages();
-// For a check box: with its mnemonic.
+// Its name in its own script.
 QString languageName(const QString &code);
 QStringList defaultLanguages();
 

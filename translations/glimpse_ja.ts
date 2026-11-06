@@ -1128,26 +1128,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <source>Windows OCR failed to recognize the image.</source>
         <translation>Windows OCR で画像を認識できませんでした。</translation>
     </message>
-    <message>
-        <source>&amp;Chinese (Simplified)</source>
-        <translation>中国語（簡体字）(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Chinese (&amp;Traditional)</source>
-        <translation>中国語（繁体字）(&amp;T)</translation>
-    </message>
-    <message>
-        <source>&amp;Japanese</source>
-        <translation>日本語(&amp;J)</translation>
-    </message>
-    <message>
-        <source>&amp;French</source>
-        <translation>フランス語(&amp;F)</translation>
-    </message>
-    <message>
-        <source>E&amp;nglish</source>
-        <translation>英語(&amp;N)</translation>
-    </message>
 </context>
 <context>
     <name>OcrResultDialog</name>

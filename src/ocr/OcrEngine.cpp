@@ -50,15 +50,16 @@ QStringList supportedLanguages()
 
 QString languageName(const QString &code)
 {
+    // Each in its own script, as its readers know it: not translated.
     if (code == QLatin1String("zh_CN"))
-        return QCoreApplication::translate("Ocr", "&Chinese (Simplified)");
+        return QStringLiteral("简体中文");
     if (code == QLatin1String("zh_TW"))
-        return QCoreApplication::translate("Ocr", "Chinese (&Traditional)");
+        return QStringLiteral("繁體中文");
     if (code == QLatin1String("ja"))
-        return QCoreApplication::translate("Ocr", "&Japanese");
+        return QStringLiteral("日本語");
     if (code == QLatin1String("fr"))
-        return QCoreApplication::translate("Ocr", "&French");
-    return QCoreApplication::translate("Ocr", "E&nglish");
+        return QStringLiteral("Français");
+    return QStringLiteral("English");
 }
 
 QStringList defaultLanguages()
