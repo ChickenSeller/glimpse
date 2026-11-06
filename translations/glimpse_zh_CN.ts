@@ -2084,7 +2084,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+18"/>
         <source>Recognition models are downloaded the first time they are needed. Selecting fewer languages makes recognition faster and more accurate.</source>
-        <translation>识别模型会在首次使用时下载。选择的文字越少，识别越快、越准确。</translation>
+        <translation>识别模型会在首次使用时下载。选择的语言（文字）越少，识别越快、越准确。</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -2179,7 +2179,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+105"/>
         <source>Select at least one language for text recognition.</source>
-        <translation>请至少选择一种要识别的文字。</translation>
+        <translation>请至少选择一种要识别的语言（文字）。</translation>
     </message>
     <message>
         <location line="+96"/>
