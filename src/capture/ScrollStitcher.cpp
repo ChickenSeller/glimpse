@@ -16,8 +16,10 @@ constexpr int kMinOverlap = 16;
 constexpr double kMinMatch = 0.75;
 // Static bands larger than this are not header/footer but an unscrolled view.
 constexpr int kMinContent = 24;
-// Content segments an overlap needs before it can pin down the shift on its own.
-constexpr int kMinDistinctive = 16;
+// Content segments an overlap needs before it can pin down the shift on its own
+// (two rows' worth of the 32 segments a row is cut into): a sliver of overlap
+// at a large shift matches by chance.
+constexpr int kMinDistinctive = 64;
 // A column of segments moves with a shift when this share of its content
 // rows match (a caret or a hover effect costs a few).
 constexpr double kColumnMatch = 0.9;
@@ -241,6 +243,9 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
     int bestInformative = 0;
     double bestInformativeScore = 0.0;
     int bestBlank = 0;
+    // Failing that, the best shift most of the scrolled columns move with.
+    int bestMoving = 0;
+    double bestMovingScore = 0.0;
     // A narrow overlap can be off by a row or two; the user can always scroll
     // back, unlike a program that cannot tell.
     const int minOverlap = tracking ? std::max(kMinOverlap, content / 8) : kMinOverlap;
@@ -270,7 +275,12 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
         const int distance = std::abs(shift);
         int compared = 0, matched = 0;   // all overlapping segments
         int dCompared = 0, dMatched = 0; // segments with content
-        int columnCompared[kSegments] = {}, columnMatched[kSegments] = {}; // content, per column
+        // Content proves a shift only where it differs from what the previous
+        // frame had at the place it moved to: a separator line, a scroll bar's
+        // track or the inside of a coloured band match a few rows away without
+        // anything having moved. The column and peak tests go by this alone.
+        int pCompared = 0, pMatched = 0;
+        int columnCompared[kSegments] = {}, columnMatched[kSegments] = {}; // proving content, per column
         // previous row first + shift + i  <->  next row first + i (down);
         // previous row first + i  <->  next row first + distance + i (up)
         for (int i = skipTop; i < std::min(content - distance, content - skipBottom); ++i) {
@@ -283,8 +293,12 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
                 if (prev.content[a + k]) {
                     ++dCompared;
                     dMatched += same;
-                    ++columnCompared[k];
-                    columnMatched[k] += same;
+                    if (prev.hashes[a + k] != prev.hashes[b + k]) {
+                        ++pCompared;
+                        pMatched += same;
+                        ++columnCompared[k];
+                        columnMatched[k] += same;
+                    }
                 }
             }
         }
@@ -293,7 +307,7 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
         if (dCompared >= kMinDistinctive) {
             // The content of the columns that move with this shift, out of
             // that of the columns that did not rather stay put.
-            int moving = 0, scrolled = 0;
+            int moving = 0, scrolled = 0, scrolledMatched = 0;
             for (int k = 0; k < kSegments; ++k) {
                 if (columnCompared[k] == 0)
                     continue;
@@ -301,6 +315,7 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
                 if (stillCompared[k] > 0 && double(stillMatched[k]) / stillCompared[k] > fits)
                     continue;
                 scrolled += columnCompared[k];
+                scrolledMatched += columnMatched[k];
                 if (columnCompared[k] >= kColumnContent && fits >= kColumnMatch)
                     moving += columnCompared[k];
             }
@@ -308,15 +323,22 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
             // header turned sticky), or most of the content moves with this
             // shift beside columns that stayed put (a sticky sidebar).
             const double score = double(dMatched) / dCompared;
-            scores.emplace_back(shift, score);
-            const bool matches = double(matched) / compared >= kMinMatch && score >= kMinMatch;
-            if (!matches && (moving < kMinDistinctive || double(moving) / scrolled < kMinMoving))
-                continue;
+            const double proof = pCompared >= kMinDistinctive ? double(pMatched) / pCompared : 0.0;
+            // For standing out, only the columns that scrolled count: a pane
+            // that stays put (a folder tree beside a list) matches at no shift.
+            if (scrolled >= kMinDistinctive)
+                scores.emplace_back(shift, double(scrolledMatched) / scrolled);
             // Judged on all the content, so the shift most of it follows wins.
             // Ties keep the smaller shift: periodic content repeats at larger ones.
-            if (score > bestInformativeScore + 1e-9) {
-                bestInformativeScore = score;
-                bestInformative = shift;
+            if (double(matched) / compared >= kMinMatch && score >= kMinMatch) {
+                if (score > bestInformativeScore + 1e-9) {
+                    bestInformativeScore = score;
+                    bestInformative = shift;
+                }
+            } else if (moving >= kMinDistinctive && double(moving) / scrolled >= kMinMoving
+                       && proof > bestMovingScore + 1e-9) {
+                bestMovingScore = proof;
+                bestMoving = shift;
             }
         } else if (double(matched) / compared >= kMinMatch && !tracking
                    && (bestBlank == 0 || std::abs(shift - m_lastShift) < std::abs(bestBlank - m_lastShift))) {
@@ -325,6 +347,8 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
     }
     if (bestInformative != 0)
         return bestInformative;
+    if (bestMoving != 0)
+        return bestMoving;
     if (!scores.empty()) {
         // Sidebars half stuck, animations and the like spoil every column
         // here and there; the true shift still stands out from all others.

@@ -59,13 +59,14 @@ public:
 
 private:
     // Each row is compared in kSegments horizontal segments, so a change in
-    // part of a row (a rotating banner, an animation) only costs that part.
+    // part of a row (a rotating banner, an animation) only costs that part,
+    // and a narrow pane that scrolls beside still ones has segments of its own.
     struct Signature {
         std::vector<size_t> hashes; // row * kSegments + segment
         std::vector<char> content;  // segment is not a single solid colour
         bool operator==(const Signature &other) const { return hashes == other.hashes; }
     };
-    static constexpr int kSegments = 8;
+    static constexpr int kSegments = 32;
 
     static Signature signature(const QImage &image);
     bool rowsEqual(const Signature &a, int rowA, const Signature &b, int rowB) const;
