@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QImage>
+#include <QKeySequence>
 #include <QList>
 #include <QPixmap>
 #include <QPolygonF>
@@ -39,6 +40,9 @@ public:
     // The mouse goes to the programs below; the drawing stays.
     bool passThrough() const { return m_passThrough; }
     void setPassThrough(bool on);
+    // The global hotkey that toggles pass-through, named in its tooltip;
+    // empty when none works.
+    void setPassThroughHotkey(const QKeySequence &key);
 
     bool canUndo() const { return !m_undo.isEmpty(); }
     bool canRedo() const { return !m_redo.isEmpty(); }

@@ -328,9 +328,6 @@
    </item>
    <item>
     <widget class="QToolButton" name="passThroughButton">
-     <property name="toolTip">
-      <string>Pass-Through: the mouse works the programs below, the drawing stays (hotkey again: toggle)</string>
-     </property>
      <property name="text">
       <string>Pass-Through</string>
      </property>

@@ -27,6 +27,8 @@ public:
     explicit WhiteboardToolbar(WhiteboardCanvas *canvas);
     ~WhiteboardToolbar() override;
 
+    void setPassThroughHotkey(const QKeySequence &key);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void changeEvent(QEvent *event) override;
@@ -47,4 +49,5 @@ private:
     QList<QAction *> m_widthActions;
     QMenu *m_backgroundMenu;
     QHash<QAction *, WhiteboardCanvas::Background> m_backgroundActions;
+    QKeySequence m_passThroughHotkey;
 };

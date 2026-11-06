@@ -2498,8 +2498,12 @@ Install the package for your system from the download page.</source>
     </message>
     <message>
         <location line="+20"/>
-        <source>Pass-Through: the mouse works the programs below, the drawing stays (hotkey again: toggle)</source>
-        <translation>鼠标穿透：鼠标可以操作下面的程序，画的内容保留（再按一次热键：切换）</translation>
+        <source>Pass-Through: the mouse works the programs below, the drawing stays</source>
+        <translation>鼠标穿透：鼠标可以操作下面的程序，画的内容保留</translation>
+    </message>
+    <message>
+        <source>%1 (%2 toggles it)</source>
+        <translation>%1（按 %2 切换）</translation>
     </message>
     <message>
         <location line="+3"/>

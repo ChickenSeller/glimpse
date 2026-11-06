@@ -121,6 +121,12 @@ WhiteboardToolbar::WhiteboardToolbar(WhiteboardCanvas *canvas)
 
 WhiteboardToolbar::~WhiteboardToolbar() = default;
 
+void WhiteboardToolbar::setPassThroughHotkey(const QKeySequence &key)
+{
+    m_passThroughHotkey = key;
+    retranslate();
+}
+
 // Choosing a tool or a color means drawing again, so pass-through ends.
 void WhiteboardToolbar::drawWith(const std::function<void()> &choose)
 {
@@ -161,6 +167,11 @@ void WhiteboardToolbar::applyIconColor()
 
 void WhiteboardToolbar::retranslate()
 {
+    const QString passThrough = tr("Pass-Through: the mouse works the programs below, the drawing stays");
+    ui->passThroughButton->setToolTip(
+        m_passThroughHotkey.isEmpty()
+            ? passThrough
+            : tr("%1 (%2 toggles it)").arg(passThrough, m_passThroughHotkey.toString(QKeySequence::NativeText)));
     for (qsizetype i = 0; i < m_colorButtons.size(); ++i)
         m_colorButtons.at(i)->setToolTip(tr("Color (%1)").arg(i + 1));
     const QList<qreal> &widths = WhiteboardCanvas::penWidths();

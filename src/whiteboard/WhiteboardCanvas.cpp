@@ -154,6 +154,11 @@ void WhiteboardCanvas::setPassThrough(bool on)
     emit stateChanged();
 }
 
+void WhiteboardCanvas::setPassThroughHotkey(const QKeySequence &key)
+{
+    m_toolbar->setPassThroughHotkey(key);
+}
+
 void WhiteboardCanvas::undo()
 {
     if (m_undo.isEmpty())

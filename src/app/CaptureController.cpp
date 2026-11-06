@@ -257,6 +257,8 @@ QStringList CaptureController::registerHotkeys()
 
     // Hints show only hotkeys that actually work.
     m_toolbar->setHotkeyHints(active);
+    if (m_whiteboard)
+        m_whiteboard->setPassThroughHotkey(active.value(Mode::Whiteboard));
     for (auto it = m_trayCaptureActions.cbegin(); it != m_trayCaptureActions.cend(); ++it)
         it.value()->setShortcut(active.value(it.key()));
 
@@ -302,6 +304,8 @@ void CaptureController::startCapture(Mode mode, bool afterFade)
         if (!screen)
             screen = QGuiApplication::primaryScreen();
         m_whiteboard = new WhiteboardCanvas(screen);
+        if (m_hotkeyRegistered.value(Mode::Whiteboard))
+            m_whiteboard->setPassThroughHotkey(AppSettings::hotkey(Mode::Whiteboard));
         m_whiteboard->show();
         m_whiteboard->raise();
         m_whiteboard->activateWindow();

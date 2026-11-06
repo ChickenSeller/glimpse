@@ -2498,8 +2498,12 @@ Install the package for your system from the download page.</source>
     </message>
     <message>
         <location line="+20"/>
-        <source>Pass-Through: the mouse works the programs below, the drawing stays (hotkey again: toggle)</source>
-        <translation>クリックスルー：マウスで下のプログラムを操作でき、描いた内容は残ります（ホットキーをもう一度：切り替え）</translation>
+        <source>Pass-Through: the mouse works the programs below, the drawing stays</source>
+        <translation>クリックスルー：マウスで下のプログラムを操作でき、描いた内容は残ります</translation>
+    </message>
+    <message>
+        <source>%1 (%2 toggles it)</source>
+        <translation>%1（%2 で切り替え）</translation>
     </message>
     <message>
         <location line="+3"/>
