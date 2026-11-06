@@ -136,7 +136,8 @@ Qt::CursorShape AnnotationMultiItemResizer::cursorForCurrentHandle()
 
 void AnnotationMultiItemResizer::hideCurrentResizer()
 {
-    if (mCurrentResizer == nullptr) {
+    // A curve is shaped by its handles: they stay in sight while dragged.
+    if (mCurrentResizer == nullptr || mCurrentResizer->staysShownWhileDragged()) {
         return;
     }
 

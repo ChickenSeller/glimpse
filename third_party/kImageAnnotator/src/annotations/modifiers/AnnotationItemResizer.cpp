@@ -154,6 +154,12 @@ Qt::CursorShape AnnotationItemResizer::cursorForPos(const QPointF &scenePos)
     return mResizeHandles->cursorForPos(pos);
 }
 
+// A curve's handles, and the lines to them, show the shape being made.
+bool AnnotationItemResizer::staysShownWhileDragged() const
+{
+    return dynamic_cast<AbstractAnnotationCurve *>(mAnnotationItem) != nullptr && !mRotating;
+}
+
 Qt::CursorShape AnnotationItemResizer::cursorForCurrentHandle()
 {
     if (mRotating) {

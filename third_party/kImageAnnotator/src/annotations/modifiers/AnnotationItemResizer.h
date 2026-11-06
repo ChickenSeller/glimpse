@@ -44,6 +44,7 @@ public:
     bool isItemVisible() const;
     Qt::CursorShape cursorForPos(const QPointF &pos);
     Qt::CursorShape cursorForCurrentHandle();
+    bool staysShownWhileDragged() const;
 
 signals:
     void newCommand(QUndoCommand *command) const;
