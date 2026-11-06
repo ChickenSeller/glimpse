@@ -133,6 +133,53 @@
            </widget>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="scrollPreviewLayout">
+            <item>
+             <widget class="QCheckBox" name="scrollPreviewCheck">
+              <property name="toolTip">
+               <string>Beside the area, where there is room: the stitched image so far, to see a misalignment while it can still be fixed</string>
+              </property>
+              <property name="text">
+               <string>Show a pre&amp;view during scrolling capture</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="scrollPreviewOpacityLabel">
+              <property name="text">
+               <string>Opacity:</string>
+              </property>
+              <property name="buddy">
+               <cstring>scrollPreviewOpacitySpin</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="scrollPreviewOpacitySpin">
+              <property name="suffix">
+               <string>%</string>
+              </property>
+              <property name="minimum">
+               <number>20</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="singleStep">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="scrollPreviewSpacer">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="freehandFillLayout">
             <item>
              <widget class="QLabel" name="freehandFillLabel">

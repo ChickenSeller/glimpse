@@ -204,6 +204,27 @@ void setAdjustSelection(bool adjust)
     SettingsStore::open().setValue(QStringLiteral("capture/adjustSelection"), adjust);
 }
 
+bool scrollPreview()
+{
+    return SettingsStore::open().value(QStringLiteral("capture/scrollPreview"), true).toBool();
+}
+
+void setScrollPreview(bool show)
+{
+    SettingsStore::open().setValue(QStringLiteral("capture/scrollPreview"), show);
+}
+
+int scrollPreviewOpacity()
+{
+    const int percent = SettingsStore::open().value(QStringLiteral("capture/scrollPreviewOpacity"), 70).toInt();
+    return std::clamp(percent, 20, 100);
+}
+
+void setScrollPreviewOpacity(int percent)
+{
+    SettingsStore::open().setValue(QStringLiteral("capture/scrollPreviewOpacity"), std::clamp(percent, 20, 100));
+}
+
 bool freehandTransparent()
 {
     return SettingsStore::open().value(QStringLiteral("capture/freehandTransparent"), true).toBool();

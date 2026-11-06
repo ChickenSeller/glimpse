@@ -25,6 +25,7 @@ UINT toVirtualKey(Qt::Key key)
     case Qt::Key_Pause: return VK_PAUSE;
     case Qt::Key_ScrollLock: return VK_SCROLL;
     case Qt::Key_Space: return VK_SPACE;
+    case Qt::Key_Escape: return VK_ESCAPE;
     case Qt::Key_Insert: return VK_INSERT;
     case Qt::Key_Delete: return VK_DELETE;
     case Qt::Key_Home: return VK_HOME;

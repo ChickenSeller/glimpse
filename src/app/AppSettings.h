@@ -52,6 +52,12 @@ void setCopyCapturesToClipboard(bool copy);
 // arrow keys) and confirmed with Enter or a double-click, or Ctrl+C to copy.
 bool adjustSelection();
 void setAdjustSelection(bool adjust);
+// Scrolling capture's preview of the stitched image beside the area, and how
+// opaque it is (percent).
+bool scrollPreview();
+void setScrollPreview(bool show);
+int scrollPreviewOpacity();
+void setScrollPreviewOpacity(int percent);
 // What fills a freehand capture outside the drawn outline: transparent by
 // default, or a solid color (kept while transparency is switched on).
 bool freehandTransparent();

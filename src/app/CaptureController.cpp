@@ -487,6 +487,7 @@ void CaptureController::startScrollingCapture(const QRect &rect, bool manual)
     // Still "busy": the toolbar stays hidden while the live screen is grabbed.
     auto *session = new ScrollCaptureSession(
         rect, manual ? ScrollCaptureSession::Scrolling::Manual : ScrollCaptureSession::Scrolling::Automatic, this);
+    session->setPreviewOpacity(AppSettings::scrollPreview() ? AppSettings::scrollPreviewOpacity() / 100.0 : 0.0);
     connect(session, &ScrollCaptureSession::finished, this, [this, session](const QImage &image) {
         session->deleteLater();
         endCapture();
@@ -502,6 +503,9 @@ void CaptureController::startScrollingCapture(const QRect &rect, bool manual)
         box.addButton(QMessageBox::Cancel);
         box.setDefaultButton(manual);
         box.setWindowFlag(Qt::WindowStaysOnTopHint);
+        // It may sit over the area: never in a grabbed frame, not even fading out.
+        Platform::disableWindowAnimations(&box);
+        Platform::excludeFromCapture(&box);
         box.exec();
         if (box.clickedButton() == manual) {
             session->continueManually();

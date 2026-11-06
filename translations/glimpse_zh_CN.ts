@@ -1669,6 +1669,22 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>SettingsDialog</name>
     <message>
+        <source>Beside the area, where there is room: the stitched image so far, to see a misalignment while it can still be fixed</source>
+        <translation>显示在选区旁边（有空位时）：已拼接的图像，出现错位时能及时发现并纠正</translation>
+    </message>
+    <message>
+        <source>Show a pre&amp;view during scrolling capture</source>
+        <translation>滚动截图时显示预览(&amp;V)</translation>
+    </message>
+    <message>
+        <source>Opacity:</source>
+        <translation>不透明度：</translation>
+    </message>
+    <message>
+        <source>%</source>
+        <translation>%</translation>
+    </message>
+    <message>
         <source>Ad&amp;just the selected area before taking it</source>
         <translation>选好区域后先调整再截取(&amp;J)</translation>
     </message>

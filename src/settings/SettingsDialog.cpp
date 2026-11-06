@@ -99,6 +99,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->captureCursorCheck->setChecked(AppSettings::captureIncludesCursor());
     ui->captureClipboardCheck->setChecked(AppSettings::copyCapturesToClipboard());
     ui->adjustSelectionCheck->setChecked(AppSettings::adjustSelection());
+    ui->scrollPreviewCheck->setChecked(AppSettings::scrollPreview());
+    ui->scrollPreviewOpacitySpin->setValue(AppSettings::scrollPreviewOpacity());
+    ui->scrollPreviewOpacitySpin->setEnabled(ui->scrollPreviewCheck->isChecked());
+    connect(ui->scrollPreviewCheck, &QCheckBox::toggled, ui->scrollPreviewOpacitySpin, &QWidget::setEnabled);
     ui->freehandTransparentCheck->setChecked(AppSettings::freehandTransparent());
 
     ui->recordHighlightCheck->setChecked(AppSettings::recordHighlightCursor());
@@ -243,10 +247,12 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     applyPlatformLimits();
     updateOcrEngineNote();
     for (QCheckBox *check : {ui->autostartCheck, ui->usageStatsCheck, ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->adjustSelectionCheck,
+                             ui->scrollPreviewCheck,
                              ui->freehandTransparentCheck,
                              ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck,
                              ui->ocrChineseCheck, ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
+    connect(ui->scrollPreviewOpacitySpin, &QSpinBox::valueChanged, this, [this] { setModified(true); });
     setModified(false);
 }
 
@@ -334,6 +340,8 @@ bool SettingsDialog::apply()
     AppSettings::setCaptureIncludesCursor(ui->captureCursorCheck->isChecked());
     AppSettings::setCopyCapturesToClipboard(ui->captureClipboardCheck->isChecked());
     AppSettings::setAdjustSelection(ui->adjustSelectionCheck->isChecked());
+    AppSettings::setScrollPreview(ui->scrollPreviewCheck->isChecked());
+    AppSettings::setScrollPreviewOpacity(ui->scrollPreviewOpacitySpin->value());
     AppSettings::setFreehandTransparent(ui->freehandTransparentCheck->isChecked());
     AppSettings::setFreehandColor(m_freehandColor);
     AppSettings::setRecordHighlightCursor(ui->recordHighlightCheck->isChecked());
@@ -576,6 +584,8 @@ void SettingsDialog::restoreDefaults()
     ui->captureCursorCheck->setChecked(false);
     ui->captureClipboardCheck->setChecked(false);
     ui->adjustSelectionCheck->setChecked(false);
+    ui->scrollPreviewCheck->setChecked(true);
+    ui->scrollPreviewOpacitySpin->setValue(70);
     ui->freehandTransparentCheck->setChecked(true);
     ui->recordHighlightCheck->setChecked(true);
     ui->recordClicksCheck->setChecked(true);

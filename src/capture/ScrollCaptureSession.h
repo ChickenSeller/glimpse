@@ -40,20 +40,26 @@ public:
     ScrollCaptureSession(const QRect &logicalRect, Scrolling scrolling, QObject *parent = nullptr);
     ~ScrollCaptureSession() override;
 
+    // How opaque the preview beside the area is (0 to 1); 0 shows none.
+    // Before start().
+    void setPreviewOpacity(qreal opacity) { m_previewOpacity = opacity; }
     void start();
     // Ends the capture with what it has, as Stop does.
     void stop() { m_stopRequested = true; }
     // Ends it without a result.
     void abort();
     // After elevationNeeded(): goes on with the user scrolling.
-    void continueManually() { takeOver(); }
+    void continueManually();
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 signals:
     // The stitched image; null if nothing could be captured.
     void finished(const QImage &image);
     // Automatic scrolling found the area's window running as administrator,
     // out of reach of the wheel input; the session waits for continueManually()
-    // or abort().
+    // or abort(), with Esc and Ctrl+Z released for the question.
     void elevationNeeded();
 
 private:
@@ -65,7 +71,14 @@ private:
     void updatePanel();
     void updatePreview();
     // From automatic to manual scrolling: the user scrolls from here on.
-    void takeOver();
+    void takeOver(int firstGrabDelayMs);
+    // Esc and Ctrl+Z, held while capturing so the scrolled program does not
+    // get them.
+    void holdKeys(bool hold);
+    // Over a window running as administrator, Windows lets Glimpse see no
+    // keys at all (not even its hotkeys) while that window has the focus: the
+    // panel takes the focus instead, so that Esc and Ctrl+Z reach it.
+    void focusPanel();
     void undo();
 
     Scrolling m_scrolling;
@@ -91,4 +104,6 @@ private:
     bool m_stopRequested = false;
     bool m_done = false;
     bool m_discard = false;
+    bool m_reachChecked = false; // Manual: looked whether the area is out of reach
+    qreal m_previewOpacity = 0.7;
 };

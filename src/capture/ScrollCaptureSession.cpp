@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QGuiApplication>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QLoggingCategory>
 #include <QPainter>
@@ -36,19 +37,22 @@ constexpr int kMaxNotches = 15;
 constexpr int kBorder = 3;
 const QColor kFrameColor(0xe5, 0x39, 0x35);
 constexpr int kUndoHotkey = 1000; // apart from the capture hotkeys' ids
+constexpr int kStopHotkey = 1001;
 // The preview beside the area: at most this size, and not shown in less room.
 constexpr int kPreviewMaxWidth = 220;
 constexpr int kPreviewMaxHeight = 560;
 constexpr int kPreviewMinWidth = 100;
 constexpr int kPreviewPad = 4;
+const QColor kPreviewBorder(0xff, 0xd4, 0x00);
 
 // The stitched image so far, shrunk to fit; the mouse goes through it.
 class PreviewWindow : public QWidget
 {
 public:
-    PreviewWindow()
+    explicit PreviewWindow(qreal opacity)
         : QWidget(nullptr, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool
                                | Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus)
+        , m_opacity(opacity)
     {
         setAttribute(Qt::WA_ShowWithoutActivating);
         setAttribute(Qt::WA_TranslucentBackground);
@@ -68,17 +72,23 @@ protected:
         // Only as wide as the image, centered; it narrows as it grows longer.
         const QSizeF size = m_image.deviceIndependentSize();
         const QRectF image(QPointF((width() - size.width()) / 2, kPreviewPad), size);
-        const QRectF box = image.adjusted(-kPreviewPad, -kPreviewPad, kPreviewPad, kPreviewPad);
         QPainter p(this);
-        p.setRenderHint(QPainter::Antialiasing);
-        p.setPen(QPen(kFrameColor, 1));
-        p.setBrush(QColor(0x20, 0x20, 0x20, 220));
-        p.drawRoundedRect(box.adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
+        // See-through, so it hides less of what is beside the area.
+        p.setOpacity(m_opacity);
         p.drawImage(image, m_image);
+        // Right around the image, a border of exactly one screen pixel, also
+        // at 150% and the like.
+        const qreal dpr = devicePixelRatioF();
+        p.setWorldTransform(QTransform::fromScale(1.0 / dpr, 1.0 / dpr));
+        const QRect edge = QRectF(image.topLeft() * dpr, image.size() * dpr).toAlignedRect();
+        p.setPen(QPen(kPreviewBorder, 1));
+        p.setBrush(Qt::NoBrush);
+        p.drawRect(QRectF(edge).adjusted(-0.5, -0.5, 0.5, 0.5));
     }
 
 private:
     QImage m_image;
+    qreal m_opacity;
 };
 
 QWidget *makeStrip(const QRect &geometry)
@@ -120,13 +130,17 @@ void ScrollCaptureSession::start()
     }
     ScrollInput::escapePressed(); // forget an Esc from before (e.g. a canceled selection)
     createChrome();
-    // A hotkey, so the scrolled application does not undo something itself.
+    // Hotkeys, so the scrolled application does not undo something itself,
+    // and Esc works also over a window running as administrator, whose keys
+    // Glimpse cannot otherwise see.
     m_hotkeys = GlobalHotkeys::create(this);
-    m_hotkeys->add(kUndoHotkey, QKeySequence(Qt::CTRL | Qt::Key_Z), tr("Undo"));
     connect(m_hotkeys, &GlobalHotkeys::activated, this, [this](int id) {
         if (id == kUndoHotkey)
             undo();
+        else if (id == kStopHotkey)
+            stop();
     });
+    holdKeys(true);
     if (m_scrolling == Scrolling::Manual) {
         QTimer::singleShot(kStartDelayMs, this, &ScrollCaptureSession::manualStep);
         return;
@@ -137,7 +151,58 @@ void ScrollCaptureSession::start()
     QTimer::singleShot(kStartDelayMs, this, &ScrollCaptureSession::step);
 }
 
-void ScrollCaptureSession::takeOver()
+void ScrollCaptureSession::holdKeys(bool hold)
+{
+    m_hotkeys->clear();
+    if (!hold)
+        return;
+    m_hotkeys->add(kUndoHotkey, QKeySequence(Qt::CTRL | Qt::Key_Z), tr("Undo"));
+    m_hotkeys->add(kStopHotkey, QKeySequence(Qt::Key_Escape), tr("Stop"));
+}
+
+void ScrollCaptureSession::focusPanel()
+{
+    if (!m_panel || m_panelOverlaps)
+        return;
+    qCDebug(lcScroll) << "the area's window is out of reach of keys: the panel takes the focus";
+    m_panel->setWindowFlag(Qt::WindowDoesNotAcceptFocus, false); // hides it: shown again below
+    m_panel->setAttribute(Qt::WA_ShowWithoutActivating, false);
+    m_panel->setFocusPolicy(Qt::StrongFocus);
+    m_panel->installEventFilter(this);
+    Platform::disableWindowAnimations(m_panel.get());
+    m_panel->show();
+    m_panel->raise();
+    m_panel->activateWindow();
+    m_panel->setFocus();
+}
+
+bool ScrollCaptureSession::eventFilter(QObject *watched, QEvent *event)
+{
+    if (m_panel && watched == m_panel.get() && event->type() == QEvent::KeyPress) {
+        const auto *key = static_cast<QKeyEvent *>(event);
+        if (key->key() == Qt::Key_Escape) {
+            stop();
+            return true;
+        }
+        if (key->key() == Qt::Key_Z && key->modifiers().testFlag(Qt::ControlModifier)) {
+            undo();
+            return true;
+        }
+    }
+    return QObject::eventFilter(watched, event);
+}
+
+void ScrollCaptureSession::continueManually()
+{
+    holdKeys(true);
+    m_reachChecked = true;
+    focusPanel(); // the area's window is out of reach: that is why we are here
+    ScrollInput::escapePressed(); // not the Esc that may have answered the question
+    // The question's window may still be fading out over the area.
+    takeOver(kStartDelayMs);
+}
+
+void ScrollCaptureSession::takeOver(int firstGrabDelayMs)
 {
     if (m_scrolling == Scrolling::Manual)
         return;
@@ -149,7 +214,7 @@ void ScrollCaptureSession::takeOver()
     if (m_panelOverlaps)
         m_panel->hide(); // manual scrolling grabs too often to show it in between
     updatePanel();
-    QTimer::singleShot(kManualIntervalMs, this, &ScrollCaptureSession::manualStep);
+    QTimer::singleShot(firstGrabDelayMs, this, &ScrollCaptureSession::manualStep);
 }
 
 void ScrollCaptureSession::undo()
@@ -157,7 +222,7 @@ void ScrollCaptureSession::undo()
     if (m_done || !m_stitcher.canUndo())
         return;
     // Taking rows back only lines up again when following the view.
-    takeOver();
+    takeOver(kManualIntervalMs);
     m_stitcher.undoLast();
     m_lost = false;
     updatePanel();
@@ -236,6 +301,8 @@ void ScrollCaptureSession::createChrome()
 // and clear of the panel; not at all if there is no such room.
 void ScrollCaptureSession::placePreview(const QRect &panel)
 {
+    if (m_previewOpacity <= 0)
+        return;
     const QRect screen = m_screen->geometry();
     const int gap = kBorder + 6;
     const int height = std::min(kPreviewMaxHeight, std::max(m_rect.height(), 160));
@@ -252,7 +319,7 @@ void ScrollCaptureSession::placePreview(const QRect &panel)
     for (const QRect &r : std::as_const(candidates)) {
         if (panel.intersects(r))
             continue;
-        m_preview = std::make_unique<PreviewWindow>();
+        m_preview = std::make_unique<PreviewWindow>(m_previewOpacity);
         m_preview->setGeometry(r);
         Platform::disableWindowAnimations(m_preview.get());
         m_preview->show();
@@ -289,6 +356,12 @@ void ScrollCaptureSession::manualStep()
 {
     if (m_done)
         return;
+    // Once, with the selection gone and the pointer on the area.
+    if (!m_reachChecked) {
+        m_reachChecked = true;
+        if (ScrollInput::targetOutOfReach())
+            focusPanel();
+    }
     if (m_stopRequested || ScrollInput::escapePressed()) {
         finish();
         return;
@@ -332,13 +405,14 @@ void ScrollCaptureSession::step()
         return;
     }
     if (ScrollInput::userScrolled()) {
-        takeOver();
+        takeOver(kManualIntervalMs);
         return;
     }
     // Before the first scroll, with the pointer on the area: Windows would
     // drop the wheel input to a window running as administrator.
     if (m_steps == 0 && m_stitcher.isEmpty() && ScrollInput::targetOutOfReach()) {
         qCDebug(lcScroll) << "the area's window runs with higher rights";
+        holdKeys(false); // the question needs Esc
         emit elevationNeeded();
         return;
     }
