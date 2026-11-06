@@ -18,6 +18,7 @@ struct Paragraph {
     QString text;
     QRect box;
     int lineHeight = 0;
+    QRect last; // its last line
 };
 
 bool isCjk(QChar c)
@@ -39,12 +40,54 @@ void joinInto(QString &paragraph, const QString &text)
     paragraph += (cjkJoin ? QString() : QStringLiteral(" ")) + text;
 }
 
+// The width of one character of `line`, on average.
+qreal charWidth(const OcrLine &line)
+{
+    return qreal(line.box.width()) / std::max<qsizetype>(1, line.text.trimmed().size());
+}
+
+// How wide the first word of `line` is: up to its first space, or one
+// character of CJK text, which breaks anywhere.
+qreal firstWordWidth(const OcrLine &line)
+{
+    const QString text = line.text.trimmed();
+    if (text.isEmpty())
+        return 0;
+    if (isCjk(text.front()))
+        return charWidth(line);
+    const qsizetype space = text.indexOf(QLatin1Char(' '));
+    return charWidth(line) * (space < 0 ? text.size() : space);
+}
+
+// Whether most lines start with a number that counts up, as in an editor or
+// a listing with line numbers: each line stands on its own there.
+bool numberedLines(const QList<OcrLine> &lines)
+{
+    static const QRegularExpression leading(QStringLiteral("^\\s*(\\d+)\\b"));
+    int numbered = 0, counting = 0;
+    qint64 previous = -1;
+    for (const OcrLine &line : lines) {
+        const QRegularExpressionMatch m = leading.match(line.text);
+        if (!m.hasMatch())
+            continue;
+        ++numbered;
+        const qint64 n = m.captured(1).toLongLong();
+        if (n > previous)
+            ++counting;
+        previous = n;
+    }
+    return lines.size() >= 3 && numbered * 10 >= lines.size() * 6 && counting * 10 >= numbered * 8;
+}
+
 // Joins OCR lines into paragraphs: a line continues the paragraph above when
-// it starts close below it and overlaps it horizontally. Translating whole
+// it starts close below it, overlaps it horizontally, and the line above it
+// was full (its first word would not have fitted there; a line short of that
+// ended its paragraph) and it is not indented further. Translating whole
 // paragraphs gives far better results than line by line.
 QList<Paragraph> paragraphsOf(QList<OcrLine> lines)
 {
     std::sort(lines.begin(), lines.end(), [](const OcrLine &a, const OcrLine &b) { return a.box.top() < b.box.top(); });
+    const bool eachLine = numberedLines(lines);
     QList<Paragraph> paragraphs;
     for (const OcrLine &line : std::as_const(lines)) {
         const QString text = line.text.trimmed();
@@ -52,17 +95,24 @@ QList<Paragraph> paragraphsOf(QList<OcrLine> lines)
             continue;
         Paragraph *current = nullptr;
         for (Paragraph &p : paragraphs) {
+            if (eachLine)
+                break;
             const int gap = line.box.top() - p.box.bottom();
             const bool overlaps = line.box.left() < p.box.right() && line.box.right() > p.box.left();
-            if (overlaps && gap > -p.lineHeight / 2 && gap < p.lineHeight * 0.8)
-                current = &p;
+            if (!overlaps || gap <= -p.lineHeight / 2 || gap >= p.lineHeight * 0.8)
+                continue;
+            const qreal room = std::max(p.box.right(), line.box.right()) - p.last.right();
+            const bool lastWasFull = room <= firstWordWidth(line) + charWidth(line);
+            const bool indented = line.box.left() > p.last.left() + 2 * charWidth(line);
+            current = lastWasFull && !indented ? &p : nullptr;
         }
         if (!current) {
-            paragraphs.append({text, line.box, line.box.height()});
+            paragraphs.append({text, line.box, line.box.height(), line.box});
             continue;
         }
         joinInto(current->text, text);
         current->box |= line.box;
+        current->last = line.box;
     }
     // Reading order: top to bottom, then left to right.
     std::sort(paragraphs.begin(), paragraphs.end(), [](const Paragraph &a, const Paragraph &b) {
@@ -271,12 +321,33 @@ void OcrResultDialog::translate()
                              // Only the recognized paragraphs have boxes to paint into.
                              m_translations = edited ? QStringList() : translations;
                              if (error.isEmpty())
-                                 ui->targetEdit->setPlainText(translations.join(QStringLiteral("\n\n")));
+                                 ui->targetEdit->setPlainText(joinTranslations(translations, edited));
                              updateTexts();
                              updateButtons();
                          });
     updateTexts();
     updateButtons();
+}
+
+// One paragraph after another as they were laid out: a paragraph right below
+// the one before it (the next line of a listing) on the next line, others
+// after a blank line.
+QString OcrResultDialog::joinTranslations(const QStringList &translations, bool edited) const
+{
+    if (edited || translations.size() != m_boxes.size())
+        return translations.join(QStringLiteral("\n\n"));
+    QString text;
+    for (qsizetype i = 0; i < translations.size(); ++i) {
+        if (i > 0) {
+            const QRect &above = m_boxes.at(i - 1);
+            const QRect &below = m_boxes.at(i);
+            const bool overlaps = below.left() < above.right() && below.right() > above.left();
+            const bool next = overlaps && below.top() - above.bottom() < m_lineHeights.at(i - 1) * 0.8;
+            text += next ? QStringLiteral("\n") : QStringLiteral("\n\n");
+        }
+        text += translations.at(i);
+    }
+    return text;
 }
 
 void OcrResultDialog::updateTexts()

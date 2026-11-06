@@ -49,6 +49,7 @@ private:
     // The paragraphs to translate: as recognized while the text is unedited,
     // else split at blank lines.
     QStringList sourceParagraphs() const;
+    QString joinTranslations(const QStringList &translations, bool edited) const;
     bool sourceEdited() const;
     void updateTexts();
     void updateButtons();
