@@ -78,6 +78,17 @@ if(NOT DEFINED GLIMPSE_MATOMO_SITE_ID)
     set(GLIMPSE_MATOMO_SITE_ID "3")
 endif()
 
+# Forum build, for the release on the 52pojie forum, whose rules forbid
+# update prompts and web addresses in an app: no update check at start and
+# no update mode to choose (Settings > General > Update now stays, and
+# installs the regular build), no usage statistics, and no links in the
+# About window. Windows only; the package is Glimpse-<version>-windows-x64-52pojie.zip.
+option(GLIMPSE_FORUM_BUILD "Build without automatic updates, statistics or links (52pojie forum)" OFF)
+if(GLIMPSE_FORUM_BUILD)
+    set(GLIMPSE_MATOMO_URL "")
+    set(GLIMPSE_MATOMO_SITE_ID "")
+endif()
+
 # Text recognition engines (Windows OCR needs nothing extra).
 option(GLIMPSE_WITH_TESSERACT "Build the Tesseract OCR engine" ON)
 option(GLIMPSE_WITH_PADDLEOCR "Build the PaddleOCR engine (ONNX Runtime)" ON)
@@ -271,6 +282,9 @@ target_compile_definitions(glimpse PRIVATE GLIMPSE_VERSION="${PROJECT_VERSION}"
     GLIMPSE_GITHUB_URL="${GLIMPSE_GITHUB_URL}" GLIMPSE_HOMEPAGE_URL="${GLIMPSE_HOMEPAGE_URL}"
     GLIMPSE_UPDATE_URL="${GLIMPSE_UPDATE_URL}"
     GLIMPSE_MATOMO_URL="${GLIMPSE_MATOMO_URL}" GLIMPSE_MATOMO_SITE_ID="${GLIMPSE_MATOMO_SITE_ID}")
+if(GLIMPSE_FORUM_BUILD)
+    target_compile_definitions(glimpse PRIVATE GLIMPSE_FORUM_BUILD)
+endif()
 # UI translations, compiled to .qm and embedded under :/i18n. Refresh the .ts
 # files after changing UI strings with: cmake --build <dir> --target update_translations
 qt_add_translations(TARGETS glimpse
@@ -520,9 +534,10 @@ else()
     set(_glimpse_plugins_dir [=[${QT_DEPLOY_PLUGINS_DIR}]=])
 endif()
 # Glimpse draws with the raster engine only: skip the 20 MB software OpenGL.
+# Of Qt's own translations, only those of Glimpse's languages.
 set(_glimpse_deploy_options "")
 if(WIN32)
-    set(_glimpse_deploy_options "DEPLOY_TOOL_OPTIONS --no-opengl-sw")
+    set(_glimpse_deploy_options "DEPLOY_TOOL_OPTIONS --no-opengl-sw --translations en,ja,zh_CN")
 else()
     # The deployment finds libraries through the files' runpaths, and the
     # installed executable's no longer leads to Qt: the Qt libraries only
@@ -574,7 +589,9 @@ set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_COMPONENTS_GROUPING ALL_COMPONENTS_IN_ONE)
 # Unzips into one folder named after the package, not loose files.
 set(CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY ON)
-if(WIN32)
+if(WIN32 AND GLIMPSE_FORUM_BUILD)
+    set(CPACK_PACKAGE_FILE_NAME "Glimpse-${PROJECT_VERSION}-windows-x64-52pojie")
+elseif(WIN32)
     set(CPACK_PACKAGE_FILE_NAME "Glimpse-${PROJECT_VERSION}-windows-x64")
 else()
     set(CPACK_PACKAGE_FILE_NAME "Glimpse-${PROJECT_VERSION}-linux-${CMAKE_SYSTEM_PROCESSOR}")

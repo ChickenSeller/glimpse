@@ -54,6 +54,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->updateModeCombo->setCurrentIndex(std::max(0, ui->updateModeCombo->findData(int(Updater::mode()))));
     connect(ui->updateModeCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
     connect(ui->updateNowButton, &QPushButton::clicked, this, &SettingsDialog::updateNowRequested);
+#ifdef GLIMPSE_FORUM_BUILD
+    // Updates only on request, and no statistics at all (see CMakeLists.txt).
+    ui->updateForm->setRowVisible(ui->updateModeCombo, false);
+    ui->updateForm->setRowVisible(ui->usageStatsCheck, false);
+#endif
 
     // Downloads: the combo's rows are in ModelStore::SourceOrder's order.
     ui->downloadOrderCombo->setCurrentIndex(int(ModelStore::sourceOrder()));

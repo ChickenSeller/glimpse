@@ -50,6 +50,9 @@ public:
     static bool canInstall();
     static Mode mode();
     static void setMode(Mode mode);
+    // Stores `mode` only when none has been chosen yet; a choice already made
+    // is never overwritten.
+    static void setDefaultMode(Mode mode);
 
     // Whether Glimpse may quit now for an automatic install (no capture or
     // recording in progress); asked again later while it may not.

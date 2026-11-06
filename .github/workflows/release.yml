@@ -1,7 +1,8 @@
-# Builds the Windows package and the Linux ones (.deb, .rpm). A version tag
-# (v1.2.3, pushed here from GitLab) publishes them as a GitHub release, which
-# GitLab's release job then copies. Started by hand, it only builds, and the
-# packages are kept as run artifacts.
+# Builds the Windows package and the Linux ones (.deb, .rpm), and the Windows
+# package of the 52pojie forum build (GLIMPSE_FORUM_BUILD, see CMakeLists.txt).
+# A version tag (v1.2.3, pushed here from GitLab) publishes them as a GitHub
+# release, which GitLab's release job then copies, all but the forum build.
+# Started by hand, it only builds, and the packages are kept as run artifacts.
 name: Release
 
 on:
@@ -44,12 +45,43 @@ jobs:
           cmake --build build/release --target package
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
+      # The forum build, in the same folder: only Glimpse itself is built
+      # again. Its zip is encrypted with the password 52pojie, as the forum
+      # asks; ZipCrypto, which Windows' own unzipping can open.
+      - name: Build the forum package
+        shell: pwsh
+        run: |
+          cmake -S . -B build/release -DGLIMPSE_FORUM_BUILD=ON
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cmake --build build/release --parallel
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cmake --build build/release --target package
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $zip = Get-Item build/release/Glimpse-*-windows-x64-52pojie.zip
+          $stage = Join-Path $env:RUNNER_TEMP forum
+          7z x $zip.FullName "-o$stage" -y | Out-Null
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          Remove-Item $zip.FullName
+          Push-Location $stage
+          7z a -tzip -p52pojie -mem=ZipCrypto -mx=9 $zip.FullName * | Out-Null
+          $code = $LASTEXITCODE
+          Pop-Location
+          if ($code) { exit $code }
+
       # Optional engines are skipped quietly when something is missing (e.g.
       # Visual Studio for the Firefox engine); a release must have them all.
       - name: Check the package
         shell: pwsh
         run: |
           $zip = Get-Item build/release/Glimpse-*-windows-x64.zip
+          $forum = Get-Item build/release/Glimpse-*-windows-x64-52pojie.zip
+          # The forum zip opens with its password only, and holds the same files.
+          7z t -pwrong $forum.FullName | Out-Null
+          if (-not $LASTEXITCODE) { throw "$($forum.Name) opens without its password" }
+          $listing = 7z l -slt -p52pojie $forum.FullName
+          if ($LASTEXITCODE) { throw "$($forum.Name) does not open with the password 52pojie" }
+          $forumNames = $listing | Where-Object { $_ -like 'Path = *' } | ForEach-Object { Split-Path ($_.Substring(7)) -Leaf }
+          "{0}: {1:N0} MB" -f $forum.Name, ($forum.Length / 1MB)
           Add-Type -AssemblyName System.IO.Compression.FileSystem
           $archive = [IO.Compression.ZipFile]::OpenRead($zip.FullName)
           $names = $archive.Entries | ForEach-Object { Split-Path $_.FullName -Leaf }
@@ -57,12 +89,17 @@ jobs:
           $missing = 'glimpse.exe', 'Qt6Core.dll', 'glimpse-bergamot.dll', 'onnxruntime.dll', 'llama.dll', 'LICENSE' |
             Where-Object { $names -notcontains $_ }
           if ($missing) { throw "Missing from $($zip.Name): $($missing -join ', ')" }
+          # (The top folder is named after the package, so it differs.)
+          $missing = $names | Where-Object { $_ -and $_ -notlike 'Glimpse-*' -and $forumNames -notcontains $_ } | Select-Object -Unique
+          if ($missing) { throw "Missing from $($forum.Name): $($missing -join ', ')" }
           "{0}: {1:N0} MB" -f $zip.Name, ($zip.Length / 1MB)
 
       - uses: actions/upload-artifact@v4
         with:
           name: glimpse-windows-x64
-          path: build/release/Glimpse-*-windows-x64.zip
+          path: |
+            build/release/Glimpse-*-windows-x64.zip
+            build/release/Glimpse-*-windows-x64-52pojie.zip
 
   linux:
     # The oldest system the packages are for: Qt's Linux build needs glibc

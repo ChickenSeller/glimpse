@@ -83,6 +83,13 @@ void Updater::setMode(Mode mode)
     SettingsStore::open().setValue(kModeKey, int(mode));
 }
 
+void Updater::setDefaultMode(Mode mode)
+{
+    QSettings settings = SettingsStore::open();
+    if (!settings.contains(kModeKey))
+        settings.setValue(kModeKey, int(mode));
+}
+
 void Updater::setCanRestart(std::function<bool()> canRestart)
 {
     m_canRestart = std::move(canRestart);
@@ -90,6 +97,9 @@ void Updater::setCanRestart(std::function<bool()> canRestart)
 
 void Updater::checkAtStartup()
 {
+#ifdef GLIMPSE_FORUM_BUILD
+    return; // only when the user asks (see CMakeLists.txt)
+#endif
     if (!isSupported() || mode() == Mode::Never)
         return;
     requestManifest(false);

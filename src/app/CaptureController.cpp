@@ -98,6 +98,12 @@ CaptureController::CaptureController(QObject *parent)
     // QApplication itself receives LanguageChange when a translator is (un)installed.
     qApp->installEventFilter(this);
 
+#ifdef GLIMPSE_FORUM_BUILD
+    // Off unless the user chose otherwise, also in the regular build a manual
+    // update installs, which reads the same settings.
+    Updater::setDefaultMode(Updater::Mode::Never);
+    UsageStats::setDefaultEnabled(false);
+#endif
     // Checked a little after start, once the toolbar is up.
     m_updater = new Updater(this);
     m_updater->setCanRestart([this] { return !m_busy && !m_recording; });

@@ -145,6 +145,28 @@ with its Qt under `/opt/glimpse`, plus a menu entry, its icon and
 Ubuntu 22.04, as the release ones are, also run on Debian 12, Fedora 35,
 RHEL 9 and later.
 
+### Forum build (52pojie)
+
+The 52pojie forum does not allow an app to show update prompts or web
+addresses. `-DGLIMPSE_FORUM_BUILD=ON` builds Glimpse for it, packaged as
+`Glimpse-<version>-windows-x64-52pojie.zip`:
+
+- **Updates**: no check at start and no update mode in the settings;
+  Settings > General > Update now stays, checks only when clicked, and
+  installs the regular build.
+- **Statistics**: no statistics site built in, nothing sent, no setting.
+- **Links**: none in the About window.
+- **Defaults**: at start it sets updates to "never check" and statistics to
+  off, but only where the user has not chosen yet. The regular build a manual
+  update installs reads the same settings, so both stay off until the user
+  changes them.
+
+The release build makes it in the same build folder after the regular one
+(only Glimpse itself is built again) and packs it with the password
+`52pojie`, as the forum asks. It is published on GitHub only: the GitLab
+release, and with it the homepage and the update check, has the regular
+packages.
+
 ## License
 
 Glimpse is released under the [MIT License](LICENSE). It uses third-party

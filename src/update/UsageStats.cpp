@@ -109,6 +109,13 @@ bool isEnabled()
     return SettingsStore::open().value(kEnabledKey, true).toBool();
 }
 
+void setDefaultEnabled(bool enabled)
+{
+    QSettings settings = SettingsStore::open();
+    if (!settings.contains(kEnabledKey))
+        settings.setValue(kEnabledKey, enabled);
+}
+
 void setEnabled(bool enabled)
 {
     QSettings settings = SettingsStore::open();

@@ -22,6 +22,9 @@ namespace UsageStats {
 bool isAvailable();
 bool isEnabled();
 void setEnabled(bool enabled);
+// Stores `enabled` only when the user has not chosen yet; a choice already
+// made is never overwritten.
+void setDefaultEnabled(bool enabled);
 
 // At start: App/Start, Update/Mode, and First run or Updated when they apply.
 void reportStart(const QString &updateMode);

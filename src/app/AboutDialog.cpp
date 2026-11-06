@@ -41,6 +41,15 @@ void AboutDialog::updateTexts()
     ui->titleLabel->setText(QStringLiteral("<span style=\"font-size: 12pt; font-weight: 600;\">Glimpse</span>"
                                            "&nbsp;&nbsp;%1")
                                 .arg(tr("Version %1").arg(QStringLiteral(GLIMPSE_VERSION)).toHtmlEscaped()));
+#ifdef GLIMPSE_FORUM_BUILD
+    // No links (see CMakeLists.txt); the license and notices are beside glimpse.exe.
+    ui->linksLabel->hide();
+    ui->licenseLabel->setText(
+        tr("Copyright © 2026 Kaguya. Released under the %1; built with Qt %2 and other open-source components (%3).")
+            .arg(tr("MIT License").toHtmlEscaped(), QString::fromLatin1(qVersion()),
+                 tr("third-party notices").toHtmlEscaped()));
+    return;
+#endif
     ui->linksLabel->setText(QStringLiteral("%1: %2<br>%3: %4")
                                 .arg(tr("Source code").toHtmlEscaped(), link(github, github),
                                      tr("Homepage").toHtmlEscaped(),
