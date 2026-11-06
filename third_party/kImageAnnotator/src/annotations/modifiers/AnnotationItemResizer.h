@@ -58,6 +58,9 @@ private:
     ZoomValueProvider *mZoomValueProvider;
     int mCurrentHandle;
     QPointF mClickOffset;
+    // The zoom, kept: the bounds need it, and they are asked for also while
+    // the editor is being torn down, its zoom provider gone already.
+    double mZoomValue;
     // Turning: about the item's middle (its coordinates, and in the scene),
     // from its angle and the pointer's when taken hold of.
     bool mRotating = false;

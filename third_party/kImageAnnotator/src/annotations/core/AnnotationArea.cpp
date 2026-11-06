@@ -65,6 +65,9 @@ AnnotationArea::AnnotationArea(
 
 AnnotationArea::~AnnotationArea()
 {
+	// Clearing the undo stack on its way out says its index changed; the
+	// selection must not be updated then, half of the editor being gone.
+	disconnect(mUndoStack, nullptr, this, nullptr);
 	delete mPropertiesFactory;
 	delete mItemFactory;
 	delete mItems;

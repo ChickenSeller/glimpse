@@ -28,7 +28,8 @@ namespace kImageAnnotator {
 AnnotationItemResizer::AnnotationItemResizer(AbstractAnnotationItem *item, ZoomValueProvider *zoomValueProvider) :
 	mAnnotationItem(item),
 	mZoomValueProvider(zoomValueProvider),
-	mCurrentHandle(-1)
+	mCurrentHandle(-1),
+	mZoomValue(zoomValueProvider->zoomValue())
 {
     mResizeHandles = ResizeHandlesFactory::createResizeHandles(item, zoomValueProvider->zoomValue());
     connect(zoomValueProvider, &ZoomValueProvider::zoomValueChanged, this, &AnnotationItemResizer::applyZoomValue);
@@ -60,12 +61,12 @@ QRectF AnnotationItemResizer::boundingRect() const
 QPointF AnnotationItemResizer::rotateHandleCenter() const
 {
     const auto rect = mAnnotationItem->boundingRect().normalized();
-    return { rect.center().x(), rect.top() - 24 / mZoomValueProvider->zoomValue() };
+    return { rect.center().x(), rect.top() - 24 / mZoomValue };
 }
 
 qreal AnnotationItemResizer::rotateHandleRadius() const
 {
-    return 5 / mZoomValueProvider->zoomValue();
+    return 5 / mZoomValue;
 }
 
 void AnnotationItemResizer::grabHandle(const QPointF &scenePos)
@@ -214,6 +215,8 @@ void AnnotationItemResizer::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 void AnnotationItemResizer::applyZoomValue(double value)
 {
+    prepareGeometryChange();
+    mZoomValue = value;
     mResizeHandles->applyZoomValue(value);
 }
 
