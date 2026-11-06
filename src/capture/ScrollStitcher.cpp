@@ -18,6 +18,29 @@ constexpr double kMinMatch = 0.75;
 constexpr int kMinContent = 24;
 // Content segments an overlap needs before it can pin down the shift on its own.
 constexpr int kMinDistinctive = 16;
+// A column of segments moves with a shift when this share of its content
+// rows match (a caret or a hover effect costs a few).
+constexpr double kColumnMatch = 0.9;
+// Share of the content that, the same in place, shows the view unmoved
+// right away. Animations (a spinning icon, an animated picture) keep frames
+// from ever repeating exactly; below this, staying put must fit better than
+// any shift does, down to kMaybeUnmoved.
+constexpr double kUnmoved = 0.95;
+constexpr double kMaybeUnmoved = 0.5;
+// Otherwise a shift is taken when it stands out: its content matches at least
+// this well, and this many times better than at any shift apart from it.
+// Overshooting leaves every shift matching poorly and none standing out.
+constexpr double kMinPeak = 0.4;
+constexpr double kPeakMargin = 1.5;
+constexpr int kPeakWidth = 2; // shifts this close to the peak are the peak
+// Content rows a column needs for that to tell anything.
+constexpr int kColumnContent = 4;
+// Share of the content that must move with a shift. Columns that do not move
+// at all (a sidebar that sticks once scrolled, buttons fixed to the window's
+// edge) disagree with every shift; the content beside them decides. Whole
+// columns matching at a wrong shift are next to impossible, so a third is
+// plenty, and leaves room for a sidebar halfway between sticking and moving.
+constexpr double kMinMoving = 0.3;
 
 // Columns left out at each side when comparing rows: a scroll bar (whose
 // thumb moves with every step) or an overlay scroll indicator lives there.
@@ -48,6 +71,42 @@ ScrollStitcher::Signature ScrollStitcher::signature(const QImage &image)
     return sig;
 }
 
+double ScrollStitcher::contentMatch(const Signature &next, int shift) const
+{
+    const Signature &prev = m_previousSignature;
+    const int rows = int(prev.hashes.size() / kSegments);
+    size_t content = 0, same = 0;
+    for (int y = std::max(0, -shift); y < std::min(rows, rows - shift); ++y) {
+        const size_t a = size_t(y + shift) * kSegments;
+        const size_t b = size_t(y) * kSegments;
+        for (int k = 0; k < kSegments; ++k) {
+            if (prev.content[a + k]) {
+                ++content;
+                same += prev.hashes[a + k] == next.hashes[b + k];
+            }
+        }
+    }
+    return content > 0 ? double(same) / content : 0.0;
+}
+
+bool ScrollStitcher::unmoved(const Signature &next) const
+{
+    const double still = contentMatch(next, 0);
+    if (still >= kUnmoved)
+        return true;
+    if (still < kMaybeUnmoved)
+        return false;
+    // Where the page is mostly blank, a few animations are much of the
+    // content. Segments the same down a whole column (a sidebar's border)
+    // match at every shift alike, so they do not tip this.
+    const int rows = int(next.hashes.size() / kSegments);
+    for (int shift = 1; shift <= rows - kMinOverlap; ++shift) {
+        if (contentMatch(next, shift) >= still || contentMatch(next, -shift) >= still)
+            return false;
+    }
+    return true;
+}
+
 bool ScrollStitcher::rowsEqual(const Signature &a, int rowA, const Signature &b, int rowB) const
 {
     return std::equal(a.hashes.begin() + qsizetype(rowA) * kSegments, a.hashes.begin() + qsizetype(rowA + 1) * kSegments,
@@ -72,6 +131,12 @@ ScrollStitcher::Result ScrollStitcher::addFrame(const QImage &input)
 
     if (frame.size() != m_previous.size() || sig == m_previousSignature)
         return Result::NoChange;
+    if (unmoved(sig)) {
+        // Kept as the latest look of this place.
+        m_previous = frame;
+        m_previousSignature = std::move(sig);
+        return Result::NoChange;
+    }
 
     const int h = frame.height();
     const bool detecting = m_header < 0;
@@ -161,10 +226,26 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
         if (tracking)
             shifts.push_back(-distance);
     }
+    // How well each column of segments matches staying where it was: a column
+    // that a shift fits worse than that did not scroll (a sticky sidebar,
+    // buttons fixed to the window's edge, the still part of a view where only
+    // a pane scrolls) and is left out of judging that shift.
+    int stillCompared[kSegments] = {}, stillMatched[kSegments] = {};
+    for (int i = skipTop; i < content - skipBottom; ++i) {
+        const size_t row = size_t(first + i) * kSegments;
+        for (int k = 0; k < kSegments; ++k) {
+            if (prev.content[row + k]) {
+                ++stillCompared[k];
+                stillMatched[k] += prev.hashes[row + k] == next.hashes[row + k];
+            }
+        }
+    }
+    std::vector<std::pair<int, double>> scores; // of the shifts with enough content
     for (const int shift : shifts) {
         const int distance = std::abs(shift);
         int compared = 0, matched = 0;   // all overlapping segments
         int dCompared = 0, dMatched = 0; // segments with content
+        int columnCompared[kSegments] = {}, columnMatched[kSegments] = {}; // content, per column
         // previous row first + shift + i  <->  next row first + i (down);
         // previous row first + i  <->  next row first + distance + i (up)
         for (int i = skipTop; i < std::min(content - distance, content - skipBottom); ++i) {
@@ -177,24 +258,61 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
                 if (prev.content[a + k]) {
                     ++dCompared;
                     dMatched += same;
+                    ++columnCompared[k];
+                    columnMatched[k] += same;
                 }
             }
         }
-        if (compared < minOverlap * kSegments || double(matched) / compared < kMinMatch)
+        if (compared < minOverlap * kSegments)
             continue;
         if (dCompared >= kMinDistinctive) {
+            // The content of the columns that move with this shift, out of
+            // that of the columns that did not rather stay put.
+            int moving = 0, scrolled = 0;
+            for (int k = 0; k < kSegments; ++k) {
+                if (columnCompared[k] == 0)
+                    continue;
+                const double fits = double(columnMatched[k]) / columnCompared[k];
+                if (stillCompared[k] > 0 && double(stillMatched[k]) / stillCompared[k] > fits)
+                    continue;
+                scrolled += columnCompared[k];
+                if (columnCompared[k] >= kColumnContent && fits >= kColumnMatch)
+                    moving += columnCompared[k];
+            }
+            // Most of the view matches (also where a banner rotates or a
+            // header turned sticky), or most of the content moves with this
+            // shift beside columns that stayed put (a sticky sidebar).
             const double score = double(dMatched) / dCompared;
+            scores.emplace_back(shift, score);
+            const bool matches = double(matched) / compared >= kMinMatch && score >= kMinMatch;
+            if (!matches && (moving < kMinDistinctive || double(moving) / scrolled < kMinMoving))
+                continue;
+            // Judged on all the content, so the shift most of it follows wins.
             // Ties keep the smaller shift: periodic content repeats at larger ones.
-            if (score >= kMinMatch && score > bestInformativeScore + 1e-9) {
+            if (score > bestInformativeScore + 1e-9) {
                 bestInformativeScore = score;
                 bestInformative = shift;
             }
-        } else if (!tracking && (bestBlank == 0 || std::abs(shift - m_lastShift) < std::abs(bestBlank - m_lastShift))) {
+        } else if (double(matched) / compared >= kMinMatch && !tracking
+                   && (bestBlank == 0 || std::abs(shift - m_lastShift) < std::abs(bestBlank - m_lastShift))) {
             bestBlank = shift;
         }
     }
     if (bestInformative != 0)
         return bestInformative;
+    if (!scores.empty()) {
+        // Sidebars half stuck, animations and the like spoil every column
+        // here and there; the true shift still stands out from all others.
+        const auto peak = std::max_element(scores.begin(), scores.end(),
+                                           [](const auto &a, const auto &b) { return a.second < b.second; });
+        double others = 0.0;
+        for (const auto &[shift, score] : scores) {
+            if (std::abs(shift - peak->first) > kPeakWidth)
+                others = std::max(others, score);
+        }
+        if (peak->second >= kMinPeak && peak->second >= kPeakMargin * others)
+            return peak->first;
+    }
     return m_lastShift > 0 ? bestBlank : 0;
 }
 

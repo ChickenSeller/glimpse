@@ -69,6 +69,12 @@ private:
 
     static Signature signature(const QImage &image);
     bool rowsEqual(const Signature &a, int rowA, const Signature &b, int rowB) const;
+    // Whether `next` shows the view where the previous frame did, give or
+    // take what animates in it.
+    bool unmoved(const Signature &next) const;
+    // Share of the previous frame's content segments that `next` has `shift`
+    // rows up (down for a negative shift).
+    double contentMatch(const Signature &next, int shift) const;
     // skipTop / skipBottom: rows at the edges of the scrolling part that the
     // new frame shows unchanged in place (an element that turned sticky).
     // Negative when Tracking found the view scrolled up; 0 if none lines up.
