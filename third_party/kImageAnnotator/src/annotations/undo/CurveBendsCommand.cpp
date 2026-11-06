@@ -21,7 +21,7 @@
 
 namespace kImageAnnotator {
 
-CurveBendsCommand::CurveBendsCommand(AbstractAnnotationCurve *curve, const QList<QPointF> &newBends) :
+CurveBendsCommand::CurveBendsCommand(AbstractAnnotationCurve *curve, const AbstractAnnotationCurve::Nodes &newBends) :
 	mCurve(curve),
 	mOldBends(curve->bends()),
 	mNewBends(newBends)

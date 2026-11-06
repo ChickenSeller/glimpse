@@ -27,19 +27,29 @@
 
 namespace kImageAnnotator {
 
-// A line that bends: drawn straight, then bent by its bend points, which the
-// curve passes through in order, smoothly (a Catmull-Rom spline, drawn as
-// cubic Bezier curves). Bend points are added on the curve and removed
-// again. Arrow heads go where its properties say: at the end, the start,
-// both or neither.
+// A line that bends: a chain of cubic Bezier curves through its nodes, each
+// node with a handle on either side, as in vector drawing programs. Drawn
+// straight; a bend point added on it splits the curve there exactly, so the
+// shape stays as it was until the point is dragged, and a dragged point
+// takes its handles along. Arrow heads go where its properties say: at the
+// end, the start, both or neither.
 //
 // Points by index: 0 the start, 1 the end, 2 and up the bend points from the
-// start on. The bend points are kept relative to the two ends, so they
-// follow them when they are moved, and the whole item when it is moved or
-// scaled.
+// start on. Nodes are kept relative to the two ends, so they follow them
+// when they are moved, and the whole item when it is moved or scaled.
 class AbstractAnnotationCurve : public AbstractAnnotationLine
 {
 public:
+	// A point of the curve and its handles; relative to the two ends: a share
+	// of the way from the start to the end, and a share of that length to its
+	// left.
+	struct Node {
+		QPointF point;
+		QPointF in;  // towards the node before
+		QPointF out; // towards the node after
+	};
+	using Nodes = QList<Node>;
+
 	AbstractAnnotationCurve(const QPointF &startPosition, const PropertiesPtr &properties);
 	AbstractAnnotationCurve(const AbstractAnnotationCurve &other);
 	~AbstractAnnotationCurve() override = default;
@@ -49,32 +59,26 @@ public:
 	void setProperties(const PropertiesPtr &properties) override;
 
 	int bendCount() const;
-	// The bend points in the form kept (relative to the ends), to restore them.
-	QList<QPointF> bends() const;
-	void setBends(const QList<QPointF> &bends);
-	// The bends with one more at `pos`, if it is within `tolerance` of the
-	// curve, between the points it lies between.
-	std::optional<QList<QPointF>> bendsWithPointAt(const QPointF &pos, qreal tolerance) const;
-	// The bends without the one of point `index` (2 and up).
-	std::optional<QList<QPointF>> bendsWithoutPoint(int index) const;
+	// All nodes, ends included, to restore them.
+	Nodes bends() const;
+	void setBends(const Nodes &nodes);
+	// The nodes with a bend point added where the curve passes nearest
+	// `pos`, if within `tolerance` of it; the shape stays the same.
+	std::optional<Nodes> bendsWithPointAt(const QPointF &pos, qreal tolerance) const;
+	// The nodes without the bend point `index` (2 and up).
+	std::optional<Nodes> bendsWithoutPoint(int index) const;
 
 protected:
 	void updateShape() override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
-	// Each bend point as a share of the way from the start to the end, and a
-	// share of that length to the left of it (0 = on the straight line).
-	QList<QPointF> mBends;
+	Nodes mNodes; // the start, the bend points, the end
 	QPainterPath mCurve; // stroked only
 	QPainterPath mHeads; // stroked and filled
 
-	QPointF toPoint(const QPointF &bend) const;
-	std::optional<QPointF> toBend(const QPointF &point) const;
-	// Start, bend points, end.
-	QList<QPointF> curvePoints() const;
-	// The cubic Bezier control points of each segment (two per segment).
-	QList<QPointF> controlPoints(const QList<QPointF> &points) const;
+	QPointF toPoint(const QPointF &relative) const;
+	std::optional<QPointF> toRelative(const QPointF &point) const;
 };
 
 } // namespace kImageAnnotator

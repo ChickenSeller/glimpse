@@ -26,20 +26,20 @@
 
 namespace kImageAnnotator {
 
-// A bend point added to a curve or removed from it: its bend points before
+// A bend point added to a curve or removed from it: its nodes before
 // and after.
 class CurveBendsCommand : public QUndoCommand
 {
 public:
-	CurveBendsCommand(AbstractAnnotationCurve *curve, const QList<QPointF> &newBends);
+	CurveBendsCommand(AbstractAnnotationCurve *curve, const AbstractAnnotationCurve::Nodes &newBends);
 	~CurveBendsCommand() override = default;
 	void undo() override;
 	void redo() override;
 
 private:
 	AbstractAnnotationCurve *mCurve;
-	QList<QPointF> mOldBends;
-	QList<QPointF> mNewBends;
+	AbstractAnnotationCurve::Nodes mOldBends;
+	AbstractAnnotationCurve::Nodes mNewBends;
 };
 
 } // namespace kImageAnnotator
