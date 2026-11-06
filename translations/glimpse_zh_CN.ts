@@ -894,6 +894,22 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Ocr</name>
     <message>
+        <source>Copy Official &amp;Links</source>
+        <translation>复制原始链接(&amp;L)</translation>
+    </message>
+    <message>
+        <source>The files&apos; own addresses (Hugging Face, GitHub...)</source>
+        <translation>文件的原始地址（Hugging Face、GitHub 等）</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Mirror Links</source>
+        <translation>复制镜像链接(&amp;M)</translation>
+    </message>
+    <message>
+        <source>The same files on the mirror set in Settings &gt; General</source>
+        <translation>同样的文件在设置 &gt; 常规里所设镜像上的地址</translation>
+    </message>
+    <message>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -924,10 +940,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <source>Downloading slowly? Copy the links, download the files in a browser or a download manager, then choose them here. Downloading can also be canceled halfway to come back here.</source>
         <translation>下载太慢？可以复制链接，用浏览器或下载工具下载，再在这里选择这些文件。下载中途也可以取消，回到这里。</translation>
-    </message>
-    <message>
-        <source>Copy &amp;Links</source>
-        <translation>复制链接(&amp;L)</translation>
     </message>
     <message>
         <source>C&amp;hoose Files...</source>

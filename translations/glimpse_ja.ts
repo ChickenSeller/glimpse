@@ -894,6 +894,22 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Ocr</name>
     <message>
+        <source>Copy Official &amp;Links</source>
+        <translation>公式リンクをコピー(&amp;L)</translation>
+    </message>
+    <message>
+        <source>The files&apos; own addresses (Hugging Face, GitHub...)</source>
+        <translation>ファイル本来のアドレス（Hugging Face、GitHub など）</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Mirror Links</source>
+        <translation>ミラーのリンクをコピー(&amp;M)</translation>
+    </message>
+    <message>
+        <source>The same files on the mirror set in Settings &gt; General</source>
+        <translation>設定 &gt; 全般で指定したミラー上の同じファイル</translation>
+    </message>
+    <message>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -924,10 +940,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <source>Downloading slowly? Copy the links, download the files in a browser or a download manager, then choose them here. Downloading can also be canceled halfway to come back here.</source>
         <translation>ダウンロードが遅い場合は、リンクをコピーしてブラウザーやダウンロードツールでダウンロードし、ここで選択してください。ダウンロードは途中でキャンセルしてここに戻ることもできます。</translation>
-    </message>
-    <message>
-        <source>Copy &amp;Links</source>
-        <translation>リンクをコピー(&amp;L)</translation>
     </message>
     <message>
         <source>C&amp;hoose Files...</source>

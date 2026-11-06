@@ -160,8 +160,13 @@ public:
         layout->addWidget(hint);
 
         auto *buttons = new QHBoxLayout;
-        auto *copy = new QPushButton(QCoreApplication::translate("Ocr", "Copy &Links"));
-        connect(copy, &QPushButton::clicked, this, &ObtainDialog::copyLinks);
+        auto *copy = new QPushButton(QCoreApplication::translate("Ocr", "Copy Official &Links"));
+        copy->setToolTip(QCoreApplication::translate("Ocr", "The files' own addresses (Hugging Face, GitHub...)"));
+        connect(copy, &QPushButton::clicked, this, [this] { copyLinks(false); });
+        auto *copyMirror = new QPushButton(QCoreApplication::translate("Ocr", "Copy &Mirror Links"));
+        copyMirror->setToolTip(QCoreApplication::translate("Ocr", "The same files on the mirror set in Settings > General"));
+        copyMirror->setEnabled(!mirror().isEmpty());
+        connect(copyMirror, &QPushButton::clicked, this, [this] { copyLinks(true); });
         auto *chooseAll = new QPushButton(QCoreApplication::translate("Ocr", "C&hoose Files..."));
         chooseAll->setToolTip(QCoreApplication::translate("Ocr", "Choose several files at once; each goes to the row its name belongs to"));
         connect(chooseAll, &QPushButton::clicked, this, &ObtainDialog::chooseFiles);
@@ -171,6 +176,7 @@ public:
         auto *cancel = new QPushButton(QCoreApplication::translate("Ocr", "Cancel"));
         connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
         buttons->addWidget(copy);
+        buttons->addWidget(copyMirror);
         buttons->addWidget(chooseAll);
         buttons->addStretch();
         buttons->addWidget(m_download);
@@ -203,11 +209,12 @@ private:
             accept();
     }
 
-    void copyLinks()
+    // The addresses of the files still missing, one per line.
+    void copyLinks(bool mirrored)
     {
         QStringList links;
         for (const ModelFile &file : rest())
-            links << sources(file.url).constFirst().toString();
+            links << (mirrored ? mirrorUrl(file.url, mirror()) : file.url).toString();
         QGuiApplication::clipboard()->setText(links.join(QLatin1Char('\n')) + QLatin1Char('\n'));
     }
 
