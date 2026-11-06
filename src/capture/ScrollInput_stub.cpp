@@ -21,6 +21,23 @@ bool userScrolled()
     return false;
 }
 
+void wheelBy(int)
+{
+}
+
+void userWheel(int)
+{
+}
+
+void pace(bool)
+{
+}
+
+int takePending(int)
+{
+    return 0;
+}
+
 bool targetOutOfReach()
 {
     return false;

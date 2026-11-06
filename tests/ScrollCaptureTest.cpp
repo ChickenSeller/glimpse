@@ -6,12 +6,16 @@
 // itself, unevenly and once back up, as a user might.
 //
 //   glimpse-scroll-test [--manual] [--save <png>]
+//   glimpse-scroll-test --rect x,y,w,h [--click x,y] [--manual [--seconds n]] [--save <png>]
 
 #include "capture/ScrollCaptureSession.h"
+#include "capture/ScrollInput.h"
 
 #include <QApplication>
 #include <QLabel>
+#include <QCursor>
 #include <QPainter>
+#include <QRandomGenerator>
 #include <QScreen>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -61,7 +65,10 @@ int main(int argc, char *argv[])
         if (parts.size() != 4)
             return 2;
         const QRect rect(parts[0].toInt(), parts[1].toInt(), parts[2].toInt(), parts[3].toInt());
-        auto *session = new ScrollCaptureSession(rect, ScrollCaptureSession::Scrolling::Automatic, &app);
+        // With --manual, the test scrolls as a user might: bursts of one to
+        // three notches at uneven intervals, for --seconds (12 by default).
+        auto *session = new ScrollCaptureSession(
+            rect, manual ? ScrollCaptureSession::Scrolling::Manual : ScrollCaptureSession::Scrolling::Automatic, &app);
         QObject::connect(session, &ScrollCaptureSession::finished, &app, [&](const QImage &image) {
             if (!savePath.isEmpty())
                 image.save(savePath);
@@ -70,11 +77,36 @@ int main(int argc, char *argv[])
             std::fflush(stdout);
             QApplication::quit();
         });
-        QTimer::singleShot(0, session, [session, rect] {
+        // --click x,y: where the user would click to begin (logical, global);
+        // the middle of the area by default.
+        QPoint click = rect.center();
+        if (const qsizetype at = args.indexOf(QStringLiteral("--click")); at >= 0 && at + 1 < args.size()) {
+            const QStringList xy = args.at(at + 1).split(QLatin1Char(','));
+            if (xy.size() == 2)
+                click = QPoint(xy[0].toInt(), xy[1].toInt());
+        }
+        QTimer::singleShot(0, session, [session, click] {
             session->start();
-            // Automatic scrolling begins with a click: in the middle of the area.
-            session->clickAt(rect.center());
+            session->clickAt(click);
         });
+        if (manual) {
+            int seconds = 12;
+            if (const qsizetype at = args.indexOf(QStringLiteral("--seconds")); at >= 0 && at + 1 < args.size())
+                seconds = args.at(at + 1).toInt();
+            auto *rng = new QRandomGenerator(7);
+            auto *wheel = new QTimer(session);
+            wheel->setSingleShot(true);
+            QObject::connect(wheel, &QTimer::timeout, session, [wheel, rng, click] {
+                QCursor::setPos(click);
+                ScrollInput::userWheel(-int(1 + rng->bounded(3)));
+                wheel->start(80 + int(rng->bounded(220)));
+            });
+            QTimer::singleShot(1200, wheel, [wheel] { wheel->start(0); });
+            QTimer::singleShot(1200 + seconds * 1000, session, [session, wheel] {
+                wheel->stop();
+                session->stop();
+            });
+        }
         QApplication::exec();
         return 0;
     }

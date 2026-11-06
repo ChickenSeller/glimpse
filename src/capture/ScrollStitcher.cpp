@@ -27,17 +27,20 @@ constexpr int kMinDistinctive = 64;
 // A column of segments moves with a shift when this share of its content
 // rows match (a caret or a hover effect costs a few).
 constexpr double kColumnMatch = 0.9;
-// Share of the content that, the same in place, shows the view unmoved
-// right away. Animations (a spinning icon, an animated picture) keep frames
-// from ever repeating exactly: down to kMaybeUnmoved, the view is unmoved
-// when what changed is found nowhere else in the previous frame. (A large
-// still part, a toolbar above a list that scrolled, keeps the share high
-// too; there what changed is the list, found a few rows away.)
-constexpr double kUnmoved = 0.95;
+// Animations (a spinning icon, an animated picture) keep frames from ever
+// repeating exactly. With at least this share of the content the same in
+// place, the view is unmoved when what changed is found nowhere else in the
+// previous frame. However much stays the same: a small pane that scrolled in
+// a large still window changes little, but what changed is found a few rows
+// away.
 constexpr double kMaybeUnmoved = 0.85;
-// Share of the changed segments that, found shifted in the previous frame,
-// show that something scrolled.
+// Share of the changed segments, and at least kMinExplained of them, that
+// found shifted in the previous frame show that something scrolled.
 constexpr double kExplained = 0.3;
+constexpr size_t kMinExplained = 16;
+// Segments changed in a row that make it part of something replaced, not
+// animated (see unmoved()).
+constexpr int kBusyRowSegments = 4;
 // Otherwise a shift is taken when it stands out: its content matches at least
 // this well, and this many times better than at any shift apart from it.
 // Overshooting leaves every shift matching poorly and none standing out.
@@ -103,8 +106,6 @@ double ScrollStitcher::contentMatch(const Signature &next, int shift) const
 bool ScrollStitcher::unmoved(const Signature &next) const
 {
     const double still = contentMatch(next, 0);
-    if (still >= kUnmoved)
-        return true;
     if (still < kMaybeUnmoved)
         return false;
     // The content segments that changed in place.
@@ -120,9 +121,21 @@ bool ScrollStitcher::unmoved(const Signature &next) const
     }
     if (changed.empty())
         return true;
+    // An animation changes a little here and there; a pane whose content was
+    // replaced (scrolled further than it is high) changes whole rows of text.
+    int busyRows = 0;
+    for (size_t i = 0; i < changed.size();) {
+        size_t j = i;
+        while (j < changed.size() && changed[j].first == changed[i].first)
+            ++j;
+        busyRows += int(j - i) >= kBusyRowSegments;
+        i = j;
+    }
+    if (busyRows >= kMinContent)
+        return false;
     // Scrolled content turns up a few rows away in the previous frame; an
     // animation's new look turns up nowhere.
-    const size_t needed = std::max<size_t>(kMinDistinctive, size_t(kExplained * changed.size()));
+    const size_t needed = std::max(kMinExplained, size_t(kExplained * changed.size()));
     for (int shift = 1; shift < rows; ++shift) {
         for (const int direction : {shift, -shift}) {
             size_t found = 0;
@@ -158,7 +171,24 @@ bool ScrollStitcher::rowStill(const Signature &next, int row) const
         else if (m_previousSignature.content[i])
             ++sameContent;
     }
-    return differing <= kStillRowSlack && sameContent >= kStillRowContent;
+    if (differing > kStillRowSlack || sameContent < kStillRowContent)
+        return false;
+    // What differs must not have come from another row: lines of text alike
+    // but for a word or two (a log, a table) that scrolled look like this
+    // too, while a progress bar or a caret shows something new.
+    const int rows = int(next.hashes.size() / kSegments);
+    for (int k = 0; k < kSegments; ++k) {
+        const size_t i = size_t(row) * kSegments + k;
+        if (next.hashes[i] == m_previousSignature.hashes[i])
+            continue;
+        for (int d = 1; d < rows; ++d) {
+            for (const int from : {row + d, row - d}) {
+                if (from >= 0 && from < rows && next.hashes[i] == m_previousSignature.hashes[size_t(from) * kSegments + k])
+                    return false;
+            }
+        }
+    }
+    return true;
 }
 
 ScrollStitcher::Result ScrollStitcher::addFrame(const QImage &input)

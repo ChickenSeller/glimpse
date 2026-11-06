@@ -206,6 +206,7 @@ void ScrollCaptureSession::start()
     });
     holdKeys(true);
     if (m_scrolling == Scrolling::Manual) {
+        startPacing();
         QTimer::singleShot(kStartDelayMs, this, &ScrollCaptureSession::manualStep);
         return;
     }
@@ -329,6 +330,7 @@ void ScrollCaptureSession::takeOver(int firstGrabDelayMs)
     m_scrolling = Scrolling::Manual;
     m_stitcher.setScrolling(ScrollStitcher::Scrolling::Tracking);
     ScrollInput::watchUser(false);
+    startPacing();
     m_restoreCursor = {}; // the pointer is the user's now; leave it where they put it
     if (m_panelOverlaps)
         m_panel->hide(); // manual scrolling grabs too often to show it in between
@@ -495,13 +497,17 @@ void ScrollCaptureSession::manualStep()
         finish();
         return;
     }
+    if (lcScroll().isDebugEnabled()) {
+        static int frameNumber = 0;
+        frame.save(QDir::temp().filePath(QStringLiteral("glimpse-manual-%1.png").arg(frameNumber++, 3, 10, QLatin1Char('0'))));
+    }
     // Unchanged frames are simply skipped. One that does not line up was
     // scrolled too far since the last grab: scrolling back to where that one
     // was picks up from there.
     const ScrollStitcher::Result result = m_stitcher.addFrame(frame);
     if (result != ScrollStitcher::Result::NoChange)
         qCDebug(lcScroll) << "manual result" << int(result) << "(0 added, 1 moved, 2 unchanged, 3 no overlap, 4 gap)" << "shift"
-                          << m_stitcher.lastShift() << "height" << m_stitcher.height();
+                          << m_stitcher.lastShift() << "height" << m_stitcher.height() << "after passing on" << m_passedOn;
     if (result == ScrollStitcher::Result::Added || result == ScrollStitcher::Result::Moved)
         m_lost = false;
     else if (result == ScrollStitcher::Result::NoOverlap || result == ScrollStitcher::Result::Gap)
@@ -513,7 +519,49 @@ void ScrollCaptureSession::manualStep()
         finish();
         return;
     }
+    passOnWheel(result);
     QTimer::singleShot(kManualIntervalMs, this, &ScrollCaptureSession::manualStep);
+}
+
+void ScrollCaptureSession::startPacing()
+{
+    // A window running as administrator gets no wheel input from Glimpse:
+    // there the user's wheel must go straight through.
+    if (ScrollInput::targetOutOfReach())
+        return;
+    m_pacing = true;
+    ScrollInput::pace(true);
+}
+
+void ScrollCaptureSession::passOnWheel(ScrollStitcher::Result result)
+{
+    if (!m_pacing)
+        return;
+    if (ScrollInput::targetOutOfReach()) {
+        // The pointer went over such a window: the wheel is the user's again.
+        m_pacing = false;
+        ScrollInput::pace(false);
+        return;
+    }
+    // How far a notch scrolls, from what was passed on before this grab.
+    if (m_passedOn != 0 && (result == ScrollStitcher::Result::Added || result == ScrollStitcher::Result::Moved)
+        && m_stitcher.lastShift() != 0) {
+        const double seen = std::abs(m_stitcher.lastShift()) * 120.0 / std::abs(m_passedOn);
+        m_pixelsPerNotch = m_pixelsPerNotch > 0 ? (m_pixelsPerNotch + seen) / 2 : seen;
+    }
+    // At most half the view's height, so the next grab still overlaps this
+    // one; parts of a notch where one notch goes further. A third of a notch
+    // until it is known.
+    int limit = 40;
+    if (m_pixelsPerNotch > 0) {
+        const double room = 0.5 * m_stitcher.contentHeight();
+        limit = std::clamp(int(room / m_pixelsPerNotch * 120), 20, 120 * kMaxNotches);
+    }
+    m_passedOn = ScrollInput::takePending(limit);
+    if (m_passedOn != 0) {
+        qCDebug(lcScroll) << "passing on" << m_passedOn << "of the wheel; a notch scrolls" << m_pixelsPerNotch;
+        ScrollInput::wheelBy(m_passedOn);
+    }
 }
 
 void ScrollCaptureSession::step()
@@ -623,6 +671,10 @@ void ScrollCaptureSession::finish()
         return;
     qCDebug(lcScroll) << "finished after" << m_steps << "steps, height" << m_stitcher.height();
     m_done = true;
+    if (m_pacing) {
+        m_pacing = false;
+        ScrollInput::pace(false);
+    }
     if (m_clickCatcher)
         m_clickCatcher->close();
     m_clickHint.reset();

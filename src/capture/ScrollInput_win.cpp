@@ -2,6 +2,9 @@
 
 #include <windows.h>
 
+#include <algorithm>
+#include <atomic>
+#include <thread>
 #include <vector>
 
 namespace {
@@ -9,19 +12,70 @@ namespace {
 // Marks the wheel input Glimpse sends, so the hook can tell it from the user's.
 constexpr ULONG_PTR kOwnInput = 0x476c6d70; // "Glmp"
 
-HHOOK g_hook = nullptr;
-bool g_userScrolled = false;
+std::atomic<bool> g_watching{false};
+std::atomic<bool> g_userScrolled{false};
+std::atomic<bool> g_pacing{false};
+std::atomic<int> g_pending{0}; // wheel units held back while pacing
 
-// A low-level hook sees all mouse input before any window does; it runs on
-// this (the GUI) thread, between its messages.
+// A low-level hook sees all mouse input before any window does. Windows
+// passes the input on without it when the hook's thread does not answer in
+// time, and Glimpse's own thread is busy grabbing and stitching: the hook
+// runs on a thread of its own that does nothing else.
 LRESULT CALLBACK mouseHook(int code, WPARAM message, LPARAM data)
 {
     if (code == HC_ACTION && (message == WM_MOUSEWHEEL || message == WM_MOUSEHWHEEL)) {
         const auto *info = reinterpret_cast<const MSLLHOOKSTRUCT *>(data);
-        if (info->dwExtraInfo != kOwnInput)
-            g_userScrolled = true;
+        if (info->dwExtraInfo != kOwnInput) {
+            if (g_pacing && message == WM_MOUSEWHEEL) {
+                g_pending += GET_WHEEL_DELTA_WPARAM(info->mouseData);
+                return 1; // held back; passed on by the capture
+            }
+            if (g_watching)
+                g_userScrolled = true;
+        }
     }
     return CallNextHookEx(nullptr, code, message, data);
+}
+
+std::thread g_hookThread;
+std::atomic<DWORD> g_hookThreadId{0};
+
+// The hook (and its thread) is in place while anything needs it. Called from
+// Glimpse's thread only.
+void updateHook()
+{
+    const bool needed = g_watching || g_pacing;
+    if (needed && !g_hookThread.joinable()) {
+        g_hookThreadId = 0;
+        g_hookThread = std::thread([] {
+            MSG msg;
+            PeekMessageW(&msg, nullptr, 0, 0, PM_NOREMOVE); // gives the thread its message queue
+            const HHOOK hook = SetWindowsHookExW(WH_MOUSE_LL, mouseHook, GetModuleHandleW(nullptr), 0);
+            g_hookThreadId = GetCurrentThreadId();
+            while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
+            }
+            if (hook)
+                UnhookWindowsHookEx(hook);
+        });
+        while (g_hookThreadId == 0) // until it can be told to quit
+            Sleep(1);
+    } else if (!needed && g_hookThread.joinable()) {
+        PostThreadMessageW(g_hookThreadId, WM_QUIT, 0, 0);
+        g_hookThread.join();
+    }
+}
+
+void sendWheel(int delta, ULONG_PTR extra)
+{
+    // SendInput goes through the normal input path, so it reaches whatever is
+    // under the pointer exactly like a real wheel (posting WM_MOUSEWHEEL does
+    // not work for browsers and other apps that read raw input).
+    INPUT input{};
+    input.type = INPUT_MOUSE;
+    input.mi.dwFlags = MOUSEEVENTF_WHEEL;
+    input.mi.mouseData = DWORD(delta);
+    input.mi.dwExtraInfo = extra;
+    SendInput(1, &input, sizeof(input));
 }
 
 // The integrity level of a process token (its mandatory label's RID), which
@@ -61,15 +115,31 @@ namespace ScrollInput {
 
 void wheel(int notches)
 {
-    // SendInput goes through the normal input path, so it reaches whatever is
-    // under the pointer exactly like a real wheel (posting WM_MOUSEWHEEL does
-    // not work for browsers and other apps that read raw input).
-    INPUT input{};
-    input.type = INPUT_MOUSE;
-    input.mi.dwFlags = MOUSEEVENTF_WHEEL;
-    input.mi.mouseData = DWORD(notches * WHEEL_DELTA);
-    input.mi.dwExtraInfo = kOwnInput;
-    SendInput(1, &input, sizeof(input));
+    sendWheel(notches * WHEEL_DELTA, kOwnInput);
+}
+
+void wheelBy(int delta)
+{
+    sendWheel(delta, kOwnInput);
+}
+
+void userWheel(int notches)
+{
+    sendWheel(notches * WHEEL_DELTA, 0);
+}
+
+void pace(bool on)
+{
+    g_pacing = on;
+    g_pending = 0;
+    updateHook();
+}
+
+int takePending(int limit)
+{
+    const int taken = std::clamp(g_pending.load(), -limit, limit);
+    g_pending -= taken;
+    return taken;
 }
 
 bool escapePressed()
@@ -81,19 +151,13 @@ bool escapePressed()
 void watchUser(bool on)
 {
     g_userScrolled = false;
-    if (on && !g_hook) {
-        g_hook = SetWindowsHookExW(WH_MOUSE_LL, mouseHook, GetModuleHandleW(nullptr), 0);
-    } else if (!on && g_hook) {
-        UnhookWindowsHookEx(g_hook);
-        g_hook = nullptr;
-    }
+    g_watching = on;
+    updateHook();
 }
 
 bool userScrolled()
 {
-    const bool scrolled = g_userScrolled;
-    g_userScrolled = false;
-    return scrolled;
+    return g_userScrolled.exchange(false);
 }
 
 bool targetOutOfReach()

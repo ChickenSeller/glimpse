@@ -90,6 +90,10 @@ private:
     // panel takes the focus instead, so that Esc and Ctrl+Z reach it.
     void focusPanel();
     void undo();
+    // Manual: starts holding back the user's wheel, where it can be passed on.
+    void startPacing();
+    // Manual: passes on as much of the user's wheel as can be followed.
+    void passOnWheel(ScrollStitcher::Result result);
 
     Scrolling m_scrolling;
     QScreen *m_screen = nullptr;
@@ -117,5 +121,11 @@ private:
     bool m_done = false;
     bool m_discard = false;
     bool m_reachChecked = false; // Manual: looked whether the area is out of reach
+    // Manual: the user's wheel is held back and passed on step by step (see
+    // ScrollInput::pace()); how far one notch scrolls, once seen; how much
+    // was passed on before the last grab.
+    bool m_pacing = false;
+    double m_pixelsPerNotch = 0;
+    int m_passedOn = 0;
     qreal m_previewOpacity = 0.7;
 };
