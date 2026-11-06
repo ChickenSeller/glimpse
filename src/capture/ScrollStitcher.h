@@ -70,6 +70,9 @@ private:
 
     static Signature signature(const QImage &image);
     bool rowsEqual(const Signature &a, int rowA, const Signature &b, int rowB) const;
+    // The same row in two frames, but for a little that animates (a progress
+    // bar, a caret): still a row that did not scroll.
+    bool rowStill(const Signature &next, int row) const;
     // Whether `next` shows the view where the previous frame did, give or
     // take what animates in it.
     bool unmoved(const Signature &next) const;

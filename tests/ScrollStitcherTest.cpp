@@ -54,6 +54,8 @@ QImage frameAt(const QImage &page, int scroll)
     p.fillRect(10, 12, 120, 14, Qt::white);
     p.drawImage(0, kHeader, page, 0, scroll, kWidth, kContent);
     p.fillRect(0, kHeader + kContent, kWidth, kFooter, QColor(220, 220, 220)); // sticky footer
+    for (int x = 30; x < 220; x += 38) // its labels
+        p.fillRect(x, kHeader + kContent + 9, 24, 10, QColor(60, 60, 60));
     p.fillRect(kWidth - 90, kHeader + kContent + 6, 80, 16, QColor(0, 120, 60));
     return frame;
 }
@@ -97,8 +99,9 @@ constexpr int kBannerTop = 500;
 constexpr int kBannerHeight = 160;
 
 // A browser-like view: a scroll bar whose thumb moves with every step, a
-// navigation bar that turns sticky (covers the top of the view) once scrolled
-// and a rotating banner in the left half of the page.
+// navigation bar that turns sticky (covers the top of the view) once scrolled,
+// a rotating banner in the left half of the page and a progress bar that
+// grows and shrinks in the footer.
 QImage browserFrameAt(const QImage &page, int scroll, int pageHeight, int frameIndex)
 {
     QImage frame = frameAt(page, scroll);
@@ -110,6 +113,7 @@ QImage browserFrameAt(const QImage &page, int scroll, int pageHeight, int frameI
     p.setClipping(false);
     if (scroll > 0)
         p.fillRect(0, kHeader, kWidth, 60, QColor(0, 90, 170)); // sticky nav
+    p.fillRect(236, kHeader + kContent + 10, 4 + (frameIndex % 3) * 4, 8, QColor(40, 170, 80)); // progress
     const int track = kContent;
     const int thumb = track * kContent / pageHeight;
     const int thumbTop = (track - thumb) * scroll / (pageHeight - kContent);

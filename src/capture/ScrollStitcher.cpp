@@ -14,6 +14,10 @@ constexpr int kMinOverlap = 16;
 // nonsense (the best-matching shift wins anyway); it must tolerate a caret,
 // hover effects, a rotating banner and headers that turn sticky once scrolled.
 constexpr double kMinMatch = 0.75;
+// A row that did not scroll may differ in this many segments (a progress bar,
+// a caret), when at least kStillRowContent segments of content are the same.
+constexpr int kStillRowSlack = 2;
+constexpr int kStillRowContent = 4;
 // Static bands larger than this are not header/footer but an unscrolled view.
 constexpr int kMinContent = 24;
 // Content segments an overlap needs before it can pin down the shift on its own
@@ -140,6 +144,23 @@ bool ScrollStitcher::rowsEqual(const Signature &a, int rowA, const Signature &b,
                       b.hashes.begin() + qsizetype(rowB) * kSegments);
 }
 
+bool ScrollStitcher::rowStill(const Signature &next, int row) const
+{
+    if (rowsEqual(next, row, m_previousSignature, row))
+        return true;
+    // A few segments may differ when plenty of content beside them is the
+    // same; a sparse line of text that scrolled has little that stays.
+    int differing = 0, sameContent = 0;
+    for (int k = 0; k < kSegments; ++k) {
+        const size_t i = size_t(row) * kSegments + k;
+        if (next.hashes[i] != m_previousSignature.hashes[i])
+            ++differing;
+        else if (m_previousSignature.content[i])
+            ++sameContent;
+    }
+    return differing <= kStillRowSlack && sameContent >= kStillRowContent;
+}
+
 ScrollStitcher::Result ScrollStitcher::addFrame(const QImage &input)
 {
     QImage frame = input.convertToFormat(QImage::Format_RGB32);
@@ -170,10 +191,10 @@ ScrollStitcher::Result ScrollStitcher::addFrame(const QImage &input)
     if (detecting) {
         // Rows identical at the same place in both frames do not scroll.
         int top = 0;
-        while (top < h && rowsEqual(sig, top, m_previousSignature, top))
+        while (top < h && rowStill(sig, top))
             ++top;
         int bottom = 0;
-        while (bottom < h - top && rowsEqual(sig, h - 1 - bottom, m_previousSignature, h - 1 - bottom))
+        while (bottom < h - top && rowStill(sig, h - 1 - bottom))
             ++bottom;
         if (h - top - bottom < kMinContent) // only a sliver moved: no usable header/footer split
             top = bottom = 0;
@@ -187,11 +208,11 @@ ScrollStitcher::Result ScrollStitcher::addFrame(const QImage &input)
     // pinned on scroll) sit unchanged in place in both frames and hide what
     // scrolls beneath them: leave those rows out of the matching.
     int staticTop = 0;
-    while (m_header + staticTop < h - m_footer && rowsEqual(sig, m_header + staticTop, m_previousSignature, m_header + staticTop))
+    while (m_header + staticTop < h - m_footer && rowStill(sig, m_header + staticTop))
         ++staticTop;
     int staticBottom = 0;
     while (staticBottom < h - m_footer - m_header - staticTop
-           && rowsEqual(sig, h - m_footer - 1 - staticBottom, m_previousSignature, h - m_footer - 1 - staticBottom))
+           && rowStill(sig, h - m_footer - 1 - staticBottom))
         ++staticBottom;
     if (contentHeight() - staticTop - staticBottom < kMinContent)
         staticTop = staticBottom = 0; // (almost) nothing moved: no sticky split to make
