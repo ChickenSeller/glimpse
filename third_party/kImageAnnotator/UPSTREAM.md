@@ -73,3 +73,7 @@ only when needed, and listed below.
   selected (`requiresSelectionAfterCreation`), and under a drawing tool a
   press on the selection or its handles adjusts it instead of drawing a new
   item.
+- **Shift keeps shapes regular** (`src/annotations/core/AnnotationArea.cpp`,
+  `AnnotationTriangle.*`): Shift does what Ctrl did while drawing (squares,
+  circles, lines at multiples of 45°), and a triangle becomes equilateral,
+  the largest in the dragged box.

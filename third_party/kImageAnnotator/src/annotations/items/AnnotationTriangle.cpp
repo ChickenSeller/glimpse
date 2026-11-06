@@ -19,6 +19,9 @@
 
 #include "AnnotationTriangle.h"
 
+#include <algorithm>
+#include <cmath>
+
 namespace kImageAnnotator {
 
 AnnotationTriangle::AnnotationTriangle(const QPointF &startPosition, const PropertiesPtr &properties) :
@@ -33,6 +36,22 @@ AnnotationTriangle::AnnotationTriangle(const AnnotationTriangle &other) : Abstra
 Tools AnnotationTriangle::toolType() const
 {
 	return Tools::Triangle;
+}
+
+void AnnotationTriangle::addPoint(const QPointF &position, bool modified)
+{
+	AbstractAnnotationRect::addPoint(position, false);
+	if (!modified) {
+		return;
+	}
+	// The largest equilateral triangle in the dragged box, pointing the way
+	// it was dragged.
+	prepareGeometryChange();
+	const qreal heightPerSide = std::sqrt(3.0) / 2;
+	const qreal side = std::min(std::abs(mRect->width()), std::abs(mRect->height()) / heightPerSide);
+	mRect->setWidth(std::copysign(side, mRect->width()));
+	mRect->setHeight(std::copysign(side * heightPerSide, mRect->height()));
+	updateShape();
 }
 
 void AnnotationTriangle::updateShape()

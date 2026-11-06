@@ -426,7 +426,9 @@ void AnnotationArea::addItemAtPosition(const QPointF &position)
 
 void AnnotationArea::addPointToCurrentItem(const QPointF &position)
 {
-	mCurrentItem->addPoint(position, mKeyHelper->isControlPressed());
+	// Shift (or Ctrl, as before) keeps shapes regular: squares, circles,
+	// equilateral triangles, lines at multiples of 45°.
+	mCurrentItem->addPoint(position, mKeyHelper->isControlPressed() || mKeyHelper->isShiftPressed());
 }
 
 void AnnotationArea::toolChanged(Tools toolType)

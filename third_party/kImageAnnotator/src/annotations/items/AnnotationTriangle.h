@@ -34,6 +34,8 @@ public:
 	AnnotationTriangle(const AnnotationTriangle &other);
 	~AnnotationTriangle() override = default;
 	Tools toolType() const override;
+	// Modified (Shift): an equilateral triangle, the largest in the box.
+	void addPoint(const QPointF &position, bool modified) override;
 
 protected:
 	void updateShape() override;
