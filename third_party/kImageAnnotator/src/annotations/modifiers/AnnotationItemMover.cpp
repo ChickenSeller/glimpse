@@ -24,7 +24,9 @@ namespace kImageAnnotator {
 void AnnotationItemMover::setOffset(const QPointF &pos, const QList<AbstractAnnotationItem *> &selectedItems)
 {
 	for (auto item : selectedItems) {
-		mItemToOffset[item] = QPointF(pos - item->position());
+		// In the item's coordinates, which a turned item does not share with
+		// the scene; its transform stays put while it moves.
+		mItemToOffset[item] = QPointF(item->mapFromScene(pos) - item->position());
 	}
 }
 
@@ -34,7 +36,7 @@ void AnnotationItemMover::moveItems(const QPointF &pos)
 
 	for (auto item : mItemToOffset.keys()) {
 		if (item != nullptr) {
-			itemToNewPos[item] = pos - mItemToOffset[item];
+			itemToNewPos[item] = item->mapFromScene(pos) - mItemToOffset[item];
 		}
 	}
 

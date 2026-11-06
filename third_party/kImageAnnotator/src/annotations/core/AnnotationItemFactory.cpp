@@ -91,6 +91,9 @@ AbstractAnnotationItem *AnnotationItemFactory::clone(const AbstractAnnotationIte
 	Q_ASSERT(item != nullptr);
 
 	auto newItem = cloneItem(item);
+	newItem->setTransformOriginPoint(item->transformOriginPoint());
+	newItem->setRotation(item->rotation());
+	newItem->setPos(item->pos());
 
 	initItem(newItem);
 

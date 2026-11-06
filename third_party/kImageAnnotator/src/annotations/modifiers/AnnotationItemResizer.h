@@ -24,6 +24,7 @@
 
 #include "resizeHandles/ResizeHandlesFactory.h"
 #include "src/annotations/undo/ResizeCommand.h"
+#include "src/annotations/undo/RotateItemCommand.h"
 #include "src/annotations/core/ZoomValueProvider.h"
 
 namespace kImageAnnotator {
@@ -45,7 +46,7 @@ public:
     Qt::CursorShape cursorForCurrentHandle();
 
 signals:
-    void newCommand(ResizeCommand *resize) const;
+    void newCommand(QUndoCommand *command) const;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -56,8 +57,17 @@ private:
     ZoomValueProvider *mZoomValueProvider;
     int mCurrentHandle;
     QPointF mClickOffset;
+    // Turning: about the item's middle (its coordinates, and in the scene),
+    // from its angle and the pointer's when taken hold of.
+    bool mRotating = false;
+    QPointF mRotationCenter;
+    QPointF mRotationCenterInScene;
+    qreal mStartRotation = 0;
+    qreal mStartPointerAngle = 0;
 
     void applyZoomValue(double value);
+    QPointF rotateHandleCenter() const;
+    qreal rotateHandleRadius() const;
 };
 
 } // namespace kImageAnnotator

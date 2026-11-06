@@ -138,7 +138,7 @@ private:
 	void replaceBackgroundImage(const QPixmap &image);
 	void finishDrawingItem(const QPointF &pos);
 	AbstractAnnotationCurve *selectedCurve() const;
-	bool editCurveBendsAt(AbstractAnnotationCurve *curve, const QPointF &pos);
+	bool editCurveBendsAt(AbstractAnnotationCurve *curve, const QPointF &scenePos);
 	QRectF annotationItemsBoundingRect() const;
 
 private slots:

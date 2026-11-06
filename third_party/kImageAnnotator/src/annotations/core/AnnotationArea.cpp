@@ -307,7 +307,7 @@ void AnnotationArea::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 		if (mCurrentItem) {
 			addPointToCurrentItem(event->scenePos());
 		} else {
-			mItemModifier->handleMouseMove(event->scenePos(), mKeyHelper->isControlPressed());
+			mItemModifier->handleMouseMove(event->scenePos(), mKeyHelper->isControlPressed() || mKeyHelper->isShiftPressed());
 		}
 	}
 
@@ -347,7 +347,7 @@ QRectF AnnotationArea::annotationItemsBoundingRect() const
 {
 	QRectF boundingRect;
 	for(auto item : *mItems) {
-		boundingRect = boundingRect.united(item->boundingRect());
+		boundingRect = boundingRect.united(item->sceneBoundingRect());
 	}
 	return boundingRect;
 }
@@ -372,8 +372,10 @@ AbstractAnnotationCurve *AnnotationArea::selectedCurve() const
 	return items.size() == 1 ? dynamic_cast<AbstractAnnotationCurve *>(items.first()) : nullptr;
 }
 
-bool AnnotationArea::editCurveBendsAt(AbstractAnnotationCurve *curve, const QPointF &pos)
+bool AnnotationArea::editCurveBendsAt(AbstractAnnotationCurve *curve, const QPointF &scenePos)
 {
+	// The curve's points are in its own coordinates, turned or not.
+	const QPointF pos = curve->mapFromScene(scenePos);
 	// In scene units: what is a few pixels on screen at this zoom.
 	const qreal zoom = mZoomValueProvider != nullptr ? mZoomValueProvider->zoomValue() : 1.0;
 	const qreal reach = 8 / zoom;

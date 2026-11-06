@@ -113,7 +113,7 @@ void AnnotationItemSelector::refresh()
 	prepareGeometryChange();
 	mSelectedItemsBoundingRect = QRectF();
 	for (auto item : *mSelectedItems) {
-		mSelectedItemsBoundingRect = mSelectedItemsBoundingRect.united(item->boundingRect());
+		mSelectedItemsBoundingRect = mSelectedItemsBoundingRect.united(item->sceneBoundingRect());
 	}
 }
 
@@ -139,8 +139,9 @@ void AnnotationItemSelector::paint(QPainter *painter, const QStyleOptionGraphics
 
 	painter->setPen(mSelectionPen);
 	painter->setBrush(Qt::NoBrush);
+	// Turned with the item.
 	for (auto item : *mSelectedItems) {
-		painter->drawRect(item->boundingRect());
+		painter->drawPolygon(item->mapToScene(item->boundingRect()));
 	}
 }
 

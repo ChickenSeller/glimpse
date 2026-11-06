@@ -69,7 +69,8 @@ QPainterPath AbstractAnnotationItem::shape() const
 
 bool AbstractAnnotationItem::intersects(const QRectF &rect) const
 {
-	return shape().intersects(rect);
+	// `rect` is in the scene; the shape turns with the item.
+	return sceneTransform().map(shape()).intersects(rect);
 }
 
 void AbstractAnnotationItem::setShape(QPainterPath &newShape)

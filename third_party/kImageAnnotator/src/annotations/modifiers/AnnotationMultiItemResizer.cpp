@@ -117,7 +117,7 @@ Qt::CursorShape AnnotationMultiItemResizer::cursorForPos(const QPointF &pos)
 {
     for (auto item : childItems()) {
         auto resizer = castToResizer(item);
-        if (resizer->boundingRect().contains(pos)) {
+        if (resizer->sceneBoundingRect().contains(pos)) {
             return resizer->cursorForPos(pos);
         }
     }

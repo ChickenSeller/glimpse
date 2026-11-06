@@ -19,6 +19,10 @@
 
 #include "AnnotationItemResizer.h"
 
+#include <QLineF>
+
+#include <cmath>
+
 namespace kImageAnnotator {
 
 AnnotationItemResizer::AnnotationItemResizer(AbstractAnnotationItem *item, ZoomValueProvider *zoomValueProvider) :
@@ -29,6 +33,7 @@ AnnotationItemResizer::AnnotationItemResizer(AbstractAnnotationItem *item, ZoomV
     mResizeHandles = ResizeHandlesFactory::createResizeHandles(item, zoomValueProvider->zoomValue());
     connect(zoomValueProvider, &ZoomValueProvider::zoomValueChanged, this, &AnnotationItemResizer::applyZoomValue);
     prepareGeometryChange();
+    setTransform(item->sceneTransform());
 }
 
 AnnotationItemResizer::~AnnotationItemResizer()
@@ -41,16 +46,42 @@ QRectF AnnotationItemResizer::boundingRect() const
 {
     auto size = mResizeHandles->handleSize() / 2;
     auto rect = mAnnotationItem->boundingRect().normalized().adjusted(-size, -size, size, size);
-    // A curve's handles may stick out of it.
+    // A curve's handles may stick out of it; the turning handle does.
     const auto handles = mResizeHandles->handles();
     for (const auto &handle : handles) {
         rect |= handle;
     }
+    const auto radius = rotateHandleRadius();
+    rect |= QRectF(rotateHandleCenter() - QPointF(radius, radius), QSizeF(2 * radius, 2 * radius));
     return rect;
 }
 
-void AnnotationItemResizer::grabHandle(const QPointF &pos)
+// Above the middle of the item's top edge, in its coordinates.
+QPointF AnnotationItemResizer::rotateHandleCenter() const
 {
+    const auto rect = mAnnotationItem->boundingRect().normalized();
+    return { rect.center().x(), rect.top() - 24 / mZoomValueProvider->zoomValue() };
+}
+
+qreal AnnotationItemResizer::rotateHandleRadius() const
+{
+    return 5 / mZoomValueProvider->zoomValue();
+}
+
+void AnnotationItemResizer::grabHandle(const QPointF &scenePos)
+{
+    // Positions come in the scene; the handles are in the item's coordinates.
+    const QPointF pos = mAnnotationItem->mapFromScene(scenePos);
+    mRotating = false;
+    if (QLineF(pos, rotateHandleCenter()).length() <= rotateHandleRadius() * 1.5) {
+        mRotating = true;
+        mRotationCenter = mAnnotationItem->boundingRect().normalized().center();
+        mRotationCenterInScene = mAnnotationItem->mapToScene(mRotationCenter);
+        mStartRotation = mAnnotationItem->rotation();
+        mStartPointerAngle = QLineF(mRotationCenterInScene, scenePos).angle();
+        mCurrentHandle = -1;
+        return;
+    }
     mCurrentHandle = mResizeHandles->indexOfHandleAt(pos);
     // A curve's point taken hold of shows its handles (or hides them).
     if (auto curve = dynamic_cast<AbstractAnnotationCurve *>(mAnnotationItem); curve != nullptr && mCurrentHandle != -1) {
@@ -62,9 +93,20 @@ void AnnotationItemResizer::grabHandle(const QPointF &pos)
     }
 }
 
-void AnnotationItemResizer::moveHandle(const QPointF &pos, bool isCtrlPressed)
+void AnnotationItemResizer::moveHandle(const QPointF &scenePos, bool isCtrlPressed)
 {
+    if (mRotating) {
+        // QLineF measures angles counterclockwise; items turn clockwise.
+        auto angle = mStartRotation - (QLineF(mRotationCenterInScene, scenePos).angle() - mStartPointerAngle);
+        if (isCtrlPressed) {
+            angle = std::round(angle / 15) * 15; // Shift or Ctrl: steps of 15°
+        }
+        angle = std::fmod(angle, 360.0);
+        emit newCommand(new RotateItemCommand(mAnnotationItem, mRotationCenter, angle));
+        return;
+    }
     if (mCurrentHandle != -1) {
+		const QPointF pos = mAnnotationItem->mapFromScene(scenePos);
 		emit newCommand(new ResizeCommand(mAnnotationItem, mCurrentHandle, pos - mClickOffset, isCtrlPressed));
     }
 }
@@ -72,17 +114,20 @@ void AnnotationItemResizer::moveHandle(const QPointF &pos, bool isCtrlPressed)
 void AnnotationItemResizer::releaseHandle()
 {
     mCurrentHandle = -1;
+    mRotating = false;
 }
 
 bool AnnotationItemResizer::isResizing() const
 {
-    return mCurrentHandle != -1;
+    return mCurrentHandle != -1 || mRotating;
 }
 
 void AnnotationItemResizer::refresh()
 {
     prepareGeometryChange();
     mResizeHandles->update();
+    // Turned with the item: the handles are in its coordinates.
+    setTransform(mAnnotationItem->sceneTransform());
 }
 
 bool AnnotationItemResizer::isItemVisible() const
@@ -90,18 +135,40 @@ bool AnnotationItemResizer::isItemVisible() const
 	return mAnnotationItem != nullptr && mAnnotationItem->isVisible();
 }
 
-Qt::CursorShape AnnotationItemResizer::cursorForPos(const QPointF &pos)
+Qt::CursorShape AnnotationItemResizer::cursorForPos(const QPointF &scenePos)
 {
+    const QPointF pos = mAnnotationItem->mapFromScene(scenePos);
+    if (QLineF(pos, rotateHandleCenter()).length() <= rotateHandleRadius() * 1.5) {
+        return Qt::PointingHandCursor;
+    }
     return mResizeHandles->cursorForPos(pos);
 }
 
 Qt::CursorShape AnnotationItemResizer::cursorForCurrentHandle()
 {
+    if (mRotating) {
+        return Qt::ClosedHandCursor;
+    }
     return mResizeHandles->cursorForHandle(mCurrentHandle);
 }
 
 void AnnotationItemResizer::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+    // The turning handle, on a stalk from the top edge.
+    {
+        const auto rect = mAnnotationItem->boundingRect().normalized();
+        const auto center = rotateHandleCenter();
+        const auto radius = rotateHandleRadius();
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(QPen(Qt::gray, 1.0 / mZoomValueProvider->zoomValue()));
+        painter->drawLine(QPointF(center.x(), rect.top()), center + QPointF(0, radius));
+        painter->setPen(QPen(Qt::white, 1.0 / mZoomValueProvider->zoomValue()));
+        painter->setBrush(QColor(0x2d, 0x9c, 0xff));
+        painter->drawEllipse(center, radius, radius);
+        painter->restore();
+    }
+
     painter->setPen(QPen(Qt::white, 1.0 / mZoomValueProvider->zoomValue()));
     painter->setBrush(Qt::gray);
     auto handles = mResizeHandles->handles();

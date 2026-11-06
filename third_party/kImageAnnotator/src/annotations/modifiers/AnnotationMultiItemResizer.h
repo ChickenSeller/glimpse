@@ -51,7 +51,7 @@ public:
     void showCurrentResizer();
 
 signals:
-    void newCommand(ResizeCommand *resize) const;
+    void newCommand(QUndoCommand *command) const;
 
 private:
 	ZoomValueProvider *mZoomValueProvider;

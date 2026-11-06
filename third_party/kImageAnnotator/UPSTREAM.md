@@ -77,3 +77,13 @@ only when needed, and listed below.
   `AnnotationTriangle.*`): Shift does what Ctrl did while drawing (squares,
   circles, lines at multiples of 45°), and a triangle becomes equilateral,
   the largest in the dragged box.
+- **Turning items** (`src/annotations/undo/RotateItemCommand.*`,
+  `src/annotations/modifiers/AnnotationItemResizer.*` and the other
+  modifiers, `AbstractAnnotationItem::intersects`, the item factory's
+  clone): a round handle above a selected item turns it about its middle
+  (Shift or Ctrl: steps of 15°), as an undoable step. An item's shape stays
+  in its own coordinates and its transform turns it, so the places that took
+  item coordinates for scene ones now map between them: moving, selecting,
+  the selection outline, the handles (which turn with the item) and copies
+  (which keep the turn). Handles dragged with Shift keep proportions as
+  with Ctrl.
