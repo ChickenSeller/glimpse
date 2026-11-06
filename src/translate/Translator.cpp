@@ -335,7 +335,7 @@ namespace Translate {
 
 QStringList engineIds()
 {
-    return {QStringLiteral("google-free"), QStringLiteral("index"),     QStringLiteral("firefox"),   QStringLiteral("local"),
+    return {QStringLiteral("firefox"),     QStringLiteral("index"),     QStringLiteral("google-free"), QStringLiteral("local"),
             QStringLiteral("deepl"),       QStringLiteral("google"),    QStringLiteral("microsoft"),
             QStringLiteral("claude")};
 }
@@ -395,8 +395,10 @@ QString engineDescription(const QString &id)
 
 QString defaultEngine()
 {
-    // Works out of the box: no key, nothing to download.
-    return QStringLiteral("google-free");
+    // Offline and free, with no service that may limit or change; its small
+    // language files are fetched on first use. The free Google service where
+    // this build has no Firefox engine.
+    return FirefoxTranslation::unavailableReason().isEmpty() ? QStringLiteral("firefox") : QStringLiteral("google-free");
 }
 
 QStringList targetLanguages()
