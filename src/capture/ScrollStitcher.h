@@ -59,16 +59,23 @@ public:
 
 private:
     // Each row is compared in kSegments horizontal segments, so a change in
-    // part of a row (a rotating banner, an animation) only costs that part.
+    // part of a row (a rotating banner, an animation) only costs that part,
+    // and a narrow pane that scrolls beside still ones has segments of its own.
     struct Signature {
         std::vector<size_t> hashes; // row * kSegments + segment
         std::vector<char> content;  // segment is not a single solid colour
         bool operator==(const Signature &other) const { return hashes == other.hashes; }
     };
-    static constexpr int kSegments = 8;
+    static constexpr int kSegments = 32;
 
     static Signature signature(const QImage &image);
     bool rowsEqual(const Signature &a, int rowA, const Signature &b, int rowB) const;
+    // Whether `next` shows the view where the previous frame did, give or
+    // take what animates in it.
+    bool unmoved(const Signature &next) const;
+    // Share of the previous frame's content segments that `next` has `shift`
+    // rows up (down for a negative shift).
+    double contentMatch(const Signature &next, int shift) const;
     // skipTop / skipBottom: rows at the edges of the scrolling part that the
     // new frame shows unchanged in place (an element that turned sticky).
     // Negative when Tracking found the view scrolled up; 0 if none lines up.

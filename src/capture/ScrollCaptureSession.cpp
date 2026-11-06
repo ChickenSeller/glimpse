@@ -378,7 +378,7 @@ void ScrollCaptureSession::manualStep()
     // was picks up from there.
     const ScrollStitcher::Result result = m_stitcher.addFrame(frame);
     if (result != ScrollStitcher::Result::NoChange)
-        qCDebug(lcScroll) << "manual result" << int(result) << "(0 added, 1 moved, 3 no overlap)" << "shift"
+        qCDebug(lcScroll) << "manual result" << int(result) << "(0 added, 1 moved, 2 unchanged, 3 no overlap, 4 gap)" << "shift"
                           << m_stitcher.lastShift() << "height" << m_stitcher.height();
     if (result == ScrollStitcher::Result::Added || result == ScrollStitcher::Result::Moved)
         m_lost = false;
@@ -433,7 +433,7 @@ void ScrollCaptureSession::step()
         frame.save(QDir::temp().filePath(QStringLiteral("glimpse-scroll-%1.png").arg(frameNumber++, 3, 10, QLatin1Char('0'))));
     }
     const ScrollStitcher::Result result = m_stitcher.addFrame(frame);
-    qCDebug(lcScroll) << "step" << m_steps << "result" << int(result) << "(0 added, 1 unchanged, 2 no overlap)"
+    qCDebug(lcScroll) << "step" << m_steps << "result" << int(result) << "(0 added, 2 unchanged, 3 no overlap)"
                       << "shift" << m_stitcher.lastShift() << "notches" << notchesUsed << "height"
                       << m_stitcher.height() << "content" << m_stitcher.contentHeight();
     if (result == ScrollStitcher::Result::Added)
