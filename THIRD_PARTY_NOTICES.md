@@ -79,12 +79,16 @@ are used under their own terms:
 | Tesseract language data (`*.traineddata`) | tesseract-ocr/tessdata | Apache-2.0 |
 | Hy-MT2 1.8B / 7B (GGUF) | Tencent | Apache-2.0 |
 | Qwen3 4B (GGUF) | Alibaba Qwen | Apache-2.0 |
+| Index-Translate 2B / 9B (GGUF) | Bilibili (IndexTeam) | Apache-2.0 |
 | Firefox translation models | Mozilla | See <https://github.com/mozilla/translations> |
 
 ## Online services
 
-The online translation services (Google Translate's free service, DeepL,
-Google Cloud Translation, Microsoft Translator, Anthropic Claude) are operated
-by their providers under their own terms of service. Text is sent to them only
-when you choose them. The free Google service is unofficial and may change or
-stop working at any time.
+The online translation services (Google Translate's free service, Bilibili's
+Index-Translate service, DeepL, Google Cloud Translation, Microsoft Translator,
+Anthropic Claude) are operated by their providers under their own terms of
+service. Text is sent to them only when you choose them. The free Google
+service is unofficial and may change or stop working at any time. Bilibili
+offers Index-Translate without a key and has published no terms for it beyond
+its documentation (<https://github.com/bilibili/Index-Translate>); it too may
+be limited or ended at any time.
