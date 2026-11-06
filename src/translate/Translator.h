@@ -11,7 +11,7 @@ class QObject;
 // OCR engine. Every engine needs the user's own API key.
 namespace Translate {
 
-// "google-free" (no key), "firefox" (Bergamot, offline), "local" (llama.cpp,
+// "google-free" (no key), "index" (Bilibili, no key), "firefox" (Bergamot, offline), "local" (llama.cpp,
 // offline), "deepl", "google", "microsoft", "claude".
 QStringList engineIds();
 QString engineName(const QString &id);

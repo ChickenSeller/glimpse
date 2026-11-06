@@ -36,10 +36,11 @@ namespace LocalModel {
 QList<Preset> presets()
 {
     const QString dir = modelsDirectory();
-    const auto preset = [&dir](const char *id, const QString &name, const char *file, const char *url) {
+    const auto preset = [&dir](const char *id, const QString &name, const char *file, const char *url,
+                               const char *sha256 = "") {
         return Preset{QString::fromLatin1(id), name,
                       ModelFile{QString::fromLatin1(file), QUrl(QString::fromLatin1(url)),
-                                QDir(dir).filePath(QString::fromLatin1(file))}};
+                                QDir(dir).filePath(QString::fromLatin1(file)), QByteArray(sha256)}};
     };
     // Tencent's Hy-MT2 models are made for translation (33 languages, Apache 2.0).
     return {
@@ -52,6 +53,17 @@ QList<Preset> presets()
         preset("hy-mt2-7b", QCoreApplication::translate("LocalModel", "Hy-MT2 7B (4.6 GB, best; wants a graphics card)"),
                "Hy-MT2-7B-Q4_K_M.gguf",
                "https://huggingface.co/tencent/Hy-MT2-7B-GGUF/resolve/main/Hy-MT2-7B-Q4_K_M.gguf"),
+        // Bilibili's Index-Translate (on Qwen3.5, 150 languages, Apache 2.0).
+        preset("index-translate-2b",
+               QCoreApplication::translate("LocalModel", "Index-Translate 2B (1.3 GB, light, by Bilibili)"),
+               "Index-Translate-2B.Q4_K_M.gguf",
+               "https://huggingface.co/IndexTeam/Index-Translate-2B-GGUF/resolve/main/Index-Translate-2B.Q4_K_M.gguf",
+               "044b313d29342bd3b2c77cbb64023ca0d209bd9b3247763f9d162767ef2d746a"),
+        preset("index-translate-9b",
+               QCoreApplication::translate("LocalModel", "Index-Translate 9B (5.8 GB, by Bilibili; wants a graphics card)"),
+               "Index-Translate-9B.Q4_K_M.gguf",
+               "https://huggingface.co/IndexTeam/Index-Translate-9B-GGUF/resolve/main/Index-Translate-9B.Q4_K_M.gguf",
+               "9cc6758b0007f4cbf42ea3400768cbff91ae74ef8d640e467158348426d33713"),
     };
 }
 
@@ -269,7 +281,13 @@ std::string buildPrompt(const QString &text, const QString &language, const QStr
     const QByteArray userText = text.toUtf8();
     QByteArray system;
     QByteArray user;
-    if (modelFile.contains(QLatin1String("hy-mt"), Qt::CaseInsensitive)
+    // Index-Translate's documented prompt; it answers without thinking only
+    // when the thinking block is already closed (enable_thinking=False).
+    const bool index = modelFile.contains(QLatin1String("index-translate"), Qt::CaseInsensitive);
+    if (index) {
+        user = QStringLiteral("请将以下文本翻译为%1，直接输出翻译结果，不要进行任何解释。\n\n").arg(language).toUtf8()
+               + userText;
+    } else if (modelFile.contains(QLatin1String("hy-mt"), Qt::CaseInsensitive)
         || modelFile.contains(QLatin1String("hunyuan-mt"), Qt::CaseInsensitive)) {
         // The Hy-MT models' documented prompts (Chinese ones for Chinese);
         // they take no system message.
@@ -308,6 +326,8 @@ std::string buildPrompt(const QString &text, const QString &language, const QStr
     }
     if (n > 0) {
         buffer.resize(size_t(n));
+        if (index)
+            buffer += "<think>\n\n</think>\n\n";
         return buffer;
     }
     // A template llama.cpp does not know: ChatML, which most models accept.
@@ -315,6 +335,8 @@ std::string buildPrompt(const QString &text, const QString &language, const QStr
     if (!system.isEmpty())
         chatml += "<|im_start|>system\n" + system.toStdString() + "<|im_end|>\n";
     chatml += "<|im_start|>user\n" + user.toStdString() + "<|im_end|>\n<|im_start|>assistant\n";
+    if (index)
+        chatml += "<think>\n\n</think>\n\n";
     return chatml;
 }
 

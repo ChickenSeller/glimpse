@@ -28,9 +28,9 @@ Homepage: <https://pages.yanlei.org/kaguya/glimpse/>
 - **Screenshot translation**: translate the recognized text from the same
   window, or paint the translation over the capture.
   - Offline: Firefox's translation engine (Bergamot), or a local language
-    model through llama.cpp (Hy-MT2, Qwen3), which uses the GPU through Vulkan
+    model through llama.cpp (Hy-MT2, Index-Translate, Qwen3), which uses the GPU through Vulkan
     and falls back to the CPU.
-  - Online: Google Translate (free), DeepL, Google Cloud Translation,
+  - Online: Google Translate (free), Bilibili Index-Translate (free), DeepL, Google Cloud Translation,
     Microsoft Translator or Claude, with your own API key where one is needed.
 - **QR code and barcode** reading (ZXing-C++).
 - **Screen crosshair**, which also picks colors: double-click a pixel.

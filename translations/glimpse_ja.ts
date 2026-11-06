@@ -803,6 +803,14 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>LocalModel</name>
     <message>
+        <source>Index-Translate 2B (1.3 GB, light, by Bilibili)</source>
+        <translation>Index-Translate 2B（1.3 GB、軽量、bilibili 製）</translation>
+    </message>
+    <message>
+        <source>Index-Translate 9B (5.8 GB, by Bilibili; wants a graphics card)</source>
+        <translation>Index-Translate 9B（5.8 GB、bilibili 製、グラフィックカード推奨）</translation>
+    </message>
+    <message>
         <source>Qwen3 4B (2.5 GB, balanced)</source>
         <translation type="vanished">Qwen3 4B（2.5 GB、速度と品質のバランス）</translation>
     </message>
@@ -2205,6 +2213,18 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>Translate</name>
+    <message>
+        <source>Bilibili Index-Translate (free, online)</source>
+        <translation>bilibili Index-Translate（無料、オンライン）</translation>
+    </message>
+    <message>
+        <source>Bilibili's translation model (Index-Translate 35B), offered free without a key: natural translations, 150 languages. Slower than Google, and Bilibili may limit or end the service.</source>
+        <translation>bilibili の翻訳モデル（Index-Translate 35B）。キー不要で無料。自然な訳文で 150 言語に対応します。Google より遅く、bilibili がサービスを制限・終了する可能性があります。</translation>
+    </message>
+    <message>
+        <source>The Index-Translate reply could not be read.</source>
+        <translation>Index-Translate の応答を読み取れませんでした。</translation>
+    </message>
     <message>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻訳には先にこれらの言語ファイルが必要です（1 方向あたり約 50 MB）。このコンピューターに保存され、以後はオフラインで使えます。</translation>

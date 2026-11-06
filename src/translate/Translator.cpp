@@ -17,7 +17,10 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QPointer>
+#include <QRegularExpression>
 #include <QUrlQuery>
+
+#include <memory>
 
 namespace {
 
@@ -269,13 +272,70 @@ void claude(const QStringList &texts, const QString &target, const QString &key,
          });
 }
 
+// Bilibili's free Index-Translate service (OpenAI-compatible, no key). It
+// takes one text per request, so the paragraphs go out side by side and
+// `done` is called once all have come back, or on the first error.
+void indexTranslate(const QStringList &texts, const QString &target, QObject *context, const Translate::Callback &done)
+{
+    struct Pending {
+        QStringList results;
+        int remaining = 0;
+        bool failed = false;
+    };
+    auto pending = std::make_shared<Pending>();
+    pending->results.resize(texts.size());
+    pending->remaining = int(texts.size());
+    if (texts.isEmpty()) {
+        done({}, {});
+        return;
+    }
+    const QString prompt = QStringLiteral("请将以下文本翻译为%1，直接输出翻译结果，不要进行任何解释。\n\n")
+                               .arg(Translate::languageName(target));
+    for (qsizetype i = 0; i < texts.size(); ++i) {
+        QNetworkRequest request(QUrl(QStringLiteral("https://index-translate.bilibili.com/v1/chat/completions")));
+        const QJsonObject body{
+            {QStringLiteral("model"), QStringLiteral("Index-Translate-35B-A3B")},
+            {QStringLiteral("messages"),
+             QJsonArray{QJsonObject{{QStringLiteral("role"), QStringLiteral("user")},
+                                    {QStringLiteral("content"), prompt + texts.at(i)}}}},
+            {QStringLiteral("chat_template_kwargs"), QJsonObject{{QStringLiteral("enable_thinking"), false}}}};
+        send(request, QJsonDocument(body).toJson(QJsonDocument::Compact), 1, context,
+             [pending, i, done](const QStringList &translations, const QString &error) {
+                 if (pending->failed)
+                     return;
+                 if (!error.isEmpty()) {
+                     pending->failed = true;
+                     done({}, error);
+                     return;
+                 }
+                 pending->results[i] = translations.constFirst();
+                 if (--pending->remaining == 0)
+                     done(pending->results, {});
+             },
+             [](const QByteArray &data, QString *error) {
+                 const QJsonArray choices = QJsonDocument::fromJson(data).object().value(QStringLiteral("choices")).toArray();
+                 QString text = choices.first().toObject().value(QStringLiteral("message")).toObject()
+                                    .value(QStringLiteral("content")).toString();
+                 static const QRegularExpression think(QStringLiteral("<think>.*?</think>"),
+                                                       QRegularExpression::DotMatchesEverythingOption);
+                 text.remove(think);
+                 text = text.trimmed();
+                 if (choices.isEmpty() || text.isEmpty()) {
+                     *error = QCoreApplication::translate("Translate", "The Index-Translate reply could not be read.");
+                     return QStringList();
+                 }
+                 return QStringList{text};
+             });
+    }
+}
+
 } // namespace
 
 namespace Translate {
 
 QStringList engineIds()
 {
-    return {QStringLiteral("google-free"), QStringLiteral("firefox"),   QStringLiteral("local"),
+    return {QStringLiteral("google-free"), QStringLiteral("index"),     QStringLiteral("firefox"),   QStringLiteral("local"),
             QStringLiteral("deepl"),       QStringLiteral("google"),    QStringLiteral("microsoft"),
             QStringLiteral("claude")};
 }
@@ -284,6 +344,8 @@ QString engineName(const QString &id)
 {
     if (id == QLatin1String("google-free"))
         return QCoreApplication::translate("Translate", "Google Translate (free, online)");
+    if (id == QLatin1String("index"))
+        return QCoreApplication::translate("Translate", "Bilibili Index-Translate (free, online)");
     if (id == QLatin1String("firefox"))
         return QCoreApplication::translate("Translate", "Firefox translation (offline, light)");
     if (id == QLatin1String("local"))
@@ -305,6 +367,10 @@ QString engineDescription(const QString &id)
         return QCoreApplication::translate("Translate", "The free service behind Google Translate in Chrome: no key, good quality, "
                                                         "many languages. It is unofficial, so Google may limit or change it; "
                                                         "if it stops working, switch to another service.");
+    if (id == QLatin1String("index"))
+        return QCoreApplication::translate("Translate", "Bilibili's translation model (Index-Translate 35B), offered free "
+                                                        "without a key: natural translations, 150 languages. Slower than "
+                                                        "Google, and Bilibili may limit or end the service.");
     if (id == QLatin1String("firefox"))
         return QCoreApplication::translate("Translate", "The engine behind Firefox's offline translations: small models "
                                                         "(35-70 MB per language direction, downloaded on first use) that "
@@ -364,7 +430,7 @@ QString defaultTarget()
 bool needsKey(const QString &engine)
 {
     return engine != QLatin1String("local") && engine != QLatin1String("firefox")
-           && engine != QLatin1String("google-free");
+           && engine != QLatin1String("google-free") && engine != QLatin1String("index");
 }
 
 void translate(const QString &engine, const QStringList &texts, const QString &target, QObject *context,
@@ -372,6 +438,10 @@ void translate(const QString &engine, const QStringList &texts, const QString &t
 {
     if (engine == QLatin1String("google-free")) {
         googleFree(texts, target, context, done);
+        return;
+    }
+    if (engine == QLatin1String("index")) {
+        indexTranslate(texts, target, context, done);
         return;
     }
     if (engine == QLatin1String("firefox")) {

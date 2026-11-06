@@ -803,6 +803,14 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>LocalModel</name>
     <message>
+        <source>Index-Translate 2B (1.3 GB, light, by Bilibili)</source>
+        <translation>Index-Translate 2B（1.3 GB，轻量，B 站出品）</translation>
+    </message>
+    <message>
+        <source>Index-Translate 9B (5.8 GB, by Bilibili; wants a graphics card)</source>
+        <translation>Index-Translate 9B（5.8 GB，B 站出品，需要显卡）</translation>
+    </message>
+    <message>
         <source>Qwen3 4B (2.5 GB, balanced)</source>
         <translation type="vanished">Qwen3 4B（2.5 GB，速度与质量均衡）</translation>
     </message>
@@ -2205,6 +2213,18 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>Translate</name>
+    <message>
+        <source>Bilibili Index-Translate (free, online)</source>
+        <translation>B 站 Index-Translate（免费，在线）</translation>
+    </message>
+    <message>
+        <source>Bilibili's translation model (Index-Translate 35B), offered free without a key: natural translations, 150 languages. Slower than Google, and Bilibili may limit or end the service.</source>
+        <translation>B 站的翻译大模型（Index-Translate 35B），免费、无需密钥：译文自然，支持 150 种语言。比 Google 慢，B 站也可能限流或停止这项服务。</translation>
+    </message>
+    <message>
+        <source>The Index-Translate reply could not be read.</source>
+        <translation>无法读取 Index-Translate 的回复。</translation>
+    </message>
     <message>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻译需要先准备这些语言文件（每个方向约 50 MB）。文件保存在这台电脑上，之后可以离线使用。</translation>
