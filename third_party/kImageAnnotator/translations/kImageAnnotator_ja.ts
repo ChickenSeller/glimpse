@@ -486,8 +486,12 @@ Rotating by non 90° multipliers might introduce loss of quality.</source>
         <translation>三角形</translation>
     </message>
     <message>
-        <source>Lines and Arrows</source>
-        <translation>線と矢印</translation>
+        <source>Lines and Arrows (A)
+Double-click a selected line to add a bend point there; drag the point, or the round handles beside it, to bend the line (Ctrl: one handle alone). Double-click a bend point to remove it.
+Arrow heads: in the settings bar. Shift: angles in steps of 45°.</source>
+        <translation>線と矢印 (A)
+選択した線をダブルクリックすると、その位置に制御点を追加します。制御点、またはその両側の丸いハンドルをドラッグして線を曲げます（Ctrl：片側のハンドルだけ）。制御点をダブルクリックすると削除します。
+矢印：設定バーで選択します。Shift：角度を 45° 刻みにします。</translation>
     </message>
     <message>
         <source>Number Pointer</source>

@@ -71,7 +71,12 @@ void ToolPicker::initGui()
 
 	// Glimpse: one tool for lines and arrows, straight or bent, with arrow
 	// heads at either end, both or none.
-	action = createAction(tr("Lines and Arrows"), IconLoader::load(QLatin1String("arrow.svg")), Qt::Key_A, Tools::Curve);
+	action = createAction(tr("Lines and Arrows (A)\n"
+							 "Double-click a selected line to add a bend point there; drag the point, or the "
+							 "round handles beside it, to bend the line (Ctrl: one handle alone). Double-click "
+							 "a bend point to remove it.\n"
+							 "Arrow heads: in the settings bar. Shift: angles in steps of 45°."),
+						  IconLoader::load(QLatin1String("line.svg")), Qt::Key_A, Tools::Curve);
 	createButton(action);
 
 	QMenu *menu;

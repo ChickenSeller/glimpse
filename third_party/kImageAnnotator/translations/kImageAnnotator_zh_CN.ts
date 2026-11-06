@@ -486,8 +486,12 @@ Rotating by non 90° multipliers might introduce loss of quality.</source>
         <translation>三角形</translation>
     </message>
     <message>
-        <source>Lines and Arrows</source>
-        <translation>线条和箭头</translation>
+        <source>Lines and Arrows (A)
+Double-click a selected line to add a bend point there; drag the point, or the round handles beside it, to bend the line (Ctrl: one handle alone). Double-click a bend point to remove it.
+Arrow heads: in the settings bar. Shift: angles in steps of 45°.</source>
+        <translation>线条和箭头 (A)
+双击选中的线条，在该处添加控制点；拖动控制点或它两侧的圆形手柄，使线条弯曲（按住 Ctrl：只移动一侧手柄）。双击控制点可将其删除。
+箭头：在设置栏中选择。按住 Shift：角度以 45° 为步长。</translation>
     </message>
     <message>
         <source>Number Pointer</source>
