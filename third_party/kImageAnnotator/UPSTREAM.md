@@ -35,6 +35,10 @@ only when needed, and listed below.
   `src/gui/cutter/CutWidget.cpp`, `src/gui/scrollAndZoomView/`): those views
   open at the editor's zoom, set exactly (not rounded to a tenth), instead of
   100%, which on a scaled screen showed the image larger than in the editor.
+- **Image smoothing** (`src/annotations/core/AnnotationArea.cpp`): the image
+  is drawn smoothed wherever a view shows it smaller than its pixels; picked
+  rows dropped one-pixel lines (the bars of text) in whole stretches of long
+  images. At its pixels or larger it is drawn as before.
 
 ## Glimpse's tools
 

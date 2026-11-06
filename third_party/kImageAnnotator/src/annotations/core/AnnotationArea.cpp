@@ -19,6 +19,8 @@
 
 #include "AnnotationArea.h"
 
+#include <cmath>
+
 namespace kImageAnnotator {
 
 AnnotationArea::AnnotationArea(
@@ -96,9 +98,34 @@ void AnnotationArea::insertImageItem(const QPointF &position, const QPixmap &ima
 	toolChanged(mSettingsProvider->toolType());
 }
 
+namespace {
+
+// Glimpse: the image, smoothed where it is shown smaller than its pixels.
+// Picking every n-th row instead drops one-pixel lines, such as the bars of
+// text, in whole stretches of the image. Shown at its pixels or larger, it
+// stays sharp.
+class BackgroundImageItem : public QGraphicsPixmapItem
+{
+public:
+	using QGraphicsPixmapItem::QGraphicsPixmapItem;
+
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override
+	{
+		// Per view, as each is zoomed: set on the painter, not on the item.
+		const auto deviceScale = painter->device() != nullptr ? painter->device()->devicePixelRatioF() : 1.0;
+		const auto scale = std::sqrt(std::abs(painter->worldTransform().determinant())) * deviceScale;
+		painter->setRenderHint(QPainter::SmoothPixmapTransform, scale < 0.999);
+		painter->drawPixmap(offset(), pixmap());
+	}
+};
+
+} // namespace
+
 void AnnotationArea::replaceBackgroundImage(const QPixmap &image)
 {
-	mBackgroundImage = QSharedPointer<QGraphicsPixmapItem>(addPixmap(image));
+	auto backgroundImage = new BackgroundImageItem(image);
+	addItem(backgroundImage);
+	mBackgroundImage = QSharedPointer<QGraphicsPixmapItem>(backgroundImage);
 	setSceneRect(QRect());
 }
 
