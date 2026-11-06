@@ -46,6 +46,16 @@ QString ConfigNameHelper::toolTextColor(Tools tool)
 	return kImageAnnotator() + QLatin1String("ToolTextColor_") + QString::number(static_cast<int>(tool));
 }
 
+QString ConfigNameHelper::toolArrowHeads(Tools tool)
+{
+	return kImageAnnotator() + QLatin1String("ToolArrowHeads_") + QString::number(static_cast<int>(tool));
+}
+
+QString ConfigNameHelper::recentTools()
+{
+	return kImageAnnotator() + QLatin1String("RecentTools");
+}
+
 QString ConfigNameHelper::toolFillType(Tools tool)
 {
 	return kImageAnnotator() + QLatin1String("ToolFillType_") + QString::number(static_cast<int>(tool));

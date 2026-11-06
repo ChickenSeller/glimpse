@@ -36,6 +36,7 @@ AnnotationProperties::AnnotationProperties(const PropertiesPtr &other)
 	mTextColor = other->mTextColor;
 	mWidth = other->mWidth;
 	mFillType = other->mFillType;
+	mArrowHeads = other->mArrowHeads;
 	mShadowEnabled = other->mShadowEnabled;
 	mOpacity = other->mOpacity;
 }
@@ -68,6 +69,16 @@ int AnnotationProperties::width() const
 void AnnotationProperties::setWidth(int size)
 {
 	mWidth = size;
+}
+
+ArrowHeads AnnotationProperties::arrowHeads() const
+{
+	return mArrowHeads;
+}
+
+void AnnotationProperties::setArrowHeads(ArrowHeads arrowHeads)
+{
+	mArrowHeads = arrowHeads;
 }
 
 FillModes AnnotationProperties::fillType() const

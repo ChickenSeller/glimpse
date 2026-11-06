@@ -27,10 +27,11 @@
 
 namespace kImageAnnotator {
 
-// A line that bends: drawn straight like a line, then bent by its bend
-// points, which the curve passes through in order, smoothly (a Catmull-Rom
-// spline, drawn as cubic Bezier curves). A new curve has one bend point
-// halfway; more can be added on the curve and removed again.
+// A line that bends: drawn straight, then bent by its bend points, which the
+// curve passes through in order, smoothly (a Catmull-Rom spline, drawn as
+// cubic Bezier curves). Bend points are added on the curve and removed
+// again. Arrow heads go where its properties say: at the end, the start,
+// both or neither.
 //
 // Points by index: 0 the start, 1 the end, 2 and up the bend points from the
 // start on. The bend points are kept relative to the two ends, so they
@@ -45,6 +46,7 @@ public:
 	void setPointAt(const QPointF &point, int index, bool snapToAngle) override;
 	QPointF pointAt(int index) const override;
 	bool requiresSelectionAfterCreation() const override;
+	void setProperties(const PropertiesPtr &properties) override;
 
 	int bendCount() const;
 	// The bend points in the form kept (relative to the ends), to restore them.
@@ -59,14 +61,13 @@ public:
 protected:
 	void updateShape() override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-	virtual bool hasArrowHead() const = 0;
 
 private:
 	// Each bend point as a share of the way from the start to the end, and a
 	// share of that length to the left of it (0 = on the straight line).
 	QList<QPointF> mBends;
 	QPainterPath mCurve; // stroked only
-	QPainterPath mHead;  // stroked and filled
+	QPainterPath mHeads; // stroked and filled
 
 	QPointF toPoint(const QPointF &bend) const;
 	std::optional<QPointF> toBend(const QPointF &point) const;

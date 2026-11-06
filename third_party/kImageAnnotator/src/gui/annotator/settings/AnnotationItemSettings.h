@@ -25,6 +25,7 @@
 #include "src/widgets/settingsPicker/ColorPicker.h"
 #include "src/widgets/settingsPicker/NumberPicker.h"
 #include "src/widgets/settingsPicker/FillModePicker.h"
+#include "src/widgets/settingsPicker/ArrowHeadsPicker.h"
 #include "src/widgets/settingsPicker/StickerPicker.h"
 #include "src/widgets/settingsPicker/BoolPicker.h"
 #include "src/widgets/settingsPicker/FontPicker.h"
@@ -49,6 +50,8 @@ public:
 	void setToolWidth(int width);
 	FillModes fillMode() const;
 	void setFillMode(FillModes mode);
+	ArrowHeads arrowHeads() const;
+	void setArrowHeads(ArrowHeads arrowHeads);
 	int obfuscationFactor() const;
 	void setObfuscationFactor(int factor);
 	QString sticker() const;
@@ -70,6 +73,7 @@ signals:
 	void toolTextColorChanged(const QColor &color);
 	void toolWidthChanged(int width);
 	void toolFillTypeChanged(FillModes fill);
+	void toolArrowHeadsChanged(ArrowHeads arrowHeads);
 	void notifyNumberToolSeedChanged(int newNumberToolSeed);
 	void obfuscateFactorChanged(int factor);
 	void stickerChanged(const QString &sticker);
@@ -84,6 +88,7 @@ private:
 	NumberPicker *mWidthPicker;
 	ColorPicker *mTextColorPicker;
 	FillModePicker *mFillModePicker;
+	ArrowHeadsPicker *mArrowHeadsPicker;
 	NumberPicker *mNumberToolSeedPicker;
 	NumberPicker *mObfuscateFactorPicker;
 	StickerPicker *mStickerPicker;

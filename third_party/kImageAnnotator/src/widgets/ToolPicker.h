@@ -40,6 +40,8 @@ public:
 	explicit ToolPicker(QWidget *parent);
 	~ToolPicker() override = default;
 	void setTool(Tools newTool);
+	// Shows `tool` on its group's button, without choosing it.
+	void showTool(Tools tool);
 	Tools tool();
 
 signals:

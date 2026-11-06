@@ -59,6 +59,11 @@ void AnnotationToolSelection::setOrientation(Qt::Orientation orientation)
 	AbstractAnnotationDockWidgetContent::setOrientation(orientation);
 }
 
+void AnnotationToolSelection::showTool(Tools tool)
+{
+	mToolPicker->showTool(tool);
+}
+
 QString AnnotationToolSelection::name() const
 {
 	return tr("Tool Selection");

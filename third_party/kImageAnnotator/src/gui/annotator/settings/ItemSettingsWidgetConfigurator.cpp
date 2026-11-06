@@ -65,6 +65,12 @@ void ItemSettingsWidgetConfigurator::setWidthWidget(NumberPicker *widget)
 	updateWidgets();
 }
 
+void ItemSettingsWidgetConfigurator::setArrowHeadsWidget(ArrowHeadsPicker *widget)
+{
+	mArrowHeadsWidget = widget;
+	updateWidgets();
+}
+
 void ItemSettingsWidgetConfigurator::setFillTypeWidget(FillModePicker *widget)
 {
 	mFillModeWidget = widget;
@@ -216,7 +222,6 @@ void ItemSettingsWidgetConfigurator::updateVisibility() const
 		case Tools::Arrow:
 		case Tools::DoubleArrow:
 		case Tools::Curve:
-		case Tools::CurveArrow:
 			setColorWidgetVisible(true);
 			setTextColorWidgetVisible(false);
 			setWidthWidgetVisible(true);
@@ -364,6 +369,10 @@ void ItemSettingsWidgetConfigurator::updateVisibility() const
 			break;
 		default:
 			qCritical("Unknown tool type in WidgetConfigurator");
+	}
+	// Only lines have arrow heads to choose.
+	if (mArrowHeadsWidget) {
+		mArrowHeadsWidget->setVisible(mCurrentTool == Tools::Curve);
 	}
 }
 

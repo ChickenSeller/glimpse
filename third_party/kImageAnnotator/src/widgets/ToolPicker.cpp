@@ -32,9 +32,22 @@ ToolPicker::ToolPicker(QWidget *parent) :
 	setFocusPolicy(Qt::ClickFocus);
 }
 
+void ToolPicker::showTool(Tools tool)
+{
+	auto action = mActionToTool.key(tool);
+	if (action != nullptr) {
+		mActionToButton[action]->setDefaultAction(action);
+	}
+}
+
 void ToolPicker::setTool(Tools newTool)
 {
 	auto action = mActionToTool.key(newTool);
+	if (action == nullptr) {
+		// A tool not offered here (any more): the select tool instead.
+		newTool = Tools::Select;
+		action = mActionToTool.key(newTool);
+	}
 	auto button = mActionToButton[action];
 	button->setDefaultAction(action);
 	action->setChecked(true);
@@ -56,18 +69,12 @@ void ToolPicker::initGui()
 	action = createAction(tr("Duplicate"), IconLoader::load(QLatin1String("duplicate.svg")), Qt::Key_U, Tools::Duplicate);
 	createButton(action);
 
-	auto menu = new QMenu(this);
-	action = createAction(tr("Arrow"), IconLoader::load(QLatin1String("arrow.svg")), Qt::Key_A, Tools::Arrow);
-	menu->addAction(action);
-	action = createAction(tr("Double Arrow"), IconLoader::load(QLatin1String("doubleArrow.svg")), Qt::Key_D, Tools::DoubleArrow);
-	menu->addAction(action);
-	action = createAction(tr("Line"), IconLoader::load(QLatin1String("line.svg")), Qt::Key_L, Tools::Line);
-	menu->addAction(action);
-	action = createAction(tr("Curved Arrow"), IconLoader::load(QLatin1String("curveArrow.svg")), Qt::Key_Y, Tools::CurveArrow);
-	menu->addAction(action);
-	action = createAction(tr("Curve"), IconLoader::load(QLatin1String("curve.svg")), Qt::Key_V, Tools::Curve);
-	menu->addAction(action);
-	createButton(menu);
+	// Glimpse: one tool for lines and arrows, straight or bent, with arrow
+	// heads at either end, both or none.
+	action = createAction(tr("Lines and Arrows"), IconLoader::load(QLatin1String("arrow.svg")), Qt::Key_A, Tools::Curve);
+	createButton(action);
+
+	QMenu *menu;
 
 	action = createAction(tr("Pen"), IconLoader::load(QLatin1String("pen.svg")), Qt::Key_P, Tools::Pen);
 	createButton(action);

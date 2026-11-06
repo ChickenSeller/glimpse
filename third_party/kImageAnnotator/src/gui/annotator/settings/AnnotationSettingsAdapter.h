@@ -53,6 +53,7 @@ public:
 	int toolWidth() const override;
 	QFont font() const override;
 	FillModes fillType() const override;
+	ArrowHeads arrowHeads() const override;
 	int obfuscationFactor() const override;
 	QString sticker() const override;
 	ImageEffects effect() const override;
@@ -83,6 +84,7 @@ private slots:
 	void toolTextColorChanged(const QColor &color);
 	void toolWidthChanged(int width);
 	void toolFillTypeChanged(FillModes fill);
+	void toolArrowHeadsChanged(ArrowHeads arrowHeads);
 	void notifyNumberToolSeedChanged(int newNumberToolSeed);
 	void obfuscateFactorChanged(int factor);
 	void stickerChanged(const QString &sticker);

@@ -39,19 +39,28 @@ only when needed, and listed below.
   rectangle, its apex on the edge where the drag started, so dragging
   upwards draws it pointing down. Same settings as the rectangle. Added last
   to the `Tools` enum, since tool settings are stored by the tool's number.
-- **Curve and Curved Arrow** (`src/annotations/items/AbstractAnnotationCurve.*`,
-  `AnnotationCurve.*`, `AnnotationCurveArrow.*`,
-  `src/annotations/modifiers/resizeHandles/CurveResizeHandles.*`,
-  `src/annotations/undo/CurveBendsCommand.*`; shortcuts V and Y, with Arrow
-  and Line): drawn straight like a line, with one bend point halfway. The
-  curve passes smoothly through its bend points in order (a Catmull-Rom
-  spline, drawn as cubic Bezier curves); a double-click on a selected curve
-  adds a bend point there, or removes the one it is on, as an undoable step.
-  Bend points are kept relative to the two ends, so they follow them. The
-  curved arrow's head points along the curve at its end; its shaft is
-  stroked only, its head stroked and filled, since kImageAnnotator's own
-  painting would fill the area under the curve. Added last to the `Tools`
+- **Lines and Arrows** (tool `Curve`, shortcut A, in place of Arrow, Double
+  Arrow and Line, which are no longer offered; a saved choice of one of them
+  becomes this tool): `src/annotations/items/AbstractAnnotationCurve.*`,
+  `AnnotationCurve.*`, `src/annotations/modifiers/resizeHandles/CurveResizeHandles.*`,
+  `src/annotations/undo/CurveBendsCommand.*`. Drawn straight; a
+  double-click on a selected line adds a bend point there, or removes the
+  one it is on, as an undoable step, and the line passes smoothly through
+  its bend points (a Catmull-Rom spline, drawn as cubic Bezier curves). Bend
+  points are kept relative to the two ends, so they follow them. Its shaft
+  is stroked only and its heads stroked and filled, since kImageAnnotator's
+  own painting would fill the area under a curve. Added last to the `Tools`
   enum.
+- **Arrow heads** (`src/common/enum/ArrowHeads.h`,
+  `src/widgets/settingsPicker/ArrowHeadsPicker.*`, and the properties,
+  settings provider, config and settings bar): a line's arrow heads, none,
+  at the end, at the start or at both, chosen in the settings bar like the
+  fill, saved per tool (at the end by default) and changeable on a selected
+  line.
+- **Each group remembers its tool** (`src/backend/Config.*`,
+  `src/widgets/ToolPicker.*`, `AnnotationToolSelection`, settings adapter):
+  the tools chosen lately are saved, and each group's button shows the one
+  last chosen in it when the editor opens again.
 - **Adjusting a curve right after drawing it**
   (`src/annotations/core/AnnotationArea.*`,
   `src/annotations/modifiers/AnnotationItemModifier.*`): a new curve is

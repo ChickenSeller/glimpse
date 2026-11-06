@@ -36,7 +36,6 @@
 #include "src/annotations/items/AnnotationEllipse.h"
 #include "src/annotations/items/AnnotationTriangle.h"
 #include "src/annotations/items/AnnotationCurve.h"
-#include "src/annotations/items/AnnotationCurveArrow.h"
 #include "src/annotations/items/AnnotationNumber.h"
 #include "src/annotations/items/AnnotationNumberPointer.h"
 #include "src/annotations/items/AnnotationNumberArrow.h"

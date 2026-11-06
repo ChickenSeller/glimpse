@@ -25,6 +25,7 @@
 #include "src/common/enum/Tools.h"
 #include "src/widgets/settingsPicker/ColorPicker.h"
 #include "src/widgets/settingsPicker/FillModePicker.h"
+#include "src/widgets/settingsPicker/ArrowHeadsPicker.h"
 #include "src/widgets/ToolPicker.h"
 #include "src/widgets/settingsPicker/NumberPicker.h"
 #include "src/widgets/settingsPicker/StickerPicker.h"
@@ -43,6 +44,7 @@ public:
 	void setTextColorWidget(ColorPicker *widget);
 	void setWidthWidget(NumberPicker *widget);
 	void setFillTypeWidget(FillModePicker *widget);
+	void setArrowHeadsWidget(ArrowHeadsPicker *widget);
 	void setFirstNumberWidget(NumberPicker *widget);
 	void setObfuscateFactorWidget(NumberPicker *widget);
 	void setStickerWidget(StickerPicker *widget);
@@ -57,6 +59,7 @@ private:
 	ColorPicker *mTextColorWidget;
 	NumberPicker *mWidthWidget;
 	FillModePicker *mFillModeWidget;
+	ArrowHeadsPicker *mArrowHeadsWidget = nullptr;
 	NumberPicker *mFirstNumberWidget;
 	NumberPicker *mObfuscateFactorWidget;
 	StickerPicker *mStickerWidget;

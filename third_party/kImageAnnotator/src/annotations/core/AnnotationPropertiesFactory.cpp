@@ -47,6 +47,7 @@ PropertiesPtr AnnotationPropertiesFactory::create(Tools tool, bool fromConfig) c
 	setTextColor(properties);
 	setWidthSize(properties);
 	setFill(properties, tool);
+	properties->setArrowHeads(fromConfig ? mConfig->toolArrowHeads(tool) : mSettingsProvider->arrowHeads());
 	setShadowEnabled(properties, tool, fromConfig);
 	setPathProperties(properties);
 	setTextProperties(properties);

@@ -45,6 +45,7 @@ AnnotationSettingsAdapter::AnnotationSettingsAdapter(
 	connect(mItemSettings, &AnnotationItemSettings::toolWidthChanged, this, &AnnotationSettingsAdapter::toolWidthChanged);
 	connect(mItemSettings, &AnnotationItemSettings::toolTextColorChanged, this, &AnnotationSettingsAdapter::toolTextColorChanged);
 	connect(mItemSettings, &AnnotationItemSettings::toolFillTypeChanged, this, &AnnotationSettingsAdapter::toolFillTypeChanged);
+	connect(mItemSettings, &AnnotationItemSettings::toolArrowHeadsChanged, this, &AnnotationSettingsAdapter::toolArrowHeadsChanged);
 	connect(mItemSettings, &AnnotationItemSettings::notifyNumberToolSeedChanged, this, &AnnotationSettingsAdapter::notifyNumberToolSeedChanged);
 	connect(mItemSettings, &AnnotationItemSettings::obfuscateFactorChanged, this, &AnnotationSettingsAdapter::obfuscateFactorChanged);
 	connect(mItemSettings, &AnnotationItemSettings::stickerChanged, this, &AnnotationSettingsAdapter::stickerChanged);
@@ -94,6 +95,11 @@ QFont AnnotationSettingsAdapter::font() const
 	return mItemSettings->font();
 }
 
+ArrowHeads AnnotationSettingsAdapter::arrowHeads() const
+{
+	return mItemSettings->arrowHeads();
+}
+
 FillModes AnnotationSettingsAdapter::fillType() const
 {
 	return mItemSettings->fillMode();
@@ -141,6 +147,9 @@ void AnnotationSettingsAdapter::updateZoomLevel(double value)
 
 void AnnotationSettingsAdapter::reloadConfig()
 {
+	for (auto tool : mConfig->recentTools()) {
+		mToolSettings->showTool(tool);
+	}
 	mToolSettings->setToolType(mConfig->selectedTool());
 	mImageSettings->setEffect(ImageEffects::NoEffect);
 	mItemSettings->setUpForTool(toolType());
@@ -168,6 +177,7 @@ void AnnotationSettingsAdapter::loadFromConfig(Tools tool)
 	mItemSettings->setTextColor(mConfig->toolTextColor(tool));
 	mItemSettings->setToolWidth(mConfig->toolWidth(tool));
 	mItemSettings->setFillMode(mConfig->toolFillType(tool));
+	mItemSettings->setArrowHeads(mConfig->toolArrowHeads(tool));
 	mItemSettings->setFont(mConfig->toolFont(tool));
 	mItemSettings->setObfuscationFactor(mConfig->obfuscationFactor(tool));
 	mItemSettings->setShadowEnabled(mConfig->shadowEnabled(tool));
@@ -183,6 +193,7 @@ void AnnotationSettingsAdapter::loadFromItem(const AbstractAnnotationItem *item)
 	mItemSettings->setTextColor(properties->textColor());
 	mItemSettings->setToolWidth(properties->width());
 	mItemSettings->setFillMode(properties->fillType());
+	mItemSettings->setArrowHeads(properties->arrowHeads());
 	mItemSettings->setShadowEnabled(properties->shadowEnabled());
 	mItemSettings->setOpacity(properties->opacity());
 
@@ -230,6 +241,13 @@ void AnnotationSettingsAdapter::toolWidthChanged(int width)
 {
 	configChanged([&](Tools tool){
 		mConfig->setToolWidth(width, tool);
+	});
+}
+
+void AnnotationSettingsAdapter::toolArrowHeadsChanged(ArrowHeads arrowHeads)
+{
+	configChanged([&](Tools tool){
+		mConfig->setToolArrowHeads(arrowHeads, tool);
 	});
 }
 

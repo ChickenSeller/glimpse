@@ -27,6 +27,7 @@ AnnotationItemSettings::AnnotationItemSettings() :
 	mWidthPicker(new NumberPicker(this)),
 	mTextColorPicker(new ColorPicker(this)),
 	mFillModePicker(new FillModePicker(this)),
+	mArrowHeadsPicker(new ArrowHeadsPicker(this)),
 	mNumberToolSeedPicker(new NumberPicker(this)),
 	mObfuscateFactorPicker(new NumberPicker(this)),
 	mStickerPicker(new StickerPicker(this)),
@@ -74,6 +75,7 @@ void AnnotationItemSettings::initGui()
 	insertPickerWidget(mColorPicker);
 	insertPickerWidget(mWidthPicker);
 	insertPickerWidget(mFillModePicker);
+	insertPickerWidget(mArrowHeadsPicker);
 	insertPickerWidget(mTextColorPicker);
 	insertPickerWidget(mFontPicker);
 	insertPickerWidget(mNumberToolSeedPicker);
@@ -87,6 +89,7 @@ void AnnotationItemSettings::initGui()
 	mWidgetConfigurator.setTextColorWidget(mTextColorPicker);
 	mWidgetConfigurator.setWidthWidget(mWidthPicker);
 	mWidgetConfigurator.setFillTypeWidget(mFillModePicker);
+	mWidgetConfigurator.setArrowHeadsWidget(mArrowHeadsPicker);
 	mWidgetConfigurator.setFirstNumberWidget(mNumberToolSeedPicker);
 	mWidgetConfigurator.setObfuscateFactorWidget(mObfuscateFactorPicker);
 	mWidgetConfigurator.setStickerWidget(mStickerPicker);
@@ -105,6 +108,7 @@ void AnnotationItemSettings::initGui()
 	connect(mWidthPicker, &NumberPicker::numberSelected, this, &AnnotationItemSettings::toolWidthChanged);
 	connect(mTextColorPicker, &ColorPicker::colorSelected, this, &AnnotationItemSettings::toolTextColorChanged);
 	connect(mFillModePicker, &FillModePicker::fillSelected, this, &AnnotationItemSettings::toolFillTypeChanged);
+	connect(mArrowHeadsPicker, &ArrowHeadsPicker::arrowHeadsSelected, this, &AnnotationItemSettings::toolArrowHeadsChanged);
 	connect(mNumberToolSeedPicker, &NumberPicker::numberSelected, this, &AnnotationItemSettings::notifyNumberToolSeedChanged);
 	connect(mObfuscateFactorPicker, &NumberPicker::numberSelected, this, &AnnotationItemSettings::obfuscateFactorChanged);
 	connect(mStickerPicker, &StickerPicker::stickerSelected, this, &AnnotationItemSettings::stickerChanged);
@@ -157,6 +161,16 @@ int AnnotationItemSettings::toolWidth() const
 void AnnotationItemSettings::setToolWidth(int width)
 {
 	mWidthPicker->setNumber(width);
+}
+
+ArrowHeads AnnotationItemSettings::arrowHeads() const
+{
+	return mArrowHeadsPicker->arrowHeads();
+}
+
+void AnnotationItemSettings::setArrowHeads(ArrowHeads arrowHeads)
+{
+	mArrowHeadsPicker->setArrowHeads(arrowHeads);
 }
 
 FillModes AnnotationItemSettings::fillMode() const

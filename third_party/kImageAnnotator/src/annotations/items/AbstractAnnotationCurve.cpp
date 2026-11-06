@@ -54,8 +54,7 @@ qreal distanceToSegment(const QPointF &p, const QPointF &a, const QPointF &b)
 } // namespace
 
 AbstractAnnotationCurve::AbstractAnnotationCurve(const QPointF &startPosition, const PropertiesPtr &properties) :
-	AbstractAnnotationLine(startPosition, properties),
-	mBends{QPointF(0.5, 0)}
+	AbstractAnnotationLine(startPosition, properties)
 {
 }
 
@@ -204,36 +203,52 @@ bool AbstractAnnotationCurve::requiresSelectionAfterCreation() const
 	return true;
 }
 
+// Arrow heads and their size come from the properties.
+void AbstractAnnotationCurve::setProperties(const PropertiesPtr &properties)
+{
+	AbstractAnnotationLine::setProperties(properties);
+	updateShape();
+}
+
 void AbstractAnnotationCurve::updateShape()
 {
 	QList<QPointF> points = curvePoints();
-	QList<QPointF> controls = controlPoints(points);
-	const QPointF end = points.last();
+	const QList<QPointF> controls = controlPoints(points);
+	const auto heads = properties()->arrowHeads();
 
-	mHead = QPainterPath();
-	if (hasArrowHead()) {
-		// The head points along the curve at its end.
-		QLineF tangent(controls.last(), end);
+	// A head at `tip`, pointing along the curve away from `inner`; the shaft
+	// then stops a little short of the tip.
+	mHeads = QPainterPath();
+	const auto addHead = [this, &points](int tipIndex, const QPointF &inner, const QPointF &fallback) {
+		const QPointF tip = points[tipIndex];
+		QLineF tangent(inner, tip);
 		if (tangent.length() < 1) {
-			tangent = QLineF(points[points.size() - 2], end);
+			tangent = QLineF(fallback, tip);
 		}
 		auto head = AnnotationShapeCreator::createArrowHead(properties()->width() / 2);
-		head = AnnotationShapeCreator::translate(head, end, -tangent.angle());
-		mHead.addPolygon(head);
-		mHead.closeSubpath();
+		head = AnnotationShapeCreator::translate(head, tip, -tangent.angle());
+		mHeads.addPolygon(head);
+		mHeads.closeSubpath();
 
-		QLineF shortened(end, tangent.p1());
+		QLineF shortened(tip, tangent.p1());
 		shortened.setLength(std::min(kShaftShortening, tangent.length()));
-		points.last() = shortened.p2();
+		points[tipIndex] = shortened.p2();
+	};
+	const int last = int(points.size()) - 1;
+	if (heads == ArrowHeads::End || heads == ArrowHeads::Both) {
+		addHead(last, controls.last(), points[last - 1]);
+	}
+	if (heads == ArrowHeads::Start || heads == ArrowHeads::Both) {
+		addHead(0, controls.first(), points[1]);
 	}
 
 	mCurve = QPainterPath(points.first());
-	for (int i = 0; i + 1 < points.size(); ++i) {
+	for (int i = 0; i < last; ++i) {
 		mCurve.cubicTo(controls[2 * i], controls[2 * i + 1], points[i + 1]);
 	}
 
 	QPainterPath shape = mCurve;
-	shape.addPath(mHead);
+	shape.addPath(mHeads);
 	setShape(shape);
 }
 
@@ -245,9 +260,9 @@ void AbstractAnnotationCurve::paint(QPainter *painter, const QStyleOptionGraphic
 	painter->setPen(painterPen());
 	painter->setBrush(Qt::NoBrush);
 	painter->drawPath(mCurve);
-	if (!mHead.isEmpty()) {
+	if (!mHeads.isEmpty()) {
 		painter->setBrush(painterPen().color());
-		painter->drawPath(mHead);
+		painter->drawPath(mHeads);
 	}
 }
 

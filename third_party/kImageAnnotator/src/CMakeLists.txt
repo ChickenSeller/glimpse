@@ -86,7 +86,6 @@ set(KIMAGEANNOTATOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationMarkerRect.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationArrow.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationCurve.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationCurveArrow.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationDoubleArrow.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationRect.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/items/AnnotationEllipse.cpp
@@ -160,6 +159,7 @@ set(KIMAGEANNOTATOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/widgets/settingsPicker/NumberPicker.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/widgets/settingsPicker/BoolPicker.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/widgets/settingsPicker/FillModePicker.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/widgets/settingsPicker/ArrowHeadsPicker.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/widgets/settingsPicker/FontPicker.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/widgets/settingsPicker/SettingsPickerWidget.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/widgets/settingsPicker/StickerPicker.cpp

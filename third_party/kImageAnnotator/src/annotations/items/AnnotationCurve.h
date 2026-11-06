@@ -24,7 +24,7 @@
 
 namespace kImageAnnotator {
 
-// A curve without an arrow head.
+// A line, straight or bent, with arrow heads where its properties say.
 class AnnotationCurve : public AbstractAnnotationCurve
 {
 public:
@@ -32,9 +32,6 @@ public:
 	AnnotationCurve(const AnnotationCurve &other);
 	~AnnotationCurve() override = default;
 	Tools toolType() const override;
-
-protected:
-	bool hasArrowHead() const override;
 };
 
 } // namespace kImageAnnotator

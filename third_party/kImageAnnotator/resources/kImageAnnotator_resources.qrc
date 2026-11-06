@@ -13,8 +13,10 @@
         <file alias="markerEllipse.svg" >icons/dark/markerEllipse.svg</file>
         <file alias="modifycanvas.svg" >icons/dark/modifycanvas.svg</file>
         <file alias="line.svg" >icons/dark/line.svg</file>
-        <file alias="curve.svg" >icons/dark/curve.svg</file>
-        <file alias="curveArrow.svg" >icons/dark/curveArrow.svg</file>
+        <file alias="arrowHeads_none.svg" >icons/dark/arrowHeads_none.svg</file>
+        <file alias="arrowHeads_end.svg" >icons/dark/arrowHeads_end.svg</file>
+        <file alias="arrowHeads_start.svg" >icons/dark/arrowHeads_start.svg</file>
+        <file alias="arrowHeads_both.svg" >icons/dark/arrowHeads_both.svg</file>
         <file alias="pen.svg" >icons/dark/pen.svg</file>
         <file alias="rect.svg" >icons/dark/rect.svg</file>
         <file alias="redo.svg" >icons/dark/redo.svg</file>
@@ -69,8 +71,10 @@
         <file alias="markerEllipse.svg" >icons/light/markerEllipse.svg</file>
         <file alias="modifycanvas.svg" >icons/light/modifycanvas.svg</file>
         <file alias="line.svg" >icons/light/line.svg</file>
-        <file alias="curve.svg" >icons/light/curve.svg</file>
-        <file alias="curveArrow.svg" >icons/light/curveArrow.svg</file>
+        <file alias="arrowHeads_none.svg" >icons/light/arrowHeads_none.svg</file>
+        <file alias="arrowHeads_end.svg" >icons/light/arrowHeads_end.svg</file>
+        <file alias="arrowHeads_start.svg" >icons/light/arrowHeads_start.svg</file>
+        <file alias="arrowHeads_both.svg" >icons/light/arrowHeads_both.svg</file>
         <file alias="pen.svg" >icons/light/pen.svg</file>
         <file alias="rect.svg" >icons/light/rect.svg</file>
         <file alias="redo.svg" >icons/light/redo.svg</file>

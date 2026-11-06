@@ -33,6 +33,8 @@ public:
 	~AnnotationToolSelection() override;
 	Tools toolType() const;
 	void setToolType(Tools tool);
+	// Shows `tool` on its group's button, without choosing it.
+	void showTool(Tools tool);
 	void setOrientation(Qt::Orientation orientation) override;
 	QString name() const override;
 

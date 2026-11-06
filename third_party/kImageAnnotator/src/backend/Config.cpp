@@ -41,7 +41,6 @@ Config::Config(const QSharedPointer<ISettings> &settings) :
 		Tools::Arrow,
 		Tools::DoubleArrow,
 		Tools::Curve,
-		Tools::CurveArrow,
 		Tools::Rect,
 		Tools::Ellipse,
 		Tools::Triangle,
@@ -74,6 +73,39 @@ void Config::setSelectedToolType(Tools tool)
 
 	mSelectTool = tool;
 	saveToolType(tool);
+
+	mRecentTools.removeAll(tool);
+	mRecentTools.append(tool);
+	if (mSaveToolSelection) {
+		QVariantList tools;
+		for (auto recent : mRecentTools) {
+			tools.append(static_cast<int>(recent));
+		}
+		mSettings->setValue(ConfigNameHelper::recentTools(), tools);
+		mSettings->sync();
+	}
+}
+
+QList<Tools> Config::recentTools() const
+{
+	return mRecentTools;
+}
+
+ArrowHeads Config::toolArrowHeads(Tools tool) const
+{
+	return mToolToArrowHeads.value(tool, defaultToolArrowHeads(tool));
+}
+
+void Config::setToolArrowHeads(ArrowHeads arrowHeads, Tools tool)
+{
+	if (toolArrowHeads(tool) == arrowHeads) {
+		return;
+	}
+	mToolToArrowHeads[tool] = arrowHeads;
+	if (mSaveToolSelection) {
+		mSettings->setValue(ConfigNameHelper::toolArrowHeads(tool), static_cast<int>(arrowHeads));
+		mSettings->sync();
+	}
 }
 
 QColor Config::toolColor(Tools tool) const
@@ -314,7 +346,40 @@ void Config::initToolSettings()
 void Config::initSelectedTool()
 {
 	mSelectTool = loadToolType();
+
+	mRecentTools.clear();
+	mToolToArrowHeads.clear();
+	if (mSaveToolSelection) {
+		const auto tools = mSettings->value(ConfigNameHelper::recentTools(), QVariantList()).toList();
+		for (const auto &value : tools) {
+			const auto tool = currentTool(static_cast<Tools>(value.toInt()));
+			mRecentTools.removeAll(tool);
+			mRecentTools.append(tool);
+		}
+		for (auto toolType : mAllTools) {
+			const auto value = mSettings->value(ConfigNameHelper::toolArrowHeads(toolType), QVariant());
+			if (value.isValid()) {
+				mToolToArrowHeads[toolType] = static_cast<ArrowHeads>(value.toInt());
+			}
+		}
+	}
 };
+
+// The tool that stands for `tool` now: the line tools are one since Glimpse
+// made them one, and a tool no longer offered is none.
+Tools Config::currentTool(Tools tool)
+{
+	switch (tool) {
+		case Tools::Arrow:
+		case Tools::DoubleArrow:
+		case Tools::Line:
+			return Tools::Curve;
+		default:
+			break;
+	}
+	const auto value = static_cast<int>(tool);
+	return value >= 0 && value <= static_cast<int>(Tools::Curve) ? tool : defaultToolType();
+}
 
 void Config::initToolColors()
 {
@@ -478,7 +543,7 @@ void Config::saveToolFont(Tools tool, const QFont &font)
 Tools Config::loadToolType()
 {
 	if (mSaveToolSelection) {
-		return mSettings->value(ConfigNameHelper::toolType(), static_cast<int>(defaultToolType())).value<Tools>();
+		return currentTool(mSettings->value(ConfigNameHelper::toolType(), static_cast<int>(defaultToolType())).value<Tools>());
 	} else {
 		return defaultToolType();
 	}
@@ -568,7 +633,6 @@ QColor Config::defaultToolColor(Tools toolType)
 		case Tools::MarkerEllipse:
 			return { Qt::yellow };
 		case Tools::Line:
-		case Tools::Curve:
 			return { Qt::blue };
 		case Tools::Rect:
 			return { Qt::gray };
@@ -606,7 +670,7 @@ int Config::defaultToolWidth(Tools toolType)
 			return 30;
 		case Tools::Arrow:
 		case Tools::DoubleArrow:
-		case Tools::CurveArrow:
+		case Tools::Curve:
 			return 6;
 		case Tools::Number:
 			return 5;
@@ -622,12 +686,16 @@ int Config::defaultToolWidth(Tools toolType)
 	}
 }
 
+ArrowHeads Config::defaultToolArrowHeads(Tools toolType)
+{
+	return toolType == Tools::Curve ? ArrowHeads::End : ArrowHeads::None;
+}
+
 FillModes Config::defaultToolFillMode(Tools toolType)
 {
 	switch (toolType) {
 		case Tools::Arrow:
 		case Tools::DoubleArrow:
-		case Tools::CurveArrow:
 		case Tools::Rect:
 		case Tools::Number:
 		case Tools::NumberPointer:
@@ -688,7 +756,6 @@ bool Config::defaultShadowEnabled(Tools tool)
 		case Tools::Arrow:
 		case Tools::DoubleArrow:
 		case Tools::Curve:
-		case Tools::CurveArrow:
 		case Tools::Rect:
 		case Tools::Ellipse:
 		case Tools::Triangle:

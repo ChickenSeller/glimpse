@@ -29,6 +29,7 @@
 #include "ISettings.h"
 #include "src/common/enum/Tools.h"
 #include "src/common/enum/FillModes.h"
+#include "src/common/enum/ArrowHeads.h"
 #include "src/common/enum/NumberUpdateMode.h"
 #include "src/common/helper/ConfigNameHelper.h"
 
@@ -56,6 +57,12 @@ public slots:
 
 	FillModes toolFillType(Tools tool) const;
 	void setToolFillType(FillModes fillType, Tools tool);
+
+	ArrowHeads toolArrowHeads(Tools tool) const;
+	void setToolArrowHeads(ArrowHeads arrowHeads, Tools tool);
+
+	// The tools chosen lately, most recently chosen last, each once.
+	QList<Tools> recentTools() const;
 
 	QFont toolFont(Tools tool) const;
 	void setToolFont(const QFont &font, Tools tool);
@@ -106,6 +113,8 @@ private:
 	QHash<Tools, QColor> mToolToTextColor;
 	QHash<Tools, int> mToolToWidth;
 	QHash<Tools, FillModes> mToolToFillType;
+	QHash<Tools, ArrowHeads> mToolToArrowHeads;
+	QList<Tools> mRecentTools;
 	QHash<Tools, QFont> mToolToFont;
 	QHash<Tools, int> mToolToObfuscationFactor;
 	QHash<Tools, bool> mToolToShadowEnabled;
@@ -157,6 +166,8 @@ private:
 	static QColor defaultToolTextColor(Tools toolType);
 	static int defaultToolWidth(Tools toolType);
 	static FillModes defaultToolFillMode(Tools toolType);
+	static ArrowHeads defaultToolArrowHeads(Tools toolType);
+	static Tools currentTool(Tools tool);
 	static QFont defaultToolFont(Tools tool);
 	static Tools defaultToolType();
 	static int defaultObfuscateFactor();

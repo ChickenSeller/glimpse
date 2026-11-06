@@ -48,8 +48,7 @@ enum class Tools
 	Pixelate,
 	Duplicate,
 	Triangle,
-	Curve,
-	CurveArrow
+	Curve
 };
 
 inline uint qHash(const Tools &tool, uint seed)

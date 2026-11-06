@@ -486,12 +486,8 @@ Rotating by non 90° multipliers might introduce loss of quality.</source>
         <translation>三角形</translation>
     </message>
     <message>
-        <source>Curve</source>
-        <translation>曲线</translation>
-    </message>
-    <message>
-        <source>Curved Arrow</source>
-        <translation>曲线箭头</translation>
+        <source>Lines and Arrows</source>
+        <translation>线条和箭头</translation>
     </message>
     <message>
         <source>Number Pointer</source>
@@ -547,6 +543,29 @@ Rotating by non 90° multipliers might introduce loss of quality.</source>
     <message>
         <source>Fit image to view (%1)</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>kImageAnnotator::ArrowHeadsPicker</name>
+    <message>
+        <source>Arrow Heads</source>
+        <translation>箭头</translation>
+    </message>
+    <message>
+        <source>No Arrow Heads</source>
+        <translation>无箭头</translation>
+    </message>
+    <message>
+        <source>At the End</source>
+        <translation>终点</translation>
+    </message>
+    <message>
+        <source>At the Start</source>
+        <translation>起点</translation>
+    </message>
+    <message>
+        <source>At Both Ends</source>
+        <translation>两端</translation>
     </message>
 </context>
 </TS>

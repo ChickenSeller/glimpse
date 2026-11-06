@@ -24,6 +24,7 @@
 #include <QSharedPointer>
 
 #include "src/common/enum/FillModes.h"
+#include "src/common/enum/ArrowHeads.h"
 
 namespace kImageAnnotator {
 
@@ -45,6 +46,8 @@ public:
 	void setWidth(int size);
 	FillModes fillType() const;
 	void setFillType(FillModes fillType);
+	ArrowHeads arrowHeads() const;
+	void setArrowHeads(ArrowHeads arrowHeads);
 	bool shadowEnabled() const;
 	void setShadowEnabled(bool enabled);
 	qreal opacity() const;
@@ -56,6 +59,7 @@ private:
 	QColor mTextColor;
 	int mWidth;
 	FillModes mFillType;
+	ArrowHeads mArrowHeads = ArrowHeads::None;
 	bool mShadowEnabled{};
 	qreal mOpacity{};
 };

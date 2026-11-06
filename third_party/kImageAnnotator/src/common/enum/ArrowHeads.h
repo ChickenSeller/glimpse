@@ -17,27 +17,24 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "AnnotationCurveArrow.h"
+#ifndef KIMAGEANNOTATOR_ARROWHEADS_H
+#define KIMAGEANNOTATOR_ARROWHEADS_H
+
+#include <QMetaType>
 
 namespace kImageAnnotator {
 
-AnnotationCurveArrow::AnnotationCurveArrow(const QPointF &startPosition, const PropertiesPtr &properties) :
-	AbstractAnnotationCurve(startPosition, properties)
+// Where a line has arrow heads.
+enum class ArrowHeads
 {
-}
-
-AnnotationCurveArrow::AnnotationCurveArrow(const AnnotationCurveArrow &other) : AbstractAnnotationCurve(other)
-{
-}
-
-Tools AnnotationCurveArrow::toolType() const
-{
-	return Tools::CurveArrow;
-}
-
-bool AnnotationCurveArrow::hasArrowHead() const
-{
-	return true;
-}
+	None,
+	End,
+	Start,
+	Both
+};
 
 } // namespace kImageAnnotator
+
+Q_DECLARE_METATYPE(kImageAnnotator::ArrowHeads);
+
+#endif // KIMAGEANNOTATOR_ARROWHEADS_H

@@ -35,9 +35,4 @@ Tools AnnotationCurve::toolType() const
 	return Tools::Curve;
 }
 
-bool AnnotationCurve::hasArrowHead() const
-{
-	return false;
-}
-
 } // namespace kImageAnnotator

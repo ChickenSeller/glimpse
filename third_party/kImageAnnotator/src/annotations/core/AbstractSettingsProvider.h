@@ -26,6 +26,7 @@
 #include "ISettingsListener.h"
 #include "ZoomValueProvider.h"
 #include "src/common/enum/FillModes.h"
+#include "src/common/enum/ArrowHeads.h"
 #include "src/annotations/items/AbstractAnnotationItem.h"
 
 namespace kImageAnnotator {
@@ -43,6 +44,7 @@ public:
 	virtual int toolWidth() const = 0;
 	virtual QFont font() const = 0;
 	virtual FillModes fillType() const = 0;
+	virtual ArrowHeads arrowHeads() const = 0;
 	virtual int obfuscationFactor() const = 0;
 	virtual QString sticker() const = 0;
 	virtual ImageEffects effect() const = 0;
