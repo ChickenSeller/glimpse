@@ -23,10 +23,15 @@ constexpr int kMinDistinctive = 16;
 constexpr double kColumnMatch = 0.9;
 // Share of the content that, the same in place, shows the view unmoved
 // right away. Animations (a spinning icon, an animated picture) keep frames
-// from ever repeating exactly; below this, staying put must fit better than
-// any shift does, down to kMaybeUnmoved.
+// from ever repeating exactly: down to kMaybeUnmoved, the view is unmoved
+// when what changed is found nowhere else in the previous frame. (A large
+// still part, a toolbar above a list that scrolled, keeps the share high
+// too; there what changed is the list, found a few rows away.)
 constexpr double kUnmoved = 0.95;
-constexpr double kMaybeUnmoved = 0.5;
+constexpr double kMaybeUnmoved = 0.85;
+// Share of the changed segments that, found shifted in the previous frame,
+// show that something scrolled.
+constexpr double kExplained = 0.3;
 // Otherwise a shift is taken when it stands out: its content matches at least
 // this well, and this many times better than at any shift apart from it.
 // Overshooting leaves every shift matching poorly and none standing out.
@@ -96,13 +101,33 @@ bool ScrollStitcher::unmoved(const Signature &next) const
         return true;
     if (still < kMaybeUnmoved)
         return false;
-    // Where the page is mostly blank, a few animations are much of the
-    // content. Segments the same down a whole column (a sidebar's border)
-    // match at every shift alike, so they do not tip this.
+    // The content segments that changed in place.
+    const Signature &prev = m_previousSignature;
     const int rows = int(next.hashes.size() / kSegments);
-    for (int shift = 1; shift <= rows - kMinOverlap; ++shift) {
-        if (contentMatch(next, shift) >= still || contentMatch(next, -shift) >= still)
-            return false;
+    std::vector<std::pair<int, int>> changed; // row, segment
+    for (int y = 0; y < rows; ++y) {
+        for (int k = 0; k < kSegments; ++k) {
+            const size_t i = size_t(y) * kSegments + k;
+            if (next.content[i] && next.hashes[i] != prev.hashes[i])
+                changed.emplace_back(y, k);
+        }
+    }
+    if (changed.empty())
+        return true;
+    // Scrolled content turns up a few rows away in the previous frame; an
+    // animation's new look turns up nowhere.
+    const size_t needed = std::max<size_t>(kMinDistinctive, size_t(kExplained * changed.size()));
+    for (int shift = 1; shift < rows; ++shift) {
+        for (const int direction : {shift, -shift}) {
+            size_t found = 0;
+            for (const auto &[y, k] : changed) {
+                const int from = y + direction;
+                if (from >= 0 && from < rows && next.hashes[size_t(y) * kSegments + k] == prev.hashes[size_t(from) * kSegments + k])
+                    ++found;
+            }
+            if (found >= needed)
+                return false;
+        }
     }
     return true;
 }
