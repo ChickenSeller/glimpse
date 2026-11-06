@@ -1943,8 +1943,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+7"/>
-        <source>Show &amp;keys pressed (at the bottom)</source>
-        <translation>在底部显示按下的按键(&amp;K)</translation>
+        <source>Show &amp;keys pressed</source>
+        <translation>显示按下的按键(&amp;K)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2257,6 +2257,66 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+1"/>
         <source>High (charts, colored text)</source>
         <translation>高（图表、彩色文字）</translation>
+    </message>
+    <message>
+        <source>P&amp;osition:</source>
+        <translation>位置(&amp;O)：</translation>
+    </message>
+    <message>
+        <source>In the picture, bottom</source>
+        <translation>画面内，下方</translation>
+    </message>
+    <message>
+        <source>In the picture, bottom left</source>
+        <translation>画面内，左下</translation>
+    </message>
+    <message>
+        <source>In the picture, bottom right</source>
+        <translation>画面内，右下</translation>
+    </message>
+    <message>
+        <source>In the picture, top</source>
+        <translation>画面内，上方</translation>
+    </message>
+    <message>
+        <source>In the picture, top left</source>
+        <translation>画面内，左上</translation>
+    </message>
+    <message>
+        <source>In the picture, top right</source>
+        <translation>画面内，右上</translation>
+    </message>
+    <message>
+        <source>In the picture, left</source>
+        <translation>画面内，左侧</translation>
+    </message>
+    <message>
+        <source>In the picture, middle</source>
+        <translation>画面内，中央</translation>
+    </message>
+    <message>
+        <source>In the picture, right</source>
+        <translation>画面内，右侧</translation>
+    </message>
+    <message>
+        <source>Outside the picture, below</source>
+        <translation>画面外，下方</translation>
+    </message>
+    <message>
+        <source>Outside the picture, above</source>
+        <translation>画面外，上方</translation>
+    </message>
+    <message>
+        <source>Outside the picture, left</source>
+        <translation>画面外，左侧</translation>
+    </message>
+    <message>
+        <source>Outside the picture, right</source>
+        <translation>画面外，右侧</translation>
+    </message>
+    <message>
+        <source>Outside the picture, the video gets a band on that side for the keys, so they cover nothing; the video is that much larger.</source>
+        <translation>放在画面外时，视频会在那一侧加一条边带来显示按键，不遮挡画面；视频尺寸也相应变大。</translation>
     </message>
 </context>
 <context>

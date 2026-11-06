@@ -1943,8 +1943,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+7"/>
-        <source>Show &amp;keys pressed (at the bottom)</source>
-        <translation>押したキーを下部に表示(&amp;K)</translation>
+        <source>Show &amp;keys pressed</source>
+        <translation>押したキーを表示(&amp;K)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2257,6 +2257,66 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+1"/>
         <source>High (charts, colored text)</source>
         <translation>高（グラフ、色付きの文字）</translation>
+    </message>
+    <message>
+        <source>P&amp;osition:</source>
+        <translation>位置(&amp;O)：</translation>
+    </message>
+    <message>
+        <source>In the picture, bottom</source>
+        <translation>画面内・下</translation>
+    </message>
+    <message>
+        <source>In the picture, bottom left</source>
+        <translation>画面内・左下</translation>
+    </message>
+    <message>
+        <source>In the picture, bottom right</source>
+        <translation>画面内・右下</translation>
+    </message>
+    <message>
+        <source>In the picture, top</source>
+        <translation>画面内・上</translation>
+    </message>
+    <message>
+        <source>In the picture, top left</source>
+        <translation>画面内・左上</translation>
+    </message>
+    <message>
+        <source>In the picture, top right</source>
+        <translation>画面内・右上</translation>
+    </message>
+    <message>
+        <source>In the picture, left</source>
+        <translation>画面内・左</translation>
+    </message>
+    <message>
+        <source>In the picture, middle</source>
+        <translation>画面内・中央</translation>
+    </message>
+    <message>
+        <source>In the picture, right</source>
+        <translation>画面内・右</translation>
+    </message>
+    <message>
+        <source>Outside the picture, below</source>
+        <translation>画面外・下</translation>
+    </message>
+    <message>
+        <source>Outside the picture, above</source>
+        <translation>画面外・上</translation>
+    </message>
+    <message>
+        <source>Outside the picture, left</source>
+        <translation>画面外・左</translation>
+    </message>
+    <message>
+        <source>Outside the picture, right</source>
+        <translation>画面外・右</translation>
+    </message>
+    <message>
+        <source>Outside the picture, the video gets a band on that side for the keys, so they cover nothing; the video is that much larger.</source>
+        <translation>画面外にすると、動画のその側にキー表示用の帯を加えるため、画面を隠しません。その分、動画は大きくなります。</translation>
     </message>
 </context>
 <context>

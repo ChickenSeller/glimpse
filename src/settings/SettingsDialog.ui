@@ -648,7 +648,7 @@
           <item>
            <widget class="QCheckBox" name="recordKeysCheck">
             <property name="text">
-             <string>Show &amp;keys pressed (at the bottom)</string>
+             <string>Show &amp;keys pressed</string>
             </property>
            </widget>
           </item>
@@ -698,6 +698,19 @@
                </property>
               </item>
              </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="recordKeyPositionLabel">
+              <property name="text">
+               <string>P&amp;osition:</string>
+              </property>
+              <property name="buddy">
+               <cstring>recordKeyPositionCombo</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="recordKeyPositionCombo"/>
             </item>
             <item>
              <spacer name="recordKeyStyleSpacer">

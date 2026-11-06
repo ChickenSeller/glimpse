@@ -30,6 +30,7 @@ constexpr qint64 kKeyShowMs = 2000;
 constexpr int kMaxKeys = 4;
 
 const QColor kHighlight(255, 214, 0, 80);
+const QColor kBand(32, 32, 32);
 const QColor kLeftClick(229, 57, 53);
 const QColor kRightClick(30, 136, 229);
 const QColor kMiddleClick(67, 160, 71);
@@ -246,7 +247,7 @@ void ScreenRecorder::beginRecording()
 #ifndef Q_OS_WIN
     // Twice the size: H.264 encoders take at most 4096 pixels a side, H.265
     // ones 8192 (NVENC, VA-API).
-    const QSize doubled = m_area.size() * 2;
+    const QSize doubled = m_frameSize * 2;
     m_doubled = m_options.fullColor && doubled.width() <= 8192 && doubled.height() <= 8192;
     if (m_doubled && (doubled.width() > 4096 || doubled.height() > 4096))
         format.setVideoCodec(QMediaFormat::VideoCodec::H265);
@@ -344,8 +345,10 @@ void ScreenRecorder::onImage(const QImage &image)
     m_area = image.copy(crop).convertToFormat(QImage::Format_ARGB32);
     m_areaOrigin = crop.topLeft();
     // The area's size in physical pixels is only known now.
-    if (!m_recording)
+    if (!m_recording) {
+        layOutFrame();
         beginRecording();
+    }
 }
 
 void ScreenRecorder::writeFrame()
@@ -358,7 +361,20 @@ void ScreenRecorder::writeFrame()
     QImage out = m_area.copy();
     // The capture shows no pointer; paint the real one in.
     drawCursor(out, m_screen, m_areaOrigin);
-    paintOverlays(out, m_areaOrigin, m_scale);
+    paintPointer(out, m_areaOrigin, m_scale);
+    if (m_options.showKeys) {
+        if (m_band.isEmpty()) {
+            paintKeys(out, out.rect(), m_scale);
+        } else {
+            QImage frame(m_frameSize, QImage::Format_ARGB32);
+            frame.fill(kBand);
+            QPainter p(&frame);
+            p.drawImage(m_areaOffset, out);
+            p.end();
+            out = frame;
+            paintKeys(out, m_band, m_scale);
+        }
+    }
 
 #ifdef Q_OS_WIN
     QVideoFrame video(out);
@@ -373,7 +389,79 @@ void ScreenRecorder::writeFrame()
         ++m_framesDropped; // the encoder is behind; skip rather than queue
 }
 
-void ScreenRecorder::paintOverlays(QImage &image, const QPoint &cropOrigin, qreal scale)
+bool ScreenRecorder::keysOutside() const
+{
+    return m_options.showKeys && m_options.keyPosition >= KeyPosition::OutsideBottom;
+}
+
+qreal ScreenRecorder::keyboardUnit(qreal scale) const
+{
+    const QSize area = m_area.size();
+    switch (m_options.keyPosition) {
+    case KeyPosition::OutsideBottom:
+    case KeyPosition::OutsideTop:
+        // The band makes room: only as wide as on the picture.
+        return std::min(area.width() * 0.6 / 19.1, 34.0 * scale);
+    case KeyPosition::OutsideLeft:
+    case KeyPosition::OutsideRight:
+        // A keyboard is wide: smaller beside the picture, or the band
+        // would be wider than the picture.
+        return std::min({area.height() / 2.0 / 7.1, area.width() * 0.5 / 19.1, 26.0 * scale});
+    default:
+        // At most 60% of the width and a third of the height, and no
+        // bigger than a comfortable size on a large recording.
+        return std::min({area.width() * 0.6 / 19.1, area.height() / 3.0 / 7.1, 34.0 * scale});
+    }
+}
+
+int ScreenRecorder::keyLabelHeight(qreal scale) const
+{
+    QFont font;
+    font.setPixelSize(qRound(22 * scale));
+    font.setBold(true);
+    return QFontMetrics(font).height() + qRound(16 * scale);
+}
+
+void ScreenRecorder::layOutFrame()
+{
+    const QSize area = m_area.size();
+    m_frameSize = area;
+    m_areaOffset = {};
+    m_band = {};
+    if (!keysOutside())
+        return;
+
+    const qreal scale = m_scale;
+    const int margin = qRound(16 * scale);
+    const bool keyboard = m_options.keyStyle != KeyStyle::Labels;
+    const bool labels = m_options.keyStyle != KeyStyle::Keyboard;
+    const QSize board = keyboard ? KeyboardOverlay::sizeFor(keyboardUnit(scale)) : QSize();
+    // The keys' block: the keyboard with room for the labels above it.
+    const int blockHeight = board.height() + (labels ? keyLabelHeight(scale) + (keyboard ? qRound(10 * scale) : 0) : 0);
+    const int blockWidth = keyboard ? board.width() : qRound(320 * scale);
+
+    switch (m_options.keyPosition) {
+    case KeyPosition::OutsideTop:
+    case KeyPosition::OutsideBottom: {
+        const int band = (blockHeight + 2 * margin + 1) & ~1;
+        m_frameSize = {area.width(), area.height() + band};
+        const bool top = m_options.keyPosition == KeyPosition::OutsideTop;
+        m_areaOffset = {0, top ? band : 0};
+        m_band = QRect(0, top ? 0 : area.height(), area.width(), band);
+        break;
+    }
+    default: {
+        const int band = (blockWidth + 2 * margin + 1) & ~1;
+        m_frameSize = {area.width() + band, std::max(area.height(), (blockHeight + 2 * margin + 1) & ~1)};
+        const bool left = m_options.keyPosition == KeyPosition::OutsideLeft;
+        m_areaOffset = {left ? band : 0, (m_frameSize.height() - area.height()) / 2 & ~1};
+        m_band = QRect(left ? 0 : area.width(), 0, band, m_frameSize.height());
+        break;
+    }
+    }
+}
+
+void ScreenRecorder::paintPointer(QImage &image, const QPoint &cropOrigin, qreal scale)
 {
     const qint64 now = m_clock.elapsed();
     QPainter p(&image);
@@ -409,43 +497,90 @@ void ScreenRecorder::paintOverlays(QImage &image, const QPoint &cropOrigin, qrea
             p.drawEllipse(QPointF(cursor), 12 * scale, 12 * scale);
         }
     }
+}
 
-    if (m_options.showKeys) {
-        const bool keyboard = m_options.keyStyle != KeyStyle::Labels;
-        const bool labels = m_options.keyStyle != KeyStyle::Keyboard;
-        int bottom = image.height() - qRound(16 * scale);
-        if (keyboard) {
-            // At most 60% of the width and a third of the height, and no
-            // bigger than a comfortable size on a large recording.
-            const qreal unit = std::min({image.width() * 0.6 / 19.1, image.height() / 3.0 / 7.1, 34.0 * scale});
-            const QSize size = KeyboardOverlay::sizeFor(unit);
-            const QRectF area((image.width() - size.width()) / 2.0, bottom - size.height(), size.width(), size.height());
-            m_keyboard.paint(p, area, now);
-            bottom = int(area.top()) - qRound(10 * scale);
-        }
-        m_keys.removeIf([now](const Key &key) { return now - key.at > kKeyShowMs; });
-        if (labels && !m_keys.isEmpty()) {
-            QStringList labels;
-            for (const Key &key : std::as_const(m_keys))
-                labels << (key.count > 1 ? QStringLiteral("%1 ×%2").arg(key.text).arg(key.count) : key.text);
-            const QString text = labels.join(QStringLiteral("   "));
-            QFont font = p.font();
-            font.setPixelSize(qRound(22 * scale));
-            font.setBold(true);
-            p.setFont(font);
-            const QFontMetrics fm(font);
-            const QSize size(fm.horizontalAdvance(text) + qRound(32 * scale), fm.height() + qRound(16 * scale));
-            QRect box(QPoint((image.width() - size.width()) / 2, bottom - size.height()), size);
-            // Fades out with the newest key.
-            const qreal age = qreal(now - m_keys.last().at) / kKeyShowMs;
-            const qreal opacity = age < 0.75 ? 1.0 : std::max(0.0, (1.0 - age) / 0.25);
-            p.setOpacity(opacity);
-            p.setPen(Qt::NoPen);
-            p.setBrush(QColor(0, 0, 0, 190));
-            p.drawRoundedRect(box, 10 * scale, 10 * scale);
-            p.setPen(Qt::white);
-            p.drawText(box, Qt::AlignCenter, text);
-            p.setOpacity(1.0);
-        }
+void ScreenRecorder::paintKeys(QImage &image, const QRect &region, qreal scale)
+{
+    const qint64 now = m_clock.elapsed();
+    const bool keyboard = m_options.keyStyle != KeyStyle::Labels;
+    const bool labels = m_options.keyStyle != KeyStyle::Keyboard;
+    const QRect inner = region.adjusted(qRound(16 * scale), qRound(16 * scale), -qRound(16 * scale), -qRound(16 * scale));
+    if (inner.isEmpty())
+        return;
+
+    // Where in the region: on a band, its middle.
+    Qt::Alignment align = Qt::AlignCenter;
+    switch (m_options.keyPosition) {
+    case KeyPosition::Bottom: align = Qt::AlignBottom | Qt::AlignHCenter; break;
+    case KeyPosition::BottomLeft: align = Qt::AlignBottom | Qt::AlignLeft; break;
+    case KeyPosition::BottomRight: align = Qt::AlignBottom | Qt::AlignRight; break;
+    case KeyPosition::Top: align = Qt::AlignTop | Qt::AlignHCenter; break;
+    case KeyPosition::TopLeft: align = Qt::AlignTop | Qt::AlignLeft; break;
+    case KeyPosition::TopRight: align = Qt::AlignTop | Qt::AlignRight; break;
+    case KeyPosition::Left: align = Qt::AlignVCenter | Qt::AlignLeft; break;
+    case KeyPosition::Right: align = Qt::AlignVCenter | Qt::AlignRight; break;
+    default: break;
+    }
+    // At the top, the labels go under the keyboard, so it stays put at the edge.
+    const bool labelsBelow = align.testFlag(Qt::AlignTop);
+
+    m_keys.removeIf([now](const Key &key) { return now - key.at > kKeyShowMs; });
+    QString text;
+    if (labels && !m_keys.isEmpty()) {
+        QStringList parts;
+        for (const Key &key : std::as_const(m_keys))
+            parts << (key.count > 1 ? QStringLiteral("%1 ×%2").arg(key.text).arg(key.count) : key.text);
+        text = parts.join(QStringLiteral("   "));
+    }
+    QFont font;
+    font.setPixelSize(qRound(22 * scale));
+    font.setBold(true);
+    const int padding = qRound(32 * scale);
+    if (!text.isEmpty()) {
+        // Smaller where it would not fit (a narrow band beside the picture).
+        const int width = QFontMetrics(font).horizontalAdvance(text) + padding;
+        if (width > inner.width())
+            font.setPixelSize(std::max(8, int(font.pixelSize() * qreal(inner.width() - padding) / (width - padding))));
+    }
+    const QFontMetrics fm(font);
+    const int labelHeight = keyLabelHeight(scale);
+    const QSize labelSize = text.isEmpty()
+                                ? QSize()
+                                : QSize(std::min(inner.width(), fm.horizontalAdvance(text) + padding), labelHeight);
+
+    // The block: the keyboard, with room for the labels kept beside it so it
+    // does not jump when they come and go.
+    const QSize board = keyboard ? KeyboardOverlay::sizeFor(keyboardUnit(scale)) : QSize();
+    const int gap = keyboard && labels ? qRound(10 * scale) : 0;
+    const int blockWidth = keyboard ? board.width() : labelSize.width();
+    const int blockHeight = board.height() + (labels ? gap + labelHeight : 0);
+    const auto place = [&](int size, int from, int room, bool start, bool end) {
+        return start ? from : end ? from + room - size : from + (room - size) / 2;
+    };
+    const QRect block(place(blockWidth, inner.left(), inner.width(), align.testFlag(Qt::AlignLeft), align.testFlag(Qt::AlignRight)),
+                      place(blockHeight, inner.top(), inner.height(), align.testFlag(Qt::AlignTop), align.testFlag(Qt::AlignBottom)),
+                      blockWidth, blockHeight);
+
+    QPainter p(&image);
+    p.setRenderHint(QPainter::Antialiasing);
+    if (keyboard) {
+        const QRect area(block.left(), labelsBelow ? block.top() : block.bottom() + 1 - board.height(), board.width(), board.height());
+        m_keyboard.paint(p, area, now);
+    }
+    if (!text.isEmpty()) {
+        const int x = place(labelSize.width(), block.left(), block.width(), align.testFlag(Qt::AlignLeft), align.testFlag(Qt::AlignRight));
+        const int y = labelsBelow ? block.bottom() + 1 - labelHeight : block.top();
+        const QRect box(QPoint(x, y), labelSize);
+        // Fades out with the newest key.
+        const qreal age = qreal(now - m_keys.last().at) / kKeyShowMs;
+        const qreal opacity = age < 0.75 ? 1.0 : std::max(0.0, (1.0 - age) / 0.25);
+        p.setOpacity(opacity);
+        p.setPen(Qt::NoPen);
+        p.setBrush(QColor(0, 0, 0, 190));
+        p.drawRoundedRect(box, 10 * scale, 10 * scale);
+        p.setFont(font);
+        p.setPen(Qt::white);
+        p.drawText(box, Qt::AlignCenter, text);
+        p.setOpacity(1.0);
     }
 }

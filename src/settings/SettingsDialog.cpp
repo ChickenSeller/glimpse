@@ -9,6 +9,7 @@
 #include "capture/Platform.h"
 #include "ocr/ModelStore.h"
 #include "ocr/OcrEngine.h"
+#include "record/ScreenRecorder.h"
 #include "translate/FirefoxTranslation.h"
 #include "translate/LocalModel.h"
 #include "translate/Translator.h"
@@ -109,14 +110,39 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->recordClicksCheck->setChecked(AppSettings::recordShowClicks());
     ui->recordKeysCheck->setChecked(AppSettings::recordShowKeys());
     ui->recordKeyStyleCombo->setCurrentIndex(AppSettings::recordKeyStyle());
+    {
+        using Position = ScreenRecorder::KeyPosition;
+        auto *combo = ui->recordKeyPositionCombo;
+        const auto add = [combo](const QString &text, Position position) { combo->addItem(text, int(position)); };
+        add(tr("In the picture, bottom"), Position::Bottom);
+        add(tr("In the picture, bottom left"), Position::BottomLeft);
+        add(tr("In the picture, bottom right"), Position::BottomRight);
+        add(tr("In the picture, top"), Position::Top);
+        add(tr("In the picture, top left"), Position::TopLeft);
+        add(tr("In the picture, top right"), Position::TopRight);
+        add(tr("In the picture, left"), Position::Left);
+        add(tr("In the picture, middle"), Position::Center);
+        add(tr("In the picture, right"), Position::Right);
+        combo->insertSeparator(combo->count());
+        add(tr("Outside the picture, below"), Position::OutsideBottom);
+        add(tr("Outside the picture, above"), Position::OutsideTop);
+        add(tr("Outside the picture, left"), Position::OutsideLeft);
+        add(tr("Outside the picture, right"), Position::OutsideRight);
+        combo->setToolTip(tr("Outside the picture, the video gets a band on that side for the keys, so they "
+                             "cover nothing; the video is that much larger."));
+        combo->setCurrentIndex(std::max(0, combo->findData(AppSettings::recordKeyPosition())));
+    }
     // The style only matters while keys are shown.
     const auto updateKeyStyle = [this] {
         const bool on = ui->recordKeysCheck->isEnabled() && ui->recordKeysCheck->isChecked();
         ui->recordKeyStyleLabel->setEnabled(on);
         ui->recordKeyStyleCombo->setEnabled(on);
+        ui->recordKeyPositionLabel->setEnabled(on);
+        ui->recordKeyPositionCombo->setEnabled(on);
     };
     connect(ui->recordKeysCheck, &QCheckBox::toggled, this, updateKeyStyle);
     connect(ui->recordKeyStyleCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+    connect(ui->recordKeyPositionCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
     QTimer::singleShot(0, this, updateKeyStyle); // after applyPlatformLimits()
     const QList<int> rates = AppSettings::recordFrameRates();
     for (int rate : rates)
@@ -348,6 +374,7 @@ bool SettingsDialog::apply()
     AppSettings::setRecordShowClicks(ui->recordClicksCheck->isChecked());
     AppSettings::setRecordShowKeys(ui->recordKeysCheck->isChecked());
     AppSettings::setRecordKeyStyle(ui->recordKeyStyleCombo->currentIndex());
+    AppSettings::setRecordKeyPosition(ui->recordKeyPositionCombo->currentData().toInt());
     AppSettings::setRecordFrameRate(ui->recordFrameRateCombo->currentData().toInt());
     AppSettings::setRecordFullColor(ui->recordColorCombo->currentData().toBool());
 
@@ -591,6 +618,7 @@ void SettingsDialog::restoreDefaults()
     ui->recordClicksCheck->setChecked(true);
     ui->recordKeysCheck->setChecked(false);
     ui->recordKeyStyleCombo->setCurrentIndex(1);
+    ui->recordKeyPositionCombo->setCurrentIndex(0);
     ui->recordFrameRateCombo->setCurrentIndex(std::max(0, ui->recordFrameRateCombo->findData(30)));
     ui->recordColorCombo->setCurrentIndex(0);
     if (m_freehandColor != QColor(Qt::white)) {

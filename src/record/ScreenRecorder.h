@@ -34,6 +34,14 @@ public:
     // How pressed keys are shown: text labels ("Ctrl + S"), a full keyboard
     // with the held keys lit, or both.
     enum class KeyStyle { Labels, Keyboard, Both };
+    // Where they are shown: at a place in the picture, or on a band added
+    // to the video beside the picture, so they cover nothing. Stored as
+    // numbers in the settings: only append.
+    enum class KeyPosition {
+        Bottom, BottomLeft, BottomRight, Top, TopLeft, TopRight, Left, Center, Right,
+        OutsideBottom, OutsideTop, OutsideLeft, OutsideRight,
+    };
+    static constexpr int kKeyPositionCount = 13;
 
     struct Options {
         QString filePath;
@@ -42,6 +50,7 @@ public:
         bool showClicks = true;
         bool showKeys = false;
         KeyStyle keyStyle = KeyStyle::Keyboard;
+        KeyPosition keyPosition = KeyPosition::Bottom;
         // Linux: color as exact as the pixels, in a video twice the size;
         // H.265 where that is too large for H.264. See toYuv420().
         bool fullColor = false;
@@ -86,7 +95,15 @@ private:
     // overlays as they are now. Runs at the frame rate, also while the screen
     // content does not change (the capture only delivers changed frames).
     void writeFrame();
-    void paintOverlays(QImage &image, const QPoint &cropOrigin, qreal scale);
+    // The pointer's highlight and clicks, onto the area's pixels.
+    void paintPointer(QImage &image, const QPoint &cropOrigin, qreal scale);
+    // The keys, within `region` of the frame.
+    void paintKeys(QImage &image, const QRect &region, qreal scale);
+    // Sizes the frame: the area, and the band for the keys if they go outside.
+    void layOutFrame();
+    bool keysOutside() const;
+    qreal keyboardUnit(qreal scale) const;
+    int keyLabelHeight(qreal scale) const;
     QPoint cursorPos(qreal scale) const; // physical, relative to the screen
     void fail(const QString &message);
 
@@ -102,6 +119,9 @@ private:
     QTimer *m_frameTimer = nullptr;
     QImage m_area;          // latest screen content of the area, physical
     QPoint m_areaOrigin;    // its top-left, physical, relative to the screen
+    QSize m_frameSize;      // of the video: the area, and the band if any
+    QPoint m_areaOffset;    // where the area sits in the frame
+    QRect m_band;           // in the frame; empty with the keys inside
     qreal m_scale = 1.0;    // physical pixels per logical one
     QVideoFrameInput *m_input = nullptr;
     QMediaRecorder *m_recorder = nullptr;

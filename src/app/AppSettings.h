@@ -78,6 +78,9 @@ void setRecordShowKeys(bool on);
 // 0: key labels, 1: full keyboard, 2: both (ScreenRecorder::KeyStyle order).
 int recordKeyStyle();
 void setRecordKeyStyle(int style);
+// ScreenRecorder::KeyPosition, as a number.
+int recordKeyPosition();
+void setRecordKeyPosition(int position);
 QList<int> recordFrameRates();
 int recordFrameRate();
 void setRecordFrameRate(int rate);

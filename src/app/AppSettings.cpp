@@ -291,6 +291,18 @@ void setRecordKeyStyle(int style)
     SettingsStore::open().setValue(QStringLiteral("recording/keyStyle"), style);
 }
 
+int recordKeyPosition()
+{
+    const int position = SettingsStore::open().value(QStringLiteral("recording/keyPosition"), 0).toInt();
+    constexpr int kPositions = 13; // ScreenRecorder::kKeyPositionCount, without pulling in Qt Multimedia
+    return position >= 0 && position < kPositions ? position : 0;
+}
+
+void setRecordKeyPosition(int position)
+{
+    SettingsStore::open().setValue(QStringLiteral("recording/keyPosition"), position);
+}
+
 QList<int> recordFrameRates()
 {
     return {15, 24, 30, 60};
