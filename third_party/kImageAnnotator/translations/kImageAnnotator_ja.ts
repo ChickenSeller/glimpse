@@ -482,6 +482,10 @@ Rotating by non 90° multipliers might introduce loss of quality.</source>
         <translation>円形</translation>
     </message>
     <message>
+        <source>Triangle</source>
+        <translation>三角形</translation>
+    </message>
+    <message>
         <source>Number Pointer</source>
         <translation>数字とポイント</translation>
     </message>

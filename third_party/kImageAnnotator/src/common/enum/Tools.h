@@ -46,7 +46,8 @@ enum class Tools
 	Image,
 	Sticker,
 	Pixelate,
-	Duplicate
+	Duplicate,
+	Triangle
 };
 
 inline uint qHash(const Tools &tool, uint seed)

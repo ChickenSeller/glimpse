@@ -107,6 +107,8 @@ void ToolPicker::initGui()
 	menu->addAction(action);
 	action = createAction(tr("Ellipse"), IconLoader::load(QLatin1String("ellipse.svg")), Qt::Key_E, Tools::Ellipse);
 	menu->addAction(action);
+	action = createAction(tr("Triangle"), IconLoader::load(QLatin1String("triangle.svg")), Qt::Key_G, Tools::Triangle);
+	menu->addAction(action);
 	createButton(menu);
 
 	action = createAction(tr("Sticker"), IconLoader::load(QLatin1String("sticker.svg")), Qt::Key_I, Tools::Sticker);

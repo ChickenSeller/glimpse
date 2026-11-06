@@ -25,6 +25,7 @@
         <file alias="textArrow.svg" >icons/dark/textArrow.svg</file>
         <file alias="undo.svg" >icons/dark/undo.svg</file>
         <file alias="ellipse.svg" >icons/dark/ellipse.svg</file>
+        <file alias="triangle.svg" >icons/dark/triangle.svg</file>
         <file alias="blur.svg" >icons/dark/blur.svg</file>
         <file alias="pixelate.svg" >icons/dark/pixelate.svg</file>
         <file alias="obfuscateFactor.svg" >icons/dark/obfuscateFactor.svg</file>
@@ -78,6 +79,7 @@
         <file alias="textArrow.svg" >icons/light/textArrow.svg</file>
         <file alias="undo.svg" >icons/light/undo.svg</file>
         <file alias="ellipse.svg" >icons/light/ellipse.svg</file>
+        <file alias="triangle.svg" >icons/light/triangle.svg</file>
         <file alias="blur.svg" >icons/light/blur.svg</file>
         <file alias="pixelate.svg" >icons/light/pixelate.svg</file>
         <file alias="obfuscateFactor.svg" >icons/light/obfuscateFactor.svg</file>

@@ -228,6 +228,7 @@ void ItemSettingsWidgetConfigurator::updateVisibility() const
 			setOpacityWidgetVisible(true);
 			break;
 		case Tools::Ellipse:
+		case Tools::Triangle:
 		case Tools::Rect:
 			setColorWidgetVisible(true);
 			setTextColorWidgetVisible(false);

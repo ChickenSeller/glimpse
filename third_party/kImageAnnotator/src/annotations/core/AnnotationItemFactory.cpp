@@ -123,6 +123,9 @@ AbstractAnnotationItem *AnnotationItemFactory::createItem(const QPointF &initPos
 		case Tools::Ellipse:
 			newItem = new AnnotationEllipse(initPosition, properties);
 			break;
+		case Tools::Triangle:
+			newItem = new AnnotationTriangle(initPosition, properties);
+			break;
 		case Tools::Rect:
 			newItem = new AnnotationRect(initPosition, properties);
 			break;
@@ -195,6 +198,9 @@ AbstractAnnotationItem *AnnotationItemFactory::cloneItem(const AbstractAnnotatio
 			break;
 		case Tools::Ellipse:
 			newItem = new AnnotationEllipse(*(dynamic_cast<const AnnotationEllipse *>(item)));
+			break;
+		case Tools::Triangle:
+			newItem = new AnnotationTriangle(*(dynamic_cast<const AnnotationTriangle *>(item)));
 			break;
 		case Tools::Rect:
 			newItem = new AnnotationRect(*(dynamic_cast<const AnnotationRect *>(item)));

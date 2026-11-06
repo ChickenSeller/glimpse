@@ -31,3 +31,11 @@ only when needed, and listed below.
   1, since Glimpse loads images pixel for pixel; with the screen's device
   pixel ratio, selections were cropped too far right and down on scaled
   screens.
+
+## Glimpse's tools
+
+- **Triangle** (`src/annotations/items/AnnotationTriangle.*`, shortcut G, with
+  Rectangle and Ellipse): an isosceles triangle filling the dragged
+  rectangle, its apex on the edge where the drag started, so dragging
+  upwards draws it pointing down. Same settings as the rectangle. Added last
+  to the `Tools` enum, since tool settings are stored by the tool's number.

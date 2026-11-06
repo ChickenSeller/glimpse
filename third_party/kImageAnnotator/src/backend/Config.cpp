@@ -42,6 +42,7 @@ Config::Config(const QSharedPointer<ISettings> &settings) :
 		Tools::DoubleArrow,
 		Tools::Rect,
 		Tools::Ellipse,
+		Tools::Triangle,
 		Tools::Number,
 		Tools::NumberPointer,
 		Tools::NumberArrow,
@@ -683,6 +684,7 @@ bool Config::defaultShadowEnabled(Tools tool)
 		case Tools::DoubleArrow:
 		case Tools::Rect:
 		case Tools::Ellipse:
+		case Tools::Triangle:
 		case Tools::Sticker:
 		case Tools::Text:
 			return true;
