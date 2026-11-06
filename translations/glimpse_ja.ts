@@ -135,6 +135,14 @@
 <context>
     <name>CaptureController</name>
     <message>
+        <source>%1 needs its recognition models first.</source>
+        <translation>%1 には先に認識モデルが必要です。</translation>
+    </message>
+    <message>
+        <source>Local translation needs its model first: %1. It is stored on this computer and used offline from then on.</source>
+        <translation>ローカル翻訳には先にモデルが必要です：%1。このコンピューターに保存され、以後はオフラインで使えます。</translation>
+    </message>
+    <message>
         <source>Close All Pins</source>
         <translation>すべてのピン留めを閉じる</translation>
     </message>
@@ -865,6 +873,92 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>Ocr</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Canceled.</source>
+        <translation>キャンセルしました。</translation>
+    </message>
+    <message>
+        <source>Checking %1...</source>
+        <translation>%1 を確認しています...</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>ファイル</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Choose...</source>
+        <translation>選択...</translation>
+    </message>
+    <message>
+        <source>Use a copy of this file already on this computer</source>
+        <translation>このコンピューターにあるこのファイルを使う</translation>
+    </message>
+    <message>
+        <source>Downloading slowly? Copy the links, download the files in a browser or a download manager, then choose them here. Downloading can also be canceled halfway to come back here.</source>
+        <translation>ダウンロードが遅い場合は、リンクをコピーしてブラウザーやダウンロードツールでダウンロードし、ここで選択してください。ダウンロードは途中でキャンセルしてここに戻ることもできます。</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Links</source>
+        <translation>リンクをコピー(&amp;L)</translation>
+    </message>
+    <message>
+        <source>C&amp;hoose Files...</source>
+        <translation>ファイルを選択(&amp;H)...</translation>
+    </message>
+    <message>
+        <source>Choose several files at once; each goes to the row its name belongs to</source>
+        <translation>複数のファイルをまとめて選択し、名前に合う行に割り当てます</translation>
+    </message>
+    <message>
+        <source>&amp;Download</source>
+        <translation>ダウンロード(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>準備完了</translation>
+    </message>
+    <message>
+        <source>Missing</source>
+        <translation>未取得</translation>
+    </message>
+    <message>
+        <source>Could not use %1 for %2:
+%3</source>
+        <translation>%1 を %2 として使えませんでした：
+%3</translation>
+    </message>
+    <message>
+        <source>Choose %1</source>
+        <translation>%1 を選択</translation>
+    </message>
+    <message>
+        <source>Choose Files</source>
+        <translation>ファイルを選択</translation>
+    </message>
+    <message>
+        <source>Could not tell which file these are; choose them on their own rows:
+
+%1</source>
+        <translation>どのファイルか判別できませんでした。それぞれの行で選択してください：
+
+%1</translation>
+    </message>
+    <message>
+        <source>Could not read the file.</source>
+        <translation>ファイルを読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>Copying %1...</source>
+        <translation>%1 をコピーしています...</translation>
+    </message>
     <message>
         <source>Downloading Recognition Models</source>
         <translation type="vanished">認識モデルをダウンロード中</translation>
@@ -2111,6 +2205,10 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>Translate</name>
+    <message>
+        <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
+        <translation>Firefox 翻訳には先にこれらの言語ファイルが必要です（1 方向あたり約 50 MB）。このコンピューターに保存され、以後はオフラインで使えます。</translation>
+    </message>
     <message>
         <location filename="../src/translate/Translator.cpp" line="+59"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>

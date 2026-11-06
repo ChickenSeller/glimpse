@@ -640,18 +640,8 @@ bool CaptureController::prepareOcr(const QString &title, QString *engine, QStrin
 
     *languages = AppSettings::ocrLanguages();
     const QList<ModelFile> missing = Ocr::missingModels(*engine, *languages);
-    if (!missing.isEmpty()) {
-        QStringList names;
-        for (const ModelFile &file : missing)
-            names << file.name;
-        const auto answer = QMessageBox::question(
-            nullptr, title,
-            tr("%1 needs to download its recognition models first:\n\n%2\n\nDownload them now?")
-                .arg(Ocr::engineName(*engine), names.join(QLatin1Char('\n'))));
-        if (answer != QMessageBox::Yes || !ModelStore::download(missing, nullptr))
-            return false;
-    }
-    return true;
+    return ModelStore::obtain(missing, title, tr("%1 needs its recognition models first.").arg(Ocr::engineName(*engine)),
+                              nullptr);
 }
 
 void CaptureController::showOcrResult(const QImage &image)
@@ -691,12 +681,11 @@ bool CaptureController::prepareTranslation()
             return false;
         }
         if (const std::optional<LocalModel::Preset> missing = LocalModel::missingPreset()) {
-            const auto answer = QMessageBox::question(
-                nullptr, title,
-                tr("Local translation needs its model first:\n\n%1\n\nDownload it now? It is stored on this "
-                   "computer and used offline from then on.")
-                    .arg(missing->name));
-            if (answer != QMessageBox::Yes || !ModelStore::download({missing->file}, nullptr))
+            if (!ModelStore::obtain({missing->file}, title,
+                                    tr("Local translation needs its model first: %1. It is stored on this computer "
+                                       "and used offline from then on.")
+                                        .arg(missing->name),
+                                    nullptr))
                 return false;
         } else if (!QFileInfo::exists(LocalModel::modelPath())) {
             const auto answer = QMessageBox::question(

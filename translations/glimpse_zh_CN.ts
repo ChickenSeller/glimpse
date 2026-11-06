@@ -135,6 +135,14 @@
 <context>
     <name>CaptureController</name>
     <message>
+        <source>%1 needs its recognition models first.</source>
+        <translation>%1 需要先准备识别模型。</translation>
+    </message>
+    <message>
+        <source>Local translation needs its model first: %1. It is stored on this computer and used offline from then on.</source>
+        <translation>本地翻译需要先准备模型：%1。模型保存在这台电脑上，之后可以离线使用。</translation>
+    </message>
+    <message>
         <source>Close All Pins</source>
         <translation>关闭所有贴图</translation>
     </message>
@@ -865,6 +873,92 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>Ocr</name>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Canceled.</source>
+        <translation>已取消。</translation>
+    </message>
+    <message>
+        <source>Checking %1...</source>
+        <translation>正在校验 %1...</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>文件</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <source>Choose...</source>
+        <translation>选择...</translation>
+    </message>
+    <message>
+        <source>Use a copy of this file already on this computer</source>
+        <translation>使用这台电脑上已有的这个文件</translation>
+    </message>
+    <message>
+        <source>Downloading slowly? Copy the links, download the files in a browser or a download manager, then choose them here. Downloading can also be canceled halfway to come back here.</source>
+        <translation>下载太慢？可以复制链接，用浏览器或下载工具下载，再在这里选择这些文件。下载中途也可以取消，回到这里。</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Links</source>
+        <translation>复制链接(&amp;L)</translation>
+    </message>
+    <message>
+        <source>C&amp;hoose Files...</source>
+        <translation>选择文件(&amp;H)...</translation>
+    </message>
+    <message>
+        <source>Choose several files at once; each goes to the row its name belongs to</source>
+        <translation>一次选择多个文件，按文件名对应到各自的行</translation>
+    </message>
+    <message>
+        <source>&amp;Download</source>
+        <translation>下载(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>已就绪</translation>
+    </message>
+    <message>
+        <source>Missing</source>
+        <translation>缺少</translation>
+    </message>
+    <message>
+        <source>Could not use %1 for %2:
+%3</source>
+        <translation>无法将 %1 用作 %2：
+%3</translation>
+    </message>
+    <message>
+        <source>Choose %1</source>
+        <translation>选择 %1</translation>
+    </message>
+    <message>
+        <source>Choose Files</source>
+        <translation>选择文件</translation>
+    </message>
+    <message>
+        <source>Could not tell which file these are; choose them on their own rows:
+
+%1</source>
+        <translation>无法判断这些是哪个文件，请在各自的行里选择：
+
+%1</translation>
+    </message>
+    <message>
+        <source>Could not read the file.</source>
+        <translation>无法读取文件。</translation>
+    </message>
+    <message>
+        <source>Copying %1...</source>
+        <translation>正在复制 %1...</translation>
+    </message>
     <message>
         <source>Downloading Recognition Models</source>
         <translation type="vanished">正在下载识别模型</translation>
@@ -2111,6 +2205,10 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>Translate</name>
+    <message>
+        <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
+        <translation>Firefox 翻译需要先准备这些语言文件（每个方向约 50 MB）。文件保存在这台电脑上，之后可以离线使用。</translation>
+    </message>
     <message>
         <location filename="../src/translate/Translator.cpp" line="+59"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>

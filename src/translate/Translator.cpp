@@ -382,20 +382,14 @@ void translate(const QString &engine, const QStringList &texts, const QString &t
             done({}, unsupported);
             return;
         }
-        if (!missing.isEmpty()) {
-            QStringList names;
-            for (const ModelFile &file : missing)
-                names << file.name;
-            const auto answer = QMessageBox::question(
-                nullptr, engineName(engine),
-                QCoreApplication::translate("Translate", "Firefox translation needs these language files first (about "
-                                                         "50 MB per direction):\n\n%1\n\nDownload them now? They are "
-                                                         "kept on this computer and used offline from then on.")
-                    .arg(names.join(QLatin1Char('\n'))));
-            if (answer != QMessageBox::Yes || !ModelStore::download(missing, nullptr)) {
-                done({}, QCoreApplication::translate("Translate", "The Firefox language files were not downloaded."));
-                return;
-            }
+        if (!ModelStore::obtain(missing, engineName(engine),
+                                QCoreApplication::translate("Translate",
+                                                            "Firefox translation needs these language files first "
+                                                            "(about 50 MB per direction). They are kept on this "
+                                                            "computer and used offline from then on."),
+                                nullptr)) {
+            done({}, QCoreApplication::translate("Translate", "The Firefox language files were not downloaded."));
+            return;
         }
         using Result = QPair<QStringList, QString>;
         auto *watcher = new QFutureWatcher<Result>(context);
