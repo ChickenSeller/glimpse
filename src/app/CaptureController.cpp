@@ -133,6 +133,14 @@ void CaptureController::showToolbar()
     m_toolbar->reveal();
 }
 
+void CaptureController::captureNow(int id)
+{
+    for (CaptureMode mode : kAllCaptureModes) {
+        if (int(mode) == id && captureModeSupported(mode))
+            beginCapture(mode);
+    }
+}
+
 void CaptureController::activateHotkey(int id)
 {
     // Only hotkeys registered now, not a shortcut left behind by an older
@@ -483,6 +491,28 @@ void CaptureController::startScrollingCapture(const QRect &rect, bool manual)
         session->deleteLater();
         endCapture();
         showCapture(image);
+    });
+    connect(session, &ScrollCaptureSession::elevationNeeded, this, [session] {
+        QMessageBox box(QMessageBox::Information, tr("Scrolling Capture"),
+                        tr("The window under the area runs as administrator, and Windows does not let Glimpse "
+                           "scroll it. Restart Glimpse as administrator to scroll it automatically, or scroll it "
+                           "yourself: Glimpse stitches whatever scrolls into view."));
+        QPushButton *restart = box.addButton(tr("&Restart as Administrator"), QMessageBox::AcceptRole);
+        QPushButton *manual = box.addButton(tr("&Scroll Myself"), QMessageBox::ActionRole);
+        box.addButton(QMessageBox::Cancel);
+        box.setDefaultButton(manual);
+        box.setWindowFlag(Qt::WindowStaysOnTopHint);
+        box.exec();
+        if (box.clickedButton() == manual) {
+            session->continueManually();
+            return;
+        }
+        session->abort();
+        // The new Glimpse waits for this one to quit, then picks the area again.
+        if (box.clickedButton() == restart
+            && Platform::restartElevated({QStringLiteral("--replace"), QString::number(QCoreApplication::applicationPid()),
+                                          QStringLiteral("--capture"), QString::number(int(Mode::Scrolling))}))
+            QCoreApplication::quit();
     });
     session->start();
 }

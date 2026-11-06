@@ -3,6 +3,7 @@
 #include "app/Autostart.h"
 #include "app/CaptureController.h"
 #include "app/Language.h"
+#include "capture/Platform.h"
 #include "app/SettingsStore.h"
 #include "ocr/OcrEngine.h"
 #include "translate/FirefoxTranslation.h"
@@ -74,6 +75,15 @@ int main(int argc, char *argv[])
     if (const qsizetype i = args.indexOf(QStringLiteral("--hotkey")); i >= 0 && i + 1 < args.size())
         hotkey = args.at(i + 1).toInt();
 
+    // glimpse --replace <pid>: started by that Glimpse to take over from it
+    // (restarted as administrator); it quits right after starting this one.
+    if (const qsizetype i = args.indexOf(QStringLiteral("--replace")); i >= 0 && i + 1 < args.size())
+        Platform::waitForProcess(args.at(i + 1).toLongLong(), 15000);
+    // glimpse --capture <id>: starts that capture mode (CaptureMode) right away.
+    std::optional<int> capture;
+    if (const qsizetype i = args.indexOf(QStringLiteral("--capture")); i >= 0 && i + 1 < args.size())
+        capture = args.at(i + 1).toInt();
+
     // One Glimpse per user session: a second one could not register the
     // hotkeys and would add a second tray icon. Starting it again brings the
     // running one's toolbar up instead, or passes its hotkey on.
@@ -97,10 +107,12 @@ int main(int argc, char *argv[])
     CaptureController controller;
     Autostart::refresh();
     // Started with the session or by a hotkey, Glimpse waits in the tray (if there is one).
-    if ((!args.contains(Autostart::kArgument) && !hotkey) || !QSystemTrayIcon::isSystemTrayAvailable())
+    if ((!args.contains(Autostart::kArgument) && !hotkey && !capture) || !QSystemTrayIcon::isSystemTrayAvailable())
         controller.showToolbar();
     if (hotkey)
         controller.activateHotkey(*hotkey);
+    if (capture)
+        controller.captureNow(*capture);
     QObject::connect(&instance, &KDSingleApplication::messageReceived, &controller, [&controller](const QByteArray &message) {
         if (message.startsWith("hotkey "))
             controller.activateHotkey(message.mid(7).toInt());

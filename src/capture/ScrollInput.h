@@ -16,4 +16,8 @@ void watchUser(bool on);
 // Whether the user turned the wheel since the last call while watching.
 bool userScrolled();
 
+// Whether the window under the pointer runs with higher rights than Glimpse
+// (as administrator), so that Windows drops the wheel input sent to it.
+bool targetOutOfReach();
+
 } // namespace ScrollInput

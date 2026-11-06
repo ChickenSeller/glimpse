@@ -21,4 +21,9 @@ bool userScrolled()
     return false;
 }
 
+bool targetOutOfReach()
+{
+    return false;
+}
+
 } // namespace ScrollInput

@@ -10,7 +10,10 @@
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <dwmapi.h>
+#include <shellapi.h>
 #endif
+
+#include <QDir>
 
 namespace Platform {
 
@@ -175,6 +178,41 @@ bool moveCursorBy(int dx, int dy)
 QString unsupportedHint()
 {
     return QCoreApplication::translate("Platform", "Not available on %1 yet.").arg(displayServerName());
+}
+
+bool restartElevated(const QStringList &arguments)
+{
+#ifdef Q_OS_WIN
+    QStringList quoted;
+    for (const QString &argument : arguments)
+        quoted << (argument.contains(QLatin1Char(' ')) ? QLatin1Char('"') + argument + QLatin1Char('"') : argument);
+    const std::wstring file = QDir::toNativeSeparators(QCoreApplication::applicationFilePath()).toStdWString();
+    const std::wstring parameters = quoted.join(QLatin1Char(' ')).toStdWString();
+    SHELLEXECUTEINFOW info{};
+    info.cbSize = sizeof(info);
+    info.fMask = SEE_MASK_NOASYNC;
+    info.lpVerb = L"runas"; // the UAC prompt; declining it fails the call
+    info.lpFile = file.c_str();
+    info.lpParameters = parameters.c_str();
+    info.nShow = SW_SHOWNORMAL;
+    return ShellExecuteExW(&info);
+#else
+    Q_UNUSED(arguments);
+    return false;
+#endif
+}
+
+void waitForProcess(qint64 pid, int timeoutMs)
+{
+#ifdef Q_OS_WIN
+    if (HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, DWORD(pid))) {
+        WaitForSingleObject(process, DWORD(timeoutMs));
+        CloseHandle(process);
+    }
+#else
+    Q_UNUSED(pid);
+    Q_UNUSED(timeoutMs);
+#endif
 }
 
 } // namespace Platform

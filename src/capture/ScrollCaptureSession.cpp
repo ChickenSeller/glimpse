@@ -335,6 +335,13 @@ void ScrollCaptureSession::step()
         takeOver();
         return;
     }
+    // Before the first scroll, with the pointer on the area: Windows would
+    // drop the wheel input to a window running as administrator.
+    if (m_steps == 0 && m_stitcher.isEmpty() && ScrollInput::targetOutOfReach()) {
+        qCDebug(lcScroll) << "the area's window runs with higher rights";
+        emit elevationNeeded();
+        return;
+    }
 
     const QRect local = m_rect.translated(-m_screen->geometry().topLeft());
     const QImage frame = m_screen->grabWindow(0, local.x(), local.y(), local.width(), local.height()).toImage();
@@ -408,6 +415,12 @@ void ScrollCaptureSession::step()
     QTimer::singleShot(kSettleMs, this, &ScrollCaptureSession::step);
 }
 
+void ScrollCaptureSession::abort()
+{
+    m_discard = true;
+    finish();
+}
+
 void ScrollCaptureSession::finish()
 {
     if (m_done)
@@ -422,7 +435,7 @@ void ScrollCaptureSession::finish()
     m_preview.reset();
     if (!m_restoreCursor.isNull())
         QCursor::setPos(m_restoreCursor);
-    const QImage image = m_stitcher.image();
+    const QImage image = m_discard ? QImage() : m_stitcher.image();
     if (lcScroll().isDebugEnabled())
         image.save(QDir::temp().filePath(QStringLiteral("glimpse-scroll-result.png")));
     emit finished(image);

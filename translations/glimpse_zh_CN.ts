@@ -135,6 +135,18 @@
 <context>
     <name>CaptureController</name>
     <message>
+        <source>The window under the area runs as administrator, and Windows does not let Glimpse scroll it. Restart Glimpse as administrator to scroll it automatically, or scroll it yourself: Glimpse stitches whatever scrolls into view.</source>
+        <translation>选区下的窗口以管理员身份运行，Windows 不允许 Glimpse 替它滚动。可以以管理员身份重启 Glimpse 来自动滚动，也可以自己滚动：滚进视野的内容 Glimpse 都会拼接上。</translation>
+    </message>
+    <message>
+        <source>&amp;Restart as Administrator</source>
+        <translation>以管理员身份重启(&amp;R)</translation>
+    </message>
+    <message>
+        <source>&amp;Scroll Myself</source>
+        <translation>自己滚动(&amp;S)</translation>
+    </message>
+    <message>
         <source>%1 needs its recognition models first.</source>
         <translation>%1 需要先准备识别模型。</translation>
     </message>

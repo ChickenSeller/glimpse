@@ -2,6 +2,8 @@
 
 #include <windows.h>
 
+#include <vector>
+
 namespace {
 
 // Marks the wheel input Glimpse sends, so the hook can tell it from the user's.
@@ -20,6 +22,37 @@ LRESULT CALLBACK mouseHook(int code, WPARAM message, LPARAM data)
             g_userScrolled = true;
     }
     return CallNextHookEx(nullptr, code, message, data);
+}
+
+// The integrity level of a process token (its mandatory label's RID), which
+// is what Windows compares to let input through (UIPI); -1 if unknown.
+long integrityOf(HANDLE token)
+{
+    DWORD size = 0;
+    GetTokenInformation(token, TokenIntegrityLevel, nullptr, 0, &size);
+    if (size == 0)
+        return -1;
+    std::vector<char> buffer(size);
+    auto *label = reinterpret_cast<TOKEN_MANDATORY_LABEL *>(buffer.data());
+    if (!GetTokenInformation(token, TokenIntegrityLevel, label, size, &size))
+        return -1;
+    const DWORD count = *GetSidSubAuthorityCount(label->Label.Sid);
+    return long(*GetSidSubAuthority(label->Label.Sid, count - 1));
+}
+
+long integrityOfProcess(DWORD pid)
+{
+    HANDLE process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+    if (!process)
+        return -1;
+    long level = -1;
+    HANDLE token = nullptr;
+    if (OpenProcessToken(process, TOKEN_QUERY, &token)) {
+        level = integrityOf(token);
+        CloseHandle(token);
+    }
+    CloseHandle(process);
+    return level;
 }
 
 } // namespace
@@ -61,6 +94,24 @@ bool userScrolled()
     const bool scrolled = g_userScrolled;
     g_userScrolled = false;
     return scrolled;
+}
+
+bool targetOutOfReach()
+{
+    POINT point;
+    if (!GetCursorPos(&point))
+        return false;
+    HWND window = WindowFromPoint(point);
+    if (!window)
+        return false;
+    DWORD pid = 0;
+    GetWindowThreadProcessId(GetAncestor(window, GA_ROOT), &pid);
+    if (pid == 0 || pid == GetCurrentProcessId())
+        return false;
+    const long own = integrityOfProcess(GetCurrentProcessId());
+    // An elevated process does not let a lesser one read its token at all.
+    const long target = integrityOfProcess(pid);
+    return own >= 0 && own < SECURITY_MANDATORY_HIGH_RID && (target < 0 || target > own);
 }
 
 } // namespace ScrollInput

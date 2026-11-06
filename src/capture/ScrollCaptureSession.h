@@ -43,10 +43,18 @@ public:
     void start();
     // Ends the capture with what it has, as Stop does.
     void stop() { m_stopRequested = true; }
+    // Ends it without a result.
+    void abort();
+    // After elevationNeeded(): goes on with the user scrolling.
+    void continueManually() { takeOver(); }
 
 signals:
     // The stitched image; null if nothing could be captured.
     void finished(const QImage &image);
+    // Automatic scrolling found the area's window running as administrator,
+    // out of reach of the wheel input; the session waits for continueManually()
+    // or abort().
+    void elevationNeeded();
 
 private:
     void step();
@@ -82,4 +90,5 @@ private:
     bool m_lost = false; // Manual: scrolled too far to line up
     bool m_stopRequested = false;
     bool m_done = false;
+    bool m_discard = false;
 };

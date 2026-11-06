@@ -31,6 +31,8 @@ class CaptureController : public QObject
     Q_OBJECT
 
 public:
+    // Starts a capture mode by its id (CaptureMode), as from the command line.
+    void captureNow(int id);
     using Mode = CaptureMode;
 
     explicit CaptureController(QObject *parent = nullptr);

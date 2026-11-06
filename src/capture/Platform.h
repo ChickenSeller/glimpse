@@ -4,6 +4,8 @@
 #include <QRect>
 #include <QString>
 
+#include <QStringList>
+
 #include <optional>
 
 class QWidget;
@@ -68,5 +70,11 @@ void excludeFromCapture(QWidget *window, bool exclude = true);
 
 // Short explanation shown on disabled controls.
 QString unsupportedHint();
+
+// Windows: starts Glimpse again with administrator rights (Windows asks the
+// user first) and `arguments`. False if refused or unsupported.
+bool restartElevated(const QStringList &arguments);
+// Waits up to `timeoutMs` for the process `pid` to end (a Glimpse handing over).
+void waitForProcess(qint64 pid, int timeoutMs);
 
 } // namespace Platform
