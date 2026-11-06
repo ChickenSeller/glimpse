@@ -92,6 +92,7 @@ public:
 	QColor canvasColor() const;
 	void modifyCanvas(const QRectF &canvasRect, const QColor &color);
 	QRectF backgroundImageRect() const;
+	double zoomValue() const;
 	void cut(const QRectF &rect);
 	void keyPressed(QKeyEvent *keyEvent) override;
 	void keyReleased(QKeyEvent *keyEvent) override;

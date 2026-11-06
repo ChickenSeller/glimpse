@@ -31,6 +31,10 @@ only when needed, and listed below.
   1, since Glimpse loads images pixel for pixel; with the screen's device
   pixel ratio, selections were cropped too far right and down on scaled
   screens.
+- **Crop and cut zoom** (`src/gui/cropper/CropWidget.cpp`,
+  `src/gui/cutter/CutWidget.cpp`, `src/gui/scrollAndZoomView/`): those views
+  open at the editor's zoom, set exactly (not rounded to a tenth), instead of
+  100%, which on a scaled screen showed the image larger than in the editor.
 
 ## Glimpse's tools
 

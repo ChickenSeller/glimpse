@@ -50,6 +50,9 @@ void CutWidget::activate(AnnotationArea *annotationArea)
 	mAnnotationArea = annotationArea;
 	mSelectionHandler->init(annotationArea);
 	mCutView->init(annotationArea);
+	// Glimpse: at the editor's zoom, not at 100% of a logical pixel, which
+	// on a scaled screen shows the image larger than it is.
+	mCutView->matchZoom(annotationArea->zoomValue());
 	reset();
 	setFocus();
 }

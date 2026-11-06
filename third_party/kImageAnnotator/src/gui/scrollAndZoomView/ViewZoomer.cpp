@@ -71,6 +71,15 @@ void ViewZoomer::fitImageToView()
 	emit zoomValueChanged(zoomValue());
 }
 
+void ViewZoomer::setExactZoomValue(double value)
+{
+	// Glimpse: as given, not rounded to a tenth (the editor shows images at
+	// 1 / device pixel ratio).
+	mView->resetTransform();
+	mView->scale(value, value);
+	emit zoomValueChanged(zoomValue());
+}
+
 void ViewZoomer::setZoomValue(double value)
 {
 	zoom(value - zoomValue());

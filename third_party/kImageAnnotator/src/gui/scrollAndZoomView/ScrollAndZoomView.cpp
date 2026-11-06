@@ -41,6 +41,11 @@ ZoomValueProvider *ScrollAndZoomView::zoomValueProvider() const
 	return mViewZoomer;
 }
 
+void ScrollAndZoomView::matchZoom(double value)
+{
+	mViewZoomer->setExactZoomValue(value);
+}
+
 void ScrollAndZoomView::keyPressEvent(QKeyEvent *event)
 {
 	mKeyHelper.keyPress(event);

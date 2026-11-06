@@ -256,6 +256,11 @@ void AnnotationArea::modifyCanvas(const QRectF &canvasRect, const QColor &color)
 	emit imageChanged();
 }
 
+double AnnotationArea::zoomValue() const
+{
+	return mZoomValueProvider->zoomValue();
+}
+
 QRectF AnnotationArea::backgroundImageRect() const
 {
 	return mBackgroundImage->boundingRect();

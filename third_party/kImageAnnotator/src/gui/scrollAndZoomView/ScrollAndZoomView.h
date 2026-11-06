@@ -37,6 +37,7 @@ public:
 	explicit ScrollAndZoomView(QWidget *parent);
 	~ScrollAndZoomView() override;
 	ZoomValueProvider *zoomValueProvider() const;
+	void matchZoom(double value);
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

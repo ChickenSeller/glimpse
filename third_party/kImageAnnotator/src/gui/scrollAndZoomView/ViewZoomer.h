@@ -38,6 +38,7 @@ public:
 	~ViewZoomer() override = default;
 	double zoomValue() const override;
 	void setZoomValue(double value) override;
+	void setExactZoomValue(double value);
 
 	void zoom(double factor);
 	void zoomToPoint(double factor, const QPoint &viewPoint);
