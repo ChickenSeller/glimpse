@@ -2064,7 +2064,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <source>Languages:</source>
-        <translation>文字：</translation>
+        <translation>语言（文字）：</translation>
     </message>
     <message>
         <location line="+9"/>
