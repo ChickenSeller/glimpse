@@ -124,6 +124,21 @@ QRectF AnnotationItemModifier::boundingRect() const
 	return mItemSelector->boundingRect();
 }
 
+bool AnnotationItemModifier::isOnSelection(const QPointF &pos)
+{
+	if (mItemResizer->cursorForPos(pos) != CursorHelper::defaultCursor()) {
+		return true; // a handle
+	}
+	const QRectF spot(pos - QPointF(1, 1), QSizeF(2, 2));
+	const auto items = selectedItems();
+	for (const auto item : items) {
+		if (item->intersects(spot)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void AnnotationItemModifier::selectItem(AbstractAnnotationItem *item)
 {
 	mItemSelector->selectItem(item);

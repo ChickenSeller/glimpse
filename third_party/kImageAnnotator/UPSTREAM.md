@@ -41,11 +41,20 @@ only when needed, and listed below.
   to the `Tools` enum, since tool settings are stored by the tool's number.
 - **Curve and Curved Arrow** (`src/annotations/items/AbstractAnnotationCurve.*`,
   `AnnotationCurve.*`, `AnnotationCurveArrow.*`,
-  `src/annotations/modifiers/resizeHandles/CurveResizeHandles.*`; shortcuts V
-  and Y, with Arrow and Line): drawn straight like a line; once selected, a
-  third handle halfway along bends it, the curve (a quadratic Bezier curve)
-  passing through that handle. The bend is kept relative to the two ends, so
-  it follows them. The curved arrow's head points along the curve at its
-  end; its shaft is stroked only, its head stroked and filled, since
-  kImageAnnotator's own painting would fill the area under the curve. Added
-  last to the `Tools` enum.
+  `src/annotations/modifiers/resizeHandles/CurveResizeHandles.*`,
+  `src/annotations/undo/CurveBendsCommand.*`; shortcuts V and Y, with Arrow
+  and Line): drawn straight like a line, with one bend point halfway. The
+  curve passes smoothly through its bend points in order (a Catmull-Rom
+  spline, drawn as cubic Bezier curves); a double-click on a selected curve
+  adds a bend point there, or removes the one it is on, as an undoable step.
+  Bend points are kept relative to the two ends, so they follow them. The
+  curved arrow's head points along the curve at its end; its shaft is
+  stroked only, its head stroked and filled, since kImageAnnotator's own
+  painting would fill the area under the curve. Added last to the `Tools`
+  enum.
+- **Adjusting a curve right after drawing it**
+  (`src/annotations/core/AnnotationArea.*`,
+  `src/annotations/modifiers/AnnotationItemModifier.*`): a new curve is
+  selected (`requiresSelectionAfterCreation`), and under a drawing tool a
+  press on the selection or its handles adjusts it instead of drawing a new
+  item.

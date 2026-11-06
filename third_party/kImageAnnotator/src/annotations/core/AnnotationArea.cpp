@@ -32,6 +32,7 @@ AnnotationArea::AnnotationArea(
 	mUndoStack(new UndoStack),
 	mBackgroundImage(nullptr),
 	mCurrentItem(nullptr),
+	mZoomValueProvider(zoomValueProvider),
 	mUndoAction(nullptr),
 	mRedoAction(nullptr),
 	mConfig(config),
@@ -286,6 +287,11 @@ void AnnotationArea::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	if (event->button() == Qt::LeftButton) {
 		if (mSettingsProvider->toolType() == Tools::Select) {
 			mItemModifier->handleMousePress(event->scenePos(), mItems, mKeyHelper->isControlPressed());
+		} else if (mItemModifier->isOnSelection(event->scenePos())) {
+			// A curve stays selected under its own tool once drawn, to be
+			// bent at once: a press on it or its handles adjusts it.
+			mAdjustingSelection = true;
+			mItemModifier->handleMousePress(event->scenePos(), mItems, mKeyHelper->isControlPressed());
 		} else {
 			mItemModifier->clear();
 			addItemAtPosition(event->scenePos());
@@ -311,9 +317,10 @@ void AnnotationArea::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void AnnotationArea::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	if (event->button() == Qt::LeftButton) {
-		if (mSettingsProvider->toolType() == Tools::Select) {
+		if (mSettingsProvider->toolType() == Tools::Select || mAdjustingSelection) {
 			mItemModifier->handleMouseRelease(mItems);
 		}
+		mAdjustingSelection = false;
 		finishDrawingItem(event->scenePos());
 	}
 
@@ -347,9 +354,42 @@ QRectF AnnotationArea::annotationItemsBoundingRect() const
 
 void AnnotationArea::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
+	// A double-click on a selected curve adds a bend point there, or removes
+	// the one it is on.
+	if (event->button() == Qt::LeftButton) {
+		if (auto curve = selectedCurve(); curve != nullptr && editCurveBendsAt(curve, event->scenePos())) {
+			return;
+		}
+	}
 	if (event->button() == Qt::LeftButton && mSettingsProvider->toolType() == Tools::Select) {
 		mItemModifier->handleMouseDoubleClick(event->scenePos(), mItems);
 	}
+}
+
+AbstractAnnotationCurve *AnnotationArea::selectedCurve() const
+{
+	const auto items = mItemModifier->selectedItems();
+	return items.size() == 1 ? dynamic_cast<AbstractAnnotationCurve *>(items.first()) : nullptr;
+}
+
+bool AnnotationArea::editCurveBendsAt(AbstractAnnotationCurve *curve, const QPointF &pos)
+{
+	// In scene units: what is a few pixels on screen at this zoom.
+	const qreal zoom = mZoomValueProvider != nullptr ? mZoomValueProvider->zoomValue() : 1.0;
+	const qreal reach = 8 / zoom;
+	for (int i = 2; i < 2 + curve->bendCount(); ++i) {
+		if (QLineF(curve->pointAt(i), pos).length() <= reach) {
+			if (auto bends = curve->bendsWithoutPoint(i)) {
+				mUndoStack->push(new CurveBendsCommand(curve, *bends));
+				return true;
+			}
+		}
+	}
+	if (auto bends = curve->bendsWithPointAt(pos, reach + curve->properties()->width() / 2.0)) {
+		mUndoStack->push(new CurveBendsCommand(curve, *bends));
+		return true;
+	}
+	return false;
 }
 
 void AnnotationArea::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

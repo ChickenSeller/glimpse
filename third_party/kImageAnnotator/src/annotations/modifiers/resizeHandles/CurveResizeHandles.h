@@ -26,8 +26,8 @@
 
 namespace kImageAnnotator {
 
-// A curve's two ends, as for a line, and its bend point between them, which
-// bends the curve when dragged.
+// A curve's two ends, as for a line, and its bend points between them,
+// which bend the curve when dragged.
 class CurveResizeHandles : public AbstractItemResizeHandles
 {
 public:

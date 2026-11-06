@@ -116,6 +116,7 @@ set(KIMAGEANNOTATOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/undo/FlipCommand.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/undo/MoveCommand.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/undo/ResizeCommand.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/annotations/undo/CurveBendsCommand.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/undo/ArrangeCommand.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/undo/CropCommand.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/annotations/undo/CutCommand.cpp

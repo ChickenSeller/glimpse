@@ -47,6 +47,8 @@ public:
 	QList<AbstractAnnotationItem *> selectedItems() const;
 	QRectF boundingRect() const override;
 	void selectItem(AbstractAnnotationItem *item);
+	// Whether `pos` is on a handle of the selected items or on one of them.
+	bool isOnSelection(const QPointF &pos);
 
 public slots:
 	void clear();

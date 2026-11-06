@@ -24,13 +24,23 @@ namespace kImageAnnotator {
 CurveResizeHandles::CurveResizeHandles(AbstractAnnotationCurve *curveItem, double zoomValue) :
 	mCurveItem(curveItem)
 {
-	initHandles(3, zoomValue);
-	initCursors();
+	initHandles(2, zoomValue);
 	update();
 }
 
 void CurveResizeHandles::update()
 {
+	// One handle per bend point besides the ends; bend points come and go.
+	// New ones copy an end's handle, which has the size for the zoom.
+	const int count = 2 + mCurveItem->bendCount();
+	while (mHandles.size() < count) {
+		mHandles.append(mHandles.first());
+	}
+	while (mHandles.size() > count) {
+		mHandles.removeLast();
+	}
+	initCursors();
+
 	// The ends just beyond the line's own ends, as for a line.
 	auto line = mCurveItem->line();
 	auto offset = mCurveItem->properties()->width();
@@ -39,17 +49,20 @@ void CurveResizeHandles::update()
 	mHandles[0].setAnchor(line.p1());
 	mHandles[1].moveCenter(outerLine.p2());
 	mHandles[1].setAnchor(line.p2());
-	// Right on the curve.
-	mHandles[2].moveCenter(mCurveItem->bendPoint());
-	mHandles[2].setAnchor(mCurveItem->bendPoint());
+	// The bend points right on the curve.
+	for (int i = 2; i < count; ++i) {
+		const QPointF point = mCurveItem->pointAt(i);
+		mHandles[i].moveCenter(point);
+		mHandles[i].setAnchor(point);
+	}
 }
 
 void CurveResizeHandles::initCursors()
 {
 	mCursors.clear();
-	mCursors.append(CursorHelper::allResizeCursor());
-	mCursors.append(CursorHelper::allResizeCursor());
-	mCursors.append(CursorHelper::allResizeCursor());
+	for (int i = 0; i < mHandles.size(); ++i) {
+		mCursors.append(CursorHelper::allResizeCursor());
+	}
 }
 
 } // namespace kImageAnnotator

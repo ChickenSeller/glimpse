@@ -51,6 +51,8 @@
 #include "src/annotations/undo/ModifyCanvasCommand.h"
 #include "src/annotations/undo/RotateCommand.h"
 #include "src/annotations/core/ZoomValueProvider.h"
+#include "src/annotations/items/AbstractAnnotationCurve.h"
+#include "src/annotations/undo/CurveBendsCommand.h"
 #include "src/annotations/core/imageEffects/ImageEffectFactory.h"
 
 namespace kImageAnnotator {
@@ -115,6 +117,9 @@ private:
 	AnnotationItemFactory *mItemFactory;
     QSharedPointer<QGraphicsPixmapItem> mBackgroundImage;
     AbstractAnnotationItem *mCurrentItem;
+	ZoomValueProvider *mZoomValueProvider;
+	// A press under a drawing tool that went to the selection instead.
+	bool mAdjustingSelection = false;
     AnnotationItemModifier *mItemModifier;
     QList<AbstractAnnotationItem*> *mItems;
     KeyHelper *mKeyHelper;
@@ -132,6 +137,8 @@ private:
 	void removeAllItems();
 	void replaceBackgroundImage(const QPixmap &image);
 	void finishDrawingItem(const QPointF &pos);
+	AbstractAnnotationCurve *selectedCurve() const;
+	bool editCurveBendsAt(AbstractAnnotationCurve *curve, const QPointF &pos);
 	QRectF annotationItemsBoundingRect() const;
 
 private slots:
