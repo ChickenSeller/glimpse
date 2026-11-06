@@ -1053,8 +1053,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+9"/>
-        <source>The most accurate engine, especially for Chinese and Japanese; one model reads all three languages. Downloads about 31 MB of models on first use.</source>
-        <translation>识别最准确，尤其是中文和日文；一个模型即可识别三种语言。首次使用时需下载约 31 MB 的模型。</translation>
+        <source>The most accurate engine, especially for Chinese and Japanese; one model reads all these languages. Downloads about 31 MB of models on first use.</source>
+        <translation>识别最准确，尤其是中文和日文；一个模型即可识别以上所有语言。首次使用时需下载约 31 MB 的模型。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1127,6 +1127,26 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+9"/>
         <source>Windows OCR failed to recognize the image.</source>
         <translation>Windows OCR 识别图像失败。</translation>
+    </message>
+    <message>
+        <source>&amp;Chinese (Simplified)</source>
+        <translation>简体中文(&amp;C)</translation>
+    </message>
+    <message>
+        <source>Chinese (&amp;Traditional)</source>
+        <translation>繁体中文(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&amp;Japanese</source>
+        <translation>日文(&amp;J)</translation>
+    </message>
+    <message>
+        <source>&amp;French</source>
+        <translation>法文(&amp;F)</translation>
+    </message>
+    <message>
+        <source>E&amp;nglish</source>
+        <translation>英文(&amp;N)</translation>
     </message>
 </context>
 <context>
@@ -2064,7 +2084,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+23"/>
         <source>Languages:</source>
-        <translation>语言：</translation>
+        <translation>文字：</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2084,7 +2104,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+18"/>
         <source>Recognition models are downloaded the first time they are needed. Selecting fewer languages makes recognition faster and more accurate.</source>
-        <translation>识别模型会在首次使用时下载。选择的语言越少，识别越快、越准确。</translation>
+        <translation>识别模型会在首次使用时下载。选择的文字越少，识别越快、越准确。</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -2179,7 +2199,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     <message>
         <location line="+105"/>
         <source>Select at least one language for text recognition.</source>
-        <translation>请至少为文字识别选择一种语言。</translation>
+        <translation>请至少选择一种要识别的文字。</translation>
     </message>
     <message>
         <location line="+96"/>

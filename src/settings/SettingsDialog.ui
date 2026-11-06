@@ -828,36 +828,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <layout class="QHBoxLayout" name="ocrLanguagesLayout">
-           <item>
-            <widget class="QCheckBox" name="ocrChineseCheck">
-             <property name="text">
-              <string>&amp;Chinese (Simplified)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="ocrJapaneseCheck">
-             <property name="text">
-              <string>&amp;Japanese</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="ocrEnglishCheck">
-             <property name="text">
-              <string>E&amp;nglish</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="ocrLanguagesSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <layout class="QGridLayout" name="ocrLanguagesLayout"/>
          </item>
         </layout>
        </item>

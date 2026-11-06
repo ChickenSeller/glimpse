@@ -153,8 +153,12 @@ QStringList languageTags(const QString &code)
 {
     if (code == QLatin1String("zh_CN"))
         return {QStringLiteral("zh-Hans-CN"), QStringLiteral("zh-Hans"), QStringLiteral("zh-CN")};
+    if (code == QLatin1String("zh_TW"))
+        return {QStringLiteral("zh-Hant-TW"), QStringLiteral("zh-Hant"), QStringLiteral("zh-TW")};
     if (code == QLatin1String("ja"))
         return {QStringLiteral("ja-JP"), QStringLiteral("ja")};
+    if (code == QLatin1String("fr"))
+        return {QStringLiteral("fr-FR"), QStringLiteral("fr")};
     return {QStringLiteral("en-US"), QStringLiteral("en")};
 }
 

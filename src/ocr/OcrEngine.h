@@ -40,8 +40,11 @@ public:
 
 namespace Ocr {
 
-// Language codes shared with the UI languages: "zh_CN", "ja", "en".
+// Language codes, partly shared with the UI languages: "zh_CN", "zh_TW",
+// "en", "ja", "fr".
 QStringList supportedLanguages();
+// For a check box: with its mnemonic.
+QString languageName(const QString &code);
 QStringList defaultLanguages();
 
 // Engines compiled into this build, best first ("paddle", "windows", "tesseract").

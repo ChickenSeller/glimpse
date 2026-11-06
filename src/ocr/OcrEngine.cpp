@@ -44,7 +44,21 @@ namespace Ocr {
 
 QStringList supportedLanguages()
 {
-    return {QStringLiteral("zh_CN"), QStringLiteral("ja"), QStringLiteral("en")};
+    return {QStringLiteral("zh_CN"), QStringLiteral("zh_TW"), QStringLiteral("en"), QStringLiteral("ja"),
+            QStringLiteral("fr")};
+}
+
+QString languageName(const QString &code)
+{
+    if (code == QLatin1String("zh_CN"))
+        return QCoreApplication::translate("Ocr", "&Chinese (Simplified)");
+    if (code == QLatin1String("zh_TW"))
+        return QCoreApplication::translate("Ocr", "Chinese (&Traditional)");
+    if (code == QLatin1String("ja"))
+        return QCoreApplication::translate("Ocr", "&Japanese");
+    if (code == QLatin1String("fr"))
+        return QCoreApplication::translate("Ocr", "&French");
+    return QCoreApplication::translate("Ocr", "E&nglish");
 }
 
 QStringList defaultLanguages()
@@ -100,7 +114,7 @@ QString engineDescription(const QString &id)
 {
     if (id == kPaddle)
         return QCoreApplication::translate(
-            "Ocr", "The most accurate engine, especially for Chinese and Japanese; one model reads all three "
+            "Ocr", "The most accurate engine, especially for Chinese and Japanese; one model reads all these "
                    "languages. Downloads about 31 MB of models on first use.");
     if (id == kWindows)
         return QCoreApplication::translate(

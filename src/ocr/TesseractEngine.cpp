@@ -18,8 +18,12 @@ QString traineddataName(const QString &language)
 {
     if (language == QLatin1String("zh_CN"))
         return QStringLiteral("chi_sim");
+    if (language == QLatin1String("zh_TW"))
+        return QStringLiteral("chi_tra");
     if (language == QLatin1String("ja"))
         return QStringLiteral("jpn");
+    if (language == QLatin1String("fr"))
+        return QStringLiteral("fra");
     return QStringLiteral("eng");
 }
 

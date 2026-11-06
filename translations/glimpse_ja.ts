@@ -1053,8 +1053,8 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+9"/>
-        <source>The most accurate engine, especially for Chinese and Japanese; one model reads all three languages. Downloads about 31 MB of models on first use.</source>
-        <translation>最も精度の高いエンジンで、特に中国語と日本語に強く、1 つのモデルで 3 言語を読み取れます。初回使用時に約 31 MB のモデルをダウンロードします。</translation>
+        <source>The most accurate engine, especially for Chinese and Japanese; one model reads all these languages. Downloads about 31 MB of models on first use.</source>
+        <translation>最も精度の高いエンジンで、特に中国語と日本語に強く、1 つのモデルでこれらすべての言語を読み取れます。初回使用時に約 31 MB のモデルをダウンロードします。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1127,6 +1127,26 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+9"/>
         <source>Windows OCR failed to recognize the image.</source>
         <translation>Windows OCR で画像を認識できませんでした。</translation>
+    </message>
+    <message>
+        <source>&amp;Chinese (Simplified)</source>
+        <translation>中国語（簡体字）(&amp;C)</translation>
+    </message>
+    <message>
+        <source>Chinese (&amp;Traditional)</source>
+        <translation>中国語（繁体字）(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&amp;Japanese</source>
+        <translation>日本語(&amp;J)</translation>
+    </message>
+    <message>
+        <source>&amp;French</source>
+        <translation>フランス語(&amp;F)</translation>
+    </message>
+    <message>
+        <source>E&amp;nglish</source>
+        <translation>英語(&amp;N)</translation>
     </message>
 </context>
 <context>

@@ -4,7 +4,8 @@
 
 // PaddleOCR (PP-OCRv6 small, official ONNX export) run through ONNX Runtime.
 // Two stages: a DB text detector finds line boxes, a CTC recognizer reads each
-// box. One recognition model covers Chinese, Japanese and English.
+// box. One recognition model covers Chinese (Simplified and Traditional),
+// Japanese, English and French.
 //
 // ONNX Runtime is loaded at run time through its C API (OrtGetApiBase), so the
 // build only needs its header and the engine reports itself unavailable when

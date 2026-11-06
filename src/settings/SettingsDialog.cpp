@@ -200,6 +200,16 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     }
     ui->ocrEngineCombo->setEnabled(!Ocr::engineIds().isEmpty());
     ui->ocrEngineCombo->setCurrentIndex(std::max(0, ui->ocrEngineCombo->findData(AppSettings::ocrEngine())));
+    {
+        const QStringList languages = Ocr::supportedLanguages();
+        for (int i = 0; i < languages.size(); ++i) {
+            auto *check = new QCheckBox(Ocr::languageName(languages.at(i)), ui->ocrTab);
+            ui->ocrLanguagesLayout->addWidget(check, i / 3, i % 3);
+            m_ocrLanguageChecks.append({languages.at(i), check});
+            connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
+        }
+        ui->ocrLanguagesLayout->setColumnStretch(3, 1);
+    }
     setOcrLanguages(AppSettings::ocrLanguages());
 
     // Translation: the key field edits the selected engine's key; the others
@@ -275,8 +285,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     for (QCheckBox *check : {ui->autostartCheck, ui->usageStatsCheck, ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->adjustSelectionCheck,
                              ui->scrollPreviewCheck,
                              ui->freehandTransparentCheck,
-                             ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck,
-                             ui->ocrChineseCheck, ui->ocrJapaneseCheck, ui->ocrEnglishCheck})
+                             ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
     connect(ui->scrollPreviewOpacitySpin, &QSpinBox::valueChanged, this, [this] { setModified(true); });
     setModified(false);
@@ -535,20 +544,17 @@ void SettingsDialog::applyPlatformLimits()
 QStringList SettingsDialog::selectedOcrLanguages() const
 {
     QStringList languages;
-    if (ui->ocrChineseCheck->isChecked())
-        languages << QStringLiteral("zh_CN");
-    if (ui->ocrJapaneseCheck->isChecked())
-        languages << QStringLiteral("ja");
-    if (ui->ocrEnglishCheck->isChecked())
-        languages << QStringLiteral("en");
+    for (const auto &[code, check] : m_ocrLanguageChecks) {
+        if (check->isChecked())
+            languages << code;
+    }
     return languages;
 }
 
 void SettingsDialog::setOcrLanguages(const QStringList &languages)
 {
-    ui->ocrChineseCheck->setChecked(languages.contains(QLatin1String("zh_CN")));
-    ui->ocrJapaneseCheck->setChecked(languages.contains(QLatin1String("ja")));
-    ui->ocrEnglishCheck->setChecked(languages.contains(QLatin1String("en")));
+    for (const auto &[code, check] : std::as_const(m_ocrLanguageChecks))
+        check->setChecked(languages.contains(code));
 }
 
 // Only what Glimpse saves there (its images and videos in their subfolders),

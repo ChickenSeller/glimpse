@@ -1,7 +1,7 @@
-// glimpse-ocr-test: renders a few lines of English, Chinese and Japanese the way
-// they look on screen, runs each OCR engine on them and prints what it read.
+// glimpse-ocr-test: renders a few lines in each OCR language the way they
+// look on screen, runs each OCR engine on them and prints what it read.
 //
-//   glimpse-ocr-test [--download] [--save <png>] [engine...]
+//   glimpse-ocr-test [--download] [--save <png>] [--languages zh_CN,fr,...] [engine...]
 //
 // --download fetches missing models (into the same directory Glimpse uses);
 // without it, engines whose models are missing are skipped.
@@ -30,6 +30,8 @@ const QStringList kSample = {
     QStringLiteral("Glimpse OCR test 2026, version 0.1"),
     QStringLiteral("截图工具的文字识别测试"),
     QStringLiteral("スクリーンショットの文字認識テスト"),
+    QStringLiteral("螢幕截圖的文字辨識測試"),
+    QStringLiteral("Test de reconnaissance : élève, garçon, où, cœur"),
 };
 
 QImage renderSample()
@@ -68,8 +70,12 @@ int main(int argc, char *argv[])
         savePath = args.at(i + 1);
         args.remove(i, 2);
     }
+    QStringList languages = Ocr::supportedLanguages();
+    if (const qsizetype i = args.indexOf(QStringLiteral("--languages")); i >= 0 && i + 1 < args.size()) {
+        languages = args.at(i + 1).split(QLatin1Char(','), Qt::SkipEmptyParts);
+        args.remove(i, 2);
+    }
     const QStringList engines = args.isEmpty() ? Ocr::engineIds() : args;
-    const QStringList languages = Ocr::supportedLanguages();
 
     const QImage sample = renderSample();
     if (!savePath.isEmpty())

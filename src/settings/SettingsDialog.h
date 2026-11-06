@@ -9,6 +9,7 @@
 
 #include <memory>
 
+class QCheckBox;
 class HotkeyEdit;
 
 namespace Ui {
@@ -63,6 +64,7 @@ private:
     std::unique_ptr<Ui::SettingsDialog> ui;
     bool m_modified = false;
     QColor m_freehandColor;
+    QList<QPair<QString, QCheckBox *>> m_ocrLanguageChecks; // code, check box
     // API keys as edited, per engine (the key field shows the current engine's).
     QHash<QString, QString> m_translateKeys;
     QString m_translateKeyEngine;

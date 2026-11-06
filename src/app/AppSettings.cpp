@@ -454,7 +454,13 @@ void setOcrEngine(const QString &engine)
 QStringList ocrLanguages()
 {
     const QVariant value = SettingsStore::open().value(QStringLiteral("ocr/languages"));
-    return value.isValid() ? value.toStringList() : Ocr::defaultLanguages();
+    if (!value.isValid())
+        return Ocr::defaultLanguages();
+    // Only languages still offered.
+    QStringList languages = value.toStringList();
+    const QStringList supported = Ocr::supportedLanguages();
+    languages.removeIf([&supported](const QString &language) { return !supported.contains(language); });
+    return languages.isEmpty() ? Ocr::defaultLanguages() : languages;
 }
 
 void setOcrLanguages(const QStringList &languages)
