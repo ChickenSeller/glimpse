@@ -699,7 +699,7 @@ void CaptureController::showOcrResult(const QImage &image)
         return;
     auto *dialog = new OcrResultDialog(image, engine, languages);
     connect(dialog, &OcrResultDialog::translateRequested, this, [this, dialog] {
-        if (prepareTranslation())
+        if (prepareTranslation(dialog->translator(), dialog->localModel()))
             dialog->translate();
     });
     connect(dialog, &OcrResultDialog::translatedImageReady, this, &CaptureController::openEditor);
@@ -708,11 +708,10 @@ void CaptureController::showOcrResult(const QImage &image)
     dialog->activateWindow();
 }
 
-bool CaptureController::prepareTranslation()
+bool CaptureController::prepareTranslation(const QString &translator, const QString &localModel)
 {
     const QString title = tr("Translate");
     // Without a key every engine fails; offer the settings instead.
-    const QString translator = AppSettings::translateEngine();
     if (translator == QLatin1String("firefox")) {
         // Language files are fetched when the text is known (see Translate::translate).
         const QString reason = FirefoxTranslation::unavailableReason();
@@ -727,14 +726,14 @@ bool CaptureController::prepareTranslation()
             QMessageBox::warning(nullptr, title, reason);
             return false;
         }
-        if (const std::optional<LocalModel::Preset> missing = LocalModel::missingPreset()) {
+        if (const std::optional<LocalModel::Preset> missing = LocalModel::missingPreset(localModel)) {
             if (!ModelStore::obtain({missing->file}, title,
                                     tr("Local translation needs its model first: %1. It is stored on this computer "
                                        "and used offline from then on.")
                                         .arg(missing->name),
                                     nullptr))
                 return false;
-        } else if (!QFileInfo::exists(LocalModel::modelPath())) {
+        } else if (!QFileInfo::exists(LocalModel::modelPath(localModel))) {
             const auto answer = QMessageBox::question(
                 nullptr, title, tr("The chosen GGUF model file does not exist. Open Settings > Translation to choose one?"));
             if (answer == QMessageBox::Yes)

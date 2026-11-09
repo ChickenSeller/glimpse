@@ -436,7 +436,7 @@ bool needsKey(const QString &engine)
 }
 
 void translate(const QString &engine, const QStringList &texts, const QString &target, QObject *context,
-               Callback done)
+               Callback done, const QString &localModel)
 {
     if (engine == QLatin1String("google-free")) {
         googleFree(texts, target, context, done);
@@ -505,9 +505,9 @@ void translate(const QString &engine, const QStringList &texts, const QString &t
             idle->start();
         });
         const QString language = languageName(target);
-        watcher->setFuture(QtConcurrent::run([texts, language] {
+        watcher->setFuture(QtConcurrent::run([texts, language, localModel] {
             QString error;
-            const QStringList translations = LocalModel::translate(texts, language, &error);
+            const QStringList translations = LocalModel::translate(texts, language, &error, localModel);
             return Result(translations, error);
         }));
         return;

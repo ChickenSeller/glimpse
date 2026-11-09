@@ -73,9 +73,9 @@ QString defaultPreset()
     return QStringLiteral("hy-mt2-1.8b");
 }
 
-QString modelPath()
+QString modelPath(const QString &model)
 {
-    const QString selected = AppSettings::localModel();
+    const QString selected = model.isEmpty() ? AppSettings::localModel() : model;
     if (selected == QLatin1String(kCustom))
         return AppSettings::localModelFile();
     const QList<Preset> all = presets();
@@ -86,9 +86,21 @@ QString modelPath()
     return all.first().file.path;
 }
 
-std::optional<Preset> missingPreset()
+QString modelName(const QString &model)
 {
-    const QString selected = AppSettings::localModel();
+    if (model == QLatin1String(kCustom))
+        return QFileInfo(AppSettings::localModelFile()).fileName();
+    const QList<Preset> all = presets();
+    for (const Preset &p : all) {
+        if (p.id == model)
+            return p.name;
+    }
+    return model;
+}
+
+std::optional<Preset> missingPreset(const QString &model)
+{
+    const QString selected = model.isEmpty() ? AppSettings::localModel() : model;
     if (selected == QLatin1String(kCustom))
         return std::nullopt;
     const QList<Preset> all = presets();
@@ -107,7 +119,7 @@ QString unavailableReason()
     return QCoreApplication::translate("LocalModel", "This build does not include llama.cpp.");
 }
 
-QStringList translate(const QStringList &, const QString &, QString *error)
+QStringList translate(const QStringList &, const QString &, QString *error, const QString &)
 {
     *error = unavailableReason();
     return {};
@@ -408,10 +420,10 @@ QString unavailableReason()
     return present ? QString() : QCoreApplication::translate("LocalModel", "The llama.cpp libraries are missing next to Glimpse.");
 }
 
-QStringList translate(const QStringList &texts, const QString &language, QString *error)
+QStringList translate(const QStringList &texts, const QString &language, QString *error, const QString &model)
 {
     std::lock_guard lock(g_mutex);
-    if (!ensureModel(modelPath(), error))
+    if (!ensureModel(modelPath(model), error))
         return {};
     QStringList results;
     for (const QString &text : texts) {

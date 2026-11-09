@@ -24,10 +24,15 @@ QString defaultPreset();
 // "custom" selects the file from AppSettings::localModelFile().
 inline constexpr char kCustom[] = "custom";
 
-// The model file the settings select (may not exist yet).
-QString modelPath();
-// The preset to download for the current settings, if one is selected and missing.
-std::optional<Preset> missingPreset();
+// `model` below is a preset id or kCustom; empty means the one the settings
+// select.
+
+// The model file (may not exist yet).
+QString modelPath(const QString &model = QString());
+// The preset to download, if the model is one and missing.
+std::optional<Preset> missingPreset(const QString &model = QString());
+// The model's name for the UI: the preset's, or the custom file's.
+QString modelName(const QString &model);
 
 // Why local translation cannot run in this build; empty if it can.
 QString unavailableReason();
@@ -35,7 +40,8 @@ QString unavailableReason();
 // Translates each text into `language` (its name, e.g. "日本語"). Blocking:
 // call it off the GUI thread. Calls are serialized; the model stays loaded
 // between them until release().
-QStringList translate(const QStringList &texts, const QString &language, QString *error);
+QStringList translate(const QStringList &texts, const QString &language, QString *error,
+                      const QString &model = QString());
 // Frees the model (and its GPU memory) if it is loaded and not in use.
 void release();
 

@@ -2,6 +2,8 @@
 #include "ui_OcrResultDialog.h"
 
 #include "app/AppSettings.h"
+#include "translate/FirefoxTranslation.h"
+#include "translate/LocalModel.h"
 #include "translate/Translator.h"
 
 #include <QClipboard>
@@ -198,6 +200,10 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     for (const QString &code : targets)
         ui->languageCombo->addItem(Translate::languageName(code), code);
     ui->languageCombo->setCurrentIndex(std::max(0, ui->languageCombo->findData(AppSettings::translateTarget())));
+    // Engine names are long ("Hy-MT2 7B (4.6 GB, ...)"): the list shows them whole.
+    ui->engineCombo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    ui->engineCombo->setMinimumContentsLength(24);
+    fillEngines();
 
     connect(ui->copyButton, &QPushButton::clicked, this, [this] {
         QGuiApplication::clipboard()->setText(ui->sourceEdit->toPlainText());
@@ -208,6 +214,14 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
         // Once translated, a new language translates again.
         if (m_translation == Translation::Done || m_translation == Translation::Failed)
             emit translateRequested();
+    });
+    // For this window only: the settings keep the engine it opens with.
+    connect(ui->engineCombo, &QComboBox::currentIndexChanged, this, [this] {
+        ui->engineCombo->setToolTip(ui->engineCombo->currentText());
+        if (m_translation != Translation::None)
+            emit translateRequested();
+        else
+            updateTexts();
     });
     connect(ui->copyTranslationButton, &QPushButton::clicked, this, [this] {
         QGuiApplication::clipboard()->setText(ui->targetEdit->toPlainText());
@@ -245,6 +259,7 @@ void OcrResultDialog::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
+        fillEngines();
         updateTexts();
         updateButtons();
     }
@@ -303,6 +318,62 @@ QStringList OcrResultDialog::sourceParagraphs() const
     return paragraphs;
 }
 
+// Every engine that can translate now (or is the settings' choice, which
+// then says what it lacks), the local engine once per model.
+void OcrResultDialog::fillEngines()
+{
+    QStringList current = ui->engineCombo->currentData().toStringList();
+    const QString defaultEngine = AppSettings::translateEngine();
+    const QString defaultModel = AppSettings::localModel();
+    if (current.isEmpty())
+        current = {defaultEngine, defaultEngine == QLatin1String("local") ? defaultModel : QString()};
+
+    const QSignalBlocker blocker(ui->engineCombo);
+    ui->engineCombo->clear();
+    const QStringList engines = Translate::engineIds();
+    for (const QString &engine : engines) {
+        const bool chosen = engine == defaultEngine;
+        if (engine == QLatin1String("local")) {
+            if (!chosen && !LocalModel::unavailableReason().isEmpty())
+                continue;
+            QStringList models;
+            const QList<LocalModel::Preset> presets = LocalModel::presets();
+            for (const LocalModel::Preset &preset : presets)
+                models << preset.id;
+            if (!AppSettings::localModelFile().trimmed().isEmpty() || defaultModel == QLatin1String(LocalModel::kCustom))
+                models << QString::fromLatin1(LocalModel::kCustom);
+            for (const QString &model : std::as_const(models))
+                ui->engineCombo->addItem(tr("Local: %1").arg(LocalModel::modelName(model)), QStringList{engine, model});
+            continue;
+        }
+        if (!chosen && engine == QLatin1String("firefox") && !FirefoxTranslation::unavailableReason().isEmpty())
+            continue;
+        if (!chosen && Translate::needsKey(engine) && AppSettings::translateKey(engine).trimmed().isEmpty())
+            continue;
+        ui->engineCombo->addItem(Translate::engineName(engine), QStringList{engine, QString()});
+    }
+    ui->engineCombo->setCurrentIndex(std::max(0, ui->engineCombo->findData(current)));
+    ui->engineCombo->setToolTip(ui->engineCombo->currentText());
+}
+
+QString OcrResultDialog::translator() const
+{
+    const QStringList choice = ui->engineCombo->currentData().toStringList();
+    return choice.isEmpty() ? AppSettings::translateEngine() : choice.constFirst();
+}
+
+QString OcrResultDialog::localModel() const
+{
+    const QStringList choice = ui->engineCombo->currentData().toStringList();
+    return choice.size() > 1 ? choice.at(1) : QString();
+}
+
+QString OcrResultDialog::translatorName() const
+{
+    return translator() == QLatin1String("local") ? LocalModel::modelName(localModel())
+                                                  : Translate::engineName(translator());
+}
+
 void OcrResultDialog::translate()
 {
     const QStringList paragraphs = sourceParagraphs();
@@ -312,7 +383,7 @@ void OcrResultDialog::translate()
     m_translateError.clear();
     const int request = ++m_request;
     const bool edited = sourceEdited();
-    Translate::translate(AppSettings::translateEngine(), paragraphs, ui->languageCombo->currentData().toString(), this,
+    Translate::translate(translator(), paragraphs, ui->languageCombo->currentData().toString(), this,
                          [this, request, edited](const QStringList &translations, const QString &error) {
                              if (request != m_request)
                                  return;
@@ -324,7 +395,8 @@ void OcrResultDialog::translate()
                                  ui->targetEdit->setPlainText(joinTranslations(translations, edited));
                              updateTexts();
                              updateButtons();
-                         });
+                         },
+                         localModel());
     updateTexts();
     updateButtons();
 }
@@ -353,7 +425,7 @@ QString OcrResultDialog::joinTranslations(const QStringList &translations, bool 
 void OcrResultDialog::updateTexts()
 {
     const QString ocrEngine = Ocr::engineName(m_engine);
-    const QString translator = Translate::engineName(AppSettings::translateEngine());
+    const QString translator = translatorName();
     QString status;
     if (!m_recognized)
         status = tr("Recognizing text with %1...").arg(ocrEngine);

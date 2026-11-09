@@ -31,6 +31,10 @@ public:
     // Translates the text now; the owner calls it on translateRequested(),
     // once the translation engine is ready.
     void translate();
+    // The translation engine chosen in the window (Translate::engineIds()),
+    // and for the local engine its model (see LocalModel).
+    QString translator() const;
+    QString localModel() const;
 
 signals:
     // Translate was asked for (button, or a new language after a translation).
@@ -54,6 +58,8 @@ private:
     void updateTexts();
     void updateButtons();
     void updatePreview();
+    void fillEngines();
+    QString translatorName() const;
 
     std::unique_ptr<Ui::OcrResultDialog> ui;
     QImage m_image;

@@ -128,9 +128,29 @@
           <widget class="QComboBox" name="languageCombo"/>
          </item>
          <item>
+          <widget class="QLabel" name="engineLabel">
+           <property name="text">
+            <string>&amp;Engine:</string>
+           </property>
+           <property name="buddy">
+            <cstring>engineCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="engineCombo">
+           <property name="toolTip">
+            <string>The translation engine or model for this window; Settings &gt; Translation sets the one it opens with</string>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="translateButton">
            <property name="toolTip">
-            <string>Translate the recognized text, with the engine and language from the settings</string>
+            <string>Translate the recognized text</string>
            </property>
            <property name="text">
             <string>&amp;Translate</string>

@@ -32,9 +32,10 @@ QString defaultTarget();
 // Translates `texts` (one entry per paragraph; the source language is detected)
 // into `target` with `engine`, using the key stored in the settings. `done` is
 // called on `context`'s thread with one translation per text, or with an error
-// message. Nothing is called if `context` is destroyed first.
+// message. Nothing is called if `context` is destroyed first. `localModel`
+// picks the local engine's model (see LocalModel; empty: the settings' one).
 using Callback = std::function<void(const QStringList &translations, const QString &error)>;
 void translate(const QString &engine, const QStringList &texts, const QString &target, QObject *context,
-               Callback done);
+               Callback done, const QString &localModel = QString());
 
 } // namespace Translate

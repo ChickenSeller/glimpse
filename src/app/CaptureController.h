@@ -75,9 +75,10 @@ private:
     void pinToScreen(const QImage &image, const QRect &where);
     void showQrResult(const QImage &image);
     void showOcrResult(const QImage &image);
-    // Whether the translation engine from the settings can translate now,
-    // with a missing model downloaded (after asking); if not, says why.
-    bool prepareTranslation();
+    // Whether the translation engine (and for the local one, its model; see
+    // LocalModel) can translate now, with a missing model downloaded (after
+    // asking); if not, says why.
+    bool prepareTranslation(const QString &translator, const QString &localModel);
     // The OCR engine and languages to use, with missing models downloaded
     // (after asking); false if text cannot be recognized now.
     bool prepareOcr(const QString &title, QString *engine, QStringList *languages);

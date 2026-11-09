@@ -191,12 +191,12 @@
         <translation>%1 には先に認識モデルが必要です。</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+41"/>
         <source>Local translation needs its model first: %1. It is stored on this computer and used offline from then on.</source>
         <translation>ローカル翻訳には先にモデルが必要です：%1。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
-        <location line="-485"/>
+        <location line="-484"/>
         <source>Close All Pins</source>
         <translation>すべてのピン留めを閉じる</translation>
     </message>
@@ -369,7 +369,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻訳</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+25"/>
         <source>The chosen GGUF model file does not exist. Open Settings &gt; Translation to choose one?</source>
         <translation>選択した GGUF モデル ファイルが存在しません。「設定 &gt; 翻訳」を開いて選び直しますか？</translation>
     </message>
@@ -843,7 +843,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>Hy-MT2 7B（4.6 GB、最高品質、グラフィックス カード推奨）</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+66"/>
         <source>This build does not include llama.cpp.</source>
         <translation>このビルドには llama.cpp が含まれていません。</translation>
     </message>
@@ -1160,8 +1160,18 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+13"/>
-        <source>Translate the recognized text, with the engine and language from the settings</source>
-        <translation>認識した文字を設定の翻訳エンジンと言語で翻訳</translation>
+        <source>&amp;Engine:</source>
+        <translation>エンジン(&amp;E)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>The translation engine or model for this window; Settings &gt; Translation sets the one it opens with</source>
+        <translation>このウィンドウで使う翻訳エンジンまたはモデル。開いたときの既定値は「設定 &gt; 翻訳」で決めます</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Translate the recognized text</source>
+        <translation>認識したテキストを翻訳</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1175,7 +1185,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+386"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+458"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -1185,7 +1195,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻訳画像(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-27"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-112"/>
+        <source>Local: %1</source>
+        <translation>ローカル：%1</translation>
+    </message>
+    <message>
+        <location line="+85"/>
         <source>Recognizing text with %1...</source>
         <translation>%1 でテキストを認識しています...</translation>
     </message>

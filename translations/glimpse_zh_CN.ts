@@ -191,12 +191,12 @@
         <translation>%1 需要先准备识别模型。</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+41"/>
         <source>Local translation needs its model first: %1. It is stored on this computer and used offline from then on.</source>
         <translation>本地翻译需要先准备模型：%1。模型保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
-        <location line="-485"/>
+        <location line="-484"/>
         <source>Close All Pins</source>
         <translation>关闭所有贴图</translation>
     </message>
@@ -369,7 +369,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻译</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+25"/>
         <source>The chosen GGUF model file does not exist. Open Settings &gt; Translation to choose one?</source>
         <translation>所选的 GGUF 模型文件不存在。要打开“设置 &gt; 翻译”重新选择吗？</translation>
     </message>
@@ -843,7 +843,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>混元翻译 Hy-MT2 7B（4.6 GB，质量最好，建议有显卡）</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+66"/>
         <source>This build does not include llama.cpp.</source>
         <translation>此版本未包含 llama.cpp。</translation>
     </message>
@@ -1160,8 +1160,18 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+13"/>
-        <source>Translate the recognized text, with the engine and language from the settings</source>
-        <translation>用设置中的翻译引擎和目标语言翻译识别出的文字</translation>
+        <source>&amp;Engine:</source>
+        <translation>引擎(&amp;E)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>The translation engine or model for this window; Settings &gt; Translation sets the one it opens with</source>
+        <translation>本窗口使用的翻译引擎或模型；打开窗口时的默认值在“设置 &gt; 翻译”里设定</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Translate the recognized text</source>
+        <translation>翻译识别出的文字</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1175,7 +1185,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+386"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+458"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -1185,7 +1195,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻译图片(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-27"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-112"/>
+        <source>Local: %1</source>
+        <translation>本地：%1</translation>
+    </message>
+    <message>
+        <location line="+85"/>
         <source>Recognizing text with %1...</source>
         <translation>正在使用 %1 识别文字...</translation>
     </message>
