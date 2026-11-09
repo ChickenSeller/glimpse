@@ -171,7 +171,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+510"/>
+        <location filename="../src/app/CaptureController.cpp" line="+516"/>
         <source>The window under the area runs as administrator, and Windows does not let Glimpse scroll it. Restart Glimpse as administrator to scroll it automatically, or scroll it yourself: Glimpse stitches whatever scrolls into view.</source>
         <translation>选区下的窗口以管理员身份运行，Windows 不允许 Glimpse 替它滚动。可以以管理员身份重启 Glimpse 来自动滚动，也可以自己滚动：滚进视野的内容 Glimpse 都会拼接上。</translation>
     </message>
@@ -268,18 +268,18 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-379"/>
-        <location line="+54"/>
+        <location filename="../src/app/CaptureController.cpp" line="-382"/>
+        <location line="+57"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
     </message>
     <message>
-        <location line="-53"/>
+        <location line="-56"/>
         <source>Already in use by another program: %1</source>
         <translation>已被其他程序占用：%1</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+57"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>以下快捷键已被其他程序占用，将无法使用：
@@ -629,7 +629,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>文件</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save As...</source>
         <translation>另存为...</translation>
     </message>
@@ -669,12 +669,22 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>贴到屏幕上，置于所有窗口之上</translation>
     </message>
     <message>
+        <location line="+12"/>
+        <source>Recognize and Translate Text...</source>
+        <translation>文字识别和翻译...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Recognize the text in the capture, to copy or translate it</source>
+        <translation>识别截图中的文字，可复制或翻译</translation>
+    </message>
+    <message>
         <location line="+8"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../src/editor/EditorWindow.cpp" line="+88"/>
+        <location filename="../src/editor/EditorWindow.cpp" line="+105"/>
         <source>Glimpse - %1 × %2</source>
         <translation>Glimpse - %1 × %2</translation>
     </message>
@@ -711,7 +721,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
 %1</translation>
     </message>
     <message>
-        <location filename="../src/editor/EditorWindow.cpp" line="+17"/>
+        <location filename="../src/editor/EditorWindow.cpp" line="+18"/>
         <source>Saved to %1</source>
         <translation>已保存到 %1</translation>
     </message>

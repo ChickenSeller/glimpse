@@ -15,6 +15,12 @@
 
 namespace {
 
+std::function<void(const QImage &)> &recognizer()
+{
+    static std::function<void(const QImage &)> recognize;
+    return recognize;
+}
+
 // The capture as shown: transparent parts (e.g. outside a freehand outline)
 // over the usual light checkerboard, so they cannot be mistaken for a color.
 QPixmap previewPixmap(const QImage &image)
@@ -58,9 +64,15 @@ EditorWindow::EditorWindow(const QImage &image, QWidget *parent)
     connect(ui->actionCopy, &QAction::triggered, this, &EditorWindow::copyToClipboard);
     connect(ui->actionEdit, &QAction::triggered, this, &EditorWindow::edit);
     connect(ui->actionPin, &QAction::triggered, this, &EditorWindow::pinToScreen);
+    ui->actionTranslate->setVisible(bool(recognizer()));
+    connect(ui->actionTranslate, &QAction::triggered, this, [this] {
+        if (recognizer())
+            recognizer()(m_image);
+    });
     connect(ui->actionClose, &QAction::triggered, this, &QWidget::close);
 
-    for (QAction *action : {ui->actionSaveAs, ui->actionSaveCopyPath, ui->actionCopy, ui->actionEdit, ui->actionPin})
+    for (QAction *action : {ui->actionSaveAs, ui->actionSaveCopyPath, ui->actionCopy, ui->actionEdit, ui->actionPin,
+                            ui->actionTranslate})
         m_icons.add(action);
     m_icons.apply(palette().color(QPalette::ButtonText));
 
@@ -70,6 +82,11 @@ EditorWindow::EditorWindow(const QImage &image, QWidget *parent)
 }
 
 EditorWindow::~EditorWindow() = default;
+
+void EditorWindow::setRecognizer(std::function<void(const QImage &)> recognize)
+{
+    recognizer() = std::move(recognize);
+}
 
 void EditorWindow::changeEvent(QEvent *event)
 {
@@ -92,7 +109,8 @@ void EditorWindow::updateTexts()
 void EditorWindow::updateToolTips()
 {
     // Icon-only buttons: name the shortcut in the tooltip (as set by the .ui).
-    for (QAction *action : {ui->actionSaveAs, ui->actionSaveCopyPath, ui->actionCopy, ui->actionEdit, ui->actionPin}) {
+    for (QAction *action : {ui->actionSaveAs, ui->actionSaveCopyPath, ui->actionCopy, ui->actionEdit, ui->actionPin,
+                            ui->actionTranslate}) {
         QString text = action->toolTip();
         text.remove(QStringLiteral("..."));
         action->setToolTip(QStringLiteral("%1  (%2)").arg(text, action->shortcut().toString(QKeySequence::NativeText)));

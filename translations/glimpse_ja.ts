@@ -171,7 +171,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+510"/>
+        <location filename="../src/app/CaptureController.cpp" line="+516"/>
         <source>The window under the area runs as administrator, and Windows does not let Glimpse scroll it. Restart Glimpse as administrator to scroll it automatically, or scroll it yourself: Glimpse stitches whatever scrolls into view.</source>
         <translation>範囲の下のウィンドウは管理者として実行されているため、Windows は Glimpse によるスクロールを許可しません。Glimpse を管理者として再起動すると自動でスクロールできます。自分でスクロールすることもでき、表示された内容を Glimpse がつなげます。</translation>
     </message>
@@ -268,18 +268,18 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-379"/>
-        <location line="+54"/>
+        <location filename="../src/app/CaptureController.cpp" line="-382"/>
+        <location line="+57"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
     </message>
     <message>
-        <location line="-53"/>
+        <location line="-56"/>
         <source>Already in use by another program: %1</source>
         <translation>他のプログラムが使用中です：%1</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+57"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>次のホットキーは他のプログラムが使用中のため、動作しません：
@@ -629,7 +629,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>ファイル</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save As...</source>
         <translation>名前を付けて保存...</translation>
     </message>
@@ -669,12 +669,22 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>すべてのウィンドウの前面にピン留め</translation>
     </message>
     <message>
+        <location line="+12"/>
+        <source>Recognize and Translate Text...</source>
+        <translation>文字認識・翻訳...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Recognize the text in the capture, to copy or translate it</source>
+        <translation>キャプチャ内の文字を認識してコピーまたは翻訳</translation>
+    </message>
+    <message>
         <location line="+8"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../src/editor/EditorWindow.cpp" line="+88"/>
+        <location filename="../src/editor/EditorWindow.cpp" line="+105"/>
         <source>Glimpse - %1 × %2</source>
         <translation>Glimpse - %1 × %2</translation>
     </message>
@@ -711,7 +721,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
 %1</translation>
     </message>
     <message>
-        <location filename="../src/editor/EditorWindow.cpp" line="+17"/>
+        <location filename="../src/editor/EditorWindow.cpp" line="+18"/>
         <source>Saved to %1</source>
         <translation>%1 に保存しました</translation>
     </message>

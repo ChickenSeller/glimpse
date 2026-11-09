@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QPointer>
 
+#include <functional>
 #include <memory>
 
 class AnnotatorWindow;
@@ -26,6 +27,11 @@ public:
 
     // Copies the image and says so in the status bar.
     void copyToClipboard();
+
+    // What Recognize and Translate Text does with the image, for every
+    // capture window however it was opened (set once by the app; without it
+    // the action is hidden).
+    static void setRecognizer(std::function<void(const QImage &)> recognize);
 
 protected:
     void changeEvent(QEvent *event) override;

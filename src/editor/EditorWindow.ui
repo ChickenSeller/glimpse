@@ -72,6 +72,7 @@
    <addaction name="separator"/>
    <addaction name="actionEdit"/>
    <addaction name="actionPin"/>
+   <addaction name="actionTranslate"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionSaveAs">
@@ -141,6 +142,21 @@
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionTranslate">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/document_scanner.svg</normaloff>:/icons/document_scanner.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Recognize and Translate Text...</string>
+   </property>
+   <property name="toolTip">
+    <string>Recognize the text in the capture, to copy or translate it</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+T</string>
    </property>
   </action>
   <action name="actionClose">

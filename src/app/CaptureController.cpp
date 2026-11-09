@@ -98,6 +98,9 @@ CaptureController::CaptureController(QObject *parent)
         beginCapture(static_cast<Mode>(id));
     });
 
+    // Every capture window can recognize and translate its text.
+    EditorWindow::setRecognizer([this](const QImage &image) { showOcrResult(image); });
+
     setupTray();
     // QApplication itself receives LanguageChange when a translator is (un)installed.
     qApp->installEventFilter(this);
@@ -133,7 +136,10 @@ CaptureController::CaptureController(QObject *parent)
     }
 }
 
-CaptureController::~CaptureController() = default;
+CaptureController::~CaptureController()
+{
+    EditorWindow::setRecognizer({});
+}
 
 void CaptureController::showToolbar()
 {
