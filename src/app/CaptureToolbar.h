@@ -48,11 +48,16 @@ public:
 signals:
     void captureRequested(CaptureMode mode);
     void settingsRequested();
+    void openRequested();
+    // Image files dropped on the bar.
+    void filesDropped(const QStringList &paths);
     void closed();
     void minimizeRequested();
 
 protected:
     void changeEvent(QEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;

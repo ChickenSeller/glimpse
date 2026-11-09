@@ -9,7 +9,7 @@
         <translation>关于 Glimpse</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+48"/>
         <source>A screenshot and screen recording tool: capture, annotate, pin to the screen, recognize text and translate it.</source>
         <translation>截图与录屏工具：截图、标注、贴到屏幕、识别文字并翻译。</translation>
     </message>
@@ -19,7 +19,7 @@
         <translation>版本 %1</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+11"/>
         <source>Source code</source>
         <translation>源代码</translation>
     </message>
@@ -34,7 +34,8 @@
         <translation>Copyright © 2026 Kaguya。以 %1 发布；基于 Qt %2 及其他开源组件构建（%3）。</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-8"/>
+        <location line="+9"/>
         <source>MIT License</source>
         <translation>MIT 许可证</translation>
     </message>
@@ -44,6 +45,7 @@
         <translation>第三方声明</translation>
     </message>
     <message>
+        <location line="-12"/>
         <source>Copyright © 2026 Kaguya. Released under the %1; built with Qt %2 and other open-source components.</source>
         <translation>Copyright © 2026 Kaguya。以 %1 发布；基于 Qt %2 及其他开源组件构建。</translation>
     </message>
@@ -51,15 +53,17 @@
 <context>
     <name>AnnotatorWindow</name>
     <message>
+        <location filename="../src/editor/AnnotatorWindow.ui" line="+112"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
+        <location line="+12"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.ui" line="+14"/>
+        <location line="-110"/>
         <source>Glimpse Editor</source>
         <translation>Glimpse 编辑器</translation>
     </message>
@@ -69,7 +73,7 @@
         <translation>编辑器</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+42"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
@@ -80,6 +84,16 @@
     </message>
     <message>
         <location line="+12"/>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save the edits to the image file</source>
+        <translation>把编辑结果保存到图片文件</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Save As...</source>
         <translation>另存为...</translation>
     </message>
@@ -89,7 +103,7 @@
         <translation>复制图像</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+36"/>
         <source>Crop</source>
         <translation>裁剪</translation>
     </message>
@@ -139,44 +153,52 @@
         <translation>修改画布大小和颜色</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.cpp" line="+156"/>
+        <location filename="../src/editor/AnnotatorWindow.cpp" line="+184"/>
+        <source>Save the changes to %1?</source>
+        <translation>要保存对 %1 的修改吗？</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Apply your edits to the capture before closing the editor?</source>
         <translation>关闭编辑器前，要把编辑结果应用到截图吗？</translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <source>%1[*] - Glimpse Editor</source>
+        <translation>%1[*] - Glimpse 编辑器</translation>
     </message>
 </context>
 <context>
     <name>CaptureController</name>
     <message>
+        <location filename="../src/app/CaptureController.cpp" line="+510"/>
         <source>The window under the area runs as administrator, and Windows does not let Glimpse scroll it. Restart Glimpse as administrator to scroll it automatically, or scroll it yourself: Glimpse stitches whatever scrolls into view.</source>
         <translation>选区下的窗口以管理员身份运行，Windows 不允许 Glimpse 替它滚动。可以以管理员身份重启 Glimpse 来自动滚动，也可以自己滚动：滚进视野的内容 Glimpse 都会拼接上。</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>&amp;Restart as Administrator</source>
         <translation>以管理员身份重启(&amp;R)</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>&amp;Scroll Myself</source>
         <translation>自己滚动(&amp;S)</translation>
     </message>
     <message>
+        <location line="+176"/>
         <source>%1 needs its recognition models first.</source>
         <translation>%1 需要先准备识别模型。</translation>
     </message>
     <message>
+        <location line="+42"/>
         <source>Local translation needs its model first: %1. It is stored on this computer and used offline from then on.</source>
         <translation>本地翻译需要先准备模型：%1。模型保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
+        <location line="-485"/>
         <source>Close All Pins</source>
         <translation>关闭所有贴图</translation>
-    </message>
-    <message>
-        <source>Capture Window / Object</source>
-        <translation type="vanished">捕捉窗口/对象</translation>
-    </message>
-    <message>
-        <source>Capture Rectangular Region</source>
-        <translation type="vanished">捕捉矩形区域</translation>
     </message>
     <message>
         <location filename="../src/app/CaptureMode.h" line="+51"/>
@@ -204,7 +226,7 @@
         <translation>屏幕白板</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+641"/>
+        <location filename="../src/app/CaptureController.cpp" line="+451"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
@@ -219,11 +241,12 @@
         <translation>文字识别和翻译</translation>
     </message>
     <message>
+        <location filename="../src/app/CaptureController.cpp" line="-189"/>
         <source>Scrolling Capture</source>
-        <translation type="vanished">滚动截图</translation>
+        <translation>滚动截图</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location filename="../src/app/CaptureMode.h" line="+2"/>
         <source>Capture Freehand Region</source>
         <translation>捕捉手绘区域</translation>
     </message>
@@ -233,21 +256,9 @@
         <translation>十字线/取色</translation>
     </message>
     <message>
-        <source>Pick Screen Color</source>
-        <translation type="vanished">屏幕取色</translation>
-    </message>
-    <message>
-        <source>Screen Crosshair</source>
-        <translation type="vanished">屏幕十字线</translation>
-    </message>
-    <message>
         <location line="+1"/>
         <source>Record Screen</source>
         <translation>录制屏幕</translation>
-    </message>
-    <message>
-        <source>Translate Screenshot</source>
-        <translation type="vanished">截图翻译</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -255,25 +266,31 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-521"/>
-        <location line="+46"/>
+        <location filename="../src/app/CaptureController.cpp" line="-379"/>
+        <location line="+54"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-53"/>
         <source>Already in use by another program: %1</source>
         <translation>已被其他程序占用：%1</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+54"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>以下快捷键已被其他程序占用，将无法使用：
 %1</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+61"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+685"/>
+        <source>Open Images...</source>
+        <translation>打开图片...</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Show Toolbar</source>
         <translation>显示工具栏</translation>
     </message>
@@ -293,7 +310,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+272"/>
+        <location line="+316"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -347,38 +364,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>此版本中没有可用的文字识别引擎。</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>%1 needs to download its recognition models first:
-
-%2
-
-Download them now?</source>
-        <translation>%1 需要先下载识别模型：
-
-%2
-
-现在下载吗？</translation>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Translate</source>
         <translation>翻译</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <source>Local translation needs its model first:
-
-%1
-
-Download it now? It is stored on this computer and used offline from then on.</source>
-        <translation>本地翻译需要先下载模型：
-
-%1
-
-现在下载吗？模型保存在本机，之后离线使用。</translation>
-    </message>
-    <message>
-        <location line="+7"/>
+        <location line="+26"/>
         <source>The chosen GGUF model file does not exist. Open Settings &gt; Translation to choose one?</source>
         <translation>所选的 GGUF 模型文件不存在。要打开“设置 &gt; 翻译”重新选择吗？</translation>
     </message>
@@ -401,21 +392,9 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>拖动以移动</translation>
     </message>
     <message>
-        <source>Capture Window / Object (mouse wheel: parent / child)</source>
-        <translation type="vanished">捕捉窗口/对象（鼠标滚轮：切换父级/子级）</translation>
-    </message>
-    <message>
         <location line="+26"/>
         <source>Window</source>
         <translation>窗口</translation>
-    </message>
-    <message>
-        <source>Capture Rectangular Region</source>
-        <translation type="vanished">捕捉矩形区域</translation>
-    </message>
-    <message>
-        <source>Region</source>
-        <translation type="vanished">区域</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -473,10 +452,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>屏幕白板：在实时屏幕、冻结的屏幕或白板上画</translation>
     </message>
     <message>
-        <source>Scrolling Capture (Esc to stop)</source>
-        <translation type="vanished">滚动截图（按 Esc 停止）</translation>
-    </message>
-    <message>
         <location line="-260"/>
         <source>Capture Window / Region (click a window or drag a rectangle; mouse wheel: parent / child)</source>
         <translation>捕捉窗口/区域（点击窗口，或拖出矩形；鼠标滚轮：切换父级/子级）</translation>
@@ -502,21 +477,9 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>二维码</translation>
     </message>
     <message>
-        <source>Recognize Text in a Region</source>
-        <translation type="vanished">框选区域识别文字</translation>
-    </message>
-    <message>
         <location line="+26"/>
         <source>Text</source>
         <translation>文字</translation>
-    </message>
-    <message>
-        <source>Translate the Text in a Region</source>
-        <translation type="vanished">翻译区域中的文字</translation>
-    </message>
-    <message>
-        <source>Translate</source>
-        <translation type="vanished">翻译</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -524,34 +487,14 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>十字线/取色：位置、颜色和距离（双击：取色）</translation>
     </message>
     <message>
-        <source>Pick a Color from the Screen</source>
-        <translation type="vanished">从屏幕上取色</translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation type="vanished">取色</translation>
-    </message>
-    <message>
-        <source>Screen Crosshair: position, color and distance</source>
-        <translation type="vanished">屏幕十字线：位置、颜色和距离</translation>
-    </message>
-    <message>
         <location line="+3"/>
         <source>Crosshair</source>
         <translation>十字线</translation>
     </message>
     <message>
-        <source>Screen Ruler: measure in pixels, horizontally or vertically (double-click: turn)</source>
-        <translation type="vanished">屏幕标尺：以像素水平或垂直测量（双击：旋转）</translation>
-    </message>
-    <message>
         <location line="+26"/>
         <source>Ruler</source>
         <translation>标尺</translation>
-    </message>
-    <message>
-        <source>Screen Whiteboard: draw over the live screen, a frozen one, or a white or black board</source>
-        <translation type="vanished">屏幕白板：在实时屏幕、冻结的屏幕或白板、黑板上画</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -560,13 +503,23 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+315"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+635"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+354"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+1"/>
         <source>Delay Before Capture</source>
         <translation>截图前延迟</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+26"/>
+        <source>Open Images to Edit (or drop image files on the toolbar)</source>
+        <translation>打开图片进行编辑（也可以把图片文件拖到工具栏上）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <location line="+45"/>
         <location line="+3"/>
         <source>Settings</source>
         <translation>设置</translation>
@@ -729,23 +682,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1 × %2 像素</translation>
     </message>
     <message>
-        <location filename="../src/editor/ImageActions.cpp" line="+47"/>
-        <location line="+10"/>
+        <location filename="../src/editor/ImageActions.cpp" line="+56"/>
         <source>Save Capture</source>
         <translation>保存截图</translation>
     </message>
     <message>
-        <location line="-12"/>
-        <source>PNG Image (*.png);;JPEG Image (*.jpg *.jpeg);;BMP Image (*.bmp)</source>
-        <translation>PNG 图像 (*.png);;JPEG 图像 (*.jpg *.jpeg);;BMP 图像 (*.bmp)</translation>
-    </message>
-    <message>
-        <location line="-1"/>
+        <location line="+11"/>
         <source>PNG Image (*.png)</source>
         <translation>PNG 图像 (*.png)</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+1"/>
+        <source>JPEG Image (*.jpg *.jpeg)</source>
+        <translation>JPEG 图像 (*.jpg *.jpeg)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>BMP Image (*.bmp)</source>
+        <translation>BMP 图像 (*.bmp)</translation>
+    </message>
+    <message>
+        <location line="+52"/>
         <source>Could not save the image to
 %1</source>
         <translation>无法将图像保存到
@@ -825,25 +782,53 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
 </context>
 <context>
+    <name>ImageActions</name>
+    <message>
+        <location filename="../src/editor/ImageActions.cpp" line="+17"/>
+        <source>Images (%1)</source>
+        <translation>图片 (%1)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>All Files (*)</source>
+        <translation>所有文件 (*)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Open Images</source>
+        <translation>打开图片</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Open Image</source>
+        <translation>打开图片</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Could not open
+%1
+
+%2</source>
+        <translation>无法打开
+%1
+
+%2</translation>
+    </message>
+</context>
+<context>
     <name>LocalModel</name>
     <message>
+        <location filename="../src/translate/LocalModel.cpp" line="+58"/>
         <source>Index-Translate 2B (1.3 GB, light, by Bilibili)</source>
         <translation>Index-Translate 2B（1.3 GB，轻量，B 站出品）</translation>
     </message>
     <message>
+        <location line="+5"/>
         <source>Index-Translate 9B (5.8 GB, by Bilibili; wants a graphics card)</source>
         <translation>Index-Translate 9B（5.8 GB，B 站出品，需要显卡）</translation>
     </message>
     <message>
-        <source>Qwen3 4B (2.5 GB, balanced)</source>
-        <translation type="vanished">Qwen3 4B（2.5 GB，速度与质量均衡）</translation>
-    </message>
-    <message>
-        <source>Hunyuan-MT 7B (4.6 GB, best translations)</source>
-        <translation type="vanished">混元翻译 Hunyuan-MT 7B（4.6 GB，翻译质量最好）</translation>
-    </message>
-    <message>
-        <location filename="../src/translate/LocalModel.cpp" line="+46"/>
+        <location line="-16"/>
         <source>Hy-MT2 1.8B (1.1 GB, light: runs on any laptop)</source>
         <translation>混元翻译 Hy-MT2 1.8B（1.1 GB，轻量：普通笔记本也能跑）</translation>
     </message>
@@ -858,7 +843,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>混元翻译 Hy-MT2 7B（4.6 GB，质量最好，建议有显卡）</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+54"/>
         <source>This build does not include llama.cpp.</source>
         <translation>此版本未包含 llama.cpp。</translation>
     </message>
@@ -888,7 +873,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>内存不足，无法运行模型。</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+90"/>
         <source>A paragraph is too long for the local model; split it with blank lines.</source>
         <translation>有段落太长，本地模型处理不了；请用空行把它分成几段。</translation>
     </message>
@@ -906,88 +891,110 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Ocr</name>
     <message>
+        <location filename="../src/ocr/ModelStore.cpp" line="+163"/>
         <source>Copy Official &amp;Links</source>
         <translation>复制原始链接(&amp;L)</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>The files&apos; own addresses (Hugging Face, GitHub...)</source>
         <translation>文件的原始地址（Hugging Face、GitHub 等）</translation>
     </message>
     <message>
+        <location line="+2"/>
         <source>Copy &amp;Mirror Links</source>
         <translation>复制镜像链接(&amp;M)</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>The same files on the mirror set in Settings &gt; General</source>
         <translation>同样的文件在设置 &gt; 常规里所设镜像上的地址</translation>
     </message>
     <message>
+        <location line="-83"/>
+        <location line="+92"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
+        <location line="-77"/>
         <source>Canceled.</source>
         <translation>已取消。</translation>
     </message>
     <message>
+        <location line="+9"/>
         <source>Checking %1...</source>
         <translation>正在校验 %1...</translation>
     </message>
     <message>
+        <location line="+33"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
+        <location line="+0"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>Choose...</source>
         <translation>选择...</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Use a copy of this file already on this computer</source>
         <translation>使用这台电脑上已有的这个文件</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>Downloading slowly? Copy the links, download the files in a browser or a download manager, then choose them here. Downloading can also be canceled halfway to come back here.</source>
         <translation>下载太慢？可以复制链接，用浏览器或下载工具下载，再在这里选择这些文件。下载中途也可以取消，回到这里。</translation>
     </message>
     <message>
+        <location line="+14"/>
         <source>C&amp;hoose Files...</source>
         <translation>选择文件(&amp;H)...</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Choose several files at once; each goes to the row its name belongs to</source>
         <translation>一次选择多个文件，按文件名对应到各自的行</translation>
     </message>
     <message>
+        <location line="+2"/>
         <source>&amp;Download</source>
         <translation>下载(&amp;D)</translation>
     </message>
     <message>
+        <location line="+32"/>
         <source>Ready</source>
         <translation>已就绪</translation>
     </message>
     <message>
+        <location line="+0"/>
         <source>Missing</source>
         <translation>缺少</translation>
     </message>
     <message>
+        <location line="+22"/>
         <source>Could not use %1 for %2:
 %3</source>
         <translation>无法将 %1 用作 %2：
 %3</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>Choose %1</source>
         <translation>选择 %1</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>Choose Files</source>
         <translation>选择文件</translation>
     </message>
     <message>
+        <location line="+35"/>
         <source>Could not tell which file these are; choose them on their own rows:
 
 %1</source>
@@ -996,28 +1003,24 @@ Download it now? It is stored on this computer and used offline from then on.</s
 %1</translation>
     </message>
     <message>
+        <location line="+40"/>
         <source>Could not read the file.</source>
         <translation>无法读取文件。</translation>
     </message>
     <message>
+        <location line="+11"/>
         <source>Copying %1...</source>
         <translation>正在复制 %1...</translation>
     </message>
     <message>
-        <source>Downloading Recognition Models</source>
-        <translation type="vanished">正在下载识别模型</translation>
-    </message>
-    <message>
-        <source>Downloading %1 (%2 of %3)...</source>
-        <translation type="vanished">正在下载 %1（第 %2 个，共 %3 个）...</translation>
-    </message>
-    <message>
-        <location filename="../src/ocr/ModelStore.cpp" line="+60"/>
+        <location line="-262"/>
+        <location line="+253"/>
+        <location line="+15"/>
         <source>The file is not the expected one (checksum mismatch).</source>
         <translation>文件与预期不符（校验值不匹配）。</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+72"/>
         <source>Downloading Models</source>
         <translation>正在下载模型</translation>
     </message>
@@ -1041,7 +1044,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 %2</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrEngine.cpp" line="+84"/>
+        <location filename="../src/ocr/OcrEngine.cpp" line="+99"/>
         <source>Only available on Windows.</source>
         <translation>仅 Windows 可用。</translation>
     </message>
@@ -1076,7 +1079,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>此版本中没有文字识别引擎“%1”。</translation>
     </message>
     <message>
-        <location filename="../src/ocr/TesseractEngine.cpp" line="+95"/>
+        <location filename="../src/ocr/TesseractEngine.cpp" line="+99"/>
         <source>Tesseract could not load its language data (%1).</source>
         <translation>Tesseract 无法加载语言数据（%1）。</translation>
     </message>
@@ -1111,7 +1114,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>PaddleOCR 的字符字典缺失或无效。</translation>
     </message>
     <message>
-        <location filename="../src/ocr/WindowsOcrEngine.cpp" line="+200"/>
+        <location filename="../src/ocr/WindowsOcrEngine.cpp" line="+204"/>
         <source>Windows OCR is not available on this system.</source>
         <translation>此系统上没有可用的 Windows OCR。</translation>
     </message>
@@ -1135,10 +1138,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>OcrResultDialog</name>
-    <message>
-        <source>Recognize Text</source>
-        <translation type="vanished">识别文字</translation>
-    </message>
     <message>
         <location filename="../src/ocr/OcrResultDialog.ui" line="+14"/>
         <source>Recognize and Translate Text</source>
@@ -1176,7 +1175,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+315"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+386"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -1215,24 +1214,21 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <source>Translate the text as recognized, unedited, to paint it over the capture.</source>
         <translation>要把译文画在截图上，请翻译未经修改的识别结果。</translation>
     </message>
-    <message>
-        <source>Recognized with %1. You can edit the text before copying.</source>
-        <translation type="vanished">已使用 %1 识别。复制前可以修改文字。</translation>
-    </message>
 </context>
 <context>
     <name>PinWindow</name>
     <message>
+        <location filename="../src/pin/PinWindow.cpp" line="+357"/>
         <source>Close All &amp;Pins</source>
         <translation>关闭所有贴图(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/pin/PinWindow.cpp" line="+252"/>
+        <location line="-77"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+43"/>
         <source>Scroll: zoom  ·  Ctrl+scroll: opacity  ·  Double-click: close</source>
         <translation>滚轮：缩放  ·  Ctrl+滚轮：透明度  ·  双击：关闭</translation>
     </message>
@@ -1267,7 +1263,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>关闭(&amp;L)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Copied</source>
         <translation>已复制</translation>
     </message>
@@ -1280,7 +1276,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+177"/>
+        <location filename="../src/capture/Platform.cpp" line="+180"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 上暂不支持。</translation>
     </message>
@@ -1296,10 +1292,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+26"/>
         <source>Screenshot portal error: %1</source>
         <translation>截图门户（portal）出错：%1</translation>
-    </message>
-    <message>
-        <source>The screenshot portal refused the request.</source>
-        <translation type="vanished">截图门户（portal）拒绝了请求。</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1450,23 +1442,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+158"/>
         <source>Enter or double-click: take it  ·  Ctrl+C: copy  ·  Arrows: move (Shift: 10 px, Ctrl: resize)  ·  Right-click: select again</source>
         <translation>Enter 或双击：截取  ·  Ctrl+C：复制  ·  方向键：移动（Shift：10 像素，Ctrl：调整大小）  ·  右键：重新选择</translation>
     </message>
     <message>
-        <source>Click: pick  ·  Arrows: 1 px</source>
-        <translation type="vanished">单击：取色  ·  方向键：移动 1 像素</translation>
-    </message>
-    <message>
-        <source>Click: lock here  ·  Right-click: unlock</source>
-        <translation type="vanished">单击：锁定到此处  ·  右键：解除锁定</translation>
-    </message>
-    <message>
-        <source>Click: lock  ·  Arrows: 1 px</source>
-        <translation type="vanished">单击：锁定  ·  方向键：移动 1 像素</translation>
-    </message>
-    <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+511"/>
+        <location line="+425"/>
         <source>Click: lock here  ·  Double-click: pick color  ·  Right-click: unlock</source>
         <translation>单击：锁定到此处  ·  双击：取色  ·  右键：解除锁定</translation>
     </message>
@@ -1481,13 +1462,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Ctrl+C：复制位置  ·  Ctrl+Shift+C：复制颜色  ·  Esc：退出</translation>
     </message>
     <message>
-        <location line="+224"/>
+        <location line="+368"/>
         <location line="+12"/>
         <source>Copied %1</source>
         <translation>已复制 %1</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+55"/>
         <source>Screen %1</source>
         <translation>屏幕 %1</translation>
     </message>
@@ -1503,7 +1484,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1 px</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+96"/>
         <source>Δx %1  Δy %2  ·  %3 px</source>
         <translation>Δx %1  Δy %2  ·  %3 px</translation>
     </message>
@@ -1523,7 +1504,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>与 Y 轴 %1</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+129"/>
         <source>Angles in &amp;Degrees</source>
         <translation>角度制(&amp;D)</translation>
     </message>
@@ -1533,25 +1514,9 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>弧度制，以 π 为单位(&amp;R)</translation>
     </message>
     <message>
-        <source>To the x-axis %1°</source>
-        <translation type="vanished">与 X 轴 %1°</translation>
-    </message>
-    <message>
-        <source>To the y-axis %1°</source>
-        <translation type="vanished">与 Y 轴 %1°</translation>
-    </message>
-    <message>
         <location line="+13"/>
         <source>Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity  ·  Hold Ctrl: angle</source>
         <translation>拖动两端：长度  ·  方向键：移动  ·  Ctrl+方向键：长度  ·  Ctrl+滚轮：不透明度  ·  按住 Ctrl：角度</translation>
-    </message>
-    <message>
-        <source>Vertical</source>
-        <translation type="vanished">垂直</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation type="vanished">水平</translation>
     </message>
     <message>
         <location line="-45"/>
@@ -1559,21 +1524,9 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>不透明度 %1%</translation>
     </message>
     <message>
-        <source>Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity</source>
-        <translation type="vanished">拖动两端：长度  ·  方向键：移动  ·  Ctrl+方向键：长度  ·  Ctrl+滚轮：不透明度</translation>
-    </message>
-    <message>
         <location line="+75"/>
         <source>Screen Ruler</source>
         <translation>屏幕标尺</translation>
-    </message>
-    <message>
-        <source>Turn &amp;Horizontal</source>
-        <translation type="vanished">转为水平(&amp;H)</translation>
-    </message>
-    <message>
-        <source>Turn &amp;Vertical</source>
-        <translation type="vanished">转为垂直(&amp;V)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1584,7 +1537,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScreenCastCapture</name>
     <message>
-        <location filename="../src/record/ScreenCastCapture.cpp" line="+136"/>
+        <location filename="../src/record/ScreenCastCapture.cpp" line="+137"/>
         <source>The session D-Bus is not available.</source>
         <translation>会话 D-Bus 不可用。</translation>
     </message>
@@ -1642,7 +1595,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScreenRecorder</name>
     <message>
-        <location filename="../src/record/ScreenRecorder.cpp" line="+235"/>
+        <location filename="../src/record/ScreenRecorder.cpp" line="+242"/>
         <source>Nothing was recorded: the screen content did not arrive.</source>
         <translation>未录到任何内容：没有收到屏幕画面。</translation>
     </message>
@@ -1650,40 +1603,50 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScrollCaptureSession</name>
     <message>
-        <location filename="../src/capture/ScrollCaptureSession.cpp" line="+94"/>
+        <location filename="../src/capture/ScrollCaptureSession.cpp" line="+280"/>
+        <location line="+94"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+8"/>
+        <location line="+89"/>
         <source>Scrolling capture: %1 px  ·  Turn the wheel to scroll yourself  ·  Esc to stop</source>
         <translation>滚动截图：%1 像素  ·  自己转动滚轮可接手滚动  ·  按 Esc 停止</translation>
     </message>
     <message>
+        <location line="-192"/>
+        <location line="+91"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
+        <location line="+2"/>
         <source>Take back the last part stitched on (Ctrl+Z)</source>
         <translation>撤回最后拼上的一段（Ctrl+Z）</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+12"/>
+        <location line="+90"/>
         <source>Not lined up: scroll back a little  ·  Esc to stop</source>
         <translation>未能对齐：请往回滚一点  ·  按 Esc 停止</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-89"/>
+        <location line="+91"/>
         <source>Scroll the area yourself: %1 px  ·  Esc to stop</source>
         <translation>请自行滚动该区域：%1 像素  ·  按 Esc 停止</translation>
     </message>
     <message>
+        <location line="-332"/>
         <source>Click where to scroll to begin
 Esc to cancel</source>
         <translation>点击要滚动的位置开始
 Esc 取消</translation>
     </message>
     <message>
+        <location line="+239"/>
+        <location line="+86"/>
         <source>Click in the area where to scroll  ·  Esc to cancel</source>
         <translation>在选区内点击要滚动的位置  ·  Esc 取消</translation>
     </message>
@@ -1691,31 +1654,37 @@ Esc 取消</translation>
 <context>
     <name>SettingsDialog</name>
     <message>
+        <location filename="../src/settings/SettingsDialog.ui" line="+140"/>
         <source>Beside the area, where there is room: the stitched image so far, to see a misalignment while it can still be fixed</source>
         <translation>显示在选区旁边（有空位时）：已拼接的图像，出现错位时能及时发现并纠正</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Show a pre&amp;view during scrolling capture</source>
         <translation>滚动截图时显示预览(&amp;V)</translation>
     </message>
     <message>
+        <location line="+7"/>
         <source>Opacity:</source>
         <translation>不透明度：</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
+        <location line="-29"/>
         <source>Ad&amp;just the selected area before taking it</source>
         <translation>选好区域后先调整再截取(&amp;J)</translation>
     </message>
     <message>
+        <location line="-3"/>
         <source>Handles and the arrow keys move and resize it; Enter or a double-click takes it, Ctrl+C copies it and is done</source>
         <translation>可以拖动手柄、用方向键移动和调整大小；Enter 或双击截取，Ctrl+C 复制后直接结束</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.ui" line="+14"/>
+        <location line="-114"/>
         <source>Glimpse Settings</source>
         <translation>Glimpse 设置</translation>
     </message>
@@ -1755,11 +1724,7 @@ Esc 取消</translation>
         <translation>截图后自动复制到剪贴板(&amp;C)</translation>
     </message>
     <message>
-        <source>Sa&amp;ve captures in:</source>
-        <translation type="vanished">截图保存位置(&amp;V)：</translation>
-    </message>
-    <message>
-        <location line="+9"/>
+        <location line="+66"/>
         <source>Outside a freehand region:</source>
         <translation>手绘区域外部：</translation>
     </message>
@@ -1854,14 +1819,6 @@ Esc 取消</translation>
         <translation>快捷键</translation>
     </message>
     <message>
-        <source>Capture &amp;Window / Object:</source>
-        <translation type="vanished">捕捉窗口/对象(&amp;W)：</translation>
-    </message>
-    <message>
-        <source>Capture &amp;Rectangular Region:</source>
-        <translation type="vanished">捕捉矩形区域(&amp;R)：</translation>
-    </message>
-    <message>
         <location line="+34"/>
         <source>Capture Free&amp;hand Region:</source>
         <translation>捕捉手绘区域(&amp;H)：</translation>
@@ -1887,26 +1844,6 @@ Esc 取消</translation>
         <translation>识别二维码(&amp;Q)：</translation>
     </message>
     <message>
-        <source>Recognize &amp;Text:</source>
-        <translation type="vanished">识别文字(&amp;T)：</translation>
-    </message>
-    <message>
-        <source>Tra&amp;nslate Screenshot:</source>
-        <translation type="vanished">截图翻译(&amp;N)：</translation>
-    </message>
-    <message>
-        <source>&amp;Pick Screen Color:</source>
-        <translation type="vanished">屏幕取色(&amp;P)：</translation>
-    </message>
-    <message>
-        <source>Screen Cr&amp;osshair:</source>
-        <translation type="vanished">屏幕十字线(&amp;O)：</translation>
-    </message>
-    <message>
-        <source>&amp;Scrolling Capture:</source>
-        <translation type="vanished">滚动截图(&amp;S)：</translation>
-    </message>
-    <message>
         <location line="+67"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>点击输入框后按下新的组合键。清空输入框即可禁用该快捷键。此窗口打开期间，快捷键暂停生效。</translation>
@@ -1930,10 +1867,6 @@ Esc 取消</translation>
         <location line="+7"/>
         <source>Move Do&amp;wn</source>
         <translation>下移(&amp;W)</translation>
-    </message>
-    <message>
-        <source>&amp;Icon size:</source>
-        <translation type="vanished">图标大小(&amp;I)：</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -1981,7 +1914,7 @@ Esc 取消</translation>
         <translation>键盘和文字</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+30"/>
         <source>Everything typed is shown, including passwords.</source>
         <translation>所有输入都会显示出来，包括密码。</translation>
     </message>
@@ -1991,17 +1924,13 @@ Esc 取消</translation>
         <translation>视频帧率(&amp;V)：</translation>
     </message>
     <message>
-        <source>O&amp;utput folder:</source>
-        <translation type="vanished">保存文件夹(&amp;U)：</translation>
-    </message>
-    <message>
-        <location line="-615"/>
-        <location line="+847"/>
+        <location line="-685"/>
+        <location line="+888"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-840"/>
+        <location line="-881"/>
         <source>Cl&amp;ear</source>
         <translation>清空(&amp;E)</translation>
     </message>
@@ -2026,7 +1955,7 @@ Esc 取消</translation>
         <translation>启动后 Glimpse 在通知区域（托盘）中待命。</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+267"/>
         <source>Capture &amp;Window / Region:</source>
         <translation>捕捉窗口/区域(&amp;W)：</translation>
     </message>
@@ -2061,7 +1990,7 @@ Esc 取消</translation>
         <translation>工具栏大小(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+187"/>
         <source>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</source>
         <translation>录像保存在“常规”页所选文件夹下的 Recordings 子文件夹中。</translation>
     </message>
@@ -2081,22 +2010,7 @@ Esc 取消</translation>
         <translation>语言（文字）：</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>&amp;Chinese (Simplified)</source>
-        <translation>简体中文(&amp;C)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>&amp;Japanese</source>
-        <translation>日语(&amp;J)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>E&amp;nglish</source>
-        <translation>英语(&amp;N)</translation>
-    </message>
-    <message>
-        <location line="+18"/>
+        <location line="+12"/>
         <source>Recognition models are downloaded the first time they are needed. Selecting fewer languages makes recognition faster and more accurate.</source>
         <translation>识别模型会在首次使用时下载。选择的语言（文字）越少，识别越快、越准确。</translation>
     </message>
@@ -2146,7 +2060,7 @@ Esc 取消</translation>
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-585"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-635"/>
         <source>Tell me about new versions</source>
         <translation>有新版本时提醒我</translation>
     </message>
@@ -2156,7 +2070,7 @@ Esc 取消</translation>
         <translation>从不检查</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+40"/>
         <source>Screenshots</source>
         <translation>截图</translation>
     </message>
@@ -2171,12 +2085,12 @@ Esc 取消</translation>
         <translation>截图和录像</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+55"/>
         <source>%1 fps</source>
         <translation>%1 帧/秒</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+81"/>
         <source>Other GGUF model file...</source>
         <translation>其他 GGUF 模型文件...</translation>
     </message>
@@ -2191,12 +2105,12 @@ Esc 取消</translation>
         <translation>GGUF 模型 (*.gguf)</translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+107"/>
         <source>Select at least one language for text recognition.</source>
         <translation>请至少选择一种要识别的语言（文字）。</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+100"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -2206,7 +2120,7 @@ Esc 取消</translation>
         <translation>全局快捷键：%1</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+42"/>
         <source>There are no files to clear.</source>
         <translation>没有可清空的文件。</translation>
     </message>
@@ -2232,28 +2146,12 @@ Esc 取消</translation>
         </translation>
     </message>
     <message>
-        <source>Small</source>
-        <translation type="vanished">小</translation>
-    </message>
-    <message>
-        <source>Medium</source>
-        <translation type="vanished">中</translation>
-    </message>
-    <message>
-        <source>Large</source>
-        <translation type="vanished">大</translation>
-    </message>
-    <message>
-        <source>%1 (%2 px)</source>
-        <translation type="vanished">%1（%2 像素）</translation>
-    </message>
-    <message>
-        <location line="-266"/>
+        <location line="-267"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.ui" line="-247"/>
+        <location filename="../src/settings/SettingsDialog.ui" line="-218"/>
         <source>&amp;Color detail:</source>
         <translation>颜色细节(&amp;C)：</translation>
     </message>
@@ -2263,7 +2161,7 @@ Esc 取消</translation>
         <translation>标准视频每 2×2 个像素只保留一种颜色，会让图表、代码高亮等细的彩色线条变模糊。高会以两倍尺寸的视频保留每个像素的颜色（文件约为三倍大）。宽或高超过 2048 像素的区域会保存为 H.265，部分播放器和浏览器无法播放。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-172"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-184"/>
         <source>Standard</source>
         <translation>标准</translation>
     </message>
@@ -2273,42 +2171,52 @@ Esc 取消</translation>
         <translation>高（图表、彩色文字）</translation>
     </message>
     <message>
+        <location filename="../src/settings/SettingsDialog.ui" line="-63"/>
         <source>P&amp;osition:</source>
         <translation>位置(&amp;O)：</translation>
     </message>
     <message>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-32"/>
         <source>In the picture, bottom</source>
         <translation>画面内，下方</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>In the picture, top</source>
         <translation>画面内，上方</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>In the picture, left</source>
         <translation>画面内，左侧</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>In the picture, right</source>
         <translation>画面内，右侧</translation>
     </message>
     <message>
+        <location line="+2"/>
         <source>Outside the picture, below</source>
         <translation>画面外，下方</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Outside the picture, above</source>
         <translation>画面外，上方</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Outside the picture, left</source>
         <translation>画面外，左侧</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Outside the picture, right</source>
         <translation>画面外，右侧</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Outside the picture, the video gets a band on that side for the keys, so they cover nothing; the video is that much larger.</source>
         <translation>放在画面外时，视频会在那一侧加一条边带来显示按键，不遮挡画面；视频尺寸也相应变大。</translation>
     </message>
@@ -2316,23 +2224,27 @@ Esc 取消</translation>
 <context>
     <name>Translate</name>
     <message>
+        <location filename="../src/translate/Translator.cpp" line="+348"/>
         <source>Bilibili Index-Translate (free, online)</source>
         <translation>B 站 Index-Translate（免费，在线）</translation>
     </message>
     <message>
-        <source>Bilibili's translation model (Index-Translate 35B), offered free without a key: natural translations, 150 languages. Slower than Google, and Bilibili may limit or end the service.</source>
+        <location line="+23"/>
+        <source>Bilibili&apos;s translation model (Index-Translate 35B), offered free without a key: natural translations, 150 languages. Slower than Google, and Bilibili may limit or end the service.</source>
         <translation>B 站的翻译大模型（Index-Translate 35B），免费、无需密钥：译文自然，支持 150 种语言。比 Google 慢，B 站也可能限流或停止这项服务。</translation>
     </message>
     <message>
+        <location line="-47"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>无法读取 Index-Translate 的回复。</translation>
     </message>
     <message>
+        <location line="+134"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻译需要先准备这些语言文件（每个方向约 50 MB）。文件保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
-        <location filename="../src/translate/Translator.cpp" line="+59"/>
+        <location line="-396"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API 密钥被拒绝（HTTP %1）。请在“设置 &gt; 翻译”中检查。</translation>
     </message>
@@ -2362,12 +2274,12 @@ Esc 取消</translation>
         <translation>无法解析 Claude 的回复。</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+76"/>
         <source>Google Translate (free, online)</source>
         <translation>Google 翻译（免费，在线）</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Firefox translation (offline, light)</source>
         <translation>Firefox 翻译（离线，轻量）</translation>
     </message>
@@ -2392,7 +2304,7 @@ Esc 取消</translation>
         <translation>Chrome 中 Google 翻译所用的免费服务：不需要密钥，质量好，语种多。它是非官方接口，Google 可能会限流或变更；如果无法使用，请换用其他翻译服务。</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>The engine behind Firefox&apos;s offline translations: small models (35-70 MB per language direction, downloaded on first use) that run fast on any computer. Translates between English and other languages; others, such as Chinese and Japanese, go through English.</source>
         <translation>Firefox 离线翻译所用的引擎：模型小（每个翻译方向 35–70 MB，首次使用时下载），任何电脑上都很快。在英文和其他语言之间互译；其他组合（如中日互译）经英文中转。</translation>
     </message>
@@ -2422,25 +2334,12 @@ Esc 取消</translation>
         <translation>大语言模型：能读懂识别错误的文字，并结合上下文保留语气和术语。需要 Anthropic API 密钥，按用量计费。</translation>
     </message>
     <message>
-        <location line="+66"/>
-        <source>Firefox translation needs these language files first (about 50 MB per direction):
-
-%1
-
-Download them now? They are kept on this computer and used offline from then on.</source>
-        <translation>Firefox 翻译需要先下载这些语言文件（每个方向约 50 MB）：
-
-%1
-
-现在下载吗？文件保存在本机，之后离线使用。</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+72"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>未下载 Firefox 语言文件。</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+55"/>
         <source>No API key is set for %1. Add one in Settings &gt; Translation.</source>
         <translation>%1 尚未设置 API 密钥。请在“设置 &gt; 翻译”中填写。</translation>
     </message>
@@ -2451,68 +2350,9 @@ Download them now? They are kept on this computer and used offline from then on.
     </message>
 </context>
 <context>
-    <name>TranslateResultDialog</name>
-    <message>
-        <source>Translate</source>
-        <translation type="vanished">翻译</translation>
-    </message>
-    <message>
-        <source>Recognized text (editable; paragraphs separated by blank lines)</source>
-        <translation type="vanished">识别出的文字（可编辑；段落之间用空行分隔）</translation>
-    </message>
-    <message>
-        <source>Translation</source>
-        <translation type="vanished">翻译</translation>
-    </message>
-    <message>
-        <source>&amp;Into:</source>
-        <translation type="vanished">翻译为(&amp;I)：</translation>
-    </message>
-    <message>
-        <source>&amp;Translate Again</source>
-        <translation type="vanished">重新翻译(&amp;T)</translation>
-    </message>
-    <message>
-        <source>&amp;Copy Translation</source>
-        <translation type="vanished">复制译文(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Paint the translation over the capture, where the text was</source>
-        <translation type="vanished">把译文画在截图中原文的位置上</translation>
-    </message>
-    <message>
-        <source>Translated &amp;Image</source>
-        <translation type="vanished">翻译图片(&amp;I)</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">关闭</translation>
-    </message>
-    <message>
-        <source>No text was found in the selected area.</source>
-        <translation type="vanished">所选区域中没有找到文字。</translation>
-    </message>
-    <message>
-        <source>Recognizing text...</source>
-        <translation type="vanished">正在识别文字...</translation>
-    </message>
-    <message>
-        <source>Translating with %1...</source>
-        <translation type="vanished">正在用 %1 翻译...</translation>
-    </message>
-    <message>
-        <source>Translated with %1.</source>
-        <translation type="vanished">已用 %1 翻译。</translation>
-    </message>
-    <message>
-        <source>Keep the paragraphs as recognized (same number) to paint them over the capture.</source>
-        <translation type="vanished">段落数量需与识别结果一致，才能把译文画到截图上。</translation>
-    </message>
-</context>
-<context>
     <name>Updater</name>
     <message>
-        <location filename="../src/update/Updater.cpp" line="+131"/>
+        <location filename="../src/update/Updater.cpp" line="+141"/>
         <location line="+18"/>
         <location line="+33"/>
         <location line="+19"/>
@@ -2616,12 +2456,12 @@ Install the package for your system from the download page.</source>
     <name>WhiteboardCanvas</name>
     <message>
         <location filename="../src/whiteboard/WhiteboardCanvas.cpp" line="+74"/>
-        <location line="+410"/>
+        <location line="+415"/>
         <source>Screen Whiteboard</source>
         <translation>屏幕白板</translation>
     </message>
     <message>
-        <location line="-332"/>
+        <location line="-337"/>
         <source>The mouse works the programs below; the drawing stays</source>
         <translation>鼠标可以操作下面的程序，画的内容保留</translation>
     </message>
@@ -2631,7 +2471,7 @@ Install the package for your system from the download page.</source>
         <translation>绘画</translation>
     </message>
     <message>
-        <location line="+430"/>
+        <location line="+435"/>
         <source>Copied</source>
         <translation>已复制</translation>
     </message>
@@ -2745,16 +2585,17 @@ Install the package for your system from the download page.</source>
         <translation>背景</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location filename="../src/whiteboard/WhiteboardToolbar.cpp" line="+170"/>
         <source>Pass-Through: the mouse works the programs below, the drawing stays</source>
         <translation>鼠标穿透：鼠标可以操作下面的程序，画的内容保留</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>%1 (%2 toggles it)</source>
         <translation>%1（按 %2 切换）</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../src/whiteboard/WhiteboardToolbar.ui" line="+20"/>
         <source>Pass-Through</source>
         <translation>鼠标穿透</translation>
     </message>
@@ -2819,7 +2660,7 @@ Install the package for your system from the download page.</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../src/whiteboard/WhiteboardToolbar.cpp" line="+165"/>
+        <location filename="../src/whiteboard/WhiteboardToolbar.cpp" line="+2"/>
         <source>Color (%1)</source>
         <translation>颜色 (%1)</translation>
     </message>
@@ -2842,10 +2683,6 @@ Install the package for your system from the download page.</source>
         <location line="+1"/>
         <source>&amp;Whiteboard</source>
         <translation>白板(&amp;W)</translation>
-    </message>
-    <message>
-        <source>&amp;Blackboard</source>
-        <translation type="vanished">黑板(&amp;B)</translation>
     </message>
 </context>
 </TS>

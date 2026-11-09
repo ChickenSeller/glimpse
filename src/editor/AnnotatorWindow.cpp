@@ -7,6 +7,7 @@
 #include <kImageAnnotator/KImageAnnotator.h>
 
 #include <QCloseEvent>
+#include <QFileInfo>
 #include <QMouseEvent>
 #include <QGuiApplication>
 #include <QMessageBox>
@@ -22,12 +23,30 @@ const QString kGeometryKey = QStringLiteral("editor/geometry");
 } // namespace
 
 AnnotatorWindow::AnnotatorWindow(const QImage &image, QWidget *parent)
+    : AnnotatorWindow(image, QString(), parent)
+{
+}
+
+AnnotatorWindow::AnnotatorWindow(const QImage &image, const QString &filePath, QWidget *parent)
     : QMainWindow(parent)
     , ui(std::make_unique<Ui::AnnotatorWindow>())
     , m_devicePixelRatio(image.devicePixelRatio())
+    , m_filePath(filePath)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
+
+    // A capture is handed back by Done; a file is saved back to itself, with
+    // Ctrl+S as in any editor (Save As moves to Ctrl+Shift+S).
+    const bool editingFile = !m_filePath.isEmpty();
+    ui->actionDone->setVisible(!editingFile);
+    ui->actionSave->setVisible(editingFile);
+    ui->actionSave->setEnabled(editingFile);
+    if (editingFile) {
+        ui->actionSave->setShortcut(QKeySequence::Save);
+        ui->actionSaveAs->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S));
+        ui->actionSaveAs->setIcon(QIcon(QStringLiteral(":/icons/file_save.svg")));
+    }
 
     m_annotator = new kImageAnnotator::KImageAnnotator;
     m_annotator->setTabBarAutoHide(true);
@@ -45,9 +64,10 @@ AnnotatorWindow::AnnotatorWindow(const QImage &image, QWidget *parent)
     pixels.setDevicePixelRatio(1.0);
     m_annotator->loadImage(QPixmap::fromImage(pixels));
     setCentralWidget(m_annotator);
-    connect(m_annotator, &kImageAnnotator::KImageAnnotator::imageChanged, this, [this] { m_modified = true; });
+    connect(m_annotator, &kImageAnnotator::KImageAnnotator::imageChanged, this, [this] { setModified(true); });
 
     connect(ui->actionDone, &QAction::triggered, this, &AnnotatorWindow::done);
+    connect(ui->actionSave, &QAction::triggered, this, &AnnotatorWindow::save);
     // kImageAnnotator's own undo and redo, with their keys window-wide: it
     // handles them itself only while its view has the focus.
     connect(ui->actionUndo, &QAction::triggered, m_annotator->undoAction(), &QAction::trigger);
@@ -63,11 +83,13 @@ AnnotatorWindow::AnnotatorWindow(const QImage &image, QWidget *parent)
     connect(ui->actionCanvas, &QAction::triggered, m_annotator,
             &kImageAnnotator::KImageAnnotator::showCanvasModifier);
 
-    for (QAction *action : {ui->actionDone, ui->actionSaveAs, ui->actionCopy, ui->actionUndo, ui->actionRedo,
-                            ui->actionCrop, ui->actionCut, ui->actionResize, ui->actionRotate, ui->actionCanvas})
+    for (QAction *action : {ui->actionDone, ui->actionSave, ui->actionSaveAs, ui->actionCopy, ui->actionUndo,
+                            ui->actionRedo, ui->actionCrop, ui->actionCut, ui->actionResize, ui->actionRotate,
+                            ui->actionCanvas})
         m_icons.add(action);
     m_icons.apply(palette().color(QPalette::ButtonText));
     updateToolTips();
+    updateTitle();
     if (!restoreGeometry(SettingsStore::open().value(kGeometryKey).toByteArray()))
         fitToScreen();
 
@@ -148,6 +170,7 @@ void AnnotatorWindow::changeEvent(QEvent *event)
     if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
         updateToolTips();
+        updateTitle();
     } else if (event->type() == QEvent::PaletteChange) {
         m_icons.apply(palette().color(QPalette::ButtonText));
     }
@@ -156,7 +179,15 @@ void AnnotatorWindow::changeEvent(QEvent *event)
 
 void AnnotatorWindow::closeEvent(QCloseEvent *event)
 {
-    if (m_modified && !m_finished) {
+    if (m_modified && !m_filePath.isEmpty()) {
+        const auto answer = QMessageBox::question(
+            this, windowTitle(), tr("Save the changes to %1?").arg(QFileInfo(m_filePath).fileName()),
+            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+        if (answer == QMessageBox::Cancel || (answer == QMessageBox::Save && !save())) {
+            event->ignore();
+            return;
+        }
+    } else if (m_modified && !m_finished) {
         const auto answer = QMessageBox::question(
             this, windowTitle(), tr("Apply your edits to the capture before closing the editor?"),
             QMessageBox::Apply | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Apply);
@@ -187,9 +218,60 @@ void AnnotatorWindow::done()
     close();
 }
 
-void AnnotatorWindow::saveAs()
+bool AnnotatorWindow::save()
 {
-    ImageActions::saveAs(this, editedImage());
+    if (m_filePath.isEmpty())
+        return saveAs();
+    const QImage image = editedImage();
+    // A format Qt cannot write (GIF...), or transparency where the format has
+    // none (JPEG...): it goes to a new file instead.
+    if (!ImageActions::canWrite(image, m_filePath))
+        return saveAs();
+    if (!ImageActions::write(this, image, m_filePath, ui->actionSave->text()))
+        return false;
+    setModified(false);
+    return true;
+}
+
+bool AnnotatorWindow::saveAs()
+{
+    const QString path = ImageActions::saveAs(this, editedImage(), m_filePath);
+    if (path.isEmpty())
+        return false;
+    if (!m_filePath.isEmpty()) {
+        // Editing a file: from now on it is the one saved to.
+        m_filePath = path;
+        setModified(false);
+    }
+    return true;
+}
+
+void AnnotatorWindow::setModified(bool modified)
+{
+    m_modified = modified;
+    if (!m_filePath.isEmpty())
+        updateTitle();
+}
+
+void AnnotatorWindow::updateTitle()
+{
+    if (m_filePath.isEmpty())
+        return; // the .ui's title
+    setWindowTitle(tr("%1[*] - Glimpse Editor").arg(QFileInfo(m_filePath).fileName()));
+    setWindowFilePath(m_filePath);
+    setWindowModified(m_modified);
+}
+
+bool AnnotatorWindow::openFile(const QString &path)
+{
+    const QImage image = ImageActions::load(nullptr, path);
+    if (image.isNull())
+        return false;
+    auto *window = new AnnotatorWindow(image, QFileInfo(path).absoluteFilePath());
+    window->show();
+    window->raise();
+    window->activateWindow();
+    return true;
 }
 
 void AnnotatorWindow::copyToClipboard()
@@ -199,7 +281,7 @@ void AnnotatorWindow::copyToClipboard()
 
 void AnnotatorWindow::updateToolTips()
 {
-    for (QAction *action : {ui->actionDone, ui->actionSaveAs, ui->actionCopy, ui->actionUndo, ui->actionRedo}) {
+    for (QAction *action : {ui->actionDone, ui->actionSave, ui->actionSaveAs, ui->actionCopy, ui->actionUndo, ui->actionRedo}) {
         QString text = action->toolTip();
         text.remove(QStringLiteral("..."));
         action->setToolTip(QStringLiteral("%1  (%2)").arg(text, action->shortcut().toString(QKeySequence::NativeText)));

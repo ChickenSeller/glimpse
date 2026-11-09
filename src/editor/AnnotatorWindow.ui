@@ -38,6 +38,7 @@
    </attribute>
    <addaction name="actionDone"/>
    <addaction name="separator"/>
+   <addaction name="actionSave"/>
    <addaction name="actionSaveAs"/>
    <addaction name="actionCopy"/>
    <addaction name="separator"/>
@@ -64,6 +65,18 @@
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+Return</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../../resources/glimpse.qrc">
+     <normaloff>:/icons/save.svg</normaloff>:/icons/save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the edits to the image file</string>
    </property>
   </action>
   <action name="actionSaveAs">

@@ -649,7 +649,8 @@ void SettingsDialog::setToolbarItems(const QList<AppSettings::ToolbarItem> &item
     ui->toolbarList->clear();
     const QColor iconColor = palette().color(QPalette::ButtonText);
     for (const AppSettings::ToolbarItem &item : items) {
-        QString icon = QStringLiteral(":/icons/timer.svg");
+        QString icon = item.id == AppSettings::kOpenItemId ? QStringLiteral(":/icons/folder_open.svg")
+                                                           : QStringLiteral(":/icons/timer.svg");
         for (CaptureMode mode : kAllCaptureModes) {
             if (AppSettings::toolbarItemId(mode) == item.id)
                 icon = QString::fromLatin1(captureModeIcon(mode));
@@ -680,7 +681,9 @@ void SettingsDialog::updateToolbarItemTexts()
         QListWidgetItem *row = ui->toolbarList->item(i);
         const QString id = row->data(Qt::UserRole).toString();
         // The names the tray menu and the toolbar use, in their contexts.
-        QString text = QCoreApplication::translate("CaptureToolbar", "Delay Before Capture");
+        QString text = id == AppSettings::kOpenItemId
+            ? QCoreApplication::translate("CaptureController", "Open Images...").remove(QStringLiteral("..."))
+            : QCoreApplication::translate("CaptureToolbar", "Delay Before Capture");
         for (CaptureMode mode : kAllCaptureModes) {
             if (AppSettings::toolbarItemId(mode) == id)
                 text = QCoreApplication::translate("CaptureController", captureModeLabel(mode));

@@ -71,6 +71,7 @@ QList<ToolbarItem> defaultToolbarItems()
     for (CaptureMode mode : kAllCaptureModes)
         items.append({toolbarItemId(mode), mode != CaptureMode::FullScreen});
     items.append({kDelayItemId, true});
+    items.append({kOpenItemId, true});
     return items;
 }
 

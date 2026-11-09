@@ -44,6 +44,10 @@ public:
     void activateHotkey(int id);
     void showSettings();
     void showAbout();
+    // Opens image files in the editor, each in a window of its own.
+    void openImages(const QStringList &paths);
+    // Asks for image files, then opens them.
+    void chooseImages();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -95,6 +99,7 @@ private:
     Updater *m_updater = nullptr;
     QHash<CaptureMode, bool> m_hotkeyRegistered; // per configured hotkey: registered, or taken
     QHash<Mode, QAction *> m_trayCaptureActions;
+    QAction *m_trayOpen = nullptr;
     QAction *m_trayShowToolbar = nullptr;
     QAction *m_traySettings = nullptr;
     QAction *m_trayAbout = nullptr;

@@ -5,11 +5,15 @@
 #include "SettingsStore.h"
 #include "TintedIcon.h"
 #include "capture/Platform.h"
+#include "editor/ImageActions.h"
 
 #include <QActionGroup>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QCursor>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
 #include <QInputDialog>
 #include <QMenu>
 #include <QMouseEvent>
@@ -76,6 +80,8 @@ CaptureToolbar::CaptureToolbar(QWidget *parent)
         connect(it.value(), &QToolButton::clicked, this, [this, mode] { emit captureRequested(mode); });
     }
     connect(ui->settingsButton, &QToolButton::clicked, this, &CaptureToolbar::settingsRequested);
+    connect(ui->openButton, &QToolButton::clicked, this, &CaptureToolbar::openRequested);
+    setAcceptDrops(true); // image files dropped on the bar open in the editor
     connect(ui->minimizeButton, &QToolButton::clicked, this, &CaptureToolbar::minimizeRequested);
 
     // No title bar: the grip moves the window. The window system does the
@@ -151,6 +157,7 @@ void CaptureToolbar::applyLayoutSettings()
     for (auto it = m_modeButtons.cbegin(); it != m_modeButtons.cend(); ++it)
         buttons.insert(AppSettings::toolbarItemId(it.key()), it.value());
     buttons.insert(AppSettings::kDelayItemId, ui->delayButton);
+    buttons.insert(AppSettings::kOpenItemId, ui->openButton);
 
     // Right after the drag grip, in the chosen order.
     int index = ui->layout->indexOf(ui->dragHandle) + 1;
@@ -223,6 +230,38 @@ void CaptureToolbar::updateToolTips()
                                            : QStringLiteral("%1  (%2)").arg(it.value(),
                                                                             key.toString(QKeySequence::NativeText)));
     }
+}
+
+namespace {
+
+QStringList droppedImages(const QMimeData *data)
+{
+    QStringList paths;
+    const QList<QUrl> urls = data->urls();
+    for (const QUrl &url : urls) {
+        if (url.isLocalFile() && ImageActions::isImageFile(url.toLocalFile()))
+            paths << url.toLocalFile();
+    }
+    return paths;
+}
+
+} // namespace
+
+void CaptureToolbar::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (!droppedImages(event->mimeData()).isEmpty()) {
+        event->acceptProposedAction();
+        reveal(); // docked and slid in, it comes out to take the drop
+    }
+}
+
+void CaptureToolbar::dropEvent(QDropEvent *event)
+{
+    const QStringList paths = droppedImages(event->mimeData());
+    if (paths.isEmpty())
+        return;
+    event->acceptProposedAction();
+    emit filesDropped(paths);
 }
 
 void CaptureToolbar::changeEvent(QEvent *event)

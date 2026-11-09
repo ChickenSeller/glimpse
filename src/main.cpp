@@ -11,6 +11,7 @@
 
 #include <QApplication>
 #include <QFile>
+#include <QFileInfo>
 #include <QSystemTrayIcon>
 
 #include <optional>
@@ -84,12 +85,31 @@ int main(int argc, char *argv[])
     if (const qsizetype i = args.indexOf(QStringLiteral("--capture")); i >= 0 && i + 1 < args.size())
         capture = args.at(i + 1).toInt();
 
+    // glimpse <image file>...: opens the files in the editor (as "Open
+    // with" does). Anything not an option or an option's value is taken for
+    // a file.
+    QStringList files;
+    for (qsizetype i = 1; i < args.size(); ++i) {
+        const QString &arg = args.at(i);
+        if (arg.startsWith(QLatin1String("--"))) {
+            if (arg == QLatin1String("--hotkey") || arg == QLatin1String("--replace")
+                || arg == QLatin1String("--capture") || arg == QLatin1String("--list-downloads"))
+                ++i; // and its value
+            continue;
+        }
+        if (QFileInfo(arg).isFile())
+            files << QFileInfo(arg).absoluteFilePath();
+    }
+
     // One Glimpse per user session: a second one could not register the
     // hotkeys and would add a second tray icon. Starting it again brings the
-    // running one's toolbar up instead, or passes its hotkey on.
+    // running one's toolbar up instead, or passes its hotkey or files on.
     KDSingleApplication instance;
     if (!instance.isPrimaryInstance()) {
-        instance.sendMessage(hotkey ? QByteArrayLiteral("hotkey ") + QByteArray::number(*hotkey) : QByteArrayLiteral("show"));
+        if (!files.isEmpty())
+            instance.sendMessage(QByteArrayLiteral("open ") + files.join(QLatin1Char('\n')).toUtf8());
+        else
+            instance.sendMessage(hotkey ? QByteArrayLiteral("hotkey ") + QByteArray::number(*hotkey) : QByteArrayLiteral("show"));
         return 0;
     }
 
@@ -106,9 +126,13 @@ int main(int argc, char *argv[])
 
     CaptureController controller;
     Autostart::refresh();
-    // Started with the session or by a hotkey, Glimpse waits in the tray (if there is one).
-    if ((!args.contains(Autostart::kArgument) && !hotkey && !capture) || !QSystemTrayIcon::isSystemTrayAvailable())
+    // Started with the session, by a hotkey or to open files, Glimpse waits
+    // in the tray (if there is one).
+    if ((!args.contains(Autostart::kArgument) && !hotkey && !capture && files.isEmpty())
+        || !QSystemTrayIcon::isSystemTrayAvailable())
         controller.showToolbar();
+    if (!files.isEmpty())
+        controller.openImages(files);
     if (hotkey)
         controller.activateHotkey(*hotkey);
     if (capture)
@@ -116,6 +140,8 @@ int main(int argc, char *argv[])
     QObject::connect(&instance, &KDSingleApplication::messageReceived, &controller, [&controller](const QByteArray &message) {
         if (message.startsWith("hotkey "))
             controller.activateHotkey(message.mid(7).toInt());
+        else if (message.startsWith("open "))
+            controller.openImages(QString::fromUtf8(message.mid(5)).split(QLatin1Char('\n'), Qt::SkipEmptyParts));
         else
             controller.showToolbar();
     });

@@ -16,14 +16,15 @@ QKeySequence defaultHotkey(CaptureMode mode);
 QKeySequence hotkey(CaptureMode mode);
 void setHotkey(CaptureMode mode, const QKeySequence &key);
 
-// The toolbar's buttons in order, by id (toolbarItemId(), or "delay" for the
-// delay button), and whether each is shown. Every button is listed: ones
+// The toolbar's buttons in order, by id (toolbarItemId(), "delay" for the
+// delay button, "open" for opening images), and whether each is shown. Every button is listed: ones
 // added by a newer Glimpse join the end, shown.
 struct ToolbarItem {
     QString id;
     bool visible = true;
 };
 inline const QString kDelayItemId = QStringLiteral("delay");
+inline const QString kOpenItemId = QStringLiteral("open");
 QString toolbarItemId(CaptureMode mode);
 QList<ToolbarItem> defaultToolbarItems();
 QList<ToolbarItem> toolbarItems();

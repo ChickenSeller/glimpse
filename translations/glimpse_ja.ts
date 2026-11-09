@@ -9,7 +9,7 @@
         <translation>Glimpse について</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+48"/>
         <source>A screenshot and screen recording tool: capture, annotate, pin to the screen, recognize text and translate it.</source>
         <translation>スクリーンショットと画面録画のツールです。キャプチャ、注釈、画面へのピン留め、文字の認識と翻訳ができます。</translation>
     </message>
@@ -19,7 +19,7 @@
         <translation>バージョン %1</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+11"/>
         <source>Source code</source>
         <translation>ソースコード</translation>
     </message>
@@ -34,7 +34,8 @@
         <translation>Copyright © 2026 Kaguya。%1 で公開しています。Qt %2 とその他のオープンソースコンポーネントで構築されています（%3）。</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-8"/>
+        <location line="+9"/>
         <source>MIT License</source>
         <translation>MIT ライセンス</translation>
     </message>
@@ -44,6 +45,7 @@
         <translation>サードパーティー通知</translation>
     </message>
     <message>
+        <location line="-12"/>
         <source>Copyright © 2026 Kaguya. Released under the %1; built with Qt %2 and other open-source components.</source>
         <translation>Copyright © 2026 Kaguya。%1 で公開しています。Qt %2 とその他のオープンソースコンポーネントで構築されています。</translation>
     </message>
@@ -51,15 +53,17 @@
 <context>
     <name>AnnotatorWindow</name>
     <message>
+        <location filename="../src/editor/AnnotatorWindow.ui" line="+112"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
     <message>
+        <location line="+12"/>
         <source>Redo</source>
         <translation>やり直し</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.ui" line="+14"/>
+        <location line="-110"/>
         <source>Glimpse Editor</source>
         <translation>Glimpse エディター</translation>
     </message>
@@ -69,7 +73,7 @@
         <translation>エディター</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+42"/>
         <source>Done</source>
         <translation>完了</translation>
     </message>
@@ -80,6 +84,16 @@
     </message>
     <message>
         <location line="+12"/>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save the edits to the image file</source>
+        <translation>編集内容を画像ファイルに保存</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Save As...</source>
         <translation>名前を付けて保存...</translation>
     </message>
@@ -89,7 +103,7 @@
         <translation>画像をコピー</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+36"/>
         <source>Crop</source>
         <translation>トリミング</translation>
     </message>
@@ -139,44 +153,52 @@
         <translation>キャンバスのサイズと色を変更</translation>
     </message>
     <message>
-        <location filename="../src/editor/AnnotatorWindow.cpp" line="+156"/>
+        <location filename="../src/editor/AnnotatorWindow.cpp" line="+184"/>
+        <source>Save the changes to %1?</source>
+        <translation>%1 への変更を保存しますか？</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Apply your edits to the capture before closing the editor?</source>
         <translation>エディターを閉じる前に、編集内容をキャプチャに反映しますか？</translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <source>%1[*] - Glimpse Editor</source>
+        <translation>%1[*] - Glimpse エディター</translation>
     </message>
 </context>
 <context>
     <name>CaptureController</name>
     <message>
+        <location filename="../src/app/CaptureController.cpp" line="+510"/>
         <source>The window under the area runs as administrator, and Windows does not let Glimpse scroll it. Restart Glimpse as administrator to scroll it automatically, or scroll it yourself: Glimpse stitches whatever scrolls into view.</source>
         <translation>範囲の下のウィンドウは管理者として実行されているため、Windows は Glimpse によるスクロールを許可しません。Glimpse を管理者として再起動すると自動でスクロールできます。自分でスクロールすることもでき、表示された内容を Glimpse がつなげます。</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>&amp;Restart as Administrator</source>
         <translation>管理者として再起動(&amp;R)</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>&amp;Scroll Myself</source>
         <translation>自分でスクロール(&amp;S)</translation>
     </message>
     <message>
+        <location line="+176"/>
         <source>%1 needs its recognition models first.</source>
         <translation>%1 には先に認識モデルが必要です。</translation>
     </message>
     <message>
+        <location line="+42"/>
         <source>Local translation needs its model first: %1. It is stored on this computer and used offline from then on.</source>
         <translation>ローカル翻訳には先にモデルが必要です：%1。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
+        <location line="-485"/>
         <source>Close All Pins</source>
         <translation>すべてのピン留めを閉じる</translation>
-    </message>
-    <message>
-        <source>Capture Window / Object</source>
-        <translation type="vanished">ウィンドウ／オブジェクトをキャプチャ</translation>
-    </message>
-    <message>
-        <source>Capture Rectangular Region</source>
-        <translation type="vanished">矩形領域をキャプチャ</translation>
     </message>
     <message>
         <location filename="../src/app/CaptureMode.h" line="+51"/>
@@ -204,7 +226,7 @@
         <translation>スクリーンペン</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+641"/>
+        <location filename="../src/app/CaptureController.cpp" line="+451"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
@@ -219,11 +241,12 @@
         <translation>文字認識・翻訳</translation>
     </message>
     <message>
+        <location filename="../src/app/CaptureController.cpp" line="-189"/>
         <source>Scrolling Capture</source>
-        <translation type="vanished">スクロールキャプチャ</translation>
+        <translation>スクロールキャプチャ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location filename="../src/app/CaptureMode.h" line="+2"/>
         <source>Capture Freehand Region</source>
         <translation>フリーハンド領域をキャプチャ</translation>
     </message>
@@ -233,21 +256,9 @@
         <translation>クロスヘア／色の取得</translation>
     </message>
     <message>
-        <source>Pick Screen Color</source>
-        <translation type="vanished">画面の色を取得</translation>
-    </message>
-    <message>
-        <source>Screen Crosshair</source>
-        <translation type="vanished">画面クロスヘア</translation>
-    </message>
-    <message>
         <location line="+1"/>
         <source>Record Screen</source>
         <translation>画面を録画</translation>
-    </message>
-    <message>
-        <source>Translate Screenshot</source>
-        <translation type="vanished">スクリーンショット翻訳</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -255,25 +266,31 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-521"/>
-        <location line="+46"/>
+        <location filename="../src/app/CaptureController.cpp" line="-379"/>
+        <location line="+54"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-53"/>
         <source>Already in use by another program: %1</source>
         <translation>他のプログラムが使用中です：%1</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+54"/>
         <source>These hotkeys are already in use by another program and will not work:
 %1</source>
         <translation>次のホットキーは他のプログラムが使用中のため、動作しません：
 %1</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+61"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+685"/>
+        <source>Open Images...</source>
+        <translation>画像を開く...</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Show Toolbar</source>
         <translation>ツールバーを表示</translation>
     </message>
@@ -293,7 +310,7 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+272"/>
+        <location line="+316"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -347,38 +364,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>このビルドでは利用できる文字認識エンジンがありません。</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>%1 needs to download its recognition models first:
-
-%2
-
-Download them now?</source>
-        <translation>%1 を使うには、先に認識モデルをダウンロードする必要があります：
-
-%2
-
-今すぐダウンロードしますか？</translation>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Translate</source>
         <translation>翻訳</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <source>Local translation needs its model first:
-
-%1
-
-Download it now? It is stored on this computer and used offline from then on.</source>
-        <translation>ローカル翻訳には先にモデルのダウンロードが必要です：
-
-%1
-
-今すぐダウンロードしますか？モデルはこのコンピューターに保存され、以降はオフラインで使います。</translation>
-    </message>
-    <message>
-        <location line="+7"/>
+        <location line="+26"/>
         <source>The chosen GGUF model file does not exist. Open Settings &gt; Translation to choose one?</source>
         <translation>選択した GGUF モデル ファイルが存在しません。「設定 &gt; 翻訳」を開いて選び直しますか？</translation>
     </message>
@@ -401,21 +392,9 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>ドラッグして移動</translation>
     </message>
     <message>
-        <source>Capture Window / Object (mouse wheel: parent / child)</source>
-        <translation type="vanished">ウィンドウ／オブジェクトをキャプチャ（マウスホイール：親／子を切り替え）</translation>
-    </message>
-    <message>
         <location line="+26"/>
         <source>Window</source>
         <translation>ウィンドウ</translation>
-    </message>
-    <message>
-        <source>Capture Rectangular Region</source>
-        <translation type="vanished">矩形領域をキャプチャ</translation>
-    </message>
-    <message>
-        <source>Region</source>
-        <translation type="vanished">領域</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -473,10 +452,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>スクリーンペン：ライブの画面、静止した画面、ホワイトボードに描く</translation>
     </message>
     <message>
-        <source>Scrolling Capture (Esc to stop)</source>
-        <translation type="vanished">スクロールキャプチャ（Esc で停止）</translation>
-    </message>
-    <message>
         <location line="-260"/>
         <source>Capture Window / Region (click a window or drag a rectangle; mouse wheel: parent / child)</source>
         <translation>ウィンドウ／領域をキャプチャ（ウィンドウをクリック、または矩形をドラッグ。マウスホイール：親／子を切り替え）</translation>
@@ -502,21 +477,9 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>QR コード</translation>
     </message>
     <message>
-        <source>Recognize Text in a Region</source>
-        <translation type="vanished">領域内のテキストを認識</translation>
-    </message>
-    <message>
         <location line="+26"/>
         <source>Text</source>
         <translation>テキスト</translation>
-    </message>
-    <message>
-        <source>Translate the Text in a Region</source>
-        <translation type="vanished">領域内の文字を翻訳</translation>
-    </message>
-    <message>
-        <source>Translate</source>
-        <translation type="vanished">翻訳</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -524,34 +487,14 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>クロスヘア／色の取得：位置・色・距離（ダブルクリック：色を取得）</translation>
     </message>
     <message>
-        <source>Pick a Color from the Screen</source>
-        <translation type="vanished">画面から色を取得</translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation type="vanished">色</translation>
-    </message>
-    <message>
-        <source>Screen Crosshair: position, color and distance</source>
-        <translation type="vanished">画面クロスヘア：位置・色・距離</translation>
-    </message>
-    <message>
         <location line="+3"/>
         <source>Crosshair</source>
         <translation>クロスヘア</translation>
     </message>
     <message>
-        <source>Screen Ruler: measure in pixels, horizontally or vertically (double-click: turn)</source>
-        <translation type="vanished">スクリーンルーラー：ピクセル単位で水平・垂直に測る（ダブルクリック：回転）</translation>
-    </message>
-    <message>
         <location line="+26"/>
         <source>Ruler</source>
         <translation>ルーラー</translation>
-    </message>
-    <message>
-        <source>Screen Whiteboard: draw over the live screen, a frozen one, or a white or black board</source>
-        <translation type="vanished">スクリーンペン：ライブの画面、静止した画面、ホワイトボードやブラックボードに描く</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -560,13 +503,23 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+23"/>
-        <location filename="../src/app/CaptureToolbar.cpp" line="+315"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+635"/>
+        <location filename="../src/app/CaptureToolbar.cpp" line="+354"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+1"/>
         <source>Delay Before Capture</source>
         <translation>キャプチャ前の遅延</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+26"/>
+        <source>Open Images to Edit (or drop image files on the toolbar)</source>
+        <translation>画像を開いて編集（画像ファイルをツールバーにドロップしても開けます）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Open</source>
+        <translation>開く</translation>
+    </message>
+    <message>
+        <location line="+45"/>
         <location line="+3"/>
         <source>Settings</source>
         <translation>設定</translation>
@@ -729,23 +682,27 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1 × %2 ピクセル</translation>
     </message>
     <message>
-        <location filename="../src/editor/ImageActions.cpp" line="+47"/>
-        <location line="+10"/>
+        <location filename="../src/editor/ImageActions.cpp" line="+56"/>
         <source>Save Capture</source>
         <translation>キャプチャを保存</translation>
     </message>
     <message>
-        <location line="-12"/>
-        <source>PNG Image (*.png);;JPEG Image (*.jpg *.jpeg);;BMP Image (*.bmp)</source>
-        <translation>PNG 画像 (*.png);;JPEG 画像 (*.jpg *.jpeg);;BMP 画像 (*.bmp)</translation>
-    </message>
-    <message>
-        <location line="-1"/>
+        <location line="+11"/>
         <source>PNG Image (*.png)</source>
         <translation>PNG 画像 (*.png)</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+1"/>
+        <source>JPEG Image (*.jpg *.jpeg)</source>
+        <translation>JPEG 画像 (*.jpg *.jpeg)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>BMP Image (*.bmp)</source>
+        <translation>BMP 画像 (*.bmp)</translation>
+    </message>
+    <message>
+        <location line="+52"/>
         <source>Could not save the image to
 %1</source>
         <translation>画像を保存できませんでした：
@@ -825,25 +782,53 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
 </context>
 <context>
+    <name>ImageActions</name>
+    <message>
+        <location filename="../src/editor/ImageActions.cpp" line="+17"/>
+        <source>Images (%1)</source>
+        <translation>画像 (%1)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>All Files (*)</source>
+        <translation>すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Open Images</source>
+        <translation>画像を開く</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Open Image</source>
+        <translation>画像を開く</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Could not open
+%1
+
+%2</source>
+        <translation>開けませんでした：
+%1
+
+%2</translation>
+    </message>
+</context>
+<context>
     <name>LocalModel</name>
     <message>
+        <location filename="../src/translate/LocalModel.cpp" line="+58"/>
         <source>Index-Translate 2B (1.3 GB, light, by Bilibili)</source>
         <translation>Index-Translate 2B（1.3 GB、軽量、bilibili 製）</translation>
     </message>
     <message>
+        <location line="+5"/>
         <source>Index-Translate 9B (5.8 GB, by Bilibili; wants a graphics card)</source>
         <translation>Index-Translate 9B（5.8 GB、bilibili 製、グラフィックカード推奨）</translation>
     </message>
     <message>
-        <source>Qwen3 4B (2.5 GB, balanced)</source>
-        <translation type="vanished">Qwen3 4B（2.5 GB、速度と品質のバランス）</translation>
-    </message>
-    <message>
-        <source>Hunyuan-MT 7B (4.6 GB, best translations)</source>
-        <translation type="vanished">Hunyuan-MT 7B（4.6 GB、最高の翻訳品質）</translation>
-    </message>
-    <message>
-        <location filename="../src/translate/LocalModel.cpp" line="+46"/>
+        <location line="-16"/>
         <source>Hy-MT2 1.8B (1.1 GB, light: runs on any laptop)</source>
         <translation>Hy-MT2 1.8B（1.1 GB、軽量：一般的なノート PC でも動作）</translation>
     </message>
@@ -858,7 +843,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Hy-MT2 7B（4.6 GB、最高品質、グラフィックス カード推奨）</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+54"/>
         <source>This build does not include llama.cpp.</source>
         <translation>このビルドには llama.cpp が含まれていません。</translation>
     </message>
@@ -888,7 +873,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>モデルを実行するメモリが足りません。</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+90"/>
         <source>A paragraph is too long for the local model; split it with blank lines.</source>
         <translation>ローカル モデルには長すぎる段落があります。空行で分割してください。</translation>
     </message>
@@ -906,88 +891,110 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Ocr</name>
     <message>
+        <location filename="../src/ocr/ModelStore.cpp" line="+163"/>
         <source>Copy Official &amp;Links</source>
         <translation>公式リンクをコピー(&amp;L)</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>The files&apos; own addresses (Hugging Face, GitHub...)</source>
         <translation>ファイル本来のアドレス（Hugging Face、GitHub など）</translation>
     </message>
     <message>
+        <location line="+2"/>
         <source>Copy &amp;Mirror Links</source>
         <translation>ミラーのリンクをコピー(&amp;M)</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>The same files on the mirror set in Settings &gt; General</source>
         <translation>設定 &gt; 全般で指定したミラー上の同じファイル</translation>
     </message>
     <message>
+        <location line="-83"/>
+        <location line="+92"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
+        <location line="-77"/>
         <source>Canceled.</source>
         <translation>キャンセルしました。</translation>
     </message>
     <message>
+        <location line="+9"/>
         <source>Checking %1...</source>
         <translation>%1 を確認しています...</translation>
     </message>
     <message>
+        <location line="+33"/>
         <source>File</source>
         <translation>ファイル</translation>
     </message>
     <message>
+        <location line="+0"/>
         <source>Status</source>
         <translation>状態</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>Choose...</source>
         <translation>選択...</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Use a copy of this file already on this computer</source>
         <translation>このコンピューターにあるこのファイルを使う</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>Downloading slowly? Copy the links, download the files in a browser or a download manager, then choose them here. Downloading can also be canceled halfway to come back here.</source>
         <translation>ダウンロードが遅い場合は、リンクをコピーしてブラウザーやダウンロードツールでダウンロードし、ここで選択してください。ダウンロードは途中でキャンセルしてここに戻ることもできます。</translation>
     </message>
     <message>
+        <location line="+14"/>
         <source>C&amp;hoose Files...</source>
         <translation>ファイルを選択(&amp;H)...</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Choose several files at once; each goes to the row its name belongs to</source>
         <translation>複数のファイルをまとめて選択し、名前に合う行に割り当てます</translation>
     </message>
     <message>
+        <location line="+2"/>
         <source>&amp;Download</source>
         <translation>ダウンロード(&amp;D)</translation>
     </message>
     <message>
+        <location line="+32"/>
         <source>Ready</source>
         <translation>準備完了</translation>
     </message>
     <message>
+        <location line="+0"/>
         <source>Missing</source>
         <translation>未取得</translation>
     </message>
     <message>
+        <location line="+22"/>
         <source>Could not use %1 for %2:
 %3</source>
         <translation>%1 を %2 として使えませんでした：
 %3</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>Choose %1</source>
         <translation>%1 を選択</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>Choose Files</source>
         <translation>ファイルを選択</translation>
     </message>
     <message>
+        <location line="+35"/>
         <source>Could not tell which file these are; choose them on their own rows:
 
 %1</source>
@@ -996,28 +1003,24 @@ Download it now? It is stored on this computer and used offline from then on.</s
 %1</translation>
     </message>
     <message>
+        <location line="+40"/>
         <source>Could not read the file.</source>
         <translation>ファイルを読み込めませんでした。</translation>
     </message>
     <message>
+        <location line="+11"/>
         <source>Copying %1...</source>
         <translation>%1 をコピーしています...</translation>
     </message>
     <message>
-        <source>Downloading Recognition Models</source>
-        <translation type="vanished">認識モデルをダウンロード中</translation>
-    </message>
-    <message>
-        <source>Downloading %1 (%2 of %3)...</source>
-        <translation type="vanished">%1 をダウンロード中（%2 / %3）...</translation>
-    </message>
-    <message>
-        <location filename="../src/ocr/ModelStore.cpp" line="+60"/>
+        <location line="-262"/>
+        <location line="+253"/>
+        <location line="+15"/>
         <source>The file is not the expected one (checksum mismatch).</source>
         <translation>ファイルが想定と異なります（チェックサムの不一致）。</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+72"/>
         <source>Downloading Models</source>
         <translation>モデルをダウンロード中</translation>
     </message>
@@ -1041,7 +1044,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 %2</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrEngine.cpp" line="+84"/>
+        <location filename="../src/ocr/OcrEngine.cpp" line="+99"/>
         <source>Only available on Windows.</source>
         <translation>Windows でのみ利用できます。</translation>
     </message>
@@ -1076,7 +1079,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>このビルドでは文字認識エンジン「%1」を利用できません。</translation>
     </message>
     <message>
-        <location filename="../src/ocr/TesseractEngine.cpp" line="+95"/>
+        <location filename="../src/ocr/TesseractEngine.cpp" line="+99"/>
         <source>Tesseract could not load its language data (%1).</source>
         <translation>Tesseract が言語データ（%1）を読み込めませんでした。</translation>
     </message>
@@ -1111,7 +1114,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>PaddleOCR の文字辞書が見つからないか、無効です。</translation>
     </message>
     <message>
-        <location filename="../src/ocr/WindowsOcrEngine.cpp" line="+200"/>
+        <location filename="../src/ocr/WindowsOcrEngine.cpp" line="+204"/>
         <source>Windows OCR is not available on this system.</source>
         <translation>このシステムでは Windows OCR を利用できません。</translation>
     </message>
@@ -1135,10 +1138,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
 </context>
 <context>
     <name>OcrResultDialog</name>
-    <message>
-        <source>Recognize Text</source>
-        <translation type="vanished">テキストを認識</translation>
-    </message>
     <message>
         <location filename="../src/ocr/OcrResultDialog.ui" line="+14"/>
         <source>Recognize and Translate Text</source>
@@ -1176,7 +1175,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+315"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+386"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -1215,24 +1214,21 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <source>Translate the text as recognized, unedited, to paint it over the capture.</source>
         <translation>キャプチャに訳文を描くには、認識したままの文字を翻訳してください。</translation>
     </message>
-    <message>
-        <source>Recognized with %1. You can edit the text before copying.</source>
-        <translation type="vanished">%1 で認識しました。コピーする前にテキストを編集できます。</translation>
-    </message>
 </context>
 <context>
     <name>PinWindow</name>
     <message>
+        <location filename="../src/pin/PinWindow.cpp" line="+357"/>
         <source>Close All &amp;Pins</source>
         <translation>すべてのピン留めを閉じる(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/pin/PinWindow.cpp" line="+252"/>
+        <location line="-77"/>
         <source>Opacity %1%</source>
         <translation>不透明度 %1%</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+43"/>
         <source>Scroll: zoom  ·  Ctrl+scroll: opacity  ·  Double-click: close</source>
         <translation>ホイール：拡大縮小  ·  Ctrl+ホイール：不透明度  ·  ダブルクリック：閉じる</translation>
     </message>
@@ -1267,7 +1263,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>閉じる(&amp;L)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Copied</source>
         <translation>コピーしました</translation>
     </message>
@@ -1280,7 +1276,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>Platform</name>
     <message>
-        <location filename="../src/capture/Platform.cpp" line="+177"/>
+        <location filename="../src/capture/Platform.cpp" line="+180"/>
         <source>Not available on %1 yet.</source>
         <translation>%1 ではまだ利用できません。</translation>
     </message>
@@ -1296,10 +1292,6 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <location line="+26"/>
         <source>Screenshot portal error: %1</source>
         <translation>スクリーンショットポータルのエラー：%1</translation>
-    </message>
-    <message>
-        <source>The screenshot portal refused the request.</source>
-        <translation type="vanished">スクリーンショットポータルが要求を拒否しました。</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1450,23 +1442,12 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>RegionSelector</name>
     <message>
+        <location filename="../src/overlay/RegionSelector.cpp" line="+158"/>
         <source>Enter or double-click: take it  ·  Ctrl+C: copy  ·  Arrows: move (Shift: 10 px, Ctrl: resize)  ·  Right-click: select again</source>
         <translation>Enter またはダブルクリック：取り込む  ·  Ctrl+C：コピー  ·  矢印キー：移動（Shift：10 ピクセル、Ctrl：サイズ変更）  ·  右クリック：選択し直す</translation>
     </message>
     <message>
-        <source>Click: pick  ·  Arrows: 1 px</source>
-        <translation type="vanished">クリック：取得  ·  矢印キー：1 ピクセル移動</translation>
-    </message>
-    <message>
-        <source>Click: lock here  ·  Right-click: unlock</source>
-        <translation type="vanished">クリック：ここに固定  ·  右クリック：固定解除</translation>
-    </message>
-    <message>
-        <source>Click: lock  ·  Arrows: 1 px</source>
-        <translation type="vanished">クリック：固定  ·  矢印キー：1 ピクセル移動</translation>
-    </message>
-    <message>
-        <location filename="../src/overlay/RegionSelector.cpp" line="+511"/>
+        <location line="+425"/>
         <source>Click: lock here  ·  Double-click: pick color  ·  Right-click: unlock</source>
         <translation>クリック：ここに固定  ·  ダブルクリック：色を取得  ·  右クリック：固定解除</translation>
     </message>
@@ -1481,13 +1462,13 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>Ctrl+C：位置をコピー  ·  Ctrl+Shift+C：色をコピー  ·  Esc：終了</translation>
     </message>
     <message>
-        <location line="+224"/>
+        <location line="+368"/>
         <location line="+12"/>
         <source>Copied %1</source>
         <translation>%1 をコピーしました</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+55"/>
         <source>Screen %1</source>
         <translation>画面 %1</translation>
     </message>
@@ -1503,7 +1484,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>%1 px</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+96"/>
         <source>Δx %1  Δy %2  ·  %3 px</source>
         <translation>Δx %1  Δy %2  ·  %3 px</translation>
     </message>
@@ -1523,7 +1504,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>y 軸との角 %1</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+129"/>
         <source>Angles in &amp;Degrees</source>
         <translation>度数法(&amp;D)</translation>
     </message>
@@ -1533,25 +1514,9 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>弧度法、π 単位(&amp;R)</translation>
     </message>
     <message>
-        <source>To the x-axis %1°</source>
-        <translation type="vanished">x 軸との角 %1°</translation>
-    </message>
-    <message>
-        <source>To the y-axis %1°</source>
-        <translation type="vanished">y 軸との角 %1°</translation>
-    </message>
-    <message>
         <location line="+13"/>
         <source>Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity  ·  Hold Ctrl: angle</source>
         <translation>端をドラッグ：長さ  ·  矢印キー：移動  ·  Ctrl+矢印キー：長さ  ·  Ctrl+スクロール：不透明度  ·  Ctrl を押したまま：角度</translation>
-    </message>
-    <message>
-        <source>Vertical</source>
-        <translation type="vanished">垂直</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation type="vanished">水平</translation>
     </message>
     <message>
         <location line="-45"/>
@@ -1559,21 +1524,9 @@ Download it now? It is stored on this computer and used offline from then on.</s
         <translation>不透明度 %1%</translation>
     </message>
     <message>
-        <source>Drag an end: length  ·  Arrows: move  ·  Ctrl+arrows: length  ·  Ctrl+scroll: opacity</source>
-        <translation type="vanished">端をドラッグ：長さ  ·  矢印キー：移動  ·  Ctrl+矢印キー：長さ  ·  Ctrl+スクロール：不透明度</translation>
-    </message>
-    <message>
         <location line="+75"/>
         <source>Screen Ruler</source>
         <translation>スクリーンルーラー</translation>
-    </message>
-    <message>
-        <source>Turn &amp;Horizontal</source>
-        <translation type="vanished">水平にする(&amp;H)</translation>
-    </message>
-    <message>
-        <source>Turn &amp;Vertical</source>
-        <translation type="vanished">垂直にする(&amp;V)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1584,7 +1537,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScreenCastCapture</name>
     <message>
-        <location filename="../src/record/ScreenCastCapture.cpp" line="+136"/>
+        <location filename="../src/record/ScreenCastCapture.cpp" line="+137"/>
         <source>The session D-Bus is not available.</source>
         <translation>セッション D-Bus を利用できません。</translation>
     </message>
@@ -1642,7 +1595,7 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScreenRecorder</name>
     <message>
-        <location filename="../src/record/ScreenRecorder.cpp" line="+235"/>
+        <location filename="../src/record/ScreenRecorder.cpp" line="+242"/>
         <source>Nothing was recorded: the screen content did not arrive.</source>
         <translation>何も録画されませんでした：画面の内容が届きませんでした。</translation>
     </message>
@@ -1650,40 +1603,50 @@ Download it now? It is stored on this computer and used offline from then on.</s
 <context>
     <name>ScrollCaptureSession</name>
     <message>
-        <location filename="../src/capture/ScrollCaptureSession.cpp" line="+94"/>
+        <location filename="../src/capture/ScrollCaptureSession.cpp" line="+280"/>
+        <location line="+94"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+8"/>
+        <location line="+89"/>
         <source>Scrolling capture: %1 px  ·  Turn the wheel to scroll yourself  ·  Esc to stop</source>
         <translation>スクロールキャプチャ：%1 ピクセル  ·  ホイールを回すと手動に切り替え  ·  Esc で停止</translation>
     </message>
     <message>
+        <location line="-192"/>
+        <location line="+91"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
     <message>
+        <location line="+2"/>
         <source>Take back the last part stitched on (Ctrl+Z)</source>
         <translation>最後につなげた部分を取り消す（Ctrl+Z）</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+12"/>
+        <location line="+90"/>
         <source>Not lined up: scroll back a little  ·  Esc to stop</source>
         <translation>つながりません：少し戻してください  ·  Esc で停止</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-89"/>
+        <location line="+91"/>
         <source>Scroll the area yourself: %1 px  ·  Esc to stop</source>
         <translation>この範囲を自分でスクロール：%1 ピクセル  ·  Esc で停止</translation>
     </message>
     <message>
+        <location line="-332"/>
         <source>Click where to scroll to begin
 Esc to cancel</source>
         <translation>スクロールする位置をクリックして開始
 Esc でキャンセル</translation>
     </message>
     <message>
+        <location line="+239"/>
+        <location line="+86"/>
         <source>Click in the area where to scroll  ·  Esc to cancel</source>
         <translation>範囲内のスクロールする位置をクリック  ·  Esc でキャンセル</translation>
     </message>
@@ -1691,31 +1654,37 @@ Esc でキャンセル</translation>
 <context>
     <name>SettingsDialog</name>
     <message>
+        <location filename="../src/settings/SettingsDialog.ui" line="+140"/>
         <source>Beside the area, where there is room: the stitched image so far, to see a misalignment while it can still be fixed</source>
         <translation>範囲の横（空きがある場合）に、つなげた画像をここまで表示します。ずれを直せるうちに気づけます</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Show a pre&amp;view during scrolling capture</source>
         <translation>スクロールキャプチャ中にプレビューを表示(&amp;V)</translation>
     </message>
     <message>
+        <location line="+7"/>
         <source>Opacity:</source>
         <translation>不透明度：</translation>
     </message>
     <message>
+        <location line="+10"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
+        <location line="-29"/>
         <source>Ad&amp;just the selected area before taking it</source>
         <translation>範囲を選んだあと、取り込む前に調整する(&amp;J)</translation>
     </message>
     <message>
+        <location line="-3"/>
         <source>Handles and the arrow keys move and resize it; Enter or a double-click takes it, Ctrl+C copies it and is done</source>
         <translation>ハンドルや矢印キーで移動・サイズ変更できます。Enter またはダブルクリックで取り込み、Ctrl+C でコピーして終了します</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.ui" line="+14"/>
+        <location line="-114"/>
         <source>Glimpse Settings</source>
         <translation>Glimpse の設定</translation>
     </message>
@@ -1755,11 +1724,7 @@ Esc でキャンセル</translation>
         <translation>キャプチャをクリップボードにもコピーする(&amp;C)</translation>
     </message>
     <message>
-        <source>Sa&amp;ve captures in:</source>
-        <translation type="vanished">キャプチャの保存先(&amp;V)：</translation>
-    </message>
-    <message>
-        <location line="+9"/>
+        <location line="+66"/>
         <source>Outside a freehand region:</source>
         <translation>フリーハンド領域の外側：</translation>
     </message>
@@ -1854,14 +1819,6 @@ Esc でキャンセル</translation>
         <translation>ホットキー</translation>
     </message>
     <message>
-        <source>Capture &amp;Window / Object:</source>
-        <translation type="vanished">ウィンドウ／オブジェクトをキャプチャ(&amp;W)：</translation>
-    </message>
-    <message>
-        <source>Capture &amp;Rectangular Region:</source>
-        <translation type="vanished">矩形領域をキャプチャ(&amp;R)：</translation>
-    </message>
-    <message>
         <location line="+34"/>
         <source>Capture Free&amp;hand Region:</source>
         <translation>フリーハンド領域をキャプチャ(&amp;H)：</translation>
@@ -1887,26 +1844,6 @@ Esc でキャンセル</translation>
         <translation>QR コードを読み取る(&amp;Q)：</translation>
     </message>
     <message>
-        <source>Recognize &amp;Text:</source>
-        <translation type="vanished">テキストを認識(&amp;T)：</translation>
-    </message>
-    <message>
-        <source>Tra&amp;nslate Screenshot:</source>
-        <translation type="vanished">スクリーンショット翻訳(&amp;N)：</translation>
-    </message>
-    <message>
-        <source>&amp;Pick Screen Color:</source>
-        <translation type="vanished">画面の色を取得(&amp;P)：</translation>
-    </message>
-    <message>
-        <source>Screen Cr&amp;osshair:</source>
-        <translation type="vanished">画面クロスヘア(&amp;O)：</translation>
-    </message>
-    <message>
-        <source>&amp;Scrolling Capture:</source>
-        <translation type="vanished">スクロールキャプチャ(&amp;S)：</translation>
-    </message>
-    <message>
         <location line="+67"/>
         <source>Click a field and press the new key combination. Clear a field to disable that hotkey. Hotkeys are paused while this window is open.</source>
         <translation>入力欄をクリックして新しいキーの組み合わせを押してください。入力欄を空にするとそのホットキーは無効になります。このウィンドウを開いている間、ホットキーは一時停止します。</translation>
@@ -1930,10 +1867,6 @@ Esc でキャンセル</translation>
         <location line="+7"/>
         <source>Move Do&amp;wn</source>
         <translation>下へ(&amp;W)</translation>
-    </message>
-    <message>
-        <source>&amp;Icon size:</source>
-        <translation type="vanished">アイコンのサイズ(&amp;I)：</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -1981,7 +1914,7 @@ Esc でキャンセル</translation>
         <translation>キーボードとキー名</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+30"/>
         <source>Everything typed is shown, including passwords.</source>
         <translation>入力した内容はパスワードも含めてすべて表示されます。</translation>
     </message>
@@ -1991,17 +1924,13 @@ Esc でキャンセル</translation>
         <translation>ビデオのフレームレート(&amp;V)：</translation>
     </message>
     <message>
-        <source>O&amp;utput folder:</source>
-        <translation type="vanished">保存先フォルダー(&amp;U)：</translation>
-    </message>
-    <message>
-        <location line="-615"/>
-        <location line="+847"/>
+        <location line="-685"/>
+        <location line="+888"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-840"/>
+        <location line="-881"/>
         <source>Cl&amp;ear</source>
         <translation>クリア(&amp;E)</translation>
     </message>
@@ -2026,7 +1955,7 @@ Esc でキャンセル</translation>
         <translation>起動後、Glimpse は通知領域で待機します。</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+267"/>
         <source>Capture &amp;Window / Region:</source>
         <translation>ウィンドウ／領域をキャプチャ(&amp;W)：</translation>
     </message>
@@ -2061,7 +1990,7 @@ Esc でキャンセル</translation>
         <translation>ツールバーのサイズ(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+187"/>
         <source>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</source>
         <translation>録画は「全般」ページで選んだフォルダーの Recordings サブフォルダーに保存されます。</translation>
     </message>
@@ -2081,22 +2010,7 @@ Esc でキャンセル</translation>
         <translation>言語：</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>&amp;Chinese (Simplified)</source>
-        <translation>中国語（簡体字）(&amp;C)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>&amp;Japanese</source>
-        <translation>日本語(&amp;J)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>E&amp;nglish</source>
-        <translation>英語(&amp;N)</translation>
-    </message>
-    <message>
-        <location line="+18"/>
+        <location line="+12"/>
         <source>Recognition models are downloaded the first time they are needed. Selecting fewer languages makes recognition faster and more accurate.</source>
         <translation>認識モデルは初めて必要になったときにダウンロードされます。選択する言語を減らすと、認識が速く正確になります。</translation>
     </message>
@@ -2146,7 +2060,7 @@ Esc でキャンセル</translation>
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-585"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-635"/>
         <source>Tell me about new versions</source>
         <translation>新しいバージョンを知らせる</translation>
     </message>
@@ -2156,7 +2070,7 @@ Esc でキャンセル</translation>
         <translation>確認しない</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+40"/>
         <source>Screenshots</source>
         <translation>スクリーンショット</translation>
     </message>
@@ -2171,12 +2085,12 @@ Esc でキャンセル</translation>
         <translation>スクリーンショットと録画</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+55"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+81"/>
         <source>Other GGUF model file...</source>
         <translation>その他の GGUF モデル ファイル...</translation>
     </message>
@@ -2191,12 +2105,12 @@ Esc でキャンセル</translation>
         <translation>GGUF モデル (*.gguf)</translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+107"/>
         <source>Select at least one language for text recognition.</source>
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+100"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -2206,7 +2120,7 @@ Esc でキャンセル</translation>
         <translation>グローバルホットキー：%1</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+42"/>
         <source>There are no files to clear.</source>
         <translation>クリアするファイルはありません。</translation>
     </message>
@@ -2232,28 +2146,12 @@ Esc でキャンセル</translation>
         </translation>
     </message>
     <message>
-        <source>Small</source>
-        <translation type="vanished">小</translation>
-    </message>
-    <message>
-        <source>Medium</source>
-        <translation type="vanished">中</translation>
-    </message>
-    <message>
-        <source>Large</source>
-        <translation type="vanished">大</translation>
-    </message>
-    <message>
-        <source>%1 (%2 px)</source>
-        <translation type="vanished">%1（%2 px）</translation>
-    </message>
-    <message>
-        <location line="-266"/>
+        <location line="-267"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.ui" line="-247"/>
+        <location filename="../src/settings/SettingsDialog.ui" line="-218"/>
         <source>&amp;Color detail:</source>
         <translation>色の精細さ(&amp;C)：</translation>
     </message>
@@ -2263,7 +2161,7 @@ Esc でキャンセル</translation>
         <translation>標準の動画は 2×2 ピクセルごとに 1 色しか保持しないため、グラフやコードのハイライトなど細い色付きの線がにじみます。高では 2 倍の大きさの動画で各ピクセルの色を保持します（ファイルは約 3 倍）。幅または高さが 2048 ピクセルを超える範囲は H.265 で保存され、一部のプレーヤーやブラウザでは再生できません。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-172"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-184"/>
         <source>Standard</source>
         <translation>標準</translation>
     </message>
@@ -2273,42 +2171,52 @@ Esc でキャンセル</translation>
         <translation>高（グラフ、色付きの文字）</translation>
     </message>
     <message>
+        <location filename="../src/settings/SettingsDialog.ui" line="-63"/>
         <source>P&amp;osition:</source>
         <translation>位置(&amp;O)：</translation>
     </message>
     <message>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-32"/>
         <source>In the picture, bottom</source>
         <translation>画面内・下</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>In the picture, top</source>
         <translation>画面内・上</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>In the picture, left</source>
         <translation>画面内・左</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>In the picture, right</source>
         <translation>画面内・右</translation>
     </message>
     <message>
+        <location line="+2"/>
         <source>Outside the picture, below</source>
         <translation>画面外・下</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Outside the picture, above</source>
         <translation>画面外・上</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Outside the picture, left</source>
         <translation>画面外・左</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Outside the picture, right</source>
         <translation>画面外・右</translation>
     </message>
     <message>
+        <location line="+1"/>
         <source>Outside the picture, the video gets a band on that side for the keys, so they cover nothing; the video is that much larger.</source>
         <translation>画面外にすると、動画のその側にキー表示用の帯を加えるため、画面を隠しません。その分、動画は大きくなります。</translation>
     </message>
@@ -2316,23 +2224,27 @@ Esc でキャンセル</translation>
 <context>
     <name>Translate</name>
     <message>
+        <location filename="../src/translate/Translator.cpp" line="+348"/>
         <source>Bilibili Index-Translate (free, online)</source>
         <translation>bilibili Index-Translate（無料、オンライン）</translation>
     </message>
     <message>
-        <source>Bilibili's translation model (Index-Translate 35B), offered free without a key: natural translations, 150 languages. Slower than Google, and Bilibili may limit or end the service.</source>
+        <location line="+23"/>
+        <source>Bilibili&apos;s translation model (Index-Translate 35B), offered free without a key: natural translations, 150 languages. Slower than Google, and Bilibili may limit or end the service.</source>
         <translation>bilibili の翻訳モデル（Index-Translate 35B）。キー不要で無料。自然な訳文で 150 言語に対応します。Google より遅く、bilibili がサービスを制限・終了する可能性があります。</translation>
     </message>
     <message>
+        <location line="-47"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>Index-Translate の応答を読み取れませんでした。</translation>
     </message>
     <message>
+        <location line="+134"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻訳には先にこれらの言語ファイルが必要です（1 方向あたり約 50 MB）。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
-        <location filename="../src/translate/Translator.cpp" line="+59"/>
+        <location line="-396"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API キーが拒否されました（HTTP %1）。「設定 &gt; 翻訳」で確認してください。</translation>
     </message>
@@ -2362,12 +2274,12 @@ Esc でキャンセル</translation>
         <translation>Claude の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+76"/>
         <source>Google Translate (free, online)</source>
         <translation>Google 翻訳（無料、オンライン）</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Firefox translation (offline, light)</source>
         <translation>Firefox 翻訳（オフライン、軽量）</translation>
     </message>
@@ -2392,7 +2304,7 @@ Esc でキャンセル</translation>
         <translation>Chrome の Google 翻訳が使っている無料サービスです。キー不要で品質が良く、対応言語も豊富です。非公式のため、Google が制限・変更する可能性があります。使えなくなった場合は別の翻訳サービスに切り替えてください。</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>The engine behind Firefox&apos;s offline translations: small models (35-70 MB per language direction, downloaded on first use) that run fast on any computer. Translates between English and other languages; others, such as Chinese and Japanese, go through English.</source>
         <translation>Firefox のオフライン翻訳で使われているエンジンです。モデルが小さく（翻訳方向ごとに 35～70 MB、初回使用時にダウンロード）、どのコンピューターでも高速です。英語とほかの言語の間で翻訳し、それ以外の組み合わせ（中国語と日本語など）は英語を経由します。</translation>
     </message>
@@ -2422,25 +2334,12 @@ Esc でキャンセル</translation>
         <translation>大規模言語モデル：認識ミスを読み取り、文脈に沿って語調や用語を保ちます。Anthropic の API キーが必要で、従量課金です。</translation>
     </message>
     <message>
-        <location line="+66"/>
-        <source>Firefox translation needs these language files first (about 50 MB per direction):
-
-%1
-
-Download them now? They are kept on this computer and used offline from then on.</source>
-        <translation>Firefox 翻訳には先に次の言語ファイルが必要です（1 方向あたり約 50 MB）：
-
-%1
-
-今すぐダウンロードしますか？ファイルはこのコンピューターに保存され、以降はオフラインで使います。</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+72"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>Firefox の言語ファイルはダウンロードされませんでした。</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+55"/>
         <source>No API key is set for %1. Add one in Settings &gt; Translation.</source>
         <translation>%1 の API キーが設定されていません。「設定 &gt; 翻訳」で入力してください。</translation>
     </message>
@@ -2451,68 +2350,9 @@ Download them now? They are kept on this computer and used offline from then on.
     </message>
 </context>
 <context>
-    <name>TranslateResultDialog</name>
-    <message>
-        <source>Translate</source>
-        <translation type="vanished">翻訳</translation>
-    </message>
-    <message>
-        <source>Recognized text (editable; paragraphs separated by blank lines)</source>
-        <translation type="vanished">認識した文字（編集可。段落は空行で区切ります）</translation>
-    </message>
-    <message>
-        <source>Translation</source>
-        <translation type="vanished">翻訳</translation>
-    </message>
-    <message>
-        <source>&amp;Into:</source>
-        <translation type="vanished">翻訳先(&amp;I)：</translation>
-    </message>
-    <message>
-        <source>&amp;Translate Again</source>
-        <translation type="vanished">もう一度翻訳(&amp;T)</translation>
-    </message>
-    <message>
-        <source>&amp;Copy Translation</source>
-        <translation type="vanished">訳文をコピー(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Paint the translation over the capture, where the text was</source>
-        <translation type="vanished">訳文をキャプチャの元の文字の位置に描きます</translation>
-    </message>
-    <message>
-        <source>Translated &amp;Image</source>
-        <translation type="vanished">翻訳画像(&amp;I)</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">閉じる</translation>
-    </message>
-    <message>
-        <source>No text was found in the selected area.</source>
-        <translation type="vanished">選択した領域に文字が見つかりませんでした。</translation>
-    </message>
-    <message>
-        <source>Recognizing text...</source>
-        <translation type="vanished">文字を認識しています...</translation>
-    </message>
-    <message>
-        <source>Translating with %1...</source>
-        <translation type="vanished">%1 で翻訳しています...</translation>
-    </message>
-    <message>
-        <source>Translated with %1.</source>
-        <translation type="vanished">%1 で翻訳しました。</translation>
-    </message>
-    <message>
-        <source>Keep the paragraphs as recognized (same number) to paint them over the capture.</source>
-        <translation type="vanished">訳文をキャプチャに描くには、段落の数を認識結果と同じにしてください。</translation>
-    </message>
-</context>
-<context>
     <name>Updater</name>
     <message>
-        <location filename="../src/update/Updater.cpp" line="+131"/>
+        <location filename="../src/update/Updater.cpp" line="+141"/>
         <location line="+18"/>
         <location line="+33"/>
         <location line="+19"/>
@@ -2616,12 +2456,12 @@ Install the package for your system from the download page.</source>
     <name>WhiteboardCanvas</name>
     <message>
         <location filename="../src/whiteboard/WhiteboardCanvas.cpp" line="+74"/>
-        <location line="+410"/>
+        <location line="+415"/>
         <source>Screen Whiteboard</source>
         <translation>スクリーンペン</translation>
     </message>
     <message>
-        <location line="-332"/>
+        <location line="-337"/>
         <source>The mouse works the programs below; the drawing stays</source>
         <translation>マウスで下のプログラムを操作できます。描いた内容は残ります</translation>
     </message>
@@ -2631,7 +2471,7 @@ Install the package for your system from the download page.</source>
         <translation>描画</translation>
     </message>
     <message>
-        <location line="+430"/>
+        <location line="+435"/>
         <source>Copied</source>
         <translation>コピーしました</translation>
     </message>
@@ -2745,16 +2585,17 @@ Install the package for your system from the download page.</source>
         <translation>背景</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location filename="../src/whiteboard/WhiteboardToolbar.cpp" line="+170"/>
         <source>Pass-Through: the mouse works the programs below, the drawing stays</source>
         <translation>クリックスルー：マウスで下のプログラムを操作でき、描いた内容は残ります</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>%1 (%2 toggles it)</source>
         <translation>%1（%2 で切り替え）</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../src/whiteboard/WhiteboardToolbar.ui" line="+20"/>
         <source>Pass-Through</source>
         <translation>クリックスルー</translation>
     </message>
@@ -2819,7 +2660,7 @@ Install the package for your system from the download page.</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../src/whiteboard/WhiteboardToolbar.cpp" line="+165"/>
+        <location filename="../src/whiteboard/WhiteboardToolbar.cpp" line="+2"/>
         <source>Color (%1)</source>
         <translation>色 (%1)</translation>
     </message>
@@ -2842,10 +2683,6 @@ Install the package for your system from the download page.</source>
         <location line="+1"/>
         <source>&amp;Whiteboard</source>
         <translation>ホワイトボード(&amp;W)</translation>
-    </message>
-    <message>
-        <source>&amp;Blackboard</source>
-        <translation type="vanished">ブラックボード(&amp;B)</translation>
     </message>
 </context>
 </TS>

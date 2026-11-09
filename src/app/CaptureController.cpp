@@ -9,7 +9,9 @@
 #include "color/ColorResultDialog.h"
 #include "capture/ScrollCaptureSession.h"
 #include "capture/ScreenGrabber.h"
+#include "editor/AnnotatorWindow.h"
 #include "editor/EditorWindow.h"
+#include "editor/ImageActions.h"
 #include "editor/ImageActions.h"
 #include "hotkey/GlobalHotkeys.h"
 #include "overlay/RegionSelector.h"
@@ -76,6 +78,8 @@ CaptureController::CaptureController(QObject *parent)
 
     connect(m_toolbar.get(), &CaptureToolbar::captureRequested, this, &CaptureController::beginCapture);
     connect(m_toolbar.get(), &CaptureToolbar::settingsRequested, this, &CaptureController::showSettings);
+    connect(m_toolbar.get(), &CaptureToolbar::openRequested, this, &CaptureController::chooseImages);
+    connect(m_toolbar.get(), &CaptureToolbar::filesDropped, this, &CaptureController::openImages);
     connect(m_toolbar.get(), &CaptureToolbar::closed, this, [this] {
         // Without a tray icon there would be no way back, so closing the bar quits.
         if (!m_tray)
@@ -214,6 +218,7 @@ void CaptureController::setupTray()
         m_trayCaptureActions.insert(mode, item);
     }
     m_trayMenu->addSeparator();
+    m_trayOpen = m_trayMenu->addAction(QString(), this, &CaptureController::chooseImages);
     m_trayClosePins = m_trayMenu->addAction(QString(), this, [] { PinWindow::closeAll(); });
     connect(m_trayMenu.get(), &QMenu::aboutToShow, this, [this] { m_trayClosePins->setEnabled(PinWindow::count() > 0); });
     m_trayShowToolbar = m_trayMenu->addAction(QString(), this, &CaptureController::showToolbar);
@@ -238,6 +243,7 @@ void CaptureController::retranslate()
     for (auto it = m_trayCaptureActions.cbegin(); it != m_trayCaptureActions.cend(); ++it)
         it.value()->setText(tr(captureModeLabel(it.key())));
     if (m_trayShowToolbar) {
+        m_trayOpen->setText(tr("Open Images..."));
         m_trayClosePins->setText(tr("Close All Pins"));
         m_trayShowToolbar->setText(tr("Show Toolbar"));
         m_traySettings->setText(tr("Settings..."));
@@ -767,6 +773,20 @@ void CaptureController::showCapture(const QImage &image)
     editor->show();
     editor->raise();
     editor->activateWindow();
+}
+
+void CaptureController::chooseImages()
+{
+    // Not on top of a capture in progress, which hides every window of ours.
+    if (m_busy)
+        return;
+    openImages(ImageActions::chooseImages(nullptr));
+}
+
+void CaptureController::openImages(const QStringList &paths)
+{
+    for (const QString &path : paths)
+        AnnotatorWindow::openFile(path);
 }
 
 void CaptureController::openEditor(const QImage &image)

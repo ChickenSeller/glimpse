@@ -361,6 +361,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="openButton">
+     <property name="toolTip">
+      <string>Open Images to Edit (or drop image files on the toolbar)</string>
+     </property>
+     <property name="text">
+      <string>Open</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/glimpse.qrc">
+       <normaloff>:/icons/folder_open.svg</normaloff>:/icons/folder_open.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QFrame" name="separator">
      <property name="minimumSize">
       <size>
