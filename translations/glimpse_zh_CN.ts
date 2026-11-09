@@ -187,16 +187,17 @@
     </message>
     <message>
         <location line="+176"/>
+        <location line="+19"/>
         <source>%1 needs its recognition models first.</source>
         <translation>%1 需要先准备识别模型。</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+31"/>
         <source>Local translation needs its model first: %1. It is stored on this computer and used offline from then on.</source>
         <translation>本地翻译需要先准备模型：%1。模型保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
-        <location line="-484"/>
+        <location line="-493"/>
         <source>Close All Pins</source>
         <translation>关闭所有贴图</translation>
     </message>
@@ -227,6 +228,7 @@
     </message>
     <message>
         <location filename="../src/app/CaptureController.cpp" line="+451"/>
+        <location line="+10"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
     </message>
@@ -241,7 +243,7 @@
         <translation>文字识别和翻译</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-189"/>
+        <location filename="../src/app/CaptureController.cpp" line="-199"/>
         <source>Scrolling Capture</source>
         <translation>滚动截图</translation>
     </message>
@@ -364,7 +366,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>此版本中没有可用的文字识别引擎。</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+38"/>
         <source>Translate</source>
         <translation>翻译</translation>
     </message>
@@ -1150,6 +1152,16 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+14"/>
+        <source>&amp;Recognize with:</source>
+        <translation>识别引擎(&amp;R)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
+        <translation>本窗口使用的文字识别引擎；打开窗口时的默认值在“设置 &gt; 文字识别”里设定</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>&amp;Copy</source>
         <translation>复制(&amp;C)</translation>
     </message>
@@ -1185,7 +1197,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+458"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+519"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>

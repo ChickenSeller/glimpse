@@ -187,16 +187,17 @@
     </message>
     <message>
         <location line="+176"/>
+        <location line="+19"/>
         <source>%1 needs its recognition models first.</source>
         <translation>%1 には先に認識モデルが必要です。</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+31"/>
         <source>Local translation needs its model first: %1. It is stored on this computer and used offline from then on.</source>
         <translation>ローカル翻訳には先にモデルが必要です：%1。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
-        <location line="-484"/>
+        <location line="-493"/>
         <source>Close All Pins</source>
         <translation>すべてのピン留めを閉じる</translation>
     </message>
@@ -227,6 +228,7 @@
     </message>
     <message>
         <location filename="../src/app/CaptureController.cpp" line="+451"/>
+        <location line="+10"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
     </message>
@@ -241,7 +243,7 @@
         <translation>文字認識・翻訳</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-189"/>
+        <location filename="../src/app/CaptureController.cpp" line="-199"/>
         <source>Scrolling Capture</source>
         <translation>スクロールキャプチャ</translation>
     </message>
@@ -364,7 +366,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>このビルドでは利用できる文字認識エンジンがありません。</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+38"/>
         <source>Translate</source>
         <translation>翻訳</translation>
     </message>
@@ -1150,6 +1152,16 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+14"/>
+        <source>&amp;Recognize with:</source>
+        <translation>認識エンジン(&amp;R)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
+        <translation>このウィンドウで使う文字認識エンジン。開いたときの既定値は「設定 &gt; 文字認識」で決めます</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>&amp;Copy</source>
         <translation>コピー(&amp;C)</translation>
     </message>
@@ -1185,7 +1197,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+458"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+519"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>

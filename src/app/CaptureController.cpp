@@ -702,6 +702,15 @@ void CaptureController::showOcrResult(const QImage &image)
         if (prepareTranslation(dialog->translator(), dialog->localModel()))
             dialog->translate();
     });
+    connect(dialog, &OcrResultDialog::recognizeRequested, this, [dialog](const QString &engine) {
+        const QStringList languages = AppSettings::ocrLanguages();
+        const QList<ModelFile> missing = Ocr::missingModels(engine, languages);
+        if (ModelStore::obtain(missing, tr("Recognize Text"),
+                               tr("%1 needs its recognition models first.").arg(Ocr::engineName(engine)), dialog))
+            dialog->recognize(engine);
+        else
+            dialog->showOcrEngine(dialog->ocrEngine()); // back to the one in use
+    });
     connect(dialog, &OcrResultDialog::translatedImageReady, this, &CaptureController::openEditor);
     dialog->show();
     dialog->raise();

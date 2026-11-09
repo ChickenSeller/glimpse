@@ -35,12 +35,22 @@ public:
     // and for the local engine its model (see LocalModel).
     QString translator() const;
     QString localModel() const;
+    // Recognizes the text again with `engine`, which the window then shows
+    // as chosen. A translation made is made again for the new text.
+    void recognize(const QString &engine);
+    // The engine shown as chosen (back to the one in use when the owner
+    // could not prepare the new one).
+    QString ocrEngine() const { return m_engine; }
+    void showOcrEngine(const QString &engine);
 
 signals:
     // Translate was asked for (button, or a new language after a translation).
     void translateRequested();
     // The capture with the translation painted in, for the result window.
     void translatedImageReady(const QImage &image);
+    // Another recognition engine was chosen; the owner calls recognize()
+    // once it is ready (its models downloaded).
+    void recognizeRequested(const QString &engine);
 
 protected:
     void changeEvent(QEvent *event) override;
@@ -59,11 +69,14 @@ private:
     void updateButtons();
     void updatePreview();
     void fillEngines();
+    void fillOcrEngines();
     QString translatorName() const;
 
     std::unique_ptr<Ui::OcrResultDialog> ui;
     QImage m_image;
     QString m_engine;
+    QStringList m_languages;
+    bool m_translateAgain = false; // after recognizing anew
     QFutureWatcher<OcrResult> m_watcher;
     OcrResult m_result;
     bool m_recognized = false;

@@ -188,6 +188,7 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     , ui(std::make_unique<Ui::OcrResultDialog>())
     , m_image(image)
     , m_engine(engine)
+    , m_languages(languages)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -204,6 +205,7 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     ui->engineCombo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     ui->engineCombo->setMinimumContentsLength(24);
     fillEngines();
+    fillOcrEngines();
 
     connect(ui->copyButton, &QPushButton::clicked, this, [this] {
         QGuiApplication::clipboard()->setText(ui->sourceEdit->toPlainText());
@@ -223,6 +225,12 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
         else
             updateTexts();
     });
+    // For this window only too; the owner readies the engine, then recognize().
+    connect(ui->ocrEngineCombo, &QComboBox::currentIndexChanged, this, [this] {
+        const QString chosen = ui->ocrEngineCombo->currentData().toString();
+        if (!chosen.isEmpty() && chosen != m_engine)
+            emit recognizeRequested(chosen);
+    });
     connect(ui->copyTranslationButton, &QPushButton::clicked, this, [this] {
         QGuiApplication::clipboard()->setText(ui->targetEdit->toPlainText());
     });
@@ -233,8 +241,36 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     connect(ui->sourceEdit, &QPlainTextEdit::textChanged, this, &OcrResultDialog::updateButtons);
     connect(&m_watcher, &QFutureWatcher<OcrResult>::finished, this, &OcrResultDialog::onRecognized);
 
+    recognize(engine);
+}
+
+void OcrResultDialog::recognize(const QString &engine)
+{
+    m_engine = engine;
+    showOcrEngine(engine);
+    // What came from the last engine goes; a translation of it is made again.
+    m_recognized = false;
+    m_result = {};
+    m_recognizedText.clear();
+    m_paragraphs.clear();
+    m_boxes.clear();
+    m_lineHeights.clear();
+    m_translations.clear();
+    m_translateAgain = m_translation != Translation::None;
+    m_translation = Translation::None;
+    m_translateError.clear();
+    ++m_request; // a translation still running is of the old text
+    {
+        const QSignalBlocker blocker(ui->sourceEdit);
+        ui->sourceEdit->clear();
+    }
+    ui->sourceEdit->setReadOnly(true);
+    ui->targetEdit->clear();
+
     // Engines load models and recognize on a worker thread; the engine object
-    // never leaves it.
+    // never leaves it. A recognition still running is left to finish unseen.
+    const QImage image = m_image;
+    const QStringList languages = m_languages;
     m_watcher.setFuture(QtConcurrent::run([image, engine, languages] {
         QString error;
         std::unique_ptr<OcrEngine> ocr = Ocr::createEngine(engine, languages, &error);
@@ -246,6 +282,25 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     updatePreview();
     updateTexts();
     updateButtons();
+}
+
+void OcrResultDialog::showOcrEngine(const QString &engine)
+{
+    const QSignalBlocker blocker(ui->ocrEngineCombo);
+    ui->ocrEngineCombo->setCurrentIndex(std::max(0, ui->ocrEngineCombo->findData(engine)));
+}
+
+// The engines this build can run here, and the one in use.
+void OcrResultDialog::fillOcrEngines()
+{
+    const QSignalBlocker blocker(ui->ocrEngineCombo);
+    ui->ocrEngineCombo->clear();
+    const QStringList engines = Ocr::engineIds();
+    for (const QString &engine : engines) {
+        if (engine == m_engine || Ocr::engineUnavailableReason(engine).isEmpty())
+            ui->ocrEngineCombo->addItem(Ocr::engineName(engine), engine);
+    }
+    showOcrEngine(m_engine);
 }
 
 OcrResultDialog::~OcrResultDialog()
@@ -260,6 +315,7 @@ void OcrResultDialog::changeEvent(QEvent *event)
     if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
         fillEngines();
+        fillOcrEngines();
         updateTexts();
         updateButtons();
     }
@@ -294,6 +350,11 @@ void OcrResultDialog::onRecognized()
     updatePreview();
     updateTexts();
     updateButtons();
+    if (m_translateAgain) {
+        m_translateAgain = false;
+        if (!m_paragraphs.isEmpty())
+            emit translateRequested();
+    }
 }
 
 bool OcrResultDialog::sourceEdited() const

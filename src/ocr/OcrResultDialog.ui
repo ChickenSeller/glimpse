@@ -79,6 +79,23 @@
           </spacer>
          </item>
          <item>
+          <widget class="QLabel" name="ocrEngineLabel">
+           <property name="text">
+            <string>&amp;Recognize with:</string>
+           </property>
+           <property name="buddy">
+            <cstring>ocrEngineCombo</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="ocrEngineCombo">
+           <property name="toolTip">
+            <string>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="copyButton">
            <property name="text">
             <string>&amp;Copy</string>
