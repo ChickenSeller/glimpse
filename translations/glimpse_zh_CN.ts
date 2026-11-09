@@ -1197,7 +1197,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+519"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+550"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -1207,12 +1207,17 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻译图片(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-112"/>
+        <location line="+9"/>
+        <source>The translation, editable; in the translated image each line is one paragraph</source>
+        <translation>翻译结果，可以编辑；生成翻译图片时，每一行对应一个段落</translation>
+    </message>
+    <message>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-141"/>
         <source>Local: %1</source>
         <translation>本地：%1</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+114"/>
         <source>Recognizing text with %1...</source>
         <translation>正在使用 %1 识别文字...</translation>
     </message>

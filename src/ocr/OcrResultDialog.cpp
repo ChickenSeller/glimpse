@@ -235,7 +235,7 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
         QGuiApplication::clipboard()->setText(ui->targetEdit->toPlainText());
     });
     connect(ui->imageButton, &QPushButton::clicked, this, [this] {
-        emit translatedImageReady(paintTranslation(m_image, m_boxes, m_translations, m_lineHeights));
+        emit translatedImageReady(paintTranslation(m_image, m_boxes, paintedTranslations(), m_lineHeights));
     });
     // Editing the text changes the paragraphs the boxes belong to.
     connect(ui->sourceEdit, &QPlainTextEdit::textChanged, this, &OcrResultDialog::updateButtons);
@@ -266,6 +266,8 @@ void OcrResultDialog::recognize(const QString &engine)
     }
     ui->sourceEdit->setReadOnly(true);
     ui->targetEdit->clear();
+    ui->targetEdit->setReadOnly(true);
+    m_translatedText.clear();
 
     // Engines load models and recognize on a worker thread; the engine object
     // never leaves it. A recognition still running is left to finish unseen.
@@ -450,16 +452,45 @@ void OcrResultDialog::translate()
                                  return;
                              m_translation = error.isEmpty() ? Translation::Done : Translation::Failed;
                              m_translateError = error;
-                             // Only the recognized paragraphs have boxes to paint into.
-                             m_translations = edited ? QStringList() : translations;
-                             if (error.isEmpty())
-                                 ui->targetEdit->setPlainText(joinTranslations(translations, edited));
+                             // Only the recognized paragraphs have boxes to paint into;
+                             // each is one line, so that a line edited is a paragraph.
+                             m_translations.clear();
+                             if (!edited) {
+                                 for (const QString &t : translations)
+                                     m_translations << t.simplified();
+                             }
+                             if (error.isEmpty()) {
+                                 m_translatedText = joinTranslations(edited ? translations : m_translations, edited);
+                                 ui->targetEdit->setPlainText(m_translatedText);
+                                 ui->targetEdit->setReadOnly(false);
+                             }
                              updateTexts();
                              updateButtons();
                          },
                          localModel());
     updateTexts();
     updateButtons();
+}
+
+QStringList OcrResultDialog::paintedTranslations() const
+{
+    const QString text = ui->targetEdit->toPlainText();
+    if (text == m_translatedText)
+        return m_translations;
+    // Line by line in the order of the paragraphs; blank lines only space
+    // them. Lines short leave the last paragraphs empty (the text erased),
+    // lines over join the last one.
+    QStringList lines;
+    for (const QString &line : text.split(QLatin1Char('\n'))) {
+        if (!line.trimmed().isEmpty())
+            lines << line.trimmed();
+    }
+    QStringList texts;
+    for (qsizetype i = 0; i < m_boxes.size(); ++i)
+        texts << lines.value(i);
+    if (!texts.isEmpty() && lines.size() > texts.size())
+        texts.last() = lines.mid(texts.size() - 1).join(QLatin1Char(' '));
+    return texts;
 }
 
 // One paragraph after another as they were laid out: a paragraph right below

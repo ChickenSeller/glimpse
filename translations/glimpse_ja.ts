@@ -1197,7 +1197,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+519"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+550"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -1207,12 +1207,17 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻訳画像(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-112"/>
+        <location line="+9"/>
+        <source>The translation, editable; in the translated image each line is one paragraph</source>
+        <translation>翻訳結果（編集できます）。翻訳画像では 1 行が 1 段落に対応します</translation>
+    </message>
+    <message>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-141"/>
         <source>Local: %1</source>
         <translation>ローカル：%1</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+114"/>
         <source>Recognizing text with %1...</source>
         <translation>%1 でテキストを認識しています...</translation>
     </message>

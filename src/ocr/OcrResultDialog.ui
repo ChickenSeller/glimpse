@@ -202,6 +202,9 @@
        </item>
        <item>
         <widget class="QPlainTextEdit" name="targetEdit">
+         <property name="toolTip">
+          <string>The translation, editable; in the translated image each line is one paragraph</string>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>

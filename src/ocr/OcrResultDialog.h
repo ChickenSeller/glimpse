@@ -64,6 +64,9 @@ private:
     // else split at blank lines.
     QStringList sourceParagraphs() const;
     QString joinTranslations(const QStringList &translations, bool edited) const;
+    // One text per recognized paragraph to paint: the translation as edited
+    // in the window, each line of it one paragraph.
+    QStringList paintedTranslations() const;
     bool sourceEdited() const;
     void updateTexts();
     void updateButtons();
@@ -84,7 +87,8 @@ private:
     QStringList m_paragraphs;      // recognized paragraphs, for translating
     QList<QRect> m_boxes;          // one per recognized paragraph, image pixels
     QList<int> m_lineHeights;      // per paragraph: its tallest line, image pixels
-    QStringList m_translations;    // one per paragraph of the last translation
+    QStringList m_translations;    // one per paragraph of the last translation, one line each
+    QString m_translatedText;      // the translation as shown, to tell edits apart
     Translation m_translation = Translation::None;
     QString m_translateError;
     int m_request = 0;             // ignores replies to superseded requests
