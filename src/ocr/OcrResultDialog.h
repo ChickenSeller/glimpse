@@ -68,6 +68,7 @@ private:
     // in the window, each line of it one paragraph.
     QStringList paintedTranslations() const;
     bool sourceEdited() const;
+    bool translationEdited() const;
     void updateTexts();
     void updateButtons();
     void updatePreview();

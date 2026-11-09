@@ -239,6 +239,7 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     });
     // Editing the text changes the paragraphs the boxes belong to.
     connect(ui->sourceEdit, &QPlainTextEdit::textChanged, this, &OcrResultDialog::updateButtons);
+    connect(ui->targetEdit, &QPlainTextEdit::textChanged, this, &OcrResultDialog::updateButtons);
     connect(&m_watcher, &QFutureWatcher<OcrResult>::finished, this, &OcrResultDialog::onRecognized);
 
     recognize(engine);
@@ -357,6 +358,11 @@ void OcrResultDialog::onRecognized()
         if (!m_paragraphs.isEmpty())
             emit translateRequested();
     }
+}
+
+bool OcrResultDialog::translationEdited() const
+{
+    return m_translation == Translation::Done && ui->targetEdit->toPlainText() != m_translatedText;
 }
 
 bool OcrResultDialog::sourceEdited() const
@@ -539,6 +545,10 @@ void OcrResultDialog::updateTexts()
 void OcrResultDialog::updateButtons()
 {
     const bool hasText = !ui->sourceEdit->toPlainText().trimmed().isEmpty();
+    // Either text changed by hand says so, until it is recognized or
+    // translated anew.
+    ui->sourceEditedLabel->setVisible(m_recognized && sourceEdited());
+    ui->targetEditedLabel->setVisible(translationEdited());
     ui->copyButton->setEnabled(hasText);
     ui->translateButton->setEnabled(m_recognized && hasText && m_translation != Translation::Running);
     ui->copyTranslationButton->setEnabled(m_translation == Translation::Done);

@@ -1151,7 +1151,18 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>识别出的文字（可编辑；段落之间用空行分隔）</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+7"/>
+        <source>The recognized text was changed by hand</source>
+        <translation>识别出的文字经过了手动修改</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+113"/>
+        <source>(edited by hand)</source>
+        <translation>（已手动编辑）</translation>
+    </message>
+    <message>
+        <location line="-99"/>
         <source>&amp;Recognize with:</source>
         <translation>识别引擎(&amp;R)：</translation>
     </message>
@@ -1191,13 +1202,18 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻译(&amp;T)</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+7"/>
+        <source>The translation was changed by hand</source>
+        <translation>翻译结果经过了手动修改</translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Copy Tra&amp;nslation</source>
         <translation>复制译文(&amp;N)</translation>
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+550"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+560"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -1212,7 +1228,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻译结果，可以编辑；生成翻译图片时，每一行对应一个段落</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-141"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-145"/>
         <source>Local: %1</source>
         <translation>本地：%1</translation>
     </message>
@@ -1242,7 +1258,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>已使用 %1 识别。复制或翻译前可以修改文字。</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+20"/>
         <source>Translate the text as recognized, unedited, to paint it over the capture.</source>
         <translation>要把译文画在截图上，请翻译未经修改的识别结果。</translation>
     </message>

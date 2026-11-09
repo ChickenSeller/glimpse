@@ -1151,7 +1151,18 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>認識した文字（編集可。段落は空行で区切ります）</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+7"/>
+        <source>The recognized text was changed by hand</source>
+        <translation>認識したテキストは手動で変更されています</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+113"/>
+        <source>(edited by hand)</source>
+        <translation>（手動で編集済み）</translation>
+    </message>
+    <message>
+        <location line="-99"/>
         <source>&amp;Recognize with:</source>
         <translation>認識エンジン(&amp;R)：</translation>
     </message>
@@ -1191,13 +1202,18 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻訳(&amp;T)</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+7"/>
+        <source>The translation was changed by hand</source>
+        <translation>翻訳結果は手動で変更されています</translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Copy Tra&amp;nslation</source>
         <translation>訳文をコピー(&amp;N)</translation>
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+550"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+560"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -1212,7 +1228,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻訳結果（編集できます）。翻訳画像では 1 行が 1 段落に対応します</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-141"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-145"/>
         <source>Local: %1</source>
         <translation>ローカル：%1</translation>
     </message>
@@ -1242,7 +1258,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>%1 で認識しました。コピーや翻訳の前にテキストを編集できます。</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+20"/>
         <source>Translate the text as recognized, unedited, to paint it over the capture.</source>
         <translation>キャプチャに訳文を描くには、認識したままの文字を翻訳してください。</translation>
     </message>

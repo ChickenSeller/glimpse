@@ -72,6 +72,16 @@
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="sourceEditedLabel">
+           <property name="toolTip">
+            <string>The recognized text was changed by hand</string>
+           </property>
+           <property name="text">
+            <string>(edited by hand)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="sourceSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -171,6 +181,16 @@
            </property>
            <property name="text">
             <string>&amp;Translate</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="targetEditedLabel">
+           <property name="toolTip">
+            <string>The translation was changed by hand</string>
+           </property>
+           <property name="text">
+            <string>(edited by hand)</string>
            </property>
           </widget>
          </item>
