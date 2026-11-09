@@ -27,6 +27,14 @@ constexpr GUID kIID_IAsyncInfo = {0x00000036, 0x0000, 0x0000, {0xc0, 0x00, 0x00,
 
 constexpr int kBitmapPixelFormatBgra8 = 87;
 
+} // namespace
+
+// The interfaces must not be in the anonymous namespace: GCC then knows that
+// nothing in the program implements them, turns each call (a pure virtual
+// one, as it sees it) into "unreachable" when optimizing, and Release builds
+// jump to nowhere.
+namespace GlimpseWinRt {
+
 struct WinRect {
     float X, Y, Width, Height;
 };
@@ -85,6 +93,12 @@ struct ISoftwareBitmapStatics : IInspectable {
 struct ILanguageFactory : IInspectable {
     virtual HRESULT STDMETHODCALLTYPE CreateLanguage(HSTRING tag, IInspectable **language) = 0;
 };
+
+} // namespace GlimpseWinRt
+
+namespace {
+
+using namespace GlimpseWinRt;
 
 // Minimal owning COM pointer.
 template <typename T>
