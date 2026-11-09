@@ -1147,8 +1147,8 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+56"/>
-        <source>Recognized text (editable; paragraphs separated by blank lines)</source>
-        <translation>识别出的文字（可编辑；段落之间用空行分隔）</translation>
+        <source>Recognized text (editable; one paragraph per line)</source>
+        <translation>识别出的文字（可编辑；每行一个段落）</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1213,7 +1213,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+560"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+569"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -1228,12 +1228,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻译结果，可以编辑；生成翻译图片时，每一行对应一个段落</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-145"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-156"/>
         <source>Local: %1</source>
         <translation>本地：%1</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+125"/>
         <source>Recognizing text with %1...</source>
         <translation>正在使用 %1 识别文字...</translation>
     </message>
@@ -1259,8 +1259,8 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+20"/>
-        <source>Translate the text as recognized, unedited, to paint it over the capture.</source>
-        <translation>要把译文画在截图上，请翻译未经修改的识别结果。</translation>
+        <source>Keep one line per recognized paragraph in the text, then translate it again to paint the translation over the capture.</source>
+        <translation>让文字保持每个识别出的段落一行，再重新翻译，才能把译文贴回截图。</translation>
     </message>
 </context>
 <context>

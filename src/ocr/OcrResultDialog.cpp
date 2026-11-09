@@ -343,7 +343,9 @@ void OcrResultDialog::onRecognized()
         m_boxes << p.box;
         m_lineHeights << p.lineHeight;
     }
-    m_recognizedText = m_result.text();
+    // Shown as paragraphs, one per line and laid out as on the capture, so
+    // that the lines edited are still the paragraphs to translate.
+    m_recognizedText = layOut(m_paragraphs);
     {
         const QSignalBlocker blocker(ui->sourceEdit);
         ui->sourceEdit->setPlainText(m_recognizedText);
@@ -374,15 +376,11 @@ QStringList OcrResultDialog::sourceParagraphs() const
 {
     if (!sourceEdited())
         return m_paragraphs;
+    // Each line a paragraph, as shown; blank lines only space them.
     QStringList paragraphs;
-    const QStringList parts =
-        ui->sourceEdit->toPlainText().split(QRegularExpression(QStringLiteral("\\n\\s*\\n")), Qt::SkipEmptyParts);
-    for (const QString &part : parts) {
-        QString paragraph;
-        for (const QString &line : part.split(QLatin1Char('\n')))
-            joinInto(paragraph, line.trimmed());
-        if (!paragraph.isEmpty())
-            paragraphs << paragraph;
+    for (const QString &line : ui->sourceEdit->toPlainText().split(QLatin1Char('\n'))) {
+        if (!line.trimmed().isEmpty())
+            paragraphs << line.trimmed();
     }
     return paragraphs;
 }
@@ -451,22 +449,21 @@ void OcrResultDialog::translate()
     m_translation = Translation::Running;
     m_translateError.clear();
     const int request = ++m_request;
-    const bool edited = sourceEdited();
+    // The text edited: the translation takes its lines and blank lines.
+    const QString layout = sourceEdited() ? ui->sourceEdit->toPlainText() : QString();
     Translate::translate(translator(), paragraphs, ui->languageCombo->currentData().toString(), this,
-                         [this, request, edited](const QStringList &translations, const QString &error) {
+                         [this, request, layout](const QStringList &translations, const QString &error) {
                              if (request != m_request)
                                  return;
                              m_translation = error.isEmpty() ? Translation::Done : Translation::Failed;
                              m_translateError = error;
-                             // Only the recognized paragraphs have boxes to paint into;
-                             // each is one line, so that a line edited is a paragraph.
+                             // Each one line, so that a line edited is a paragraph.
                              m_translations.clear();
-                             if (!edited) {
-                                 for (const QString &t : translations)
-                                     m_translations << t.simplified();
-                             }
+                             for (const QString &t : translations)
+                                 m_translations << t.simplified();
                              if (error.isEmpty()) {
-                                 m_translatedText = joinTranslations(edited ? translations : m_translations, edited);
+                                 m_translatedText = layout.isEmpty() ? layOut(m_translations)
+                                                                     : followLayout(layout, m_translations);
                                  ui->targetEdit->setPlainText(m_translatedText);
                                  ui->targetEdit->setReadOnly(false);
                              }
@@ -502,12 +499,12 @@ QStringList OcrResultDialog::paintedTranslations() const
 // One paragraph after another as they were laid out: a paragraph right below
 // the one before it (the next line of a listing) on the next line, others
 // after a blank line.
-QString OcrResultDialog::joinTranslations(const QStringList &translations, bool edited) const
+QString OcrResultDialog::layOut(const QStringList &texts) const
 {
-    if (edited || translations.size() != m_boxes.size())
-        return translations.join(QStringLiteral("\n\n"));
+    if (texts.size() != m_boxes.size())
+        return texts.join(QStringLiteral("\n\n"));
     QString text;
-    for (qsizetype i = 0; i < translations.size(); ++i) {
+    for (qsizetype i = 0; i < texts.size(); ++i) {
         if (i > 0) {
             const QRect &above = m_boxes.at(i - 1);
             const QRect &below = m_boxes.at(i);
@@ -515,9 +512,21 @@ QString OcrResultDialog::joinTranslations(const QStringList &translations, bool 
             const bool next = overlaps && below.top() - above.bottom() < m_lineHeights.at(i - 1) * 0.8;
             text += next ? QStringLiteral("\n") : QStringLiteral("\n\n");
         }
-        text += translations.at(i);
+        text += texts.at(i);
     }
     return text;
+}
+
+// The translations in place of the edited text's lines, its blank lines kept.
+QString OcrResultDialog::followLayout(const QString &source, const QStringList &translations) const
+{
+    QStringList lines;
+    qsizetype next = 0;
+    for (const QString &line : source.split(QLatin1Char('\n')))
+        lines << (line.trimmed().isEmpty() ? QString() : translations.value(next++));
+    while (next < translations.size()) // more than asked for: keep them
+        lines << translations.at(next++);
+    return lines.join(QLatin1Char('\n')).trimmed();
 }
 
 void OcrResultDialog::updateTexts()
@@ -552,13 +561,14 @@ void OcrResultDialog::updateButtons()
     ui->copyButton->setEnabled(hasText);
     ui->translateButton->setEnabled(m_recognized && hasText && m_translation != Translation::Running);
     ui->copyTranslationButton->setEnabled(m_translation == Translation::Done);
-    // The image needs one translation per recognized box: the text as
-    // recognized, translated as such.
-    const bool matches = !sourceEdited() && !m_boxes.isEmpty() && m_translations.size() == m_boxes.size();
+    // The image needs one translation per recognized box: as many lines in
+    // the text translated as paragraphs were recognized.
+    const bool matches = !m_boxes.isEmpty() && m_translations.size() == m_boxes.size();
     ui->imageButton->setEnabled(m_translation == Translation::Done && matches);
     ui->imageButton->setToolTip(matches || m_translation != Translation::Done
                                     ? tr("Paint the translation over the capture, where the text was")
-                                    : tr("Translate the text as recognized, unedited, to paint it over the capture."));
+                                    : tr("Keep one line per recognized paragraph in the text, then translate it again "
+                                         "to paint the translation over the capture."));
 }
 
 void OcrResultDialog::updatePreview()

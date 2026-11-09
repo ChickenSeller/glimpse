@@ -67,7 +67,7 @@
          <item>
           <widget class="QLabel" name="sourceLabel">
            <property name="text">
-            <string>Recognized text (editable; paragraphs separated by blank lines)</string>
+            <string>Recognized text (editable; one paragraph per line)</string>
            </property>
           </widget>
          </item>

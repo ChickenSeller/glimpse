@@ -61,9 +61,11 @@ private:
 
     void onRecognized();
     // The paragraphs to translate: as recognized while the text is unedited,
-    // else split at blank lines.
+    // else each line of it.
     QStringList sourceParagraphs() const;
-    QString joinTranslations(const QStringList &translations, bool edited) const;
+    // One text per recognized paragraph, laid out as the paragraphs were.
+    QString layOut(const QStringList &texts) const;
+    QString followLayout(const QString &source, const QStringList &translations) const;
     // One text per recognized paragraph to paint: the translation as edited
     // in the window, each line of it one paragraph.
     QStringList paintedTranslations() const;

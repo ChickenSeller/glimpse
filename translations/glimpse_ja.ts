@@ -1147,8 +1147,8 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+56"/>
-        <source>Recognized text (editable; paragraphs separated by blank lines)</source>
-        <translation>認識した文字（編集可。段落は空行で区切ります）</translation>
+        <source>Recognized text (editable; one paragraph per line)</source>
+        <translation>認識したテキスト（編集可、1 行に 1 段落）</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1213,7 +1213,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+560"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+569"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -1228,12 +1228,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻訳結果（編集できます）。翻訳画像では 1 行が 1 段落に対応します</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-145"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-156"/>
         <source>Local: %1</source>
         <translation>ローカル：%1</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+125"/>
         <source>Recognizing text with %1...</source>
         <translation>%1 でテキストを認識しています...</translation>
     </message>
@@ -1259,8 +1259,8 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+20"/>
-        <source>Translate the text as recognized, unedited, to paint it over the capture.</source>
-        <translation>キャプチャに訳文を描くには、認識したままの文字を翻訳してください。</translation>
+        <source>Keep one line per recognized paragraph in the text, then translate it again to paint the translation over the capture.</source>
+        <translation>認識した段落ごとに 1 行のままにして翻訳し直すと、訳文をキャプチャに描き込めます。</translation>
     </message>
 </context>
 <context>
