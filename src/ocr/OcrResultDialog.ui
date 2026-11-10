@@ -175,6 +175,16 @@
           </widget>
          </item>
          <item>
+          <widget class="QToolButton" name="promptButton">
+           <property name="text">
+            <string>&amp;Prompt</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="translateButton">
            <property name="toolTip">
             <string>Translate the recognized text</string>
@@ -219,6 +229,22 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="promptEdit">
+         <property name="toolTip">
+          <string>The prompt for translating in this window; {language} stands for the target language. Settings &gt; Translation keeps the one it opens with.</string>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>90</height>
+          </size>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPlainTextEdit" name="targetEdit">

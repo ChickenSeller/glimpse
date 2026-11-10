@@ -4,6 +4,7 @@
 
 #include <QDialog>
 #include <QFutureWatcher>
+#include <QHash>
 #include <QImage>
 #include <QList>
 #include <QRect>
@@ -77,6 +78,9 @@ private:
     void fillEngines();
     void fillOcrEngines();
     QString translatorName() const;
+    // Whether the chosen engine (and model) takes a prompt, and showing it.
+    bool takesPrompt() const;
+    void updatePrompt();
 
     std::unique_ptr<Ui::OcrResultDialog> ui;
     QImage m_image;
@@ -95,4 +99,5 @@ private:
     Translation m_translation = Translation::None;
     QString m_translateError;
     int m_request = 0;             // ignores replies to superseded requests
+    QHash<QString, QString> m_prompts; // per engine, as edited in this window
 };

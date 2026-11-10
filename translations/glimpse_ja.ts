@@ -287,7 +287,7 @@
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+744"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+745"/>
         <source>Open Images...</source>
         <translation>画像を開く...</translation>
     </message>
@@ -1172,12 +1172,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+3"/>
-        <location line="+113"/>
+        <location line="+123"/>
         <source>(edited by hand)</source>
         <translation>（手動で編集済み）</translation>
     </message>
     <message>
-        <location line="-99"/>
+        <location line="-109"/>
         <source>&amp;Recognize with:</source>
         <translation>認識エンジン(&amp;R)：</translation>
     </message>
@@ -1208,6 +1208,11 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
+        <source>&amp;Prompt</source>
+        <translation>プロンプト(&amp;P)</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Translate the recognized text</source>
         <translation>認識したテキストを翻訳</translation>
     </message>
@@ -1228,7 +1233,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+569"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+612"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -1239,16 +1244,31 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+9"/>
+        <source>The prompt for translating in this window; {language} stands for the target language. Settings &gt; Translation keeps the one it opens with.</source>
+        <translation>このウィンドウでの翻訳に使うプロンプト。{language} は翻訳先の言語に置き換わります。開いたときのプロンプトは「設定 &gt; 翻訳」で設定します。</translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>The translation, editable; in the translated image each line is one paragraph</source>
         <translation>翻訳結果（編集できます）。翻訳画像では 1 行が 1 段落に対応します</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-156"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-184"/>
         <source>Local: %1</source>
         <translation>ローカル：%1</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+49"/>
+        <source>The prompt was changed for this window</source>
+        <translation>このウィンドウ用にプロンプトを変更しています</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show the prompt, to change it for this window</source>
+        <translation>プロンプトを表示して、このウィンドウ用に変更します</translation>
+    </message>
+    <message>
+        <location line="+103"/>
         <source>Recognizing text with %1...</source>
         <translation>%1 でテキストを認識しています...</translation>
     </message>
@@ -1987,7 +2007,12 @@ Esc でキャンセル</translation>
         <translation>ビデオのフレームレート(&amp;V)：</translation>
     </message>
     <message>
-        <location line="-685"/>
+        <location line="+253"/>
+        <source>Default &amp;prompt:</source>
+        <translation>既定のプロンプト(&amp;P)：</translation>
+    </message>
+    <message>
+        <location line="-938"/>
         <location line="+888"/>
         <source>Browse...</source>
         <translation>参照...</translation>
@@ -2138,12 +2163,7 @@ Esc でキャンセル</translation>
         <translation>例: deepseek-chat または qwen3:8b</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>&amp;Prompt:</source>
-        <translation>プロンプト(&amp;P)：</translation>
-    </message>
-    <message>
-        <location line="+43"/>
+        <location line="+50"/>
         <source>Put the default prompt back</source>
         <translation>プロンプトを既定に戻す</translation>
     </message>
@@ -2158,7 +2178,7 @@ Esc でキャンセル</translation>
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-694"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-695"/>
         <source>Tell me about new versions</source>
         <translation>新しいバージョンを知らせる</translation>
     </message>
@@ -2224,11 +2244,11 @@ Esc でキャンセル</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>{language} stands for the target language.</source>
-        <translation>{language} は翻訳先の言語に置き換わります。</translation>
+        <source>{language} stands for the target language. The translation window starts with this prompt and can change it for its own translations.</source>
+        <translation>{language} は翻訳先の言語に置き換わります。翻訳ウィンドウはこのプロンプトで開き、その翻訳だけ変更することもできます。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Glimpse adds the reply format (a JSON array of the paragraphs).</source>
         <translation>返答の形式（段落の JSON 配列）は Glimpse が付け加えます。</translation>
     </message>
@@ -2264,7 +2284,7 @@ Esc でキャンセル</translation>
         </translation>
     </message>
     <message>
-        <location line="-304"/>
+        <location line="-305"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
@@ -2352,17 +2372,17 @@ Esc でキャンセル</translation>
         <translation>bilibili の翻訳モデル（Index-Translate 35B）。キー不要で無料。自然な訳文で 150 言語に対応します。Google より遅く、bilibili がサービスを制限・終了する可能性があります。</translation>
     </message>
     <message>
-        <location line="-72"/>
+        <location line="-71"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>Index-Translate の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+199"/>
+        <location line="+204"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻訳には先にこれらの言語ファイルが必要です（1 方向あたり約 50 MB）。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
-        <location line="-480"/>
+        <location line="-486"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API キーが拒否されました（HTTP %1）。「設定 &gt; 翻訳」で確認してください。</translation>
     </message>
@@ -2382,7 +2402,7 @@ Esc でキャンセル</translation>
         <translation>Google の無料翻訳サービスから想定外の応答がありました。仕様が変わった可能性があります。別の翻訳サービスをお試しください。</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+94"/>
         <source>Claude declined to translate this text.</source>
         <translation>Claude はこのテキストの翻訳を断りました。</translation>
     </message>
@@ -2392,7 +2412,7 @@ Esc でキャンセル</translation>
         <translation>Claude の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+99"/>
         <source>The reply of %1 could not be read.</source>
         <translation>%1 の返答を読み取れませんでした。</translation>
     </message>
@@ -2467,12 +2487,12 @@ Esc でキャンセル</translation>
         <translation>OpenAI のチャット API で提供される任意の大規模言語モデル: DeepSeek、Qwen、SiliconFlow などのオンラインサービス（各サービスのキーが必要）や、このコンピューター上の Ollama、LM Studio など（通常キー不要）。段落ごとに 1 回リクエストします。</translation>
     </message>
     <message>
-        <location line="+109"/>
+        <location line="+115"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>Firefox の言語ファイルはダウンロードされませんでした。</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+54"/>
         <source>Set the address and model of the OpenAI-compatible API in Settings &gt; Translation.</source>
         <translation>「設定 &gt; 翻訳」で OpenAI 互換 API のアドレスとモデル名を入力してください。</translation>
     </message>

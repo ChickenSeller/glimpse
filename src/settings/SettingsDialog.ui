@@ -995,7 +995,7 @@
          <item row="8" column="0">
           <widget class="QLabel" name="translatePromptLabel">
            <property name="text">
-            <string>&amp;Prompt:</string>
+            <string>Default &amp;prompt:</string>
            </property>
            <property name="buddy">
             <cstring>translatePromptEdit</cstring>

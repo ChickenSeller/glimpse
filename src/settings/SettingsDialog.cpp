@@ -531,7 +531,8 @@ void SettingsDialog::showTranslateEngine()
         ui->translatePromptResetButton->setEnabled(!fixed);
         QString note = fixed ? tr("This model is made for translation and gets the prompt it was trained with. The "
                                   "prompt here is for general models, such as Qwen3 or another GGUF file.")
-                             : tr("{language} stands for the target language.");
+                             : tr("{language} stands for the target language. The translation window starts with "
+                                  "this prompt and can change it for its own translations.");
         if (!fixed && m_translateKeyEngine == QLatin1String("claude"))
             note += QLatin1Char(' ') + tr("Glimpse adds the reply format (a JSON array of the paragraphs).");
         ui->translatePromptNote->setText(note);

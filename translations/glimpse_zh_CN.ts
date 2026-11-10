@@ -287,7 +287,7 @@
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+744"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+745"/>
         <source>Open Images...</source>
         <translation>打开图片...</translation>
     </message>
@@ -1172,12 +1172,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+3"/>
-        <location line="+113"/>
+        <location line="+123"/>
         <source>(edited by hand)</source>
         <translation>（已手动编辑）</translation>
     </message>
     <message>
-        <location line="-99"/>
+        <location line="-109"/>
         <source>&amp;Recognize with:</source>
         <translation>识别引擎(&amp;R)：</translation>
     </message>
@@ -1208,6 +1208,11 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
+        <source>&amp;Prompt</source>
+        <translation>提示词(&amp;P)</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Translate the recognized text</source>
         <translation>翻译识别出的文字</translation>
     </message>
@@ -1228,7 +1233,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+569"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+612"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -1239,16 +1244,31 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+9"/>
+        <source>The prompt for translating in this window; {language} stands for the target language. Settings &gt; Translation keeps the one it opens with.</source>
+        <translation>本窗口翻译时使用的提示词，{language} 代表目标语言。窗口打开时使用的默认提示词在“设置 &gt; 翻译”中设置。</translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>The translation, editable; in the translated image each line is one paragraph</source>
         <translation>翻译结果，可以编辑；生成翻译图片时，每一行对应一个段落</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-156"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-184"/>
         <source>Local: %1</source>
         <translation>本地：%1</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+49"/>
+        <source>The prompt was changed for this window</source>
+        <translation>已为本窗口修改了提示词</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show the prompt, to change it for this window</source>
+        <translation>显示提示词，可为本窗口单独修改</translation>
+    </message>
+    <message>
+        <location line="+103"/>
         <source>Recognizing text with %1...</source>
         <translation>正在使用 %1 识别文字...</translation>
     </message>
@@ -1987,7 +2007,12 @@ Esc 取消</translation>
         <translation>视频帧率(&amp;V)：</translation>
     </message>
     <message>
-        <location line="-685"/>
+        <location line="+253"/>
+        <source>Default &amp;prompt:</source>
+        <translation>默认提示词(&amp;P)：</translation>
+    </message>
+    <message>
+        <location line="-938"/>
         <location line="+888"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
@@ -2138,12 +2163,7 @@ Esc 取消</translation>
         <translation>例如 deepseek-chat 或 qwen3:8b</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>&amp;Prompt:</source>
-        <translation>提示词(&amp;P)：</translation>
-    </message>
-    <message>
-        <location line="+43"/>
+        <location line="+50"/>
         <source>Put the default prompt back</source>
         <translation>恢复为默认的提示词</translation>
     </message>
@@ -2158,7 +2178,7 @@ Esc 取消</translation>
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-694"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-695"/>
         <source>Tell me about new versions</source>
         <translation>有新版本时提醒我</translation>
     </message>
@@ -2224,11 +2244,11 @@ Esc 取消</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>{language} stands for the target language.</source>
-        <translation>{language} 代表目标语言。</translation>
+        <source>{language} stands for the target language. The translation window starts with this prompt and can change it for its own translations.</source>
+        <translation>{language} 代表目标语言。翻译窗口打开时使用这个提示词，也可以在窗口里为该次翻译单独修改。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Glimpse adds the reply format (a JSON array of the paragraphs).</source>
         <translation>回复格式（各段落组成的 JSON 数组）由 Glimpse 自动附加。</translation>
     </message>
@@ -2264,7 +2284,7 @@ Esc 取消</translation>
         </translation>
     </message>
     <message>
-        <location line="-304"/>
+        <location line="-305"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
@@ -2352,17 +2372,17 @@ Esc 取消</translation>
         <translation>B 站的翻译大模型（Index-Translate 35B），免费、无需密钥：译文自然，支持 150 种语言。比 Google 慢，B 站也可能限流或停止这项服务。</translation>
     </message>
     <message>
-        <location line="-72"/>
+        <location line="-71"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>无法读取 Index-Translate 的回复。</translation>
     </message>
     <message>
-        <location line="+199"/>
+        <location line="+204"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻译需要先准备这些语言文件（每个方向约 50 MB）。文件保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
-        <location line="-480"/>
+        <location line="-486"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API 密钥被拒绝（HTTP %1）。请在“设置 &gt; 翻译”中检查。</translation>
     </message>
@@ -2382,7 +2402,7 @@ Esc 取消</translation>
         <translation>Google 免费翻译服务返回了无法识别的结果，接口可能已变更，请换用其他翻译服务。</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+94"/>
         <source>Claude declined to translate this text.</source>
         <translation>Claude 拒绝翻译这段文字。</translation>
     </message>
@@ -2392,7 +2412,7 @@ Esc 取消</translation>
         <translation>无法解析 Claude 的回复。</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+99"/>
         <source>The reply of %1 could not be read.</source>
         <translation>无法读取 %1 的回复。</translation>
     </message>
@@ -2467,12 +2487,12 @@ Esc 取消</translation>
         <translation>任何提供 OpenAI 聊天接口的大模型：DeepSeek、通义千问、硅基流动等在线服务（需填写它们的密钥），或在本机运行的 Ollama、LM Studio 等（一般不需要密钥）。每个段落发送一次请求。</translation>
     </message>
     <message>
-        <location line="+109"/>
+        <location line="+115"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>未下载 Firefox 语言文件。</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+54"/>
         <source>Set the address and model of the OpenAI-compatible API in Settings &gt; Translation.</source>
         <translation>请在“设置 &gt; 翻译”中填写 OpenAI 兼容接口的地址和模型名。</translation>
     </message>

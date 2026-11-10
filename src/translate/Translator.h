@@ -32,8 +32,11 @@ bool isConfigured(const QString &engine);
 // {language} in it stands for the target language.
 bool takesPrompt(const QString &engine);
 QString defaultPrompt(const QString &engine);
-// The prompt to send: the user's or the default, for `target`.
-QString prompt(const QString &engine, const QString &target);
+// The prompt the settings give the engine: the user's or the default.
+QString settingsPrompt(const QString &engine);
+// The prompt to send for `target`: `custom` (one translation's own) if any,
+// else the settings'.
+QString prompt(const QString &engine, const QString &target, const QString &custom = QString());
 
 // Target languages: "zh-Hans", "zh-Hant", "ja", "en", "ko", "fr", "de", "es", "ru".
 QStringList targetLanguages();
@@ -46,9 +49,10 @@ QString defaultTarget();
 // into `target` with `engine`, using the key stored in the settings. `done` is
 // called on `context`'s thread with one translation per text, or with an error
 // message. Nothing is called if `context` is destroyed first. `localModel`
-// picks the local engine's model (see LocalModel; empty: the settings' one).
+// picks the local engine's model (see LocalModel; empty: the settings' one);
+// `prompt` replaces the settings' prompt of an engine that takes one.
 using Callback = std::function<void(const QStringList &translations, const QString &error)>;
 void translate(const QString &engine, const QStringList &texts, const QString &target, QObject *context,
-               Callback done, const QString &localModel = QString());
+               Callback done, const QString &localModel = QString(), const QString &prompt = QString());
 
 } // namespace Translate

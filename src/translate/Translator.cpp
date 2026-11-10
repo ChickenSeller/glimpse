@@ -216,7 +216,8 @@ void microsoft(const QStringList &texts, const QString &target, const QString &k
          });
 }
 
-void claude(const QStringList &texts, const QString &target, const QString &key, QObject *context,
+// `instructions`: the prompt, ready to send (see Translate::prompt()).
+void claude(const QStringList &texts, const QString &instructions, const QString &key, QObject *context,
             const Translate::Callback &done)
 {
     QNetworkRequest request(QUrl(QStringLiteral("https://api.anthropic.com/v1/messages")));
@@ -226,7 +227,7 @@ void claude(const QStringList &texts, const QString &target, const QString &key,
     request.setRawHeader("anthropic-beta", "server-side-fallback-2026-07-01");
 
     // The user's prompt, then what the reply is read with (not theirs to change).
-    const QString system = Translate::prompt(QStringLiteral("claude"), target)
+    const QString system = instructions
                            + QStringLiteral("\n\nThe user message is a JSON array of paragraphs; translate each one. "
                                             "Reply with only a JSON array of the translated strings, the same length "
                                             "and order as the input, and nothing else.");
@@ -346,8 +347,8 @@ void indexTranslate(const QStringList &texts, const QString &target, QObject *co
 
 // Any service or local server with OpenAI's chat completions API (DeepSeek,
 // Qwen, Ollama, LM Studio...): the address, model and key from the settings,
-// the user's prompt as the system message.
-void openAi(const QStringList &texts, const QString &target, QObject *context, const Translate::Callback &done)
+// the prompt (ready to send) as the system message.
+void openAi(const QStringList &texts, const QString &instructions, QObject *context, const Translate::Callback &done)
 {
     QString address = AppSettings::openAiUrl().trimmed();
     while (address.endsWith(QLatin1Char('/')))
@@ -358,11 +359,10 @@ void openAi(const QStringList &texts, const QString &target, QObject *context, c
     const QString key = AppSettings::translateKey(QStringLiteral("openai")).trimmed();
     if (!key.isEmpty())
         request.setRawHeader("Authorization", "Bearer " + key.toUtf8());
-    const QString prompt = Translate::prompt(QStringLiteral("openai"), target);
     chatPerParagraph(request, QJsonObject{{QStringLiteral("model"), AppSettings::openAiModel().trimmed()}},
-                     [prompt](const QString &text) {
+                     [instructions](const QString &text) {
                          return QJsonArray{QJsonObject{{QStringLiteral("role"), QStringLiteral("system")},
-                                                       {QStringLiteral("content"), prompt}},
+                                                       {QStringLiteral("content"), instructions}},
                                            QJsonObject{{QStringLiteral("role"), QStringLiteral("user")},
                                                        {QStringLiteral("content"), text}}};
                      },
@@ -511,17 +511,23 @@ QString defaultPrompt(const QString &engine)
     return prompt + QStringLiteral(" Reply with the translation only, without notes or quotes.");
 }
 
-QString prompt(const QString &engine, const QString &target)
+QString settingsPrompt(const QString &engine)
 {
-    QString text = AppSettings::translatePrompt(engine).trimmed();
-    if (text.isEmpty())
-        text = defaultPrompt(engine);
+    const QString text = AppSettings::translatePrompt(engine).trimmed();
+    return text.isEmpty() ? defaultPrompt(engine) : text;
+}
+
+QString prompt(const QString &engine, const QString &target, const QString &custom)
+{
+    QString text = custom.trimmed().isEmpty() ? settingsPrompt(engine) : custom.trimmed();
     return text.replace(QLatin1String("{language}"), languageName(target));
 }
 
 void translate(const QString &engine, const QStringList &texts, const QString &target, QObject *context,
-               Callback done, const QString &localModel)
+               Callback done, const QString &localModel, const QString &customPrompt)
 {
+    // Read here: the settings belong to this thread.
+    const QString instructions = takesPrompt(engine) ? prompt(engine, target, customPrompt) : QString();
     if (engine == QLatin1String("google-free")) {
         googleFree(texts, target, context, done);
         return;
@@ -589,10 +595,9 @@ void translate(const QString &engine, const QStringList &texts, const QString &t
             idle->start();
         });
         const QString language = languageName(target);
-        const QString systemPrompt = prompt(engine, target); // read here: settings belong to this thread
-        watcher->setFuture(QtConcurrent::run([texts, language, localModel, systemPrompt] {
+        watcher->setFuture(QtConcurrent::run([texts, language, localModel, instructions] {
             QString error;
-            const QStringList translations = LocalModel::translate(texts, language, &error, localModel, systemPrompt);
+            const QStringList translations = LocalModel::translate(texts, language, &error, localModel, instructions);
             return Result(translations, error);
         }));
         return;
@@ -603,7 +608,7 @@ void translate(const QString &engine, const QStringList &texts, const QString &t
                                                               "Settings > Translation."));
             return;
         }
-        openAi(texts, target, context, done);
+        openAi(texts, instructions, context, done);
         return;
     }
 
@@ -619,7 +624,7 @@ void translate(const QString &engine, const QStringList &texts, const QString &t
     else if (engine == QLatin1String("microsoft"))
         microsoft(texts, target, key, context, done);
     else if (engine == QLatin1String("claude"))
-        claude(texts, target, key, context, done);
+        claude(texts, instructions, key, context, done);
     else
         done({}, QCoreApplication::translate("Translate", "Unknown translation engine: %1").arg(engine));
 }

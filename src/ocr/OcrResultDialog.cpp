@@ -220,6 +220,7 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     // For this window only: the settings keep the engine it opens with.
     connect(ui->engineCombo, &QComboBox::currentIndexChanged, this, [this] {
         ui->engineCombo->setToolTip(ui->engineCombo->currentText());
+        updatePrompt();
         if (m_translation != Translation::None)
             emit translateRequested();
         else
@@ -241,6 +242,20 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     connect(ui->sourceEdit, &QPlainTextEdit::textChanged, this, &OcrResultDialog::updateButtons);
     connect(ui->targetEdit, &QPlainTextEdit::textChanged, this, &OcrResultDialog::updateButtons);
     connect(&m_watcher, &QFutureWatcher<OcrResult>::finished, this, &OcrResultDialog::onRecognized);
+
+    // The prompt of a language model, for this window only: it starts as the
+    // settings' one, kept per engine as edited here.
+    ui->promptEdit->setVisible(false);
+    connect(ui->promptButton, &QToolButton::toggled, this, [this](bool on) {
+        ui->promptEdit->setVisible(on && takesPrompt());
+        if (on)
+            ui->promptEdit->setFocus();
+    });
+    connect(ui->promptEdit, &QPlainTextEdit::textChanged, this, [this] {
+        m_prompts.insert(translator(), ui->promptEdit->toPlainText());
+        updatePrompt();
+    });
+    updatePrompt();
 
     recognize(engine);
 }
@@ -435,6 +450,34 @@ QString OcrResultDialog::localModel() const
     return choice.size() > 1 ? choice.at(1) : QString();
 }
 
+bool OcrResultDialog::takesPrompt() const
+{
+    // A local model made for translation keeps its documented prompt.
+    return Translate::takesPrompt(translator())
+           && !(translator() == QLatin1String("local") && LocalModel::hasOwnPrompt(LocalModel::modelPath(localModel())));
+}
+
+void OcrResultDialog::updatePrompt()
+{
+    const bool takes = takesPrompt();
+    ui->promptButton->setVisible(takes);
+    ui->promptEdit->setVisible(takes && ui->promptButton->isChecked());
+    if (!takes)
+        return;
+    const QString engine = translator();
+    const QString text = m_prompts.contains(engine) ? m_prompts.value(engine) : Translate::settingsPrompt(engine);
+    if (ui->promptEdit->toPlainText() != text) {
+        const QSignalBlocker blocker(ui->promptEdit);
+        ui->promptEdit->setPlainText(text);
+    }
+    // Bold while this window's prompt differs from the settings'.
+    QFont font = ui->promptButton->font();
+    font.setBold(text.trimmed() != Translate::settingsPrompt(engine));
+    ui->promptButton->setFont(font);
+    ui->promptButton->setToolTip(font.bold() ? tr("The prompt was changed for this window")
+                                             : tr("Show the prompt, to change it for this window"));
+}
+
 QString OcrResultDialog::translatorName() const
 {
     return translator() == QLatin1String("local") ? LocalModel::modelName(localModel())
@@ -470,7 +513,7 @@ void OcrResultDialog::translate()
                              updateTexts();
                              updateButtons();
                          },
-                         localModel());
+                         localModel(), takesPrompt() ? ui->promptEdit->toPlainText() : QString());
     updateTexts();
     updateButtons();
 }
