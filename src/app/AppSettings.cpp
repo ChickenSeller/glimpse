@@ -440,6 +440,39 @@ void setMicrosoftTranslatorRegion(const QString &region)
     SettingsStore::open().setValue(QStringLiteral("translate/microsoftRegion"), region);
 }
 
+QString openAiUrl()
+{
+    return SettingsStore::open().value(QStringLiteral("translate/openaiUrl")).toString();
+}
+
+void setOpenAiUrl(const QString &url)
+{
+    SettingsStore::open().setValue(QStringLiteral("translate/openaiUrl"), url);
+}
+
+QString openAiModel()
+{
+    return SettingsStore::open().value(QStringLiteral("translate/openaiModel")).toString();
+}
+
+void setOpenAiModel(const QString &model)
+{
+    SettingsStore::open().setValue(QStringLiteral("translate/openaiModel"), model);
+}
+
+QString translatePrompt(const QString &engine)
+{
+    return SettingsStore::open().value(QStringLiteral("translate/prompts/") + engine).toString();
+}
+
+void setTranslatePrompt(const QString &engine, const QString &prompt)
+{
+    if (prompt.trimmed().isEmpty())
+        SettingsStore::open().remove(QStringLiteral("translate/prompts/") + engine);
+    else
+        SettingsStore::open().setValue(QStringLiteral("translate/prompts/") + engine, prompt);
+}
+
 int captureDelay()
 {
     return std::clamp(SettingsStore::open().value(QStringLiteral("capture/delay"), 0).toInt(), 0, 60);

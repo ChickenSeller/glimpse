@@ -225,12 +225,11 @@ void claude(const QStringList &texts, const QString &target, const QString &key,
     // A declined request is re-run on Anthropic's recommended fallback model.
     request.setRawHeader("anthropic-beta", "server-side-fallback-2026-07-01");
 
-    const QString system = QStringLiteral(
-        "You translate text recognized from a screenshot (it may contain OCR mistakes; read through them). "
-        "The user message is a JSON array of paragraphs. Translate each paragraph into %1, keeping its meaning, "
-        "tone, numbers, names and line breaks. Reply with only a JSON array of the translated strings, the same "
-        "length and order as the input, and nothing else.")
-                               .arg(Translate::languageName(target));
+    // The user's prompt, then what the reply is read with (not theirs to change).
+    const QString system = Translate::prompt(QStringLiteral("claude"), target)
+                           + QStringLiteral("\n\nThe user message is a JSON array of paragraphs; translate each one. "
+                                            "Reply with only a JSON array of the translated strings, the same length "
+                                            "and order as the input, and nothing else.");
     const QJsonObject body{
         {QStringLiteral("model"), QStringLiteral("claude-opus-5-5")},
         {QStringLiteral("max_tokens"), 16000},
@@ -272,10 +271,14 @@ void claude(const QStringList &texts, const QString &target, const QString &key,
          });
 }
 
-// Bilibili's free Index-Translate service (OpenAI-compatible, no key). It
-// takes one text per request, so the paragraphs go out side by side and
-// `done` is called once all have come back, or on the first error.
-void indexTranslate(const QStringList &texts, const QString &target, QObject *context, const Translate::Callback &done)
+// Chat completions, the API of OpenAI that many services and local servers
+// speak, one request per paragraph: the paragraphs go out side by side and
+// `done` is called once all have come back, or on the first error. `body`
+// names the model (and any options); `messages` makes the messages for one
+// paragraph.
+void chatPerParagraph(const QNetworkRequest &request, const QJsonObject &body,
+                      const std::function<QJsonArray(const QString &text)> &messages, const QString &unreadable,
+                      const QStringList &texts, QObject *context, const Translate::Callback &done)
 {
     struct Pending {
         QStringList results;
@@ -289,17 +292,10 @@ void indexTranslate(const QStringList &texts, const QString &target, QObject *co
         done({}, {});
         return;
     }
-    const QString prompt = QStringLiteral("请将以下文本翻译为%1，直接输出翻译结果，不要进行任何解释。\n\n")
-                               .arg(Translate::languageName(target));
     for (qsizetype i = 0; i < texts.size(); ++i) {
-        QNetworkRequest request(QUrl(QStringLiteral("https://index-translate.bilibili.com/v1/chat/completions")));
-        const QJsonObject body{
-            {QStringLiteral("model"), QStringLiteral("Index-Translate-35B-A3B")},
-            {QStringLiteral("messages"),
-             QJsonArray{QJsonObject{{QStringLiteral("role"), QStringLiteral("user")},
-                                    {QStringLiteral("content"), prompt + texts.at(i)}}}},
-            {QStringLiteral("chat_template_kwargs"), QJsonObject{{QStringLiteral("enable_thinking"), false}}}};
-        send(request, QJsonDocument(body).toJson(QJsonDocument::Compact), 1, context,
+        QJsonObject paragraph = body;
+        paragraph.insert(QStringLiteral("messages"), messages(texts.at(i)));
+        send(request, QJsonDocument(paragraph).toJson(QJsonDocument::Compact), 1, context,
              [pending, i, done](const QStringList &translations, const QString &error) {
                  if (pending->failed)
                      return;
@@ -312,7 +308,7 @@ void indexTranslate(const QStringList &texts, const QString &target, QObject *co
                  if (--pending->remaining == 0)
                      done(pending->results, {});
              },
-             [](const QByteArray &data, QString *error) {
+             [unreadable](const QByteArray &data, QString *error) {
                  const QJsonArray choices = QJsonDocument::fromJson(data).object().value(QStringLiteral("choices")).toArray();
                  QString text = choices.first().toObject().value(QStringLiteral("message")).toObject()
                                     .value(QStringLiteral("content")).toString();
@@ -321,12 +317,58 @@ void indexTranslate(const QStringList &texts, const QString &target, QObject *co
                  text.remove(think);
                  text = text.trimmed();
                  if (choices.isEmpty() || text.isEmpty()) {
-                     *error = QCoreApplication::translate("Translate", "The Index-Translate reply could not be read.");
+                     *error = unreadable;
                      return QStringList();
                  }
                  return QStringList{text};
              });
     }
+}
+
+// Bilibili's free Index-Translate service (OpenAI-compatible, no key), with
+// the model's documented prompt.
+void indexTranslate(const QStringList &texts, const QString &target, QObject *context, const Translate::Callback &done)
+{
+    const QString prompt = QStringLiteral("请将以下文本翻译为%1，直接输出翻译结果，不要进行任何解释。\n\n")
+                               .arg(Translate::languageName(target));
+    const QJsonObject body{
+        {QStringLiteral("model"), QStringLiteral("Index-Translate-35B-A3B")},
+        {QStringLiteral("chat_template_kwargs"), QJsonObject{{QStringLiteral("enable_thinking"), false}}}};
+    chatPerParagraph(QNetworkRequest(QUrl(QStringLiteral("https://index-translate.bilibili.com/v1/chat/completions"))),
+                     body,
+                     [prompt](const QString &text) {
+                         return QJsonArray{QJsonObject{{QStringLiteral("role"), QStringLiteral("user")},
+                                                       {QStringLiteral("content"), prompt + text}}};
+                     },
+                     QCoreApplication::translate("Translate", "The Index-Translate reply could not be read."), texts,
+                     context, done);
+}
+
+// Any service or local server with OpenAI's chat completions API (DeepSeek,
+// Qwen, Ollama, LM Studio...): the address, model and key from the settings,
+// the user's prompt as the system message.
+void openAi(const QStringList &texts, const QString &target, QObject *context, const Translate::Callback &done)
+{
+    QString address = AppSettings::openAiUrl().trimmed();
+    while (address.endsWith(QLatin1Char('/')))
+        address.chop(1);
+    if (!address.endsWith(QLatin1String("/chat/completions")))
+        address += QStringLiteral("/chat/completions");
+    QNetworkRequest request{QUrl(address)};
+    const QString key = AppSettings::translateKey(QStringLiteral("openai")).trimmed();
+    if (!key.isEmpty())
+        request.setRawHeader("Authorization", "Bearer " + key.toUtf8());
+    const QString prompt = Translate::prompt(QStringLiteral("openai"), target);
+    chatPerParagraph(request, QJsonObject{{QStringLiteral("model"), AppSettings::openAiModel().trimmed()}},
+                     [prompt](const QString &text) {
+                         return QJsonArray{QJsonObject{{QStringLiteral("role"), QStringLiteral("system")},
+                                                       {QStringLiteral("content"), prompt}},
+                                           QJsonObject{{QStringLiteral("role"), QStringLiteral("user")},
+                                                       {QStringLiteral("content"), text}}};
+                     },
+                     QCoreApplication::translate("Translate", "The reply of %1 could not be read.")
+                         .arg(AppSettings::openAiModel().trimmed()),
+                     texts, context, done);
 }
 
 } // namespace
@@ -337,7 +379,7 @@ QStringList engineIds()
 {
     return {QStringLiteral("firefox"),     QStringLiteral("index"),     QStringLiteral("google-free"), QStringLiteral("local"),
             QStringLiteral("deepl"),       QStringLiteral("google"),    QStringLiteral("microsoft"),
-            QStringLiteral("claude")};
+            QStringLiteral("claude"),      QStringLiteral("openai")};
 }
 
 QString engineName(const QString &id)
@@ -358,6 +400,8 @@ QString engineName(const QString &id)
         return QCoreApplication::translate("Translate", "Microsoft Translator");
     if (id == QLatin1String("claude"))
         return QStringLiteral("Claude (Anthropic)");
+    if (id == QLatin1String("openai"))
+        return QCoreApplication::translate("Translate", "OpenAI-compatible API (DeepSeek, Ollama...)");
     return id;
 }
 
@@ -390,6 +434,10 @@ QString engineDescription(const QString &id)
     if (id == QLatin1String("claude"))
         return QCoreApplication::translate("Translate", "A large language model: reads through OCR mistakes and keeps the tone and terms in context. "
                   "Needs an Anthropic API key; billed per use.");
+    if (id == QLatin1String("openai"))
+        return QCoreApplication::translate("Translate", "Any large language model served with OpenAI's chat API: online "
+                  "services such as DeepSeek, Qwen or SiliconFlow (with their key), or a server on this computer such as "
+                  "Ollama or LM Studio (usually no key). Each paragraph is one request.");
     return {};
 }
 
@@ -431,8 +479,44 @@ QString defaultTarget()
 
 bool needsKey(const QString &engine)
 {
+    return takesKey(engine) && engine != QLatin1String("openai");
+}
+
+bool takesKey(const QString &engine)
+{
     return engine != QLatin1String("local") && engine != QLatin1String("firefox")
            && engine != QLatin1String("google-free") && engine != QLatin1String("index");
+}
+
+bool isConfigured(const QString &engine)
+{
+    if (engine == QLatin1String("openai"))
+        return !AppSettings::openAiUrl().trimmed().isEmpty() && !AppSettings::openAiModel().trimmed().isEmpty();
+    return !needsKey(engine) || !AppSettings::translateKey(engine).trimmed().isEmpty();
+}
+
+bool takesPrompt(const QString &engine)
+{
+    return engine == QLatin1String("claude") || engine == QLatin1String("openai") || engine == QLatin1String("local");
+}
+
+QString defaultPrompt(const QString &engine)
+{
+    const QString prompt = QStringLiteral(
+        "Translate the text into {language}. It was recognized from a screenshot and may contain OCR mistakes; "
+        "read through them. Keep the meaning, tone, numbers, names and line breaks.");
+    // Claude's reply format is added to any prompt (see claude()).
+    if (engine == QLatin1String("claude"))
+        return prompt;
+    return prompt + QStringLiteral(" Reply with the translation only, without notes or quotes.");
+}
+
+QString prompt(const QString &engine, const QString &target)
+{
+    QString text = AppSettings::translatePrompt(engine).trimmed();
+    if (text.isEmpty())
+        text = defaultPrompt(engine);
+    return text.replace(QLatin1String("{language}"), languageName(target));
 }
 
 void translate(const QString &engine, const QStringList &texts, const QString &target, QObject *context,
@@ -505,11 +589,21 @@ void translate(const QString &engine, const QStringList &texts, const QString &t
             idle->start();
         });
         const QString language = languageName(target);
-        watcher->setFuture(QtConcurrent::run([texts, language, localModel] {
+        const QString systemPrompt = prompt(engine, target); // read here: settings belong to this thread
+        watcher->setFuture(QtConcurrent::run([texts, language, localModel, systemPrompt] {
             QString error;
-            const QStringList translations = LocalModel::translate(texts, language, &error, localModel);
+            const QStringList translations = LocalModel::translate(texts, language, &error, localModel, systemPrompt);
             return Result(translations, error);
         }));
+        return;
+    }
+    if (engine == QLatin1String("openai")) {
+        if (!isConfigured(engine)) {
+            done({}, QCoreApplication::translate("Translate", "Set the address and model of the OpenAI-compatible API in "
+                                                              "Settings > Translation."));
+            return;
+        }
+        openAi(texts, target, context, done);
         return;
     }
 

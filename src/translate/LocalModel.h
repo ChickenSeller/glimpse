@@ -37,11 +37,17 @@ QString modelName(const QString &model);
 // Why local translation cannot run in this build; empty if it can.
 QString unavailableReason();
 
+// Whether the model file is one made for translation (Hy-MT, Index-Translate),
+// which is given its documented prompt: the user's prompt is for general
+// models only.
+bool hasOwnPrompt(const QString &modelFile);
+
 // Translates each text into `language` (its name, e.g. "日本語"). Blocking:
 // call it off the GUI thread. Calls are serialized; the model stays loaded
-// between them until release().
+// between them until release(). `systemPrompt` instructs a general model
+// (see hasOwnPrompt).
 QStringList translate(const QStringList &texts, const QString &language, QString *error,
-                      const QString &model = QString());
+                      const QString &model = QString(), const QString &systemPrompt = QString());
 // Frees the model (and its GPU memory) if it is loaded and not in use.
 void release();
 

@@ -218,7 +218,25 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     for (const QString &engine : translators) {
         ui->translateEngineCombo->addItem(Translate::engineName(engine), engine);
         m_translateKeys.insert(engine, AppSettings::translateKey(engine));
+        if (Translate::takesPrompt(engine))
+            m_translatePrompts.insert(engine, AppSettings::translatePrompt(engine));
     }
+    ui->translateUrlEdit->setText(AppSettings::openAiUrl());
+    ui->translateModelNameEdit->setText(AppSettings::openAiModel());
+    connect(ui->translateUrlEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
+    connect(ui->translateModelNameEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
+    connect(ui->translatePromptEdit, &QPlainTextEdit::textChanged, this, [this] {
+        if (m_showingPrompt)
+            return;
+        const QString text = ui->translatePromptEdit->toPlainText();
+        // The default as such is kept empty, so that it follows later versions.
+        m_translatePrompts.insert(m_translateKeyEngine,
+                                  text.trimmed() == Translate::defaultPrompt(m_translateKeyEngine) ? QString() : text);
+        setModified(true);
+    });
+    connect(ui->translatePromptResetButton, &QPushButton::clicked, this, [this] {
+        ui->translatePromptEdit->setPlainText(Translate::defaultPrompt(m_translateKeyEngine));
+    });
     const QStringList targets = Translate::targetLanguages();
     for (const QString &code : targets)
         ui->translateTargetCombo->addItem(Translate::languageName(code), code);
@@ -234,12 +252,16 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         showTranslateEngine();
         setModified(true);
     });
-    connect(ui->translateModelFileEdit, &QLineEdit::textEdited, this, [this] { setModified(true); });
+    connect(ui->translateModelFileEdit, &QLineEdit::textEdited, this, [this] {
+        showTranslateEngine(); // a translation model's file takes no prompt
+        setModified(true);
+    });
     connect(ui->translateModelFileButton, &QPushButton::clicked, this, [this] {
         const QString file = QFileDialog::getOpenFileName(this, tr("Choose a GGUF Model"), ui->translateModelFileEdit->text(),
                                                           tr("GGUF models (*.gguf)"));
         if (!file.isEmpty()) {
             ui->translateModelFileEdit->setText(QDir::toNativeSeparators(file));
+            showTranslateEngine();
             setModified(true);
         }
     });
@@ -358,6 +380,10 @@ bool SettingsDialog::apply()
     for (auto it = m_translateKeys.cbegin(); it != m_translateKeys.cend(); ++it)
         AppSettings::setTranslateKey(it.key(), it.value());
     AppSettings::setMicrosoftTranslatorRegion(ui->translateRegionEdit->text().trimmed());
+    AppSettings::setOpenAiUrl(ui->translateUrlEdit->text().trimmed());
+    AppSettings::setOpenAiModel(ui->translateModelNameEdit->text().trimmed());
+    for (auto it = m_translatePrompts.cbegin(); it != m_translatePrompts.cend(); ++it)
+        AppSettings::setTranslatePrompt(it.key(), it.value());
     AppSettings::setLocalModel(ui->translateModelCombo->currentData().toString());
     AppSettings::setLocalModelFile(QDir::fromNativeSeparators(ui->translateModelFileEdit->text().trimmed()));
     if (Updater::isSupported())
@@ -474,9 +500,42 @@ void SettingsDialog::showTranslateEngine()
     ui->translateRegionLabel->setVisible(microsoft);
     ui->translateRegionEdit->setVisible(microsoft);
     const bool local = m_translateKeyEngine == QLatin1String("local");
-    const bool keyed = Translate::needsKey(m_translateKeyEngine);
+    const bool keyed = Translate::takesKey(m_translateKeyEngine);
     ui->translateKeyLabel->setVisible(keyed);
     ui->translateKeyEdit->setVisible(keyed);
+    const bool openAi = m_translateKeyEngine == QLatin1String("openai");
+    ui->translateKeyEdit->setPlaceholderText(openAi ? tr("Optional; a server on this computer usually needs none")
+                                                    : QString());
+    ui->translateUrlLabel->setVisible(openAi);
+    ui->translateUrlEdit->setVisible(openAi);
+    ui->translateModelNameLabel->setVisible(openAi);
+    ui->translateModelNameEdit->setVisible(openAi);
+
+    // The prompt of a language model; a local model made for translation
+    // keeps its documented one.
+    const bool prompted = Translate::takesPrompt(m_translateKeyEngine);
+    ui->translatePromptLabel->setVisible(prompted);
+    ui->translatePromptEdit->setVisible(prompted);
+    ui->translatePromptNote->setVisible(prompted);
+    ui->translatePromptResetButton->setVisible(prompted);
+    if (prompted) {
+        const QString modelFile = ui->translateModelCombo->currentData().toString() == QLatin1String(LocalModel::kCustom)
+                                      ? ui->translateModelFileEdit->text()
+                                      : LocalModel::modelPath(ui->translateModelCombo->currentData().toString());
+        const bool fixed = local && LocalModel::hasOwnPrompt(modelFile);
+        const QString stored = m_translatePrompts.value(m_translateKeyEngine);
+        m_showingPrompt = true;
+        ui->translatePromptEdit->setPlainText(stored.isEmpty() ? Translate::defaultPrompt(m_translateKeyEngine) : stored);
+        m_showingPrompt = false;
+        ui->translatePromptEdit->setEnabled(!fixed);
+        ui->translatePromptResetButton->setEnabled(!fixed);
+        QString note = fixed ? tr("This model is made for translation and gets the prompt it was trained with. The "
+                                  "prompt here is for general models, such as Qwen3 or another GGUF file.")
+                             : tr("{language} stands for the target language.");
+        if (!fixed && m_translateKeyEngine == QLatin1String("claude"))
+            note += QLatin1Char(' ') + tr("Glimpse adds the reply format (a JSON array of the paragraphs).");
+        ui->translatePromptNote->setText(note);
+    }
     const bool firefox = m_translateKeyEngine == QLatin1String("firefox");
     ui->translateKeyNote->setVisible(!local && !firefox); // about sending text and storing keys
     ui->translateModelLabel->setVisible(local);

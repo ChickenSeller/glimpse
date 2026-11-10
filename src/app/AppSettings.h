@@ -115,6 +115,16 @@ QString localModelFile();
 void setLocalModelFile(const QString &path);
 QString microsoftTranslatorRegion();
 void setMicrosoftTranslatorRegion(const QString &region);
+// The OpenAI-compatible engine: the API's base address ("https://.../v1")
+// and the model to ask for.
+QString openAiUrl();
+void setOpenAiUrl(const QString &url);
+QString openAiModel();
+void setOpenAiModel(const QString &model);
+// The user's own prompt for a language-model engine; empty: the default
+// (see Translate::defaultPrompt()).
+QString translatePrompt(const QString &engine);
+void setTranslatePrompt(const QString &engine, const QString &prompt);
 
 // Seconds to wait before every capture (0 = none), set from the toolbar.
 int captureDelay();

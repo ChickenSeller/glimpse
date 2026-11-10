@@ -755,10 +755,12 @@ bool CaptureController::prepareTranslation(const QString &translator, const QStr
                 showSettings();
             return false;
         }
-    } else if (Translate::needsKey(translator) && AppSettings::translateKey(translator).trimmed().isEmpty()) {
+    } else if (!Translate::isConfigured(translator)) {
         const auto answer = QMessageBox::question(
             nullptr, title,
-            tr("%1 needs an API key. Open Settings > Translation to enter one?").arg(Translate::engineName(translator)));
+            translator == QLatin1String("openai")
+                ? tr("The OpenAI-compatible API needs its address and model. Open Settings > Translation to enter them?")
+                : tr("%1 needs an API key. Open Settings > Translation to enter one?").arg(Translate::engineName(translator)));
         if (answer == QMessageBox::Yes)
             showSettings();
         return false;

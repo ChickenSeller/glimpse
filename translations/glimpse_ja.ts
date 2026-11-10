@@ -287,7 +287,7 @@
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+685"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+744"/>
         <source>Open Images...</source>
         <translation>画像を開く...</translation>
     </message>
@@ -376,7 +376,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>選択した GGUF モデル ファイルが存在しません。「設定 &gt; 翻訳」を開いて選び直しますか？</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
+        <source>The OpenAI-compatible API needs its address and model. Open Settings &gt; Translation to enter them?</source>
+        <translation>OpenAI 互換 API にはアドレスとモデル名が必要です。「設定 &gt; 翻訳」を開いて入力しますか？</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>%1 needs an API key. Open Settings &gt; Translation to enter one?</source>
         <translation>%1 には API キーが必要です。「設定 &gt; 翻訳」を開いて入力しますか？</translation>
     </message>
@@ -855,7 +860,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>Hy-MT2 7B（4.6 GB、最高品質、グラフィックス カード推奨）</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+74"/>
         <source>This build does not include llama.cpp.</source>
         <translation>このビルドには llama.cpp が含まれていません。</translation>
     </message>
@@ -885,7 +890,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>モデルを実行するメモリが足りません。</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+91"/>
         <source>A paragraph is too long for the local model; split it with blank lines.</source>
         <translation>ローカル モデルには長すぎる段落があります。空行で分割してください。</translation>
     </message>
@@ -1126,7 +1131,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>PaddleOCR の文字辞書が見つからないか、無効です。</translation>
     </message>
     <message>
-        <location filename="../src/ocr/WindowsOcrEngine.cpp" line="+204"/>
+        <location filename="../src/ocr/WindowsOcrEngine.cpp" line="+218"/>
         <source>Windows OCR is not available on this system.</source>
         <translation>このシステムでは Windows OCR を利用できません。</translation>
     </message>
@@ -2113,12 +2118,47 @@ Esc でキャンセル</translation>
         <translation>例：japaneast（グローバル リソースの場合は空欄）</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+7"/>
+        <source>API &amp;address:</source>
+        <translation>API アドレス(&amp;A)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>e.g. https://api.deepseek.com/v1 or http://localhost:11434/v1</source>
+        <translation>例: https://api.deepseek.com/v1 または http://localhost:11434/v1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Model na&amp;me:</source>
+        <translation>モデル名(&amp;M)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>e.g. deepseek-chat or qwen3:8b</source>
+        <translation>例: deepseek-chat または qwen3:8b</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&amp;Prompt:</source>
+        <translation>プロンプト(&amp;P)：</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Put the default prompt back</source>
+        <translation>プロンプトを既定に戻す</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Default Pr&amp;ompt</source>
+        <translation>既定に戻す(&amp;O)</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Text is recognized on this computer and then sent to the chosen service. Keys are kept in your user settings on this computer.</source>
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-635"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-694"/>
         <source>Tell me about new versions</source>
         <translation>新しいバージョンを知らせる</translation>
     </message>
@@ -2148,12 +2188,12 @@ Esc でキャンセル</translation>
         <translation>%1 fps</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+99"/>
         <source>Other GGUF model file...</source>
         <translation>その他の GGUF モデル ファイル...</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+12"/>
         <source>Choose a GGUF Model</source>
         <translation>GGUF モデルを選択</translation>
     </message>
@@ -2163,17 +2203,37 @@ Esc でキャンセル</translation>
         <translation>GGUF モデル (*.gguf)</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+108"/>
         <source>Select at least one language for text recognition.</source>
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+104"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+34"/>
+        <source>Optional; a server on this computer usually needs none</source>
+        <translation>省略可。このコンピューター上のサーバーには通常不要です</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>This model is made for translation and gets the prompt it was trained with. The prompt here is for general models, such as Qwen3 or another GGUF file.</source>
+        <translation>このモデルは翻訳専用で、学習時のプロンプトを使います。ここのプロンプトは Qwen3 やその他の GGUF ファイルなどの汎用モデル用です。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>{language} stands for the target language.</source>
+        <translation>{language} は翻訳先の言語に置き換わります。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Glimpse adds the reply format (a JSON array of the paragraphs).</source>
+        <translation>返答の形式（段落の JSON 配列）は Glimpse が付け加えます。</translation>
+    </message>
+    <message>
+        <location line="+59"/>
         <source>Global hotkeys: %1</source>
         <translation>グローバルホットキー：%1</translation>
     </message>
@@ -2204,12 +2264,12 @@ Esc でキャンセル</translation>
         </translation>
     </message>
     <message>
-        <location line="-267"/>
+        <location line="-304"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.ui" line="-218"/>
+        <location filename="../src/settings/SettingsDialog.ui" line="-309"/>
         <source>&amp;Color detail:</source>
         <translation>色の精細さ(&amp;C)：</translation>
     </message>
@@ -2219,7 +2279,7 @@ Esc でキャンセル</translation>
         <translation>標準の動画は 2×2 ピクセルごとに 1 色しか保持しないため、グラフやコードのハイライトなど細い色付きの線がにじみます。高では 2 倍の大きさの動画で各ピクセルの色を保持します（ファイルは約 3 倍）。幅または高さが 2048 ピクセルを超える範囲は H.265 で保存され、一部のプレーヤーやブラウザでは再生できません。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-184"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-206"/>
         <source>Standard</source>
         <translation>標準</translation>
     </message>
@@ -2282,27 +2342,27 @@ Esc でキャンセル</translation>
 <context>
     <name>Translate</name>
     <message>
-        <location filename="../src/translate/Translator.cpp" line="+348"/>
+        <location filename="../src/translate/Translator.cpp" line="+390"/>
         <source>Bilibili Index-Translate (free, online)</source>
         <translation>bilibili Index-Translate（無料、オンライン）</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+25"/>
         <source>Bilibili&apos;s translation model (Index-Translate 35B), offered free without a key: natural translations, 150 languages. Slower than Google, and Bilibili may limit or end the service.</source>
         <translation>bilibili の翻訳モデル（Index-Translate 35B）。キー不要で無料。自然な訳文で 150 言語に対応します。Google より遅く、bilibili がサービスを制限・終了する可能性があります。</translation>
     </message>
     <message>
-        <location line="-47"/>
+        <location line="-72"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>Index-Translate の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+199"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻訳には先にこれらの言語ファイルが必要です（1 方向あたり約 50 MB）。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
-        <location line="-396"/>
+        <location line="-480"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API キーが拒否されました（HTTP %1）。「設定 &gt; 翻訳」で確認してください。</translation>
     </message>
@@ -2322,7 +2382,7 @@ Esc でキャンセル</translation>
         <translation>Google の無料翻訳サービスから想定外の応答がありました。仕様が変わった可能性があります。別の翻訳サービスをお試しください。</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+93"/>
         <source>Claude declined to translate this text.</source>
         <translation>Claude はこのテキストの翻訳を断りました。</translation>
     </message>
@@ -2332,7 +2392,12 @@ Esc でキャンセル</translation>
         <translation>Claude の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+100"/>
+        <source>The reply of %1 could not be read.</source>
+        <translation>%1 の返答を読み取れませんでした。</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Google Translate (free, online)</source>
         <translation>Google 翻訳（無料、オンライン）</translation>
     </message>
@@ -2357,7 +2422,12 @@ Esc でキャンセル</translation>
         <translation>Microsoft 翻訳</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+4"/>
+        <source>OpenAI-compatible API (DeepSeek, Ollama...)</source>
+        <translation>OpenAI 互換 API（DeepSeek、Ollama など）</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>The free service behind Google Translate in Chrome: no key, good quality, many languages. It is unofficial, so Google may limit or change it; if it stops working, switch to another service.</source>
         <translation>Chrome の Google 翻訳が使っている無料サービスです。キー不要で品質が良く、対応言語も豊富です。非公式のため、Google が制限・変更する可能性があります。使えなくなった場合は別の翻訳サービスに切り替えてください。</translation>
     </message>
@@ -2392,12 +2462,22 @@ Esc でキャンセル</translation>
         <translation>大規模言語モデル：認識ミスを読み取り、文脈に沿って語調や用語を保ちます。Anthropic の API キーが必要で、従量課金です。</translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+3"/>
+        <source>Any large language model served with OpenAI&apos;s chat API: online services such as DeepSeek, Qwen or SiliconFlow (with their key), or a server on this computer such as Ollama or LM Studio (usually no key). Each paragraph is one request.</source>
+        <translation>OpenAI のチャット API で提供される任意の大規模言語モデル: DeepSeek、Qwen、SiliconFlow などのオンラインサービス（各サービスのキーが必要）や、このコンピューター上の Ollama、LM Studio など（通常キー不要）。段落ごとに 1 回リクエストします。</translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>Firefox の言語ファイルはダウンロードされませんでした。</translation>
     </message>
     <message>
         <location line="+55"/>
+        <source>Set the address and model of the OpenAI-compatible API in Settings &gt; Translation.</source>
+        <translation>「設定 &gt; 翻訳」で OpenAI 互換 API のアドレスとモデル名を入力してください。</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>No API key is set for %1. Add one in Settings &gt; Translation.</source>
         <translation>%1 の API キーが設定されていません。「設定 &gt; 翻訳」で入力してください。</translation>
     </message>

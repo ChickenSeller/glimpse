@@ -68,4 +68,6 @@ private:
     // API keys as edited, per engine (the key field shows the current engine's).
     QHash<QString, QString> m_translateKeys;
     QString m_translateKeyEngine;
+    QHash<QString, QString> m_translatePrompts; // as edited, per engine; empty: the default
+    bool m_showingPrompt = false;               // filling the prompt field, not an edit
 };

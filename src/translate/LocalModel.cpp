@@ -112,6 +112,14 @@ std::optional<Preset> missingPreset(const QString &model)
     return QFileInfo::exists(chosen.file.path) ? std::nullopt : std::optional<Preset>(chosen);
 }
 
+bool hasOwnPrompt(const QString &modelFile)
+{
+    const QString name = QFileInfo(modelFile).fileName();
+    return name.contains(QLatin1String("index-translate"), Qt::CaseInsensitive)
+           || name.contains(QLatin1String("hy-mt"), Qt::CaseInsensitive)
+           || name.contains(QLatin1String("hunyuan-mt"), Qt::CaseInsensitive);
+}
+
 #ifndef GLIMPSE_HAVE_LLAMA
 
 QString unavailableReason()
@@ -119,7 +127,7 @@ QString unavailableReason()
     return QCoreApplication::translate("LocalModel", "This build does not include llama.cpp.");
 }
 
-QStringList translate(const QStringList &, const QString &, QString *error, const QString &)
+QStringList translate(const QStringList &, const QString &, QString *error, const QString &, const QString &)
 {
     *error = unavailableReason();
     return {};
@@ -288,7 +296,8 @@ bool ensureModel(const QString &path, QString *error)
 }
 
 // The chat messages for one paragraph, in the form the model was trained on.
-std::string buildPrompt(const QString &text, const QString &language, const QString &modelFile)
+std::string buildPrompt(const QString &text, const QString &language, const QString &systemPrompt,
+                        const QString &modelFile)
 {
     const QByteArray userText = text.toUtf8();
     QByteArray system;
@@ -299,8 +308,7 @@ std::string buildPrompt(const QString &text, const QString &language, const QStr
     if (index) {
         user = QStringLiteral("请将以下文本翻译为%1，直接输出翻译结果，不要进行任何解释。\n\n").arg(language).toUtf8()
                + userText;
-    } else if (modelFile.contains(QLatin1String("hy-mt"), Qt::CaseInsensitive)
-        || modelFile.contains(QLatin1String("hunyuan-mt"), Qt::CaseInsensitive)) {
+    } else if (hasOwnPrompt(modelFile)) {
         // The Hy-MT models' documented prompts (Chinese ones for Chinese);
         // they take no system message.
         user = language.contains(QStringLiteral("中文"))
@@ -312,12 +320,13 @@ std::string buildPrompt(const QString &text, const QString &language, const QStr
                              .toUtf8()
                          + userText;
     } else {
-        system = QStringLiteral(
-                     "You are a translation engine. Translate the user's text into %1. The text was recognized from "
-                     "a screenshot and may contain OCR mistakes; read through them. Keep line breaks, numbers and "
-                     "names. Reply with the translation only, without notes or quotes.")
-                     .arg(language)
-                     .toUtf8();
+        // A general model: the user's prompt (or the default one).
+        system = systemPrompt.isEmpty()
+                     ? QStringLiteral("Translate the text into %1. Reply with the translation only, without notes "
+                                      "or quotes.")
+                           .arg(language)
+                           .toUtf8()
+                     : systemPrompt.toUtf8();
         user = userText;
         // Qwen3 thinks before answering unless told not to.
         if (modelFile.contains(QLatin1String("qwen3"), Qt::CaseInsensitive))
@@ -352,10 +361,10 @@ std::string buildPrompt(const QString &text, const QString &language, const QStr
     return chatml;
 }
 
-QString translateOne(const QString &text, const QString &language, QString *error)
+QString translateOne(const QString &text, const QString &language, const QString &systemPrompt, QString *error)
 {
     const llama_vocab *vocab = g_api.modelVocab(g_model);
-    const std::string prompt = buildPrompt(text, language, QFileInfo(g_loadedPath).fileName());
+    const std::string prompt = buildPrompt(text, language, systemPrompt, QFileInfo(g_loadedPath).fileName());
 
     std::vector<llama_token> tokens(prompt.size() + 16);
     int32_t count = g_api.tokenize(vocab, prompt.data(), int32_t(prompt.size()), tokens.data(),
@@ -420,14 +429,15 @@ QString unavailableReason()
     return present ? QString() : QCoreApplication::translate("LocalModel", "The llama.cpp libraries are missing next to Glimpse.");
 }
 
-QStringList translate(const QStringList &texts, const QString &language, QString *error, const QString &model)
+QStringList translate(const QStringList &texts, const QString &language, QString *error, const QString &model,
+                      const QString &systemPrompt)
 {
     std::lock_guard lock(g_mutex);
     if (!ensureModel(modelPath(model), error))
         return {};
     QStringList results;
     for (const QString &text : texts) {
-        results << translateOne(text, language, error);
+        results << translateOne(text, language, systemPrompt, error);
         if (!error->isEmpty())
             return {};
     }

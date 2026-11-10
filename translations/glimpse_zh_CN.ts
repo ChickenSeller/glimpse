@@ -287,7 +287,7 @@
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+685"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+744"/>
         <source>Open Images...</source>
         <translation>打开图片...</translation>
     </message>
@@ -376,7 +376,12 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>所选的 GGUF 模型文件不存在。要打开“设置 &gt; 翻译”重新选择吗？</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
+        <source>The OpenAI-compatible API needs its address and model. Open Settings &gt; Translation to enter them?</source>
+        <translation>OpenAI 兼容接口需要填写接口地址和模型名。要打开“设置 &gt; 翻译”填写吗？</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>%1 needs an API key. Open Settings &gt; Translation to enter one?</source>
         <translation>%1 需要 API 密钥。要打开“设置 &gt; 翻译”填写吗？</translation>
     </message>
@@ -855,7 +860,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>混元翻译 Hy-MT2 7B（4.6 GB，质量最好，建议有显卡）</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+74"/>
         <source>This build does not include llama.cpp.</source>
         <translation>此版本未包含 llama.cpp。</translation>
     </message>
@@ -885,7 +890,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>内存不足，无法运行模型。</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+91"/>
         <source>A paragraph is too long for the local model; split it with blank lines.</source>
         <translation>有段落太长，本地模型处理不了；请用空行把它分成几段。</translation>
     </message>
@@ -1126,7 +1131,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>PaddleOCR 的字符字典缺失或无效。</translation>
     </message>
     <message>
-        <location filename="../src/ocr/WindowsOcrEngine.cpp" line="+204"/>
+        <location filename="../src/ocr/WindowsOcrEngine.cpp" line="+218"/>
         <source>Windows OCR is not available on this system.</source>
         <translation>此系统上没有可用的 Windows OCR。</translation>
     </message>
@@ -2113,12 +2118,47 @@ Esc 取消</translation>
         <translation>例如 japaneast；全局资源留空</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+7"/>
+        <source>API &amp;address:</source>
+        <translation>接口地址(&amp;A)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>e.g. https://api.deepseek.com/v1 or http://localhost:11434/v1</source>
+        <translation>例如 https://api.deepseek.com/v1 或 http://localhost:11434/v1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Model na&amp;me:</source>
+        <translation>模型名(&amp;M)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>e.g. deepseek-chat or qwen3:8b</source>
+        <translation>例如 deepseek-chat 或 qwen3:8b</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&amp;Prompt:</source>
+        <translation>提示词(&amp;P)：</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Put the default prompt back</source>
+        <translation>恢复为默认的提示词</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Default Pr&amp;ompt</source>
+        <translation>恢复默认(&amp;O)</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Text is recognized on this computer and then sent to the chosen service. Keys are kept in your user settings on this computer.</source>
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-635"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-694"/>
         <source>Tell me about new versions</source>
         <translation>有新版本时提醒我</translation>
     </message>
@@ -2148,12 +2188,12 @@ Esc 取消</translation>
         <translation>%1 帧/秒</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+99"/>
         <source>Other GGUF model file...</source>
         <translation>其他 GGUF 模型文件...</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+12"/>
         <source>Choose a GGUF Model</source>
         <translation>选择 GGUF 模型</translation>
     </message>
@@ -2163,17 +2203,37 @@ Esc 取消</translation>
         <translation>GGUF 模型 (*.gguf)</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+108"/>
         <source>Select at least one language for text recognition.</source>
         <translation>请至少选择一种要识别的语言（文字）。</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+104"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+34"/>
+        <source>Optional; a server on this computer usually needs none</source>
+        <translation>可不填；本机运行的服务一般不需要</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>This model is made for translation and gets the prompt it was trained with. The prompt here is for general models, such as Qwen3 or another GGUF file.</source>
+        <translation>这个模型是专门做翻译的，使用它训练时的提示词。这里的提示词用于通用模型，比如 Qwen3 或其他 GGUF 文件。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>{language} stands for the target language.</source>
+        <translation>{language} 代表目标语言。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Glimpse adds the reply format (a JSON array of the paragraphs).</source>
+        <translation>回复格式（各段落组成的 JSON 数组）由 Glimpse 自动附加。</translation>
+    </message>
+    <message>
+        <location line="+59"/>
         <source>Global hotkeys: %1</source>
         <translation>全局快捷键：%1</translation>
     </message>
@@ -2204,12 +2264,12 @@ Esc 取消</translation>
         </translation>
     </message>
     <message>
-        <location line="-267"/>
+        <location line="-304"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.ui" line="-218"/>
+        <location filename="../src/settings/SettingsDialog.ui" line="-309"/>
         <source>&amp;Color detail:</source>
         <translation>颜色细节(&amp;C)：</translation>
     </message>
@@ -2219,7 +2279,7 @@ Esc 取消</translation>
         <translation>标准视频每 2×2 个像素只保留一种颜色，会让图表、代码高亮等细的彩色线条变模糊。高会以两倍尺寸的视频保留每个像素的颜色（文件约为三倍大）。宽或高超过 2048 像素的区域会保存为 H.265，部分播放器和浏览器无法播放。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-184"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-206"/>
         <source>Standard</source>
         <translation>标准</translation>
     </message>
@@ -2282,27 +2342,27 @@ Esc 取消</translation>
 <context>
     <name>Translate</name>
     <message>
-        <location filename="../src/translate/Translator.cpp" line="+348"/>
+        <location filename="../src/translate/Translator.cpp" line="+390"/>
         <source>Bilibili Index-Translate (free, online)</source>
         <translation>B 站 Index-Translate（免费，在线）</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+25"/>
         <source>Bilibili&apos;s translation model (Index-Translate 35B), offered free without a key: natural translations, 150 languages. Slower than Google, and Bilibili may limit or end the service.</source>
         <translation>B 站的翻译大模型（Index-Translate 35B），免费、无需密钥：译文自然，支持 150 种语言。比 Google 慢，B 站也可能限流或停止这项服务。</translation>
     </message>
     <message>
-        <location line="-47"/>
+        <location line="-72"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>无法读取 Index-Translate 的回复。</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+199"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻译需要先准备这些语言文件（每个方向约 50 MB）。文件保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
-        <location line="-396"/>
+        <location line="-480"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API 密钥被拒绝（HTTP %1）。请在“设置 &gt; 翻译”中检查。</translation>
     </message>
@@ -2322,7 +2382,7 @@ Esc 取消</translation>
         <translation>Google 免费翻译服务返回了无法识别的结果，接口可能已变更，请换用其他翻译服务。</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+93"/>
         <source>Claude declined to translate this text.</source>
         <translation>Claude 拒绝翻译这段文字。</translation>
     </message>
@@ -2332,7 +2392,12 @@ Esc 取消</translation>
         <translation>无法解析 Claude 的回复。</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+100"/>
+        <source>The reply of %1 could not be read.</source>
+        <translation>无法读取 %1 的回复。</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Google Translate (free, online)</source>
         <translation>Google 翻译（免费，在线）</translation>
     </message>
@@ -2357,7 +2422,12 @@ Esc 取消</translation>
         <translation>微软翻译</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+4"/>
+        <source>OpenAI-compatible API (DeepSeek, Ollama...)</source>
+        <translation>OpenAI 兼容接口（DeepSeek、Ollama 等）</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>The free service behind Google Translate in Chrome: no key, good quality, many languages. It is unofficial, so Google may limit or change it; if it stops working, switch to another service.</source>
         <translation>Chrome 中 Google 翻译所用的免费服务：不需要密钥，质量好，语种多。它是非官方接口，Google 可能会限流或变更；如果无法使用，请换用其他翻译服务。</translation>
     </message>
@@ -2392,12 +2462,22 @@ Esc 取消</translation>
         <translation>大语言模型：能读懂识别错误的文字，并结合上下文保留语气和术语。需要 Anthropic API 密钥，按用量计费。</translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+3"/>
+        <source>Any large language model served with OpenAI&apos;s chat API: online services such as DeepSeek, Qwen or SiliconFlow (with their key), or a server on this computer such as Ollama or LM Studio (usually no key). Each paragraph is one request.</source>
+        <translation>任何提供 OpenAI 聊天接口的大模型：DeepSeek、通义千问、硅基流动等在线服务（需填写它们的密钥），或在本机运行的 Ollama、LM Studio 等（一般不需要密钥）。每个段落发送一次请求。</translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>未下载 Firefox 语言文件。</translation>
     </message>
     <message>
         <location line="+55"/>
+        <source>Set the address and model of the OpenAI-compatible API in Settings &gt; Translation.</source>
+        <translation>请在“设置 &gt; 翻译”中填写 OpenAI 兼容接口的地址和模型名。</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>No API key is set for %1. Add one in Settings &gt; Translation.</source>
         <translation>%1 尚未设置 API 密钥。请在“设置 &gt; 翻译”中填写。</translation>
     </message>

@@ -415,7 +415,7 @@ void OcrResultDialog::fillEngines()
         }
         if (!chosen && engine == QLatin1String("firefox") && !FirefoxTranslation::unavailableReason().isEmpty())
             continue;
-        if (!chosen && Translate::needsKey(engine) && AppSettings::translateKey(engine).trimmed().isEmpty())
+        if (!chosen && !Translate::isConfigured(engine))
             continue;
         ui->engineCombo->addItem(Translate::engineName(engine), QStringList{engine, QString()});
     }
