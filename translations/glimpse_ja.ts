@@ -1183,7 +1183,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+399"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+350"/>
         <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
         <translation>このウィンドウで使う文字認識エンジン。開いたときの既定値は「設定 &gt; 文字認識」で決めます</translation>
     </message>
@@ -1235,7 +1235,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+269"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+270"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -2369,7 +2369,7 @@ Esc でキャンセル</translation>
 <context>
     <name>Translate</name>
     <message>
-        <location filename="../src/translate/Translator.cpp" line="+390"/>
+        <location filename="../src/translate/Translator.cpp" line="+433"/>
         <source>Bilibili Index-Translate (free, online)</source>
         <translation>bilibili Index-Translate（無料、オンライン）</translation>
     </message>
@@ -2379,22 +2379,27 @@ Esc でキャンセル</translation>
         <translation>bilibili の翻訳モデル（Index-Translate 35B）。キー不要で無料。自然な訳文で 150 言語に対応します。Google より遅く、bilibili がサービスを制限・終了する可能性があります。</translation>
     </message>
     <message>
-        <location line="-71"/>
+        <location line="-78"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>Index-Translate の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+204"/>
+        <location line="+214"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻訳には先にこれらの言語ファイルが必要です（1 方向あたり約 50 MB）。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
-        <location line="-486"/>
+        <location line="-531"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API キーが拒否されました（HTTP %1）。「設定 &gt; 翻訳」で確認してください。</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+23"/>
+        <source>The service did not answer within %1 seconds. A model on this computer may still be loading or busy; try again.</source>
+        <translation>サービスが %1 秒以内に応答しませんでした。このコンピューター上のモデルが読み込み中か処理中の可能性があります。もう一度お試しください。</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>The service returned %1 translations for %2 paragraphs.</source>
         <translation>%2 段落に対して %1 件の訳文が返されました。</translation>
     </message>
@@ -2419,7 +2424,7 @@ Esc でキャンセル</translation>
         <translation>Claude の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+133"/>
         <source>The reply of %1 could not be read.</source>
         <translation>%1 の返答を読み取れませんでした。</translation>
     </message>
@@ -2494,7 +2499,7 @@ Esc でキャンセル</translation>
         <translation>OpenAI のチャット API で提供される任意の大規模言語モデル: DeepSeek、Qwen、SiliconFlow などのオンラインサービス（各サービスのキーが必要）や、このコンピューター上の Ollama、LM Studio など（通常キー不要）。段落ごとに 1 回リクエストします。</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+118"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>Firefox の言語ファイルはダウンロードされませんでした。</translation>
     </message>

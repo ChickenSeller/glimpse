@@ -1183,7 +1183,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+399"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+350"/>
         <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
         <translation>本窗口使用的文字识别引擎；打开窗口时的默认值在“设置 &gt; 文字识别”里设定</translation>
     </message>
@@ -1235,7 +1235,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+269"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+270"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -2369,7 +2369,7 @@ Esc 取消</translation>
 <context>
     <name>Translate</name>
     <message>
-        <location filename="../src/translate/Translator.cpp" line="+390"/>
+        <location filename="../src/translate/Translator.cpp" line="+433"/>
         <source>Bilibili Index-Translate (free, online)</source>
         <translation>B 站 Index-Translate（免费，在线）</translation>
     </message>
@@ -2379,22 +2379,27 @@ Esc 取消</translation>
         <translation>B 站的翻译大模型（Index-Translate 35B），免费、无需密钥：译文自然，支持 150 种语言。比 Google 慢，B 站也可能限流或停止这项服务。</translation>
     </message>
     <message>
-        <location line="-71"/>
+        <location line="-78"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>无法读取 Index-Translate 的回复。</translation>
     </message>
     <message>
-        <location line="+204"/>
+        <location line="+214"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻译需要先准备这些语言文件（每个方向约 50 MB）。文件保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
-        <location line="-486"/>
+        <location line="-531"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API 密钥被拒绝（HTTP %1）。请在“设置 &gt; 翻译”中检查。</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+23"/>
+        <source>The service did not answer within %1 seconds. A model on this computer may still be loading or busy; try again.</source>
+        <translation>服务在 %1 秒内没有响应。本机的模型可能还在加载或正忙，请重试。</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>The service returned %1 translations for %2 paragraphs.</source>
         <translation>翻译服务为 %2 个段落返回了 %1 条译文。</translation>
     </message>
@@ -2419,7 +2424,7 @@ Esc 取消</translation>
         <translation>无法解析 Claude 的回复。</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+133"/>
         <source>The reply of %1 could not be read.</source>
         <translation>无法读取 %1 的回复。</translation>
     </message>
@@ -2494,7 +2499,7 @@ Esc 取消</translation>
         <translation>任何提供 OpenAI 聊天接口的大模型：DeepSeek、通义千问、硅基流动等在线服务（需填写它们的密钥），或在本机运行的 Ollama、LM Studio 等（一般不需要密钥）。每个段落发送一次请求。</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+118"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>未下载 Firefox 语言文件。</translation>
     </message>

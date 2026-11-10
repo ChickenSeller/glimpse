@@ -13,6 +13,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QHostAddress>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -68,18 +69,26 @@ QString replyError(QNetworkReply *reply, const QByteArray &body)
 
 using Parser = std::function<QStringList(const QByteArray &body, QString *error)>;
 
+// `timeout`: how long the service may take to answer, in ms.
 void send(QNetworkRequest request, const QByteArray &body, int expected, QObject *context,
-          const Translate::Callback &done, const Parser &parse)
+          const Translate::Callback &done, const Parser &parse, int timeout = 60000)
 {
     request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
-    request.setTransferTimeout(60000);
+    request.setTransferTimeout(timeout);
     QNetworkReply *reply = network()->post(request, body);
     QPointer<QObject> guard(context);
-    QObject::connect(reply, &QNetworkReply::finished, context, [reply, guard, done, parse, expected] {
+    QObject::connect(reply, &QNetworkReply::finished, context, [reply, guard, done, parse, expected, timeout] {
         reply->deleteLater();
         if (!guard)
             return;
         const QByteArray data = reply->readAll();
+        if (reply->error() == QNetworkReply::TimeoutError || reply->error() == QNetworkReply::OperationCanceledError) {
+            done({}, QCoreApplication::translate("Translate", "The service did not answer within %1 seconds. A model "
+                                                              "on this computer may still be loading or busy; try "
+                                                              "again.")
+                         .arg(timeout / 1000));
+            return;
+        }
         if (reply->error() != QNetworkReply::NoError) {
             done({}, replyError(reply, data));
             return;
@@ -272,42 +281,69 @@ void claude(const QStringList &texts, const QString &instructions, const QString
          });
 }
 
+// One chat translation: the paragraphs, what is sent for each, and how far
+// it has got.
+struct Chat {
+    QNetworkRequest request;
+    QJsonObject body;
+    std::function<QJsonArray(const QString &text)> messages;
+    QString unreadable;
+    QStringList texts;
+    QPointer<QObject> context;
+    Translate::Callback done;
+    int timeout = 0;
+    QStringList results;
+    qsizetype next = 0;  // the next paragraph to send
+    int remaining = 0;   // not back yet
+    bool failed = false;
+};
+
+void sendNext(const std::shared_ptr<Chat> &chat);
+
 // Chat completions, the API of OpenAI that many services and local servers
-// speak, one request per paragraph: the paragraphs go out side by side and
-// `done` is called once all have come back, or on the first error. `body`
-// names the model (and any options); `messages` makes the messages for one
-// paragraph.
+// speak, one request per paragraph: up to `parallel` at a time (a server on
+// this computer works through one at a time, and requests waiting their
+// turn would time out), and `done` once all have come back, or on the first
+// error. `body` names the model (and any options); `messages` makes the
+// messages for one paragraph; `timeout` (ms) is how long an answer may take.
 void chatPerParagraph(const QNetworkRequest &request, const QJsonObject &body,
                       const std::function<QJsonArray(const QString &text)> &messages, const QString &unreadable,
-                      const QStringList &texts, QObject *context, const Translate::Callback &done)
+                      const QStringList &texts, QObject *context, const Translate::Callback &done, int parallel,
+                      int timeout)
 {
-    struct Pending {
-        QStringList results;
-        int remaining = 0;
-        bool failed = false;
-    };
-    auto pending = std::make_shared<Pending>();
-    pending->results.resize(texts.size());
-    pending->remaining = int(texts.size());
     if (texts.isEmpty()) {
         done({}, {});
         return;
     }
-    for (qsizetype i = 0; i < texts.size(); ++i) {
-        QJsonObject paragraph = body;
-        paragraph.insert(QStringLiteral("messages"), messages(texts.at(i)));
-        send(request, QJsonDocument(paragraph).toJson(QJsonDocument::Compact), 1, context,
-             [pending, i, done](const QStringList &translations, const QString &error) {
-                 if (pending->failed)
+    auto chat = std::make_shared<Chat>(Chat{request, body, messages, unreadable, texts, context, done, timeout});
+    chat->results.resize(texts.size());
+    chat->remaining = int(texts.size());
+    for (int i = 0; i < parallel; ++i)
+        sendNext(chat);
+}
+
+void sendNext(const std::shared_ptr<Chat> &chat)
+{
+    if (chat->failed || chat->next >= chat->texts.size() || !chat->context)
+        return;
+    const qsizetype i = chat->next++;
+    QJsonObject paragraph = chat->body;
+    paragraph.insert(QStringLiteral("messages"), chat->messages(chat->texts.at(i)));
+    const QString unreadable = chat->unreadable;
+    send(chat->request, QJsonDocument(paragraph).toJson(QJsonDocument::Compact), 1, chat->context,
+             [chat, i](const QStringList &translations, const QString &error) {
+                 if (chat->failed)
                      return;
                  if (!error.isEmpty()) {
-                     pending->failed = true;
-                     done({}, error);
+                     chat->failed = true;
+                     chat->done({}, error);
                      return;
                  }
-                 pending->results[i] = translations.constFirst();
-                 if (--pending->remaining == 0)
-                     done(pending->results, {});
+                 chat->results[i] = translations.constFirst();
+                 if (--chat->remaining == 0)
+                     chat->done(chat->results, {});
+                 else
+                     sendNext(chat);
              },
              [unreadable](const QByteArray &data, QString *error) {
                  const QJsonArray choices = QJsonDocument::fromJson(data).object().value(QStringLiteral("choices")).toArray();
@@ -322,8 +358,8 @@ void chatPerParagraph(const QNetworkRequest &request, const QJsonObject &body,
                      return QStringList();
                  }
                  return QStringList{text};
-             });
-    }
+             },
+             chat->timeout);
 }
 
 // Bilibili's free Index-Translate service (OpenAI-compatible, no key), with
@@ -342,7 +378,7 @@ void indexTranslate(const QStringList &texts, const QString &target, QObject *co
                                                        {QStringLiteral("content"), prompt + text}}};
                      },
                      QCoreApplication::translate("Translate", "The Index-Translate reply could not be read."), texts,
-                     context, done);
+                     context, done, 8, 60000);
 }
 
 // Any service or local server with OpenAI's chat completions API (DeepSeek,
@@ -355,7 +391,14 @@ void openAi(const QStringList &texts, const QString &instructions, QObject *cont
         address.chop(1);
     if (!address.endsWith(QLatin1String("/chat/completions")))
         address += QStringLiteral("/chat/completions");
-    QNetworkRequest request{QUrl(address)};
+    const QUrl url(address);
+    QNetworkRequest request{url};
+    // A server on this computer or network (Ollama, LM Studio) runs one
+    // paragraph at a time, slowly on a small graphics card: send them one by
+    // one and wait longer. Online services take a few at once.
+    const QHostAddress host(url.host() == QLatin1String("localhost") ? QStringLiteral("127.0.0.1") : url.host());
+    const bool local = host.isLoopback() || host.isPrivateUse() || host.isLinkLocal()
+                       || url.host().endsWith(QLatin1String(".local"));
     const QString key = AppSettings::translateKey(QStringLiteral("openai")).trimmed();
     if (!key.isEmpty())
         request.setRawHeader("Authorization", "Bearer " + key.toUtf8());
@@ -368,7 +411,7 @@ void openAi(const QStringList &texts, const QString &instructions, QObject *cont
                      },
                      QCoreApplication::translate("Translate", "The reply of %1 could not be read.")
                          .arg(AppSettings::openAiModel().trimmed()),
-                     texts, context, done);
+                     texts, context, done, local ? 1 : 4, local ? 300000 : 120000);
 }
 
 } // namespace
@@ -520,6 +563,9 @@ QString settingsPrompt(const QString &engine)
 QString prompt(const QString &engine, const QString &target, const QString &custom)
 {
     QString text = custom.trimmed().isEmpty() ? settingsPrompt(engine) : custom.trimmed();
+    // A prompt that does not name the language still gets it.
+    if (!text.contains(QLatin1String("{language}")))
+        return text + QStringLiteral("\n\nTarget language: ") + languageName(target);
     return text.replace(QLatin1String("{language}"), languageName(target));
 }
 
