@@ -69,4 +69,9 @@ std::unique_ptr<OcrEngine> createEngine(const QString &engine, const QStringList
 // Removes the spaces engines put between CJK characters ("中 文" -> "中文").
 QString tidyCjkSpacing(const QString &text);
 
+// Whether `next`, to the right of `line` on the same row, is too far from it
+// to continue it: wider than a couple of characters' height, as between
+// columns, not words.
+bool isColumnGap(const QRect &line, const QRect &next);
+
 } // namespace Ocr

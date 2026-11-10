@@ -309,23 +309,46 @@ OcrResult WindowsOcrEngine::recognize(const QImage &image)
         HSTRING text = nullptr;
         if (FAILED(lines->GetAt(i, line.putInspectable())) || FAILED(line->get_Text(&text)))
             continue;
-        OcrLine out;
-        out.text = Ocr::tidyCjkSpacing(takeString(text));
+        const QString lineText = takeString(text);
 
-        // The line's box is the union of its words' boxes.
+        // The line's words, in image pixels.
+        QList<QPair<QString, QRect>> wordList;
         Ref<IVectorViewRaw> words;
         UINT32 wordCount = 0;
         if (SUCCEEDED(line->get_Words(words.put())) && SUCCEEDED(words->get_Size(&wordCount))) {
-            QRectF box;
             for (UINT32 w = 0; w < wordCount; ++w) {
                 Ref<IOcrWord> word;
                 WinRect rect{};
-                if (SUCCEEDED(words->GetAt(w, word.putInspectable())) && SUCCEEDED(word->get_BoundingRect(&rect)))
-                    box |= QRectF(rect.X, rect.Y, rect.Width, rect.Height);
+                HSTRING wordText = nullptr;
+                if (FAILED(words->GetAt(w, word.putInspectable())) || FAILED(word->get_BoundingRect(&rect))
+                    || FAILED(word->get_Text(&wordText)))
+                    continue;
+                const QRectF box(rect.X, rect.Y, rect.Width, rect.Height);
+                wordList.append({takeString(wordText),
+                                 QRectF(box.topLeft() * toImage, box.size() * toImage).toAlignedRect()});
             }
-            out.box = QRectF(box.topLeft() * toImage, box.size() * toImage).toAlignedRect();
         }
-        result.lines << out;
+        if (wordList.isEmpty()) {
+            result.lines << OcrLine{Ocr::tidyCjkSpacing(lineText), QRect()};
+            continue;
+        }
+        // Windows joins text side by side into one line even across columns
+        // (a sidebar, a table): a wide gap between words starts another.
+        QStringList parts;
+        QRect box;
+        const auto endLine = [&] {
+            if (!parts.isEmpty())
+                result.lines << OcrLine{Ocr::tidyCjkSpacing(parts.join(QLatin1Char(' '))), box};
+            parts.clear();
+            box = {};
+        };
+        for (const auto &[word, rect] : std::as_const(wordList)) {
+            if (!box.isNull() && Ocr::isColumnGap(box, rect))
+                endLine();
+            parts << word;
+            box |= rect;
+        }
+        endLine();
     }
     return result;
 }

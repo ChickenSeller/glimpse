@@ -463,18 +463,27 @@ OcrResult PaddleOcrEngine::recognize(const QImage &image)
     for (QList<DetectedBox> &row : rows) {
         std::sort(row.begin(), row.end(),
                   [](const DetectedBox &a, const DetectedBox &b) { return a.rect.left() < b.rect.left(); });
+        // Boxes side by side make one line, but not across a wide gap: that
+        // is another column (a sidebar, a table cell, a menu next to it).
         QStringList parts;
-        QRect rowBox;
+        QRect lineBox;
+        const auto endLine = [&] {
+            if (!parts.isEmpty())
+                result.lines << OcrLine{Ocr::tidyCjkSpacing(parts.join(QLatin1Char(' '))), lineBox};
+            parts.clear();
+            lineBox = {};
+        };
         for (const DetectedBox &box : std::as_const(row)) {
+            if (!lineBox.isNull() && Ocr::isColumnGap(lineBox, box.rect))
+                endLine();
             const QString text = d->read(rgb.copy(box.rect), &result.error);
             if (!result.error.isEmpty())
                 return result;
             if (!text.isEmpty())
                 parts << text;
-            rowBox |= box.rect;
+            lineBox |= box.rect;
         }
-        if (!parts.isEmpty())
-            result.lines << OcrLine{Ocr::tidyCjkSpacing(parts.join(QLatin1Char(' '))), rowBox};
+        endLine();
     }
     return result;
 }

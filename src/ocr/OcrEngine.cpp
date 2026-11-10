@@ -5,6 +5,8 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 
+#include <algorithm>
+
 #ifdef GLIMPSE_HAVE_TESSERACT
 #include "TesseractEngine.h"
 #endif
@@ -185,6 +187,15 @@ std::unique_ptr<OcrEngine> createEngine(const QString &engine, const QStringList
         *error = QCoreApplication::translate("Ocr", "The text recognition engine \"%1\" is not available in this build.")
                      .arg(engine);
     return nullptr;
+}
+
+bool isColumnGap(const QRect &line, const QRect &next)
+{
+    // A word space is about a third of the text's height; the space around
+    // inline code or a link a little more. The taller of the two: a word
+    // without capitals or a comma has a small box.
+    const int height = std::max({1, line.height(), next.height()});
+    return next.left() - line.right() > height * 3 / 2;
 }
 
 QString tidyCjkSpacing(const QString &text)

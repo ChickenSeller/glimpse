@@ -1,10 +1,11 @@
 // glimpse-ocr-test: renders a few lines in each OCR language the way they
 // look on screen, runs each OCR engine on them and prints what it read.
 //
-//   glimpse-ocr-test [--download] [--save <png>] [--languages zh_CN,fr,...] [engine...]
+//   glimpse-ocr-test [--download] [--save <png>] [--image <file>] [--languages zh_CN,fr,...] [engine...]
 //
 // --download fetches missing models (into the same directory Glimpse uses);
-// without it, engines whose models are missing are skipped.
+// without it, engines whose models are missing are skipped. --image reads
+// that image instead of the sample.
 
 #include "ocr/ModelStore.h"
 #include "ocr/OcrEngine.h"
@@ -75,9 +76,14 @@ int main(int argc, char *argv[])
         languages = args.at(i + 1).split(QLatin1Char(','), Qt::SkipEmptyParts);
         args.remove(i, 2);
     }
+    QString imagePath;
+    if (const qsizetype i = args.indexOf(QStringLiteral("--image")); i >= 0 && i + 1 < args.size()) {
+        imagePath = args.at(i + 1);
+        args.remove(i, 2);
+    }
     const QStringList engines = args.isEmpty() ? Ocr::engineIds() : args;
 
-    const QImage sample = renderSample();
+    const QImage sample = imagePath.isEmpty() ? renderSample() : QImage(imagePath);
     if (!savePath.isEmpty())
         sample.save(savePath);
     print(QStringLiteral("Sample (%1x%2):").arg(sample.width()).arg(sample.height()));
