@@ -287,7 +287,7 @@
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+745"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+744"/>
         <source>Open Images...</source>
         <translation>画像を開く...</translation>
     </message>
@@ -1183,6 +1183,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+394"/>
         <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
         <translation>このウィンドウで使う文字認識エンジン。開いたときの既定値は「設定 &gt; 文字認識」で決めます</translation>
     </message>
@@ -1203,6 +1204,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-2"/>
         <source>The translation engine or model for this window; Settings &gt; Translation sets the one it opens with</source>
         <translation>このウィンドウで使う翻訳エンジンまたはモデル。開いたときの既定値は「設定 &gt; 翻訳」で決めます</translation>
     </message>
@@ -1233,7 +1235,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+612"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+267"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -2178,7 +2180,7 @@ Esc でキャンセル</translation>
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-695"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-694"/>
         <source>Tell me about new versions</source>
         <translation>新しいバージョンを知らせる</translation>
     </message>
@@ -2239,11 +2241,11 @@ Esc でキャンセル</translation>
     </message>
     <message>
         <location line="+25"/>
-        <source>This model is made for translation and gets the prompt it was trained with. The prompt here is for general models, such as Qwen3 or another GGUF file.</source>
-        <translation>このモデルは翻訳専用で、学習時のプロンプトを使います。ここのプロンプトは Qwen3 やその他の GGUF ファイルなどの汎用モデル用です。</translation>
+        <source>Translation models use their built-in prompt.</source>
+        <translation>翻訳専用モデルは組み込みのプロンプトを使用します。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>{language} stands for the target language. The translation window starts with this prompt and can change it for its own translations.</source>
         <translation>{language} は翻訳先の言語に置き換わります。翻訳ウィンドウはこのプロンプトで開き、その翻訳だけ変更することもできます。</translation>
     </message>
@@ -2284,7 +2286,7 @@ Esc でキャンセル</translation>
         </translation>
     </message>
     <message>
-        <location line="-305"/>
+        <location line="-304"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>

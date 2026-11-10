@@ -81,6 +81,8 @@ private:
     // Whether the chosen engine (and model) takes a prompt, and showing it.
     bool takesPrompt() const;
     void updatePrompt();
+    // The engine boxes' tooltips: the whole name when the box cuts it.
+    void updateComboTips();
 
     std::unique_ptr<Ui::OcrResultDialog> ui;
     QImage m_image;

@@ -6,8 +6,11 @@
 #include "translate/LocalModel.h"
 #include "translate/Translator.h"
 
+#include <QAbstractItemView>
 #include <QClipboard>
 #include <QGuiApplication>
+#include <QStyle>
+#include <QStyleOptionComboBox>
 #include <QPainter>
 #include <QRegularExpression>
 #include <QtConcurrent/QtConcurrentRun>
@@ -192,7 +195,12 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
+    // Room for long texts: the window can be maximized.
+    setWindowFlag(Qt::WindowMaximizeButtonHint);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     ui->sourceEdit->setReadOnly(true);
+    ui->engineCombo->installEventFilter(this);
+    ui->ocrEngineCombo->installEventFilter(this);
     // The capture gets what the text needs less of.
     ui->splitter->setSizes({200, 260, 260});
     ui->preview->installEventFilter(this);
@@ -219,7 +227,7 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     });
     // For this window only: the settings keep the engine it opens with.
     connect(ui->engineCombo, &QComboBox::currentIndexChanged, this, [this] {
-        ui->engineCombo->setToolTip(ui->engineCombo->currentText());
+        updateComboTips();
         updatePrompt();
         if (m_translation != Translation::None)
             emit translateRequested();
@@ -304,8 +312,11 @@ void OcrResultDialog::recognize(const QString &engine)
 
 void OcrResultDialog::showOcrEngine(const QString &engine)
 {
-    const QSignalBlocker blocker(ui->ocrEngineCombo);
-    ui->ocrEngineCombo->setCurrentIndex(std::max(0, ui->ocrEngineCombo->findData(engine)));
+    {
+        const QSignalBlocker blocker(ui->ocrEngineCombo);
+        ui->ocrEngineCombo->setCurrentIndex(std::max(0, ui->ocrEngineCombo->findData(engine)));
+    }
+    updateComboTips();
 }
 
 // The engines this build can run here, and the one in use.
@@ -334,6 +345,8 @@ void OcrResultDialog::changeEvent(QEvent *event)
         ui->retranslateUi(this);
         fillEngines();
         fillOcrEngines();
+        updatePrompt();
+        updateComboTips();
         updateTexts();
         updateButtons();
     }
@@ -345,7 +358,41 @@ bool OcrResultDialog::eventFilter(QObject *watched, QEvent *event)
     // Window or splitter: the capture is scaled to the room it has.
     if (watched == ui->preview && event->type() == QEvent::Resize)
         updatePreview();
+    // A narrower box may cut the engine's name.
+    if ((watched == ui->engineCombo || watched == ui->ocrEngineCombo) && event->type() == QEvent::Resize)
+        updateComboTips();
     return QDialog::eventFilter(watched, event);
+}
+
+namespace {
+
+// Whether the combo box is too narrow to show its current choice whole.
+bool cutShort(const QComboBox *combo)
+{
+    QStyleOptionComboBox option;
+    option.initFrom(combo);
+    option.currentText = combo->currentText();
+    const QRect field = combo->style()->subControlRect(QStyle::CC_ComboBox, &option, QStyle::SC_ComboBoxEditField, combo);
+    return combo->fontMetrics().horizontalAdvance(combo->currentText()) > field.width();
+}
+
+void setComboTip(QComboBox *combo, const QString &purpose)
+{
+    combo->setToolTip(cutShort(combo) ? combo->currentText() + QStringLiteral("\n\n") + purpose : purpose);
+}
+
+} // namespace
+
+void OcrResultDialog::updateComboTips()
+{
+    // The list itself always shows the names whole, however narrow the box.
+    for (QComboBox *combo : {ui->engineCombo, ui->ocrEngineCombo})
+        combo->view()->setMinimumWidth(combo->view()->sizeHintForColumn(0) + 2 * combo->view()->frameWidth());
+    // The choice in full when cut short; what the box is for either way.
+    setComboTip(ui->engineCombo, tr("The translation engine or model for this window; Settings > Translation sets "
+                                    "the one it opens with"));
+    setComboTip(ui->ocrEngineCombo, tr("The text recognition engine for this window; Settings > Text Recognition "
+                                       "sets the one it opens with"));
 }
 
 void OcrResultDialog::onRecognized()
@@ -435,7 +482,7 @@ void OcrResultDialog::fillEngines()
         ui->engineCombo->addItem(Translate::engineName(engine), QStringList{engine, QString()});
     }
     ui->engineCombo->setCurrentIndex(std::max(0, ui->engineCombo->findData(current)));
-    ui->engineCombo->setToolTip(ui->engineCombo->currentText());
+    updateComboTips();
 }
 
 QString OcrResultDialog::translator() const

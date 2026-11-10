@@ -287,7 +287,7 @@
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+745"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+744"/>
         <source>Open Images...</source>
         <translation>打开图片...</translation>
     </message>
@@ -1183,6 +1183,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+394"/>
         <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
         <translation>本窗口使用的文字识别引擎；打开窗口时的默认值在“设置 &gt; 文字识别”里设定</translation>
     </message>
@@ -1203,6 +1204,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-2"/>
         <source>The translation engine or model for this window; Settings &gt; Translation sets the one it opens with</source>
         <translation>本窗口使用的翻译引擎或模型；打开窗口时的默认值在“设置 &gt; 翻译”里设定</translation>
     </message>
@@ -1233,7 +1235,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+612"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+267"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -2178,7 +2180,7 @@ Esc 取消</translation>
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-695"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-694"/>
         <source>Tell me about new versions</source>
         <translation>有新版本时提醒我</translation>
     </message>
@@ -2239,11 +2241,11 @@ Esc 取消</translation>
     </message>
     <message>
         <location line="+25"/>
-        <source>This model is made for translation and gets the prompt it was trained with. The prompt here is for general models, such as Qwen3 or another GGUF file.</source>
-        <translation>这个模型是专门做翻译的，使用它训练时的提示词。这里的提示词用于通用模型，比如 Qwen3 或其他 GGUF 文件。</translation>
+        <source>Translation models use their built-in prompt.</source>
+        <translation>翻译专用模型使用内置提示词。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>{language} stands for the target language. The translation window starts with this prompt and can change it for its own translations.</source>
         <translation>{language} 代表目标语言。翻译窗口打开时使用这个提示词，也可以在窗口里为该次翻译单独修改。</translation>
     </message>
@@ -2284,7 +2286,7 @@ Esc 取消</translation>
         </translation>
     </message>
     <message>
-        <location line="-305"/>
+        <location line="-304"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>

@@ -529,8 +529,7 @@ void SettingsDialog::showTranslateEngine()
         m_showingPrompt = false;
         ui->translatePromptEdit->setEnabled(!fixed);
         ui->translatePromptResetButton->setEnabled(!fixed);
-        QString note = fixed ? tr("This model is made for translation and gets the prompt it was trained with. The "
-                                  "prompt here is for general models, such as Qwen3 or another GGUF file.")
+        QString note = fixed ? tr("Translation models use their built-in prompt.")
                              : tr("{language} stands for the target language. The translation window starts with "
                                   "this prompt and can change it for its own translations.");
         if (!fixed && m_translateKeyEngine == QLatin1String("claude"))
