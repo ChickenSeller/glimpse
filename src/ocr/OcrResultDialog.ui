@@ -231,6 +231,8 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="promptLayout">
+         <item>
         <widget class="QPlainTextEdit" name="promptEdit">
          <property name="toolTip">
           <string>The prompt for translating in this window; {language} stands for the target language. Settings &gt; Translation keeps the one it opens with.</string>
@@ -245,12 +247,21 @@
           <bool>true</bool>
          </property>
         </widget>
+         </item>
+         <item alignment="Qt::AlignTop">
+          <widget class="QPushButton" name="promptResetButton">
+           <property name="toolTip">
+            <string>Use the default prompt from Settings &gt; Translation again</string>
+           </property>
+           <property name="text">
+            <string>Defa&amp;ult</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QPlainTextEdit" name="targetEdit">
-         <property name="toolTip">
-          <string>The translation, editable; in the translated image each line is one paragraph</string>
-         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>

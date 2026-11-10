@@ -1061,7 +1061,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
 %2</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrEngine.cpp" line="+99"/>
+        <location filename="../src/ocr/OcrEngine.cpp" line="+101"/>
         <source>Only available on Windows.</source>
         <translation>仅 Windows 可用。</translation>
     </message>
@@ -1183,7 +1183,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+394"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+399"/>
         <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
         <translation>本窗口使用的文字识别引擎；打开窗口时的默认值在“设置 &gt; 文字识别”里设定</translation>
     </message>
@@ -1235,7 +1235,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+267"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+269"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>把译文画在截图中原文的位置上</translation>
     </message>
@@ -1245,22 +1245,27 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻译图片(&amp;G)</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+11"/>
         <source>The prompt for translating in this window; {language} stands for the target language. Settings &gt; Translation keeps the one it opens with.</source>
         <translation>本窗口翻译时使用的提示词，{language} 代表目标语言。窗口打开时使用的默认提示词在“设置 &gt; 翻译”中设置。</translation>
     </message>
     <message>
         <location line="+16"/>
-        <source>The translation, editable; in the translated image each line is one paragraph</source>
-        <translation>翻译结果，可以编辑；生成翻译图片时，每一行对应一个段落</translation>
+        <source>Use the default prompt from Settings &gt; Translation again</source>
+        <translation>恢复使用“设置 &gt; 翻译”中的默认提示词</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-184"/>
+        <location line="+3"/>
+        <source>Defa&amp;ult</source>
+        <translation>恢复默认(&amp;U)</translation>
+    </message>
+    <message>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-186"/>
         <source>Local: %1</source>
         <translation>本地：%1</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+51"/>
         <source>The prompt was changed for this window</source>
         <translation>已为本窗口修改了提示词</translation>
     </message>

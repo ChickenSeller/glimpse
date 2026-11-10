@@ -1061,7 +1061,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
 %2</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrEngine.cpp" line="+99"/>
+        <location filename="../src/ocr/OcrEngine.cpp" line="+101"/>
         <source>Only available on Windows.</source>
         <translation>Windows でのみ利用できます。</translation>
     </message>
@@ -1183,7 +1183,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+394"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+399"/>
         <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
         <translation>このウィンドウで使う文字認識エンジン。開いたときの既定値は「設定 &gt; 文字認識」で決めます</translation>
     </message>
@@ -1235,7 +1235,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+267"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+269"/>
         <source>Paint the translation over the capture, where the text was</source>
         <translation>訳文をキャプチャの元の文字の位置に描きます</translation>
     </message>
@@ -1245,22 +1245,27 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>翻訳画像(&amp;G)</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+11"/>
         <source>The prompt for translating in this window; {language} stands for the target language. Settings &gt; Translation keeps the one it opens with.</source>
         <translation>このウィンドウでの翻訳に使うプロンプト。{language} は翻訳先の言語に置き換わります。開いたときのプロンプトは「設定 &gt; 翻訳」で設定します。</translation>
     </message>
     <message>
         <location line="+16"/>
-        <source>The translation, editable; in the translated image each line is one paragraph</source>
-        <translation>翻訳結果（編集できます）。翻訳画像では 1 行が 1 段落に対応します</translation>
+        <source>Use the default prompt from Settings &gt; Translation again</source>
+        <translation>「設定 &gt; 翻訳」の既定のプロンプトに戻します</translation>
     </message>
     <message>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="-184"/>
+        <location line="+3"/>
+        <source>Defa&amp;ult</source>
+        <translation>既定に戻す(&amp;U)</translation>
+    </message>
+    <message>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="-186"/>
         <source>Local: %1</source>
         <translation>ローカル：%1</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+51"/>
         <source>The prompt was changed for this window</source>
         <translation>このウィンドウ用にプロンプトを変更しています</translation>
     </message>

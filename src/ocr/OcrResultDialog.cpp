@@ -254,10 +254,15 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
     // The prompt of a language model, for this window only: it starts as the
     // settings' one, kept per engine as edited here.
     ui->promptEdit->setVisible(false);
+    ui->promptResetButton->setVisible(false);
     connect(ui->promptButton, &QToolButton::toggled, this, [this](bool on) {
-        ui->promptEdit->setVisible(on && takesPrompt());
+        updatePrompt();
         if (on)
             ui->promptEdit->setFocus();
+    });
+    connect(ui->promptResetButton, &QPushButton::clicked, this, [this] {
+        m_prompts.remove(translator());
+        updatePrompt();
     });
     connect(ui->promptEdit, &QPlainTextEdit::textChanged, this, [this] {
         m_prompts.insert(translator(), ui->promptEdit->toPlainText());
@@ -509,6 +514,7 @@ void OcrResultDialog::updatePrompt()
     const bool takes = takesPrompt();
     ui->promptButton->setVisible(takes);
     ui->promptEdit->setVisible(takes && ui->promptButton->isChecked());
+    ui->promptResetButton->setVisible(ui->promptEdit->isVisibleTo(this));
     if (!takes)
         return;
     const QString engine = translator();
@@ -521,6 +527,7 @@ void OcrResultDialog::updatePrompt()
     QFont font = ui->promptButton->font();
     font.setBold(text.trimmed() != Translate::settingsPrompt(engine));
     ui->promptButton->setFont(font);
+    ui->promptResetButton->setEnabled(font.bold());
     ui->promptButton->setToolTip(font.bold() ? tr("The prompt was changed for this window")
                                              : tr("Show the prompt, to change it for this window"));
 }
