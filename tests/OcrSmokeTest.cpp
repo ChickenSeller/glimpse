@@ -1,14 +1,17 @@
 // glimpse-ocr-test: renders a few lines in each OCR language the way they
 // look on screen, runs each OCR engine on them and prints what it read.
 //
-//   glimpse-ocr-test [--download] [--save <png>] [--image <file>] [--languages zh_CN,fr,...] [engine...]
+//   glimpse-ocr-test [--download] [--save <png>] [--image <file>] [--typeset <png>]
+//                    [--languages zh_CN,fr,...] [engine...]
 //
 // --download fetches missing models (into the same directory Glimpse uses);
 // without it, engines whose models are missing are skipped. --image reads
-// that image instead of the sample.
+// that image instead of the sample; --typeset <png> saves it with each line
+// typeset back (see Typesetter), one file per engine.
 
 #include "ocr/ModelStore.h"
 #include "ocr/OcrEngine.h"
+#include "ocr/Typesetter.h"
 
 #include <QApplication>
 #include <QElapsedTimer>
@@ -81,6 +84,11 @@ int main(int argc, char *argv[])
         imagePath = args.at(i + 1);
         args.remove(i, 2);
     }
+    QString typesetPath;
+    if (const qsizetype i = args.indexOf(QStringLiteral("--typeset")); i >= 0 && i + 1 < args.size()) {
+        typesetPath = args.at(i + 1);
+        args.remove(i, 2);
+    }
     const QStringList engines = args.isEmpty() ? Ocr::engineIds() : args;
 
     const QImage sample = imagePath.isEmpty() ? renderSample() : QImage(imagePath);
@@ -131,6 +139,15 @@ int main(int argc, char *argv[])
                       .arg(line.box.width())
                       .arg(line.box.height())
                       .arg(line.text));
+        // Each line typeset back as a stand-in translation, to look at.
+        if (!typesetPath.isEmpty()) {
+            QList<Typesetter::Paragraph> paragraphs;
+            for (const OcrLine &line : result.lines)
+                paragraphs.append({line.box, {line.box}, QStringLiteral("译文：") + line.text.left(24), line.text});
+            const QString file = QString(typesetPath).replace(QLatin1String(".png"), QLatin1Char('-') + engine + QLatin1String(".png"));
+            Typesetter::typeset(sample, paragraphs).save(file);
+            print(QStringLiteral("  typeset: ") + file);
+        }
     }
     return failures == 0 ? 0 : 1;
 }

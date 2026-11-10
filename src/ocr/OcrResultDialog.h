@@ -96,6 +96,7 @@ private:
     QStringList m_paragraphs;      // recognized paragraphs, for translating
     QList<QRect> m_boxes;          // one per recognized paragraph, image pixels
     QList<int> m_lineHeights;      // per paragraph: its tallest line, image pixels
+    QList<QList<QRect>> m_lineBoxes; // per paragraph: its lines, image pixels
     QStringList m_translations;    // one per paragraph of the last translation, one line each
     QString m_translatedText;      // the translation as shown, to tell edits apart
     Translation m_translation = Translation::None;

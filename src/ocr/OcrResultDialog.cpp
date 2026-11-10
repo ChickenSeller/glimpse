@@ -1,6 +1,7 @@
 #include "OcrResultDialog.h"
 #include "ui_OcrResultDialog.h"
 
+#include "Typesetter.h"
 #include "app/AppSettings.h"
 #include "translate/FirefoxTranslation.h"
 #include "translate/LocalModel.h"
@@ -24,6 +25,7 @@ struct Paragraph {
     QRect box;
     int lineHeight = 0;
     QRect last; // its last line
+    QList<QRect> lines;
 };
 
 bool isCjk(QChar c)
@@ -112,75 +114,19 @@ QList<Paragraph> paragraphsOf(QList<OcrLine> lines)
             current = lastWasFull && !indented ? &p : nullptr;
         }
         if (!current) {
-            paragraphs.append({text, line.box, line.box.height(), line.box});
+            paragraphs.append({text, line.box, line.box.height(), line.box, {line.box}});
             continue;
         }
         joinInto(current->text, text);
         current->box |= line.box;
         current->last = line.box;
+        current->lines << line.box;
     }
     // Reading order: top to bottom, then left to right.
     std::sort(paragraphs.begin(), paragraphs.end(), [](const Paragraph &a, const Paragraph &b) {
         return a.box.top() == b.box.top() ? a.box.left() < b.box.left() : a.box.top() < b.box.top();
     });
     return paragraphs;
-}
-
-// The average color of the pixels just around `box`: the background the
-// text sat on, used to cover the original text.
-QColor surroundingColor(const QImage &image, const QRect &box)
-{
-    const QRect ring = box.adjusted(-3, -3, 3, 3).intersected(image.rect());
-    qint64 r = 0, g = 0, b = 0, n = 0;
-    const auto add = [&](int x, int y) {
-        const QRgb px = image.pixel(x, y);
-        r += qRed(px);
-        g += qGreen(px);
-        b += qBlue(px);
-        ++n;
-    };
-    for (int x = ring.left(); x <= ring.right(); ++x) {
-        add(x, ring.top());
-        add(x, ring.bottom());
-    }
-    for (int y = ring.top(); y <= ring.bottom(); ++y) {
-        add(ring.left(), y);
-        add(ring.right(), y);
-    }
-    return n ? QColor(int(r / n), int(g / n), int(b / n)) : QColor(Qt::white);
-}
-
-// The capture with each paragraph's text replaced by its translation, in the
-// largest font (up to the original size) that fits the paragraph's box.
-QImage paintTranslation(const QImage &source, const QList<QRect> &boxes, const QStringList &texts,
-                        const QList<int> &lineHeights)
-{
-    QImage image = source.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-    const qreal dpr = image.devicePixelRatio();
-    image.setDevicePixelRatio(1.0); // boxes are in image pixels
-    QPainter p(&image);
-    p.setRenderHint(QPainter::TextAntialiasing);
-    for (qsizetype i = 0; i < boxes.size() && i < texts.size(); ++i) {
-        const QRect box = boxes[i].adjusted(-2, -2, 2, 2).intersected(image.rect());
-        const QColor background = surroundingColor(source, boxes[i]);
-        p.fillRect(box, background);
-        p.setPen(qGray(background.rgb()) > 140 ? QColor(0x20, 0x20, 0x20) : QColor(0xf5, 0xf5, 0xf5));
-        QFont font = p.font();
-        int flags = Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap;
-        for (int size = std::max(8, int(lineHeights.value(i, 16) * 0.8)); size >= 6; --size) {
-            font.setPixelSize(size);
-            const QRect needed = QFontMetrics(font).boundingRect(box, flags, texts[i]);
-            if (needed.height() <= box.height() && needed.width() <= box.width())
-                break;
-            if (size == 6)
-                flags = Qt::AlignLeft | Qt::AlignTop | Qt::TextWrapAnywhere;
-        }
-        p.setFont(font);
-        p.drawText(box, flags, texts[i]);
-    }
-    p.end();
-    image.setDevicePixelRatio(dpr);
-    return image;
 }
 
 } // namespace
@@ -244,7 +190,11 @@ OcrResultDialog::OcrResultDialog(const QImage &image, const QString &engine, con
         QGuiApplication::clipboard()->setText(ui->targetEdit->toPlainText());
     });
     connect(ui->imageButton, &QPushButton::clicked, this, [this] {
-        emit translatedImageReady(paintTranslation(m_image, m_boxes, paintedTranslations(), m_lineHeights));
+        const QStringList texts = paintedTranslations();
+        QList<Typesetter::Paragraph> paragraphs;
+        for (qsizetype i = 0; i < m_boxes.size() && i < texts.size(); ++i)
+            paragraphs.append({m_boxes.at(i), m_lineBoxes.value(i), texts.at(i), m_paragraphs.value(i)});
+        emit translatedImageReady(Typesetter::typeset(m_image, paragraphs));
     });
     // Editing the text changes the paragraphs the boxes belong to.
     connect(ui->sourceEdit, &QPlainTextEdit::textChanged, this, &OcrResultDialog::updateButtons);
@@ -284,6 +234,7 @@ void OcrResultDialog::recognize(const QString &engine)
     m_paragraphs.clear();
     m_boxes.clear();
     m_lineHeights.clear();
+    m_lineBoxes.clear();
     m_translations.clear();
     m_translateAgain = m_translation != Translation::None;
     m_translation = Translation::None;
@@ -409,6 +360,7 @@ void OcrResultDialog::onRecognized()
         m_paragraphs << Ocr::tidyCjkSpacing(p.text);
         m_boxes << p.box;
         m_lineHeights << p.lineHeight;
+        m_lineBoxes << p.lines;
     }
     // Shown as paragraphs, one per line and laid out as on the capture, so
     // that the lines edited are still the paragraphs to translate.

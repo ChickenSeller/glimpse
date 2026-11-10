@@ -135,6 +135,8 @@ qt_add_library(glimpse_ocr STATIC
     src/ocr/ModelStore.h
     src/ocr/OcrEngine.cpp
     src/ocr/OcrEngine.h
+    src/ocr/Typesetter.cpp
+    src/ocr/Typesetter.h
 )
 target_include_directories(glimpse_ocr PUBLIC src)
 target_link_libraries(glimpse_ocr PUBLIC Qt6::Widgets Qt6::Concurrent Qt6::Network)
