@@ -15,6 +15,9 @@ namespace SettingsStore {
 // Call once at start, after the application and organization names are set
 // and before any setting is read.
 void useProgramFolder();
+// Keeps the settings in `file` instead, nothing carried over (for tools that
+// want the defaults, see tests/SiteShots.cpp).
+void useFile(const QString &file);
 
 // The settings; what Glimpse uses in place of a default-constructed QSettings.
 QSettings open();

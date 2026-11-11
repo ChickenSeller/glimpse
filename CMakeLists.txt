@@ -167,9 +167,9 @@ if(GLIMPSE_ORT_INCLUDE_DIR)
 endif()
 
 # --- application --------------------------------------------------------------
-qt_add_executable(glimpse
-    src/main.cpp
-
+# Everything but main(), in a library that glimpse and glimpse-site-shots
+# (tests/SiteShots.cpp) both link.
+qt_add_library(glimpse_app STATIC
     src/app/AboutDialog.cpp
     src/app/AboutDialog.h
     src/app/AboutDialog.ui
@@ -277,22 +277,31 @@ qt_add_executable(glimpse
     src/translate/LocalModel.h
     src/translate/Translator.cpp
     src/translate/Translator.h
-
-    resources/glimpse.qrc
 )
 
-target_include_directories(glimpse PRIVATE src)
-target_compile_definitions(glimpse PRIVATE GLIMPSE_VERSION="${PROJECT_VERSION}"
+target_include_directories(glimpse_app PUBLIC src)
+target_compile_definitions(glimpse_app PUBLIC GLIMPSE_VERSION="${PROJECT_VERSION}"
     GLIMPSE_GITHUB_URL="${GLIMPSE_GITHUB_URL}" GLIMPSE_HOMEPAGE_URL="${GLIMPSE_HOMEPAGE_URL}"
     GLIMPSE_UPDATE_URL="${GLIMPSE_UPDATE_URL}"
     GLIMPSE_MATOMO_URL="${GLIMPSE_MATOMO_URL}" GLIMPSE_MATOMO_SITE_ID="${GLIMPSE_MATOMO_SITE_ID}")
 if(GLIMPSE_FORUM_BUILD)
-    target_compile_definitions(glimpse PRIVATE GLIMPSE_FORUM_BUILD)
+    target_compile_definitions(glimpse_app PUBLIC GLIMPSE_FORUM_BUILD)
 endif()
+
+# The icons are in each program's own resources (a static library's would
+# need initializing by hand).
+qt_add_executable(glimpse src/main.cpp resources/glimpse.qrc)
+target_link_libraries(glimpse PRIVATE glimpse_app)
+
+# glimpse-site-shots: renders the windows the homepage and the guide show, in
+# each UI language, into PNG files (run by tools/site-shots.sh).
+qt_add_executable(glimpse-site-shots tests/SiteShots.cpp resources/glimpse.qrc)
+target_link_libraries(glimpse-site-shots PRIVATE glimpse_app)
+
 # UI translations, compiled to .qm and embedded under :/i18n. Refresh the .ts
 # files after changing UI strings with: cmake --build <dir> --target update_translations
-qt_add_translations(TARGETS glimpse
-    SOURCE_TARGETS glimpse glimpse_ocr
+qt_add_translations(TARGETS glimpse glimpse-site-shots
+    SOURCE_TARGETS glimpse glimpse_app glimpse_ocr
     # Platform-only sources with UI strings, scanned on every platform: else
     # updating on one marks the other's translations obsolete, and they drop
     # out of the .qm files.
@@ -309,7 +318,7 @@ qt_add_translations(TARGETS glimpse
 )
 
 # Svg: the SVG icon engine plugin that renders the Material Symbols icons.
-target_link_libraries(glimpse PRIVATE glimpse_ocr Qt6::Widgets Qt6::Svg Qt6::Concurrent Qt6::Multimedia Qt6::Network ZXing::ZXing
+target_link_libraries(glimpse_app PUBLIC glimpse_ocr Qt6::Widgets Qt6::Svg Qt6::Concurrent Qt6::Multimedia Qt6::Network ZXing::ZXing
                                       KDAB::kdsingleapplication ${GLIMPSE_ANNOTATOR_TARGET})
 
 # Window/object picking and global hotkeys: Win32 only so far.
@@ -318,36 +327,36 @@ if(WIN32)
     enable_language(RC)
     configure_file(resources/glimpse.rc.in ${CMAKE_CURRENT_BINARY_DIR}/glimpse.rc @ONLY)
     target_sources(glimpse PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/glimpse.rc)
-    target_sources(glimpse PRIVATE
+    target_sources(glimpse_app PRIVATE
         src/capture/CursorCapture_win.cpp
         src/capture/ScrollInput_win.cpp
         src/capture/WindowList_win.cpp
         src/hotkey/GlobalHotkeys_win.cpp
         src/record/InputMonitor_win.cpp
     )
-    target_link_libraries(glimpse PRIVATE dwmapi)
+    target_link_libraries(glimpse_app PUBLIC dwmapi)
 else()
-    target_sources(glimpse PRIVATE
+    target_sources(glimpse_app PRIVATE
         src/capture/CursorCapture_stub.cpp
         src/capture/ScrollInput_stub.cpp
         src/capture/WindowList_stub.cpp
         src/record/InputMonitor_stub.cpp
     )
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        target_sources(glimpse PRIVATE src/hotkey/GlobalHotkeys_gnome.cpp) # GNOME custom shortcuts
+        target_sources(glimpse_app PRIVATE src/hotkey/GlobalHotkeys_gnome.cpp) # GNOME custom shortcuts
     else()
-        target_sources(glimpse PRIVATE src/hotkey/GlobalHotkeys_stub.cpp)
+        target_sources(glimpse_app PRIVATE src/hotkey/GlobalHotkeys_stub.cpp)
     endif()
 endif()
 
 # Linux: Wayland screenshots go through xdg-desktop-portal over D-Bus.
 if(UNIX AND NOT APPLE)
-    target_sources(glimpse PRIVATE
+    target_sources(glimpse_app PRIVATE
         src/capture/PortalScreenGrabber.cpp
         src/capture/PortalScreenGrabber.h
     )
-    target_link_libraries(glimpse PRIVATE Qt6::DBus)
-    target_compile_definitions(glimpse PRIVATE GLIMPSE_HAVE_PORTAL)
+    target_link_libraries(glimpse_app PUBLIC Qt6::DBus)
+    target_compile_definitions(glimpse_app PUBLIC GLIMPSE_HAVE_PORTAL)
 
     # Wayland recordings with the pointer: the ScreenCast portal and PipeWire
     # directly (libpipewire-0.3-dev). Without it, QScreenCapture records
@@ -357,9 +366,9 @@ if(UNIX AND NOT APPLE)
         pkg_check_modules(PIPEWIRE IMPORTED_TARGET libpipewire-0.3)
     endif()
     if(PIPEWIRE_FOUND)
-        target_sources(glimpse PRIVATE src/record/ScreenCastCapture.cpp src/record/ScreenCastCapture.h)
-        target_link_libraries(glimpse PRIVATE PkgConfig::PIPEWIRE)
-        target_compile_definitions(glimpse PRIVATE GLIMPSE_HAVE_PIPEWIRE)
+        target_sources(glimpse_app PRIVATE src/record/ScreenCastCapture.cpp src/record/ScreenCastCapture.h)
+        target_link_libraries(glimpse_app PUBLIC PkgConfig::PIPEWIRE)
+        target_compile_definitions(glimpse_app PUBLIC GLIMPSE_HAVE_PIPEWIRE)
     else()
         message(WARNING "libpipewire-0.3 not found: Wayland recordings will not show the pointer.")
     endif()
@@ -371,7 +380,7 @@ set_target_properties(glimpse PROPERTIES
 )
 
 # The Firefox engine's C interface (the library itself is loaded at run time).
-target_include_directories(glimpse PRIVATE bergamot)
+target_include_directories(glimpse_app PUBLIC bergamot)
 if(GLIMPSE_BERGAMOT_LIBRARY)
     add_dependencies(glimpse glimpse_bergamot)
     add_custom_command(TARGET glimpse POST_BUILD
@@ -382,8 +391,8 @@ endif()
 # llama.cpp is loaded at run time from next to the executable; the build only
 # needs its headers.
 if(GLIMPSE_LLAMA_INCLUDE_DIRS)
-    target_include_directories(glimpse PRIVATE ${GLIMPSE_LLAMA_INCLUDE_DIRS})
-    target_compile_definitions(glimpse PRIVATE GLIMPSE_HAVE_LLAMA)
+    target_include_directories(glimpse_app PUBLIC ${GLIMPSE_LLAMA_INCLUDE_DIRS})
+    target_compile_definitions(glimpse_app PUBLIC GLIMPSE_HAVE_LLAMA)
 endif()
 foreach(_lib IN LISTS GLIMPSE_LLAMA_RUNTIME_FILES)
     add_custom_command(TARGET glimpse POST_BUILD

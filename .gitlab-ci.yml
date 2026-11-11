@@ -119,15 +119,17 @@ release-from-github:
         "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases" > /dev/null
       echo "Released: ${CI_PROJECT_URL}/-/releases/${CI_COMMIT_TAG}"
 
-# The project homepage (site/) on GitLab Pages. Deploys when the site or the
-# icons it uses change on the default branch, and can be started by hand.
+# The project homepage (site/) and the guide (docs/) on GitLab Pages. Deploys
+# when they or the icons the page uses change on the default branch, and can
+# be started by hand.
 pages:
   stage: deploy
-  image: alpine:latest
+  image: node:22-alpine
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       changes:
         - site/**/*
+        - docs/**/*
         - resources/icons/*
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
@@ -152,6 +154,13 @@ pages:
       -e "s|%DEFAULT_BRANCH%|${CI_DEFAULT_BRANCH}|g"
       -e "s|%ASSET_VERSION%|${CI_COMMIT_SHORT_SHA}|g"
       public/index.html public/releases.html
+    # The guide (docs/, VitePress) is built into <homepage>/guide/; its
+    # screenshots, under guide/images/, are the homepage's too. Its base path
+    # (/kaguya/glimpse/guide/) is set in docs/.vitepress/config.mts.
+    - cd docs
+    - npm ci --no-audit --no-fund
+    - npx vitepress build
+    - cp -r .vitepress/dist ../public/guide
   artifacts:
     paths:
       - public

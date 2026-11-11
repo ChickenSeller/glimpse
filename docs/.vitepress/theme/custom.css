@@ -1,0 +1,36 @@
+/* The homepage's blue, so the guide looks like part of the same site. */
+:root {
+  --vp-c-brand-1: #2d7dd2;
+  --vp-c-brand-2: #2468b0;
+  --vp-c-brand-3: #2d7dd2;
+  --vp-c-brand-soft: rgba(45, 125, 210, 0.14);
+}
+.dark {
+  --vp-c-brand-1: #5aa2ec;
+  --vp-c-brand-2: #7ab5f0;
+  --vp-c-brand-3: #2d7dd2;
+  --vp-c-brand-soft: rgba(90, 162, 236, 0.16);
+  /* the homepage's dark colors */
+  --vp-c-bg: #0b1017;
+  --vp-c-bg-alt: #070b12;
+  --vp-c-bg-elv: #121a24;
+  --vp-c-bg-soft: #121a24;
+  --vp-c-divider: #1f2a37;
+  --vp-c-gutter: #070b12;
+  --vp-code-block-bg: #070b11;
+}
+
+/* Screenshots: centered, with a soft shadow so window edges stand out. */
+.vp-doc img[src*="/images/"] {
+  display: block;
+  margin: 16px auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Two screenshots side by side (before and after). */
+.vp-doc .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.vp-doc .compare p { margin: 0; }
+.vp-doc .compare img[src*="/images/"] { margin: 0; }
+@media (max-width: 640px) { .vp-doc .compare { grid-template-columns: 1fr; } }

@@ -52,6 +52,12 @@ void useProgramFolder()
     }
 }
 
+void useFile(const QString &file)
+{
+    s_file = file;
+    qApp->setProperty("glimpseSettingsFile", file);
+}
+
 QSettings open()
 {
     if (s_file.isEmpty())
