@@ -11,6 +11,7 @@
 
 #include "ocr/ModelStore.h"
 #include "ocr/OcrEngine.h"
+#include "ocr/Paragraphs.h"
 #include "ocr/Typesetter.h"
 
 #include <QApplication>
@@ -139,11 +140,19 @@ int main(int argc, char *argv[])
                       .arg(line.box.width())
                       .arg(line.box.height())
                       .arg(line.text));
-        // Each line typeset back as a stand-in translation, to look at.
+        // The paragraphs, each typeset back as a stand-in translation, to look at.
         if (!typesetPath.isEmpty()) {
             QList<Typesetter::Paragraph> paragraphs;
-            for (const OcrLine &line : result.lines)
-                paragraphs.append({line.box, {line.box}, QStringLiteral("译文：") + line.text.left(24), line.text});
+            for (const Ocr::Paragraph &p : Ocr::paragraphsOf(result.lines)) {
+                print(QStringLiteral("  paragraph [%1,%2 %3x%4] %5 lines: %6")
+                          .arg(p.box.x())
+                          .arg(p.box.y())
+                          .arg(p.box.width())
+                          .arg(p.box.height())
+                          .arg(p.lines.size())
+                          .arg(p.text.left(60)));
+                paragraphs.append({p.box, p.lines, QStringLiteral("译") + p.text, p.text});
+            }
             const QString file = QString(typesetPath).replace(QLatin1String(".png"), QLatin1Char('-') + engine + QLatin1String(".png"));
             Typesetter::typeset(sample, paragraphs).save(file);
             print(QStringLiteral("  typeset: ") + file);

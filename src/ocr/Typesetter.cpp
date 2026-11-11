@@ -217,14 +217,22 @@ Ink measure(const QImage &image, const QList<QRect> &lines, const Rgb &backgroun
 // The original text's size and weight, found by setting it in our font:
 // the pixel size at which its ink is as tall as in the capture, and bold if
 // its strokes are nearer our bold's than our regular's.
-QFont originalFont(const QString &source, const Ink &ink)
+// `width`: how wide the original's one line was (0: it was wrapped). Its
+// ink may be taller than its text (an icon in the line, two lines read as
+// one), which width tells: set that size, the text must still fit.
+QFont originalFont(const QString &source, const Ink &ink, int width)
 {
     QFont font = QGuiApplication::font();
     font.setPixelSize(100);
-    const qreal tall = QFontMetricsF(font).tightBoundingRect(source).height();
+    const QFontMetricsF at100(font);
+    const qreal tall = at100.tightBoundingRect(source).height();
     if (tall <= 0 || ink.height <= 0)
         return {};
-    font.setPixelSize(std::max(6, int(std::lround(100.0 * ink.height / tall))));
+    qreal size = 100.0 * ink.height / tall;
+    const qreal wide = at100.horizontalAdvance(source);
+    if (width > 0 && wide > 0)
+        size = std::min(size, 100.0 * width * 1.1 / wide);
+    font.setPixelSize(std::max(6, int(std::lround(size))));
 
     const QString sample = source.left(40);
     const auto strokeOf = [&sample](QFont f, bool bold) {
@@ -315,15 +323,19 @@ void setText(QPainter &painter, const Paragraph &paragraph, const Ink &ink, int 
     // The original's size and weight; without the original text, the
     // translation's own glyphs as tall as the original's ink. Then shrunk
     // only as far as needed to fit the paragraph's box.
-    QFont font = paragraph.source.trimmed().isEmpty() ? QFont() : originalFont(paragraph.source.trimmed(), ink);
+    QFont font = paragraph.source.trimmed().isEmpty()
+                     ? QFont()
+                     : originalFont(paragraph.source.trimmed(), ink, lines.size() == 1 ? box.width() : 0);
     qreal start = font.pixelSize();
-    if (start <= 0) {
+    if (start > 0) {
+        // Narrowed by the original's width when its ink was taller than its text.
+        start = std::clamp(start, std::min(height * 0.3, 7.0), height * 1.6);
+    } else {
         font = QGuiApplication::font();
         font.setPixelSize(100);
         const qreal tall = QFontMetricsF(font).tightBoundingRect(text.left(40)).height();
-        start = tall > 0 ? 100.0 * height / tall : height * 0.9;
+        start = std::clamp(tall > 0 ? 100.0 * height / tall : height * 0.9, height * 0.7, height * 1.6);
     }
-    start = std::clamp(start, height * 0.7, height * 1.6);
     const qreal smallest = std::max(7.0, start * 0.5);
     const qreal width = lines.size() == 1 ? std::max(box.width(), room) : box.width();
     Layout fit;

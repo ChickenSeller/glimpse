@@ -74,4 +74,14 @@ QString tidyCjkSpacing(const QString &text);
 // columns, not words.
 bool isColumnGap(const QRect &line, const QRect &next);
 
+// `box` narrowed to the text's ink in `image`: detectors pad their boxes,
+// and the room between lines (which tells paragraphs from lists) is then lost.
+QRect inkBox(const QImage &image, const QRect &box);
+
+// An icon before a line's text (a menu's, a list's) is read as a letter or
+// symbol ("8 Appearance", "Q Search"): when the line starts with a token of
+// one or two characters standing well apart from the rest, it is dropped
+// from the text and the box starts after it, leaving the icon alone.
+void dropLeadingIcon(const QImage &image, OcrLine &line);
+
 } // namespace Ocr

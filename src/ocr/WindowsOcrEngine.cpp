@@ -337,8 +337,11 @@ OcrResult WindowsOcrEngine::recognize(const QImage &image)
         QStringList parts;
         QRect box;
         const auto endLine = [&] {
-            if (!parts.isEmpty())
-                result.lines << OcrLine{Ocr::tidyCjkSpacing(parts.join(QLatin1Char(' '))), box};
+            if (!parts.isEmpty()) {
+                OcrLine line{Ocr::tidyCjkSpacing(parts.join(QLatin1Char(' '))), box};
+                Ocr::dropLeadingIcon(image, line);
+                result.lines << line;
+            }
             parts.clear();
             box = {};
         };

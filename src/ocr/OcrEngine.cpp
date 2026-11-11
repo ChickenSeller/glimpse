@@ -198,6 +198,128 @@ bool isColumnGap(const QRect &line, const QRect &next)
     return next.left() - line.right() > height * 3 / 2;
 }
 
+QRect inkBox(const QImage &image, const QRect &box)
+{
+    const QRect r = box.intersected(image.rect());
+    if (r.width() < 3 || r.height() < 3)
+        return box;
+    // The background: the most common of the box's edge colors, roughly
+    // (each channel's median).
+    QList<int> reds, greens, blues;
+    const auto sample = [&](int x, int y) {
+        const QRgb c = image.pixel(x, y);
+        reds << qRed(c);
+        greens << qGreen(c);
+        blues << qBlue(c);
+    };
+    for (int x = r.left(); x <= r.right(); ++x) {
+        sample(x, r.top());
+        sample(x, r.bottom());
+    }
+    for (int y = r.top(); y <= r.bottom(); ++y) {
+        sample(r.left(), y);
+        sample(r.right(), y);
+    }
+    const auto median = [](QList<int> &v) {
+        std::nth_element(v.begin(), v.begin() + v.size() / 2, v.end());
+        return v.at(v.size() / 2);
+    };
+    const int br = median(reds), bg = median(greens), bb = median(blues);
+    const auto distance = [&](QRgb c) {
+        return std::abs(qRed(c) - br) + std::abs(qGreen(c) - bg) + std::abs(qBlue(c) - bb);
+    };
+    int farthest = 0;
+    for (int y = r.top(); y <= r.bottom(); ++y) {
+        for (int x = r.left(); x <= r.right(); ++x)
+            farthest = std::max(farthest, distance(image.pixel(x, y)));
+    }
+    if (farthest < 60)
+        return box; // too faint to tell
+    int top = r.bottom(), bottom = r.top(), left = r.right(), right = r.left();
+    for (int y = r.top(); y <= r.bottom(); ++y) {
+        for (int x = r.left(); x <= r.right(); ++x) {
+            if (distance(image.pixel(x, y)) * 2 >= farthest) {
+                top = std::min(top, y);
+                bottom = std::max(bottom, y);
+                left = std::min(left, x);
+                right = std::max(right, x);
+            }
+        }
+    }
+    if (top > bottom || left > right)
+        return box;
+    return QRect(QPoint(left, top), QPoint(right, bottom)).adjusted(-1, -1, 1, 1).intersected(r);
+}
+
+void dropLeadingIcon(const QImage &image, OcrLine &line)
+{
+    const QString text = line.text.trimmed();
+    const qsizetype space = text.indexOf(QLatin1Char(' '));
+    if (space <= 0 || space > 3 || text.size() - space < 3)
+        return;
+    const QString token = text.left(space);
+    const bool symbols = std::none_of(token.cbegin(), token.cend(), [](QChar c) { return c.isLetterOrNumber(); });
+    if (token.size() > 2 && !symbols)
+        return;
+
+    const QRect r = line.box.intersected(image.rect());
+    if (r.width() < 8 || r.height() < 6)
+        return;
+    // Ink as in inkBox(): far from the box's edge color.
+    QList<int> reds, greens, blues;
+    for (int x = r.left(); x <= r.right(); ++x) {
+        for (int y : {r.top(), r.bottom()}) {
+            const QRgb c = image.pixel(x, y);
+            reds << qRed(c);
+            greens << qGreen(c);
+            blues << qBlue(c);
+        }
+    }
+    const auto median = [](QList<int> &v) {
+        std::nth_element(v.begin(), v.begin() + v.size() / 2, v.end());
+        return v.at(v.size() / 2);
+    };
+    const int br = median(reds), bg = median(greens), bb = median(blues);
+    QList<int> column(r.width());
+    int farthest = 0;
+    for (int x = r.left(); x <= r.right(); ++x) {
+        int most = 0;
+        for (int y = r.top(); y <= r.bottom(); ++y) {
+            const QRgb c = image.pixel(x, y);
+            most = std::max(most, std::abs(qRed(c) - br) + std::abs(qGreen(c) - bg) + std::abs(qBlue(c) - bb));
+        }
+        column[x - r.left()] = most;
+        farthest = std::max(farthest, most);
+    }
+    if (farthest < 60)
+        return;
+    // The first mark, then the first blank stretch after it: an icon stands
+    // half the text's height or more away (a word space is far less).
+    const int height = r.height();
+    const auto ink = [&](int i) { return column[i] * 2 >= farthest; };
+    int i = 0;
+    while (i < r.width() && !ink(i))
+        ++i;
+    const int start = i;
+    for (; i < r.width(); ++i) {
+        if (ink(i))
+            continue;
+        int blank = i;
+        while (blank < r.width() && !ink(blank))
+            ++blank;
+        if (blank - i >= std::max(4, height / 2)) {
+            if (i - start > height * 8 / 5 || blank >= r.width())
+                return; // too wide for an icon, or nothing after it
+            line.text = text.mid(space + 1).trimmed();
+            line.box.setLeft(r.left() + blank);
+            return;
+        }
+        if (i - start > height * 8 / 5)
+            return;
+        i = blank - 1;
+    }
+}
+
 QString tidyCjkSpacing(const QString &text)
 {
     QString result;

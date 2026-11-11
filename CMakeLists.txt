@@ -135,6 +135,8 @@ qt_add_library(glimpse_ocr STATIC
     src/ocr/ModelStore.h
     src/ocr/OcrEngine.cpp
     src/ocr/OcrEngine.h
+    src/ocr/Paragraphs.cpp
+    src/ocr/Paragraphs.h
     src/ocr/Typesetter.cpp
     src/ocr/Typesetter.h
 )

@@ -468,20 +468,25 @@ OcrResult PaddleOcrEngine::recognize(const QImage &image)
         QStringList parts;
         QRect lineBox;
         const auto endLine = [&] {
-            if (!parts.isEmpty())
-                result.lines << OcrLine{Ocr::tidyCjkSpacing(parts.join(QLatin1Char(' '))), lineBox};
+            if (!parts.isEmpty()) {
+                OcrLine line{Ocr::tidyCjkSpacing(parts.join(QLatin1Char(' '))), lineBox};
+                Ocr::dropLeadingIcon(rgb, line);
+                result.lines << line;
+            }
             parts.clear();
             lineBox = {};
         };
         for (const DetectedBox &box : std::as_const(row)) {
-            if (!lineBox.isNull() && Ocr::isColumnGap(lineBox, box.rect))
+            // Read with the detector's margin; placed by the ink alone.
+            const QRect ink = Ocr::inkBox(rgb, box.rect);
+            if (!lineBox.isNull() && Ocr::isColumnGap(lineBox, ink))
                 endLine();
             const QString text = d->read(rgb.copy(box.rect), &result.error);
             if (!result.error.isEmpty())
                 return result;
             if (!text.isEmpty())
                 parts << text;
-            lineBox |= box.rect;
+            lineBox |= ink;
         }
         endLine();
     }
