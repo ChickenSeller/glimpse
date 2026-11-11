@@ -36,9 +36,9 @@
 <!-- Hero: always dark, whatever the page theme -->
 <section class="hero">
   <div class="wrap hero-inner">
-    <p class="eyebrow"><span class="dot"></span><span data-i18n="hero.eyebrow">Recognizes and translates text, offline too</span></p>
-    <h1 data-i18n="hero.title">Capture your screen, then do something with it.</h1>
-    <p class="lead" data-i18n="hero.lead">Glimpse takes screenshots and screen recordings, lets you mark them up and pin them to the screen, reads the text in them and translates it. Offline when you want it, free and open source.</p>
+    <p class="eyebrow"><span class="dot"></span><span data-i18n="hero.eyebrow">Text recognition and translation, offline as well</span></p>
+    <h1 data-i18n="hero.title">Screenshots, screen recording and text recognition</h1>
+    <p class="lead" data-i18n="hero.lead">Glimpse captures and records the screen, annotates captures and pins them to the screen, and recognizes and translates the text in them. It works offline when needed, and is free and open source.</p>
     <div class="actions">
       <details class="dropdown" id="download">
         <summary class="btn primary split-btn"><span data-i18n="hero.download">Download</span><span class="arrow" aria-hidden="true"><i></i></span></summary>
@@ -64,7 +64,7 @@
     <div><b>PaddleOCR · Tesseract</b><span data-i18n="fact.ocr">Text recognition, Windows OCR too</span></div>
     <div><b data-i18n="fact.engines.b">9 engines</b><span data-i18n="fact.engines">Translation, offline or online</span></div>
     <div><b>MP4</b><span data-i18n="fact.rec">Recordings with clicks and keys</span></div>
-    <div><b data-i18n="fact.portable.b">Portable</b><span data-i18n="fact.portable">Unzip and run, nothing installed</span></div>
+    <div><b data-i18n="fact.portable.b">No installation</b><span data-i18n="fact.portable">Unpack the archive and run it</span></div>
   </div>
 </section>
 
@@ -73,18 +73,18 @@
   <div class="wrap">
     <div class="head">
       <p class="kicker" data-i18n="features.kicker">Features</p>
-      <h2 data-i18n="features.title">Everything in one small toolbar</h2>
+      <h2 data-i18n="features.title">Main features</h2>
     </div>
 
     <article class="show">
       <div class="show-text">
         <span class="ico big" style="--i:url(icons/screenshot_region.svg)"></span>
-        <h3 data-i18n="f.capture.t">Capture exactly what you mean</h3>
-        <p data-i18n="f.capture.d">Click a window or a single control, drag a rectangle, draw a freehand outline or take the whole screen. The screen freezes while you choose, so menus and tooltips stay put.</p>
+        <h3 data-i18n="f.capture.t">Screen capture</h3>
+        <p data-i18n="f.capture.d">Capture a window or a single control, a rectangle, a freehand region or the full screen. The screen is frozen while the area is selected, so menus and tooltips can be captured as well.</p>
         <ul class="ticks">
-          <li data-i18n="sc.capture.1">The mouse wheel goes from a window to the controls inside it</li>
-          <li data-i18n="sc.capture.2">Adjust the area to the pixel before taking it</li>
-          <li data-i18n="sc.capture.3">Scrolling capture stitches long pages (Windows)</li>
+          <li data-i18n="sc.capture.1">Switch between a window and its controls with the mouse wheel</li>
+          <li data-i18n="sc.capture.2">Adjust the selected area to the pixel before capturing</li>
+          <li data-i18n="sc.capture.3">Scrolling capture for long pages (Windows)</li>
         </ul>
         <a class="more" href="guide/en/capture" data-guide="capture"><span data-i18n="more">Read in the guide</span> →</a>
       </div>
@@ -94,12 +94,12 @@
     <article class="show flip">
       <div class="show-text">
         <span class="ico big" style="--i:url(icons/document_scanner.svg)"></span>
-        <h3 data-i18n="f.ocr.t">Read the text, then translate it</h3>
-        <p data-i18n="f.ocr.d">Select any part of the screen and copy the text out of it, even from pictures and programs that do not let you select. Translate it in the same window.</p>
+        <h3 data-i18n="f.ocr.t">Text recognition and translation</h3>
+        <p data-i18n="f.ocr.d">Recognize the text in any area of the screen, including text in images and text that cannot be selected, then copy or translate it in the same window.</p>
         <ul class="ticks">
           <li data-i18n="sc.ocr.1">PaddleOCR, Windows OCR or Tesseract</li>
           <li data-i18n="sc.ocr.2">Edit the text before copying or translating it</li>
-          <li data-i18n="sc.ocr.3">Your own prompt for language models</li>
+          <li data-i18n="sc.ocr.3">Custom prompts for language-model engines</li>
         </ul>
         <a class="more" href="guide/en/ocr" data-guide="ocr"><span data-i18n="more">Read in the guide</span> →</a>
       </div>
@@ -109,31 +109,31 @@
     <article class="show">
       <div class="show-text">
         <span class="ico big" style="--i:url(icons/translate.svg)"></span>
-        <h3 data-i18n="f.image.t">A translated copy of the picture</h3>
-        <p data-i18n="f.image.d">Glimpse erases the original text, fills in the background and sets the translation in its place, in the original's color, size and weight, like a scanlation.</p>
+        <h3 data-i18n="f.image.t">Translated images</h3>
+        <p data-i18n="f.image.d">Glimpse removes the original text, restores the background and places the translation in the same position, matching the original color, size and weight.</p>
         <ul class="ticks">
-          <li data-i18n="sc.image.1">Lists, headings and alignment kept</li>
-          <li data-i18n="sc.image.2">Opens in the preview to save or copy</li>
-          <li data-i18n="sc.image.3">Works with every translation engine</li>
+          <li data-i18n="sc.image.1">Keeps lists, headings and alignment</li>
+          <li data-i18n="sc.image.2">Opens in the preview window for saving or copying</li>
+          <li data-i18n="sc.image.3">Works with all translation engines</li>
         </ul>
         <a class="more" href="guide/en/ocr" data-guide="ocr"><span data-i18n="more">Read in the guide</span> →</a>
       </div>
       <div class="compare">
-        <figure><img data-shot="original.png" src="guide/images/en/original.png" width="740" height="300" alt="" loading="lazy"><figcaption data-i18n="cmp.before">Captured</figcaption></figure>
+        <figure><img data-shot="original.png" src="guide/images/en/original.png" width="740" height="300" alt="" loading="lazy"><figcaption data-i18n="cmp.before">Original</figcaption></figure>
         <span class="to" aria-hidden="true">→</span>
-        <figure><img data-shot="translated.png" src="guide/images/en/translated.png" width="740" height="300" alt="" loading="lazy"><figcaption data-i18n="cmp.after">Translated Image</figcaption></figure>
+        <figure><img data-shot="translated.png" src="guide/images/en/translated.png" width="740" height="300" alt="" loading="lazy"><figcaption data-i18n="cmp.after">Translated image</figcaption></figure>
       </div>
     </article>
 
     <article class="show flip">
       <div class="show-text">
         <span class="ico big" style="--i:url(icons/edit.svg)"></span>
-        <h3 data-i18n="f.edit.t">Mark it up, then pass it on</h3>
-        <p data-i18n="f.edit.d">Arrows, shapes, text, numbers, highlighting and blur; crop, cut out, resize or rotate. Then save, copy, or save and copy the file's path.</p>
+        <h3 data-i18n="f.edit.t">Annotation and editing</h3>
+        <p data-i18n="f.edit.d">Add arrows, shapes, text, numbers, highlights and blur, or crop, cut out, resize and rotate the image. Then save it, copy it, or save it and copy the file path.</p>
         <ul class="ticks">
-          <li data-i18n="sc.edit.1">Numbers that count up by themselves</li>
-          <li data-i18n="sc.edit.2">Blur or pixelate what should not be seen</li>
-          <li data-i18n="sc.edit.3">Save and Copy Path, for tools that take a file</li>
+          <li data-i18n="sc.edit.1">Automatically incrementing numbers</li>
+          <li data-i18n="sc.edit.2">Blur and pixelate to hide sensitive information</li>
+          <li data-i18n="sc.edit.3">Save and Copy Path, for tools that accept file paths</li>
         </ul>
         <a class="more" href="guide/en/editor" data-guide="editor"><span data-i18n="more">Read in the guide</span> →</a>
       </div>
@@ -147,14 +147,14 @@
   <div class="wrap">
     <div class="head">
       <p class="kicker" data-i18n="bento.kicker">And more</p>
-      <h2 data-i18n="bento.title">Tools for every day</h2>
+      <h2 data-i18n="bento.title">Other tools</h2>
     </div>
     <div class="bento">
       <article class="tile wide">
         <div class="tile-text">
           <span class="ico big" style="--i:url(icons/draw.svg)"></span>
           <h3 data-i18n="t.board.t">Screen whiteboard</h3>
-          <p data-i18n="t.board.d">Draw over the live screen while it keeps updating, over a frozen picture of it, or on a whiteboard. Pass-through lets the mouse work the programs below while the drawing stays.</p>
+          <p data-i18n="t.board.d">Draw over the live screen, a frozen copy of it or a whiteboard. With pass-through on, the drawing stays and the mouse operates the programs below.</p>
         </div>
         <img class="tile-shot" data-shot="whiteboard.png" src="guide/images/en/whiteboard.png" width="1600" height="900" alt="" loading="lazy">
       </article>
@@ -162,34 +162,34 @@
         <div class="tile-text">
           <span class="ico big" style="--i:url(icons/push_pin.svg)"></span>
           <h3 data-i18n="t.pin.t">Pin to the screen</h3>
-          <p data-i18n="t.pin.d">Keep a captured area on top of every window, right where it was taken. Drag it, zoom it with the wheel, fade it with Ctrl and the wheel.</p>
+          <p data-i18n="t.pin.d">Keeps a captured area on top of all windows, at the position where it was captured. Drag to move it, scroll to zoom, Ctrl+scroll to change its opacity.</p>
         </div>
         <img class="tile-shot" data-shot="pin.png" src="guide/images/en/pin.png" width="1600" height="900" alt="" loading="lazy">
       </article>
       <article class="tile">
         <span class="ico big" style="--i:url(icons/videocam.svg)"></span>
         <h3 data-i18n="t.rec.t">Screen recording</h3>
-        <p data-i18n="t.rec.d">Record a window or an area to MP4, with the pointer and clicks highlighted and the keys you press, or a full keyboard, shown in the video.</p>
+        <p data-i18n="t.rec.d">Records a window or an area to MP4, with the pointer and clicks highlighted and the keys pressed, or a full keyboard, shown in the video.</p>
       </article>
       <article class="tile">
         <span class="ico big" style="--i:url(icons/fit_page_height.svg)"></span>
         <h3 data-i18n="t.scroll.t">Scrolling capture</h3>
-        <p data-i18n="t.scroll.d">Glimpse scrolls a page, a document or a list and stitches it into one tall image; or you scroll, and it stitches. Windows, experimental.</p>
+        <p data-i18n="t.scroll.d">Scrolls a page, document or list and stitches it into one image; scrolling by hand is also supported. Windows only, experimental.</p>
       </article>
       <article class="tile">
         <span class="ico big" style="--i:url(icons/qr_code_scanner.svg)"></span>
         <h3 data-i18n="t.qr.t">QR codes</h3>
-        <p data-i18n="t.qr.d">Read QR codes and barcodes straight from the screen, no phone needed, and open the link.</p>
+        <p data-i18n="t.qr.d">Reads QR codes and barcodes on the screen and opens the links in them.</p>
       </article>
       <article class="tile">
         <span class="ico big" style="--i:url(icons/my_location.svg)"></span>
         <h3 data-i18n="t.cross.t">Crosshair and color picker</h3>
-        <p data-i18n="t.cross.d">A full-screen crosshair with coordinates: lock a point to measure the distance to another, or double-click a pixel to copy its color as HEX, RGB or HSL.</p>
+        <p data-i18n="t.cross.d">A full-screen crosshair with coordinates. Lock a point to measure the distance to another, or double-click a pixel to copy its color as HEX, RGB or HSL.</p>
       </article>
       <article class="tile">
         <span class="ico big" style="--i:url(icons/square_foot.svg)"></span>
         <h3 data-i18n="t.ruler.t">Screen ruler</h3>
-        <p data-i18n="t.ruler.d">A horizontal and a vertical ruler in a see-through cross, on top of everything, telling how far the pointer is from the cross, to the pixel.</p>
+        <p data-i18n="t.ruler.d">A horizontal and a vertical ruler crossing each other, see-through and on top, showing the distance from the pointer to the cross in pixels.</p>
       </article>
     </div>
   </div>
@@ -200,15 +200,15 @@
   <div class="wrap split">
     <div>
       <p class="kicker" data-i18n="tr.kicker">Translation</p>
-      <h2 data-i18n="tr.title">Translation that works offline</h2>
-      <p class="sub" data-i18n="tr.lead">Pick the engine that suits the computer and the text. Offline engines download their model once and never send your screen anywhere; online ones get the recognized text only.</p>
+      <h2 data-i18n="tr.title">Translation engines</h2>
+      <p class="sub" data-i18n="tr.lead">Choose an engine according to the computer and the text. Offline engines download their models once and send nothing; online engines receive only the recognized text.</p>
       <a class="more" href="guide/en/translation" data-guide="translation"><span data-i18n="more">Read in the guide</span> →</a>
     </div>
     <div class="engines">
       <h4 data-i18n="tr.offline">Offline</h4>
       <ul class="chips">
-        <li><strong data-i18n="tr.firefox">Firefox translation</strong> <span data-i18n="tr.firefox.d">Mozilla's Bergamot engine. Fast and light, runs well on office laptops.</span></li>
-        <li><strong data-i18n="tr.llm">Local language model</strong> <span data-i18n="tr.llm.d">Hy-MT2, Index-Translate or Qwen3 through llama.cpp, or any GGUF model. Uses the graphics card (Vulkan) and falls back to the CPU.</span></li>
+        <li><strong data-i18n="tr.firefox">Firefox translation</strong> <span data-i18n="tr.firefox.d">Mozilla's Bergamot engine. Fast and small, it runs on ordinary laptops.</span></li>
+        <li><strong data-i18n="tr.llm">Local language model</strong> <span data-i18n="tr.llm.d">Hy-MT2, Index-Translate, Qwen3 or another GGUF model, run by llama.cpp. Uses the graphics card (Vulkan) when available, otherwise the CPU.</span></li>
       </ul>
       <h4 data-i18n="tr.online">Online</h4>
       <ul class="chips inline">
@@ -223,7 +223,7 @@
   <div class="wrap">
     <div class="head">
       <p class="kicker" data-i18n="hk.kicker">Hotkeys</p>
-      <h2 data-i18n="hk.title">One key away, in any program</h2>
+      <h2 data-i18n="hk.title">Global hotkeys</h2>
       <p class="sub" style="margin-left:auto;margin-right:auto" data-i18n="hk.lead">Every action has a global hotkey; all of them can be changed in the settings.</p>
     </div>
     <div class="keys">
@@ -270,8 +270,8 @@
 <!-- Closing call to action -->
 <section class="cta">
   <div class="wrap cta-inner">
-    <h2 data-i18n="cta.title">Try it on your own screen.</h2>
-    <p data-i18n="cta.lead">Unzip it, run it, and press Ctrl+Alt+5 on any text you cannot select.</p>
+    <h2 data-i18n="cta.title">Download Glimpse</h2>
+    <p data-i18n="cta.lead">Unpack the archive and run glimpse.exe. No installation is required.</p>
     <div class="actions">
       <a class="btn primary" href="releases.html" data-i18n="hero.download">Download</a>
       <a class="btn ghost" href="guide/en/" data-guide=""><span data-i18n="cta.guide">Read the guide</span> <span aria-hidden="true">→</span></a>
