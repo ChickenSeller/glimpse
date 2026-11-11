@@ -5,6 +5,7 @@ import { defineConfig, type DefaultTheme } from 'vitepress'
 // /ja/. DOCS_BASE and DOCS_HOME can override the paths.
 const base = process.env.DOCS_BASE || '/kaguya/glimpse/guide/'
 const home = process.env.DOCS_HOME || 'https://pages.yanlei.org/kaguya/glimpse/'
+const source = 'https://github.com/ChickenSeller/glimpse'
 
 type Names = Record<string, string>
 
@@ -72,6 +73,7 @@ export default defineConfig({
           { text: '使用说明', link: '/getting-started', activeMatch: '^/(?!en/|ja/).+' },
           { text: '下载', link: `${home}releases.html` },
           { text: '主页', link: home },
+          { text: '源代码', link: source },
         ],
         sidebar: zh,
         outline: { level: [2, 3], label: '本页目录' },
@@ -96,6 +98,7 @@ export default defineConfig({
           { text: 'Guide', link: '/en/getting-started', activeMatch: '^/en/.+' },
           { text: 'Download', link: `${home}releases.html` },
           { text: 'Home', link: home },
+          { text: 'Source code', link: source },
         ],
         sidebar: en,
         outline: { level: [2, 3], label: 'On this page' },
@@ -112,6 +115,7 @@ export default defineConfig({
           { text: 'ガイド', link: '/ja/getting-started', activeMatch: '^/ja/.+' },
           { text: 'ダウンロード', link: `${home}releases.html` },
           { text: 'ホーム', link: home },
+          { text: 'ソースコード', link: source },
         ],
         sidebar: ja,
         outline: { level: [2, 3], label: '目次' },
