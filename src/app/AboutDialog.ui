@@ -29,7 +29,7 @@
        <item>
         <widget class="QLabel" name="mottoLabel">
          <property name="text">
-          <string notr="true">אֶהְיֶה אֲשֶׁר אֶהְיֶה</string>
+          <string notr="true">ADVENIAT REGNVM TVVM</string>
          </property>
          <property name="font">
           <font>
