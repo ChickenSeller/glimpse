@@ -2,8 +2,10 @@
 #
 # Glimpse loads the library at run time through its C API, so the build only
 # needs onnxruntime_c_api.h. An installed copy is used when found (Linux
-# packages); otherwise the official prebuilt release is downloaded and its
-# shared library is copied next to the executable.
+# packages); otherwise Microsoft's official NuGet package is downloaded and
+# its shared library is copied next to the executable. (The prebuilt zips
+# on github.com/microsoft/onnxruntime are gone since 2026-11-18; the NuGet
+# package holds the same libraries and headers for every platform.)
 #
 # Defines GLIMPSE_ORT_INCLUDE_DIR (empty if unavailable) and
 # GLIMPSE_ORT_RUNTIME_FILES (libraries to ship with the executable).
@@ -22,22 +24,26 @@ endif()
 
 set(_ort_version 1.30.0)
 if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(_ort_url https://github.com/microsoft/onnxruntime/releases/download/v${_ort_version}/onnxruntime-win-x64-${_ort_version}.zip)
-    set(_ort_hash c6ba983baf5681af108599675d2a89c2d145512d02de28aed0bff177cd0ba949)
+    set(_ort_runtime win-x64)
     set(_ort_libs onnxruntime.dll onnxruntime_providers_shared.dll)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
-    set(_ort_url https://github.com/microsoft/onnxruntime/releases/download/v${_ort_version}/onnxruntime-linux-x64-${_ort_version}.tgz)
-    set(_ort_hash a5ed5a3cac51fbb2e90da632ae43d19212faaa20e76484e62bcb7c23ddb3b3fd)
-    set(_ort_libs libonnxruntime.so libonnxruntime.so.1 libonnxruntime.so.${_ort_version})
+    # Loaded by its path (PaddleOcrEngine), so no soname links are needed.
+    set(_ort_runtime linux-x64)
+    set(_ort_libs libonnxruntime.so)
 else()
     message(STATUS "Glimpse: no prebuilt ONNX Runtime for this platform; PaddleOCR disabled")
     return()
 endif()
 
-FetchContent_Declare(onnxruntime URL ${_ort_url} URL_HASH SHA256=${_ort_hash})
+# A .nupkg is a zip; the name tells the download step to extract it.
+FetchContent_Declare(onnxruntime
+    URL https://api.nuget.org/v3-flatcontainer/microsoft.ml.onnxruntime/${_ort_version}/microsoft.ml.onnxruntime.${_ort_version}.nupkg
+    URL_HASH SHA256=30df119bd9164eaa187666d93147448fdd4a9a1a3caf83f1505daf7af2d1c5d2
+    DOWNLOAD_NAME onnxruntime-${_ort_version}.zip
+)
 FetchContent_MakeAvailable(onnxruntime)
 
-set(GLIMPSE_ORT_INCLUDE_DIR "${onnxruntime_SOURCE_DIR}/include")
+set(GLIMPSE_ORT_INCLUDE_DIR "${onnxruntime_SOURCE_DIR}/build/native/include")
 foreach(_lib IN LISTS _ort_libs)
-    list(APPEND GLIMPSE_ORT_RUNTIME_FILES "${onnxruntime_SOURCE_DIR}/lib/${_lib}")
+    list(APPEND GLIMPSE_ORT_RUNTIME_FILES "${onnxruntime_SOURCE_DIR}/runtimes/${_ort_runtime}/native/${_lib}")
 endforeach()
