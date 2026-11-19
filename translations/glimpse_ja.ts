@@ -171,7 +171,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+516"/>
+        <location filename="../src/app/CaptureController.cpp" line="+529"/>
         <source>The window under the area runs as administrator, and Windows does not let Glimpse scroll it. Restart Glimpse as administrator to scroll it automatically, or scroll it yourself: Glimpse stitches whatever scrolls into view.</source>
         <translation>範囲の下のウィンドウは管理者として実行されているため、Windows は Glimpse によるスクロールを許可しません。Glimpse を管理者として再起動すると自動でスクロールできます。自分でスクロールすることもでき、表示された内容を Glimpse がつなげます。</translation>
     </message>
@@ -186,7 +186,7 @@
         <translation>自分でスクロール(&amp;S)</translation>
     </message>
     <message>
-        <location line="+176"/>
+        <location line="+179"/>
         <location line="+19"/>
         <source>%1 needs its recognition models first.</source>
         <translation>%1 には先に認識モデルが必要です。</translation>
@@ -197,7 +197,7 @@
         <translation>ローカル翻訳には先にモデルが必要です：%1。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
-        <location line="-493"/>
+        <location line="-506"/>
         <source>Close All Pins</source>
         <translation>すべてのピン留めを閉じる</translation>
     </message>
@@ -227,7 +227,7 @@
         <translation>スクリーンペン</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+451"/>
+        <location filename="../src/app/CaptureController.cpp" line="+464"/>
         <location line="+10"/>
         <source>Recognize Text</source>
         <translation>テキストを認識</translation>
@@ -243,7 +243,7 @@
         <translation>文字認識・翻訳</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-199"/>
+        <location filename="../src/app/CaptureController.cpp" line="-202"/>
         <source>Scrolling Capture</source>
         <translation>スクロールキャプチャ</translation>
     </message>
@@ -268,7 +268,7 @@
         <translation>画面にピン留め</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-382"/>
+        <location filename="../src/app/CaptureController.cpp" line="-392"/>
         <location line="+57"/>
         <source>Hotkeys unavailable</source>
         <translation>ホットキーを使用できません</translation>
@@ -287,7 +287,7 @@
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+744"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+772"/>
         <source>Open Images...</source>
         <translation>画像を開く...</translation>
     </message>
@@ -312,7 +312,12 @@
         <translation>終了</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+223"/>
+        <source>The area is too small to record (%1 × %2): it must be at least %3 pixels wide and high. Drag an area, or click a larger window.</source>
+        <translation>範囲が小さすぎるため録画できません（%1 × %2）。幅と高さはどちらも %3 ピクセル以上必要です。範囲をドラッグするか、もっと大きなウィンドウをクリックしてください。</translation>
+    </message>
+    <message>
+        <location line="+106"/>
         <source>Recording failed: %1</source>
         <translation>録画に失敗しました：%1</translation>
     </message>
@@ -906,6 +911,19 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
 </context>
 <context>
+    <name>MicrophoneCapture</name>
+    <message>
+        <location filename="../src/record/MicrophoneCapture.cpp" line="+31"/>
+        <source>No microphone was found.</source>
+        <translation>マイクが見つかりません。</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>The microphone &quot;%1&quot; could not be opened. On Windows, check that apps may use the microphone (Settings, Privacy &amp; security, Microphone).</source>
+        <translation>マイク「%1」を開けませんでした。Windows では、アプリがマイクを使用できることを確認してください（設定 → プライバシーとセキュリティ → マイク）。</translation>
+    </message>
+</context>
+<context>
     <name>Ocr</name>
     <message>
         <location filename="../src/ocr/ModelStore.cpp" line="+163"/>
@@ -1183,7 +1201,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+350"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+237"/>
         <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
         <translation>このウィンドウで使う文字認識エンジン。開いたときの既定値は「設定 &gt; 文字認識」で決めます</translation>
     </message>
@@ -1685,7 +1703,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
 <context>
     <name>ScreenRecorder</name>
     <message>
-        <location filename="../src/record/ScreenRecorder.cpp" line="+242"/>
+        <location filename="../src/record/ScreenRecorder.cpp" line="+284"/>
         <source>Nothing was recorded: the screen content did not arrive.</source>
         <translation>何も録画されませんでした：画面の内容が届きませんでした。</translation>
     </message>
@@ -2009,6 +2027,26 @@ Esc でキャンセル</translation>
         <translation>入力した内容はパスワードも含めてすべて表示されます。</translation>
     </message>
     <message>
+        <location line="+16"/>
+        <source>Sound</source>
+        <translation>サウンド</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Record the &amp;microphone:</source>
+        <translation>マイクを録音(&amp;M)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Record the sound the computer &amp;plays</source>
+        <translation>コンピューターで再生中の音を録音(&amp;P)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>With both, they are mixed into one track. While paused, no sound is recorded.</source>
+        <translation>両方を選ぶと 1 つのトラックにミックスされます。一時停止中は録音しません。</translation>
+    </message>
+    <message>
         <location line="+18"/>
         <source>&amp;Video frame rate:</source>
         <translation>ビデオのフレームレート(&amp;V)：</translation>
@@ -2019,13 +2057,13 @@ Esc でキャンセル</translation>
         <translation>既定のプロンプト(&amp;P)：</translation>
     </message>
     <message>
-        <location line="-938"/>
-        <location line="+888"/>
+        <location line="-977"/>
+        <location line="+927"/>
         <source>Browse...</source>
         <translation>参照...</translation>
     </message>
     <message>
-        <location line="-881"/>
+        <location line="-920"/>
         <source>Cl&amp;ear</source>
         <translation>クリア(&amp;E)</translation>
     </message>
@@ -2085,7 +2123,7 @@ Esc でキャンセル</translation>
         <translation>ツールバーのサイズ(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+187"/>
+        <location line="+226"/>
         <source>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</source>
         <translation>録画は「全般」ページで選んだフォルダーの Recordings サブフォルダーに保存されます。</translation>
     </message>
@@ -2185,7 +2223,7 @@ Esc でキャンセル</translation>
         <translation>文字はこのコンピューターで認識され、選択したサービスに送信されて翻訳されます。キーはこのコンピューターのユーザー設定に保存されます。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-694"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-719"/>
         <source>Tell me about new versions</source>
         <translation>新しいバージョンを知らせる</translation>
     </message>
@@ -2215,7 +2253,17 @@ Esc でキャンセル</translation>
         <translation>%1 fps</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+11"/>
+        <source>Default device</source>
+        <translation>既定のデバイス</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Needs PipeWire (Glimpse built with libpipewire-0.3).</source>
+        <translation>PipeWire が必要です（libpipewire-0.3 を使ってビルドされた Glimpse）。</translation>
+    </message>
+    <message>
+        <location line="+93"/>
         <source>Other GGUF model file...</source>
         <translation>その他の GGUF モデル ファイル...</translation>
     </message>
@@ -2230,12 +2278,12 @@ Esc でキャンセル</translation>
         <translation>GGUF モデル (*.gguf)</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+109"/>
         <source>Select at least one language for text recognition.</source>
         <translation>文字認識の言語を少なくとも 1 つ選択してください。</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+108"/>
         <source>System default (%1)</source>
         <translation>システムの既定（%1）</translation>
     </message>
@@ -2291,7 +2339,7 @@ Esc でキャンセル</translation>
         </translation>
     </message>
     <message>
-        <location line="-304"/>
+        <location line="-308"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 が複数の操作に割り当てられています。</translation>
     </message>
@@ -2306,7 +2354,7 @@ Esc でキャンセル</translation>
         <translation>標準の動画は 2×2 ピクセルごとに 1 色しか保持しないため、グラフやコードのハイライトなど細い色付きの線がにじみます。高では 2 倍の大きさの動画で各ピクセルの色を保持します（ファイルは約 3 倍）。幅または高さが 2048 ピクセルを超える範囲は H.265 で保存され、一部のプレーヤーやブラウザでは再生できません。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-206"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-224"/>
         <source>Standard</source>
         <translation>標準</translation>
     </message>
@@ -2316,7 +2364,7 @@ Esc でキャンセル</translation>
         <translation>高（グラフ、色付きの文字）</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.ui" line="-63"/>
+        <location filename="../src/settings/SettingsDialog.ui" line="-102"/>
         <source>P&amp;osition:</source>
         <translation>位置(&amp;O)：</translation>
     </message>
@@ -2367,9 +2415,48 @@ Esc でキャンセル</translation>
     </message>
 </context>
 <context>
+    <name>SystemAudioCapture</name>
+    <message>
+        <location filename="../src/record/SystemAudioCapture_win.cpp" line="+146"/>
+        <source>No sound output device was found.</source>
+        <translation>サウンド出力デバイスが見つかりません。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The sound output device could not be opened.</source>
+        <translation>サウンド出力デバイスを開けませんでした。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The sound output device uses a sample format Glimpse cannot read.</source>
+        <translation>サウンド出力デバイスのサンプル形式を Glimpse で読み取れません。</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location filename="../src/record/SystemAudioCapture_pipewire.cpp" line="+128"/>
+        <source>The sound played could not be recorded.</source>
+        <translation>再生中の音を録音できませんでした。</translation>
+    </message>
+    <message>
+        <location filename="../src/record/SystemAudioCapture_pipewire.cpp" line="-32"/>
+        <source>PipeWire could not be started.</source>
+        <translation>PipeWire を開始できませんでした。</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>The sound played cannot be recorded: PipeWire is not running.</source>
+        <translation>再生中の音を録音できません：PipeWire が実行されていません。</translation>
+    </message>
+    <message>
+        <location filename="../src/record/SystemAudioCapture_stub.cpp" line="+22"/>
+        <source>Recording the sound played is not supported here.</source>
+        <translation>このプラットフォームでは再生中の音の録音に対応していません。</translation>
+    </message>
+</context>
+<context>
     <name>Translate</name>
     <message>
-        <location filename="../src/translate/Translator.cpp" line="+433"/>
+        <location filename="../src/translate/Translator.cpp" line="+443"/>
         <source>Bilibili Index-Translate (free, online)</source>
         <translation>bilibili Index-Translate（無料、オンライン）</translation>
     </message>
@@ -2379,17 +2466,17 @@ Esc でキャンセル</translation>
         <translation>bilibili の翻訳モデル（Index-Translate 35B）。キー不要で無料。自然な訳文で 150 言語に対応します。Google より遅く、bilibili がサービスを制限・終了する可能性があります。</translation>
     </message>
     <message>
-        <location line="-78"/>
+        <location line="-84"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>Index-Translate の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+214"/>
+        <location line="+257"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻訳には先にこれらの言語ファイルが必要です（1 方向あたり約 50 MB）。このコンピューターに保存され、以後はオフラインで使えます。</translation>
     </message>
     <message>
-        <location line="-531"/>
+        <location line="-577"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API キーが拒否されました（HTTP %1）。「設定 &gt; 翻訳」で確認してください。</translation>
     </message>
@@ -2424,7 +2511,7 @@ Esc でキャンセル</translation>
         <translation>Claude の応答を読み取れませんでした。</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+142"/>
         <source>The reply of %1 could not be read.</source>
         <translation>%1 の返答を読み取れませんでした。</translation>
     </message>
@@ -2499,7 +2586,7 @@ Esc でキャンセル</translation>
         <translation>OpenAI のチャット API で提供される任意の大規模言語モデル: DeepSeek、Qwen、SiliconFlow などのオンラインサービス（各サービスのキーが必要）や、このコンピューター上の Ollama、LM Studio など（通常キー不要）。段落ごとに 1 回リクエストします。</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+155"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>Firefox の言語ファイルはダウンロードされませんでした。</translation>
     </message>

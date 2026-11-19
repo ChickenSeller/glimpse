@@ -3,7 +3,11 @@
 // duration and frame size and saves one decoded frame as a PNG.
 //
 //   glimpse-record-test [seconds] [--rect x,y,w,h] [--out file.mp4] [--keys n]
-//       (n: ScreenRecorder::KeyPosition as a number, 9 for below the picture)
+//       [--mic] [--system] [--pause] [--sync]
+//       (n: ScreenRecorder::KeyPosition as a number, 9 for below the picture;
+//       --mic and --system record sound, --pause pauses for a second halfway;
+//       --sync covers the area with a window that flashes white once a second
+//       as a beep plays, to compare the picture and the sound in the file)
 //   glimpse-record-test --probe file.mp4 [ms]   (only reads a file back)
 //   glimpse-record-test --keyboard-preview out.png [layout...]   (draws the key
 //       overlay under the layout in use, or under each named one: 0000040C)
@@ -13,10 +17,14 @@
 #include "record/ScreenRecorder.h"
 
 #include <QApplication>
+#include <QAudioDevice>
+#include <QAudioFormat>
+#include <QAudioSink>
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFileInfo>
 #include <QGuiApplication>
+#include <QMediaDevices>
 #include <QMediaPlayer>
 #include <QPainter>
 #include <QScreen>
@@ -24,7 +32,9 @@
 #include <QUrl>
 #include <QVideoFrame>
 #include <QVideoSink>
+#include <QWidget>
 
+#include <cmath>
 #include <cstdio>
 
 int main(int argc, char *argv[])
@@ -45,8 +55,9 @@ int main(int argc, char *argv[])
             const QImage image = frame.toImage();
             const QString png = QDir::temp().filePath(QStringLiteral("glimpse-record-test.png"));
             image.save(png);
-            std::printf("decoded frame %dx%d at %lld ms, duration %lld ms -> %s\n", image.width(), image.height(),
-                        frame.startTime() / 1000, player->duration(), qPrintable(png));
+            std::printf("decoded frame %dx%d at %lld ms, duration %lld ms, %s -> %s\n", image.width(), image.height(),
+                        frame.startTime() / 1000, player->duration(),
+                        player->hasAudio() ? "with sound" : "no sound", qPrintable(png));
             QCoreApplication::exit(0);
         });
         QObject::connect(player, &QMediaPlayer::errorOccurred, [](QMediaPlayer::Error, const QString &message) {
@@ -98,6 +109,10 @@ int main(int argc, char *argv[])
     rect.moveCenter(screen->geometry().center());
     QString out = QDir::temp().filePath(QStringLiteral("glimpse-record-test.mp4"));
     int keyPosition = 0;
+    bool microphone = false;
+    bool systemAudio = false;
+    bool pause = false;
+    bool sync = false;
     for (int i = 1; i < args.size(); ++i) {
         if (args[i] == QLatin1String("--rect") && i + 1 < args.size()) {
             const QStringList v = args[++i].split(QLatin1Char(','));
@@ -107,6 +122,14 @@ int main(int argc, char *argv[])
             out = args[++i];
         } else if (args[i] == QLatin1String("--keys") && i + 1 < args.size()) {
             keyPosition = args[++i].toInt();
+        } else if (args[i] == QLatin1String("--mic")) {
+            microphone = true;
+        } else if (args[i] == QLatin1String("--system")) {
+            systemAudio = true;
+        } else if (args[i] == QLatin1String("--pause")) {
+            pause = true;
+        } else if (args[i] == QLatin1String("--sync")) {
+            sync = true;
         } else {
             seconds = std::max(1, args[i].toInt());
         }
@@ -117,6 +140,8 @@ int main(int argc, char *argv[])
     options.filePath = out;
     options.showKeys = true;
     options.keyPosition = static_cast<ScreenRecorder::KeyPosition>(keyPosition);
+    options.microphone = microphone;
+    options.systemAudio = systemAudio;
     auto *recorder = new ScreenRecorder(screen, rect, options);
 
     QObject::connect(recorder, &ScreenRecorder::failed, [](const QString &message) {
@@ -133,8 +158,46 @@ int main(int argc, char *argv[])
 
     std::printf("recording %d s of %d,%d %dx%d (logical) on %s\n", seconds, rect.x(), rect.y(), rect.width(),
                 rect.height(), qPrintable(screen->name()));
+    if (sync) {
+        auto *flash = new QWidget(nullptr, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
+        flash->setGeometry(rect);
+        flash->setAutoFillBackground(true);
+        const auto paint = [flash](const QColor &color) {
+            QPalette palette = flash->palette();
+            palette.setColor(QPalette::Window, color);
+            flash->setPalette(palette);
+            flash->repaint();
+        };
+        paint(Qt::black);
+        flash->show();
+        // A 1 kHz beep of 100 ms, pushed to the default output as the
+        // window turns white.
+        QAudioFormat format;
+        format.setSampleRate(48000);
+        format.setChannelCount(1);
+        format.setSampleFormat(QAudioFormat::Float);
+        auto *sink = new QAudioSink(QMediaDevices::defaultAudioOutput(), format);
+        QIODevice *speaker = sink->start();
+        QByteArray beep(4800 * sizeof(float), Qt::Uninitialized);
+        for (int i = 0; i < 4800; ++i)
+            reinterpret_cast<float *>(beep.data())[i] = 0.5f * float(std::sin(2 * M_PI * 1000 * i / 48000.0));
+        auto *timer = new QTimer;
+        QObject::connect(timer, &QTimer::timeout, [=] {
+            paint(Qt::white);
+            // What is queued before the beep plays after it.
+            std::printf("beep after %lld ms queued\n",
+                        qint64(format.durationForBytes(sink->bufferSize() - sink->bytesFree()) / 1000));
+            speaker->write(beep);
+            QTimer::singleShot(100, [=] { paint(Qt::black); });
+        });
+        timer->start(1000);
+    }
     recorder->start();
-    QTimer::singleShot(seconds * 1000, recorder, &ScreenRecorder::stop);
+    if (pause) {
+        QTimer::singleShot(seconds * 500, recorder, [recorder] { recorder->setPaused(true); });
+        QTimer::singleShot(seconds * 500 + 1000, recorder, [recorder] { recorder->setPaused(false); });
+    }
+    QTimer::singleShot(seconds * 1000 + (pause ? 1000 : 0), recorder, &ScreenRecorder::stop);
     QTimer::singleShot((seconds + 30) * 1000, [] {
         std::printf("FAIL: timeout\n");
         QCoreApplication::exit(1);

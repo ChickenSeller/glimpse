@@ -171,7 +171,7 @@
 <context>
     <name>CaptureController</name>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+516"/>
+        <location filename="../src/app/CaptureController.cpp" line="+529"/>
         <source>The window under the area runs as administrator, and Windows does not let Glimpse scroll it. Restart Glimpse as administrator to scroll it automatically, or scroll it yourself: Glimpse stitches whatever scrolls into view.</source>
         <translation>选区下的窗口以管理员身份运行，Windows 不允许 Glimpse 替它滚动。可以以管理员身份重启 Glimpse 来自动滚动，也可以自己滚动：滚进视野的内容 Glimpse 都会拼接上。</translation>
     </message>
@@ -186,7 +186,7 @@
         <translation>自己滚动(&amp;S)</translation>
     </message>
     <message>
-        <location line="+176"/>
+        <location line="+179"/>
         <location line="+19"/>
         <source>%1 needs its recognition models first.</source>
         <translation>%1 需要先准备识别模型。</translation>
@@ -197,7 +197,7 @@
         <translation>本地翻译需要先准备模型：%1。模型保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
-        <location line="-493"/>
+        <location line="-506"/>
         <source>Close All Pins</source>
         <translation>关闭所有贴图</translation>
     </message>
@@ -227,7 +227,7 @@
         <translation>屏幕白板</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="+451"/>
+        <location filename="../src/app/CaptureController.cpp" line="+464"/>
         <location line="+10"/>
         <source>Recognize Text</source>
         <translation>识别文字</translation>
@@ -243,7 +243,7 @@
         <translation>文字识别和翻译</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-199"/>
+        <location filename="../src/app/CaptureController.cpp" line="-202"/>
         <source>Scrolling Capture</source>
         <translation>滚动截图</translation>
     </message>
@@ -268,7 +268,7 @@
         <translation>贴图到屏幕</translation>
     </message>
     <message>
-        <location filename="../src/app/CaptureController.cpp" line="-382"/>
+        <location filename="../src/app/CaptureController.cpp" line="-392"/>
         <location line="+57"/>
         <source>Hotkeys unavailable</source>
         <translation>快捷键不可用</translation>
@@ -287,7 +287,7 @@
     </message>
     <message>
         <location line="+61"/>
-        <location filename="../src/settings/SettingsDialog.cpp" line="+744"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="+772"/>
         <source>Open Images...</source>
         <translation>打开图片...</translation>
     </message>
@@ -312,7 +312,12 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+223"/>
+        <source>The area is too small to record (%1 × %2): it must be at least %3 pixels wide and high. Drag an area, or click a larger window.</source>
+        <translation>区域太小，无法录制（%1 × %2）：宽和高都至少需要 %3 像素。请拖出一个区域，或单击一个更大的窗口。</translation>
+    </message>
+    <message>
+        <location line="+106"/>
         <source>Recording failed: %1</source>
         <translation>录制失败：%1</translation>
     </message>
@@ -906,6 +911,19 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
 </context>
 <context>
+    <name>MicrophoneCapture</name>
+    <message>
+        <location filename="../src/record/MicrophoneCapture.cpp" line="+31"/>
+        <source>No microphone was found.</source>
+        <translation>未找到麦克风。</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>The microphone &quot;%1&quot; could not be opened. On Windows, check that apps may use the microphone (Settings, Privacy &amp; security, Microphone).</source>
+        <translation>无法打开麦克风“%1”。在 Windows 上，请确认已允许应用使用麦克风（设置 → 隐私和安全性 → 麦克风）。</translation>
+    </message>
+</context>
+<context>
     <name>Ocr</name>
     <message>
         <location filename="../src/ocr/ModelStore.cpp" line="+163"/>
@@ -1183,7 +1201,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
     </message>
     <message>
         <location line="+10"/>
-        <location filename="../src/ocr/OcrResultDialog.cpp" line="+350"/>
+        <location filename="../src/ocr/OcrResultDialog.cpp" line="+237"/>
         <source>The text recognition engine for this window; Settings &gt; Text Recognition sets the one it opens with</source>
         <translation>本窗口使用的文字识别引擎；打开窗口时的默认值在“设置 &gt; 文字识别”里设定</translation>
     </message>
@@ -1685,7 +1703,7 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
 <context>
     <name>ScreenRecorder</name>
     <message>
-        <location filename="../src/record/ScreenRecorder.cpp" line="+242"/>
+        <location filename="../src/record/ScreenRecorder.cpp" line="+284"/>
         <source>Nothing was recorded: the screen content did not arrive.</source>
         <translation>未录到任何内容：没有收到屏幕画面。</translation>
     </message>
@@ -2009,6 +2027,26 @@ Esc 取消</translation>
         <translation>所有输入都会显示出来，包括密码。</translation>
     </message>
     <message>
+        <location line="+16"/>
+        <source>Sound</source>
+        <translation>声音</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Record the &amp;microphone:</source>
+        <translation>录制麦克风(&amp;M)：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Record the sound the computer &amp;plays</source>
+        <translation>录制电脑播放的声音(&amp;P)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>With both, they are mixed into one track. While paused, no sound is recorded.</source>
+        <translation>两者都选时混合为一条音轨。暂停期间不录制声音。</translation>
+    </message>
+    <message>
         <location line="+18"/>
         <source>&amp;Video frame rate:</source>
         <translation>视频帧率(&amp;V)：</translation>
@@ -2019,13 +2057,13 @@ Esc 取消</translation>
         <translation>默认提示词(&amp;P)：</translation>
     </message>
     <message>
-        <location line="-938"/>
-        <location line="+888"/>
+        <location line="-977"/>
+        <location line="+927"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location line="-881"/>
+        <location line="-920"/>
         <source>Cl&amp;ear</source>
         <translation>清空(&amp;E)</translation>
     </message>
@@ -2085,7 +2123,7 @@ Esc 取消</translation>
         <translation>工具栏大小(&amp;S)：</translation>
     </message>
     <message>
-        <location line="+187"/>
+        <location line="+226"/>
         <source>Recordings are saved in the Recordings subfolder of the folder chosen on the General page.</source>
         <translation>录像保存在“常规”页所选文件夹下的 Recordings 子文件夹中。</translation>
     </message>
@@ -2185,7 +2223,7 @@ Esc 取消</translation>
         <translation>文字在本机识别，然后发送到所选服务进行翻译。密钥保存在本机的用户设置中。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-694"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-719"/>
         <source>Tell me about new versions</source>
         <translation>有新版本时提醒我</translation>
     </message>
@@ -2215,7 +2253,17 @@ Esc 取消</translation>
         <translation>%1 帧/秒</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+11"/>
+        <source>Default device</source>
+        <translation>默认设备</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Needs PipeWire (Glimpse built with libpipewire-0.3).</source>
+        <translation>需要 PipeWire（Glimpse 需在构建时链接 libpipewire-0.3）。</translation>
+    </message>
+    <message>
+        <location line="+93"/>
         <source>Other GGUF model file...</source>
         <translation>其他 GGUF 模型文件...</translation>
     </message>
@@ -2230,12 +2278,12 @@ Esc 取消</translation>
         <translation>GGUF 模型 (*.gguf)</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+109"/>
         <source>Select at least one language for text recognition.</source>
         <translation>请至少选择一种要识别的语言（文字）。</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+108"/>
         <source>System default (%1)</source>
         <translation>跟随系统（%1）</translation>
     </message>
@@ -2291,7 +2339,7 @@ Esc 取消</translation>
         </translation>
     </message>
     <message>
-        <location line="-304"/>
+        <location line="-308"/>
         <source>%1 is assigned to more than one action.</source>
         <translation>%1 被分配给了多个动作。</translation>
     </message>
@@ -2306,7 +2354,7 @@ Esc 取消</translation>
         <translation>标准视频每 2×2 个像素只保留一种颜色，会让图表、代码高亮等细的彩色线条变模糊。高会以两倍尺寸的视频保留每个像素的颜色（文件约为三倍大）。宽或高超过 2048 像素的区域会保存为 H.265，部分播放器和浏览器无法播放。</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.cpp" line="-206"/>
+        <location filename="../src/settings/SettingsDialog.cpp" line="-224"/>
         <source>Standard</source>
         <translation>标准</translation>
     </message>
@@ -2316,7 +2364,7 @@ Esc 取消</translation>
         <translation>高（图表、彩色文字）</translation>
     </message>
     <message>
-        <location filename="../src/settings/SettingsDialog.ui" line="-63"/>
+        <location filename="../src/settings/SettingsDialog.ui" line="-102"/>
         <source>P&amp;osition:</source>
         <translation>位置(&amp;O)：</translation>
     </message>
@@ -2367,9 +2415,48 @@ Esc 取消</translation>
     </message>
 </context>
 <context>
+    <name>SystemAudioCapture</name>
+    <message>
+        <location filename="../src/record/SystemAudioCapture_win.cpp" line="+146"/>
+        <source>No sound output device was found.</source>
+        <translation>未找到声音输出设备。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The sound output device could not be opened.</source>
+        <translation>无法打开声音输出设备。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The sound output device uses a sample format Glimpse cannot read.</source>
+        <translation>声音输出设备使用了 Glimpse 无法读取的采样格式。</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location filename="../src/record/SystemAudioCapture_pipewire.cpp" line="+128"/>
+        <source>The sound played could not be recorded.</source>
+        <translation>无法录制电脑播放的声音。</translation>
+    </message>
+    <message>
+        <location filename="../src/record/SystemAudioCapture_pipewire.cpp" line="-32"/>
+        <source>PipeWire could not be started.</source>
+        <translation>无法启动 PipeWire。</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>The sound played cannot be recorded: PipeWire is not running.</source>
+        <translation>无法录制电脑播放的声音：PipeWire 未运行。</translation>
+    </message>
+    <message>
+        <location filename="../src/record/SystemAudioCapture_stub.cpp" line="+22"/>
+        <source>Recording the sound played is not supported here.</source>
+        <translation>此平台不支持录制电脑播放的声音。</translation>
+    </message>
+</context>
+<context>
     <name>Translate</name>
     <message>
-        <location filename="../src/translate/Translator.cpp" line="+433"/>
+        <location filename="../src/translate/Translator.cpp" line="+443"/>
         <source>Bilibili Index-Translate (free, online)</source>
         <translation>B 站 Index-Translate（免费，在线）</translation>
     </message>
@@ -2379,17 +2466,17 @@ Esc 取消</translation>
         <translation>B 站的翻译大模型（Index-Translate 35B），免费、无需密钥：译文自然，支持 150 种语言。比 Google 慢，B 站也可能限流或停止这项服务。</translation>
     </message>
     <message>
-        <location line="-78"/>
+        <location line="-84"/>
         <source>The Index-Translate reply could not be read.</source>
         <translation>无法读取 Index-Translate 的回复。</translation>
     </message>
     <message>
-        <location line="+214"/>
+        <location line="+257"/>
         <source>Firefox translation needs these language files first (about 50 MB per direction). They are kept on this computer and used offline from then on.</source>
         <translation>Firefox 翻译需要先准备这些语言文件（每个方向约 50 MB）。文件保存在这台电脑上，之后可以离线使用。</translation>
     </message>
     <message>
-        <location line="-531"/>
+        <location line="-577"/>
         <source>The API key was rejected (HTTP %1). Check it in Settings &gt; Translation.</source>
         <translation>API 密钥被拒绝（HTTP %1）。请在“设置 &gt; 翻译”中检查。</translation>
     </message>
@@ -2424,7 +2511,7 @@ Esc 取消</translation>
         <translation>无法解析 Claude 的回复。</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+142"/>
         <source>The reply of %1 could not be read.</source>
         <translation>无法读取 %1 的回复。</translation>
     </message>
@@ -2499,7 +2586,7 @@ Esc 取消</translation>
         <translation>任何提供 OpenAI 聊天接口的大模型：DeepSeek、通义千问、硅基流动等在线服务（需填写它们的密钥），或在本机运行的 Ollama、LM Studio 等（一般不需要密钥）。每个段落发送一次请求。</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+155"/>
         <source>The Firefox language files were not downloaded.</source>
         <translation>未下载 Firefox 语言文件。</translation>
     </message>

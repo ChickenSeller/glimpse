@@ -21,6 +21,7 @@
 #include "qr/BarcodeScanner.h"
 #include "record/RecordingDoneDialog.h"
 #include "record/RecordingSession.h"
+#include "record/SystemAudioCapture.h"
 #include "qr/QrResultDialog.h"
 #include "ocr/ModelStore.h"
 #include "ocr/OcrResultDialog.h"
@@ -55,6 +56,8 @@ namespace {
 // instead; menus and dialogs still fade out.
 constexpr int kHideDelayMs = 300;
 constexpr int kShortDelayMs = 150;
+// Recordings smaller than this (logical pixels, either side) are refused.
+constexpr int kMinRecordSize = 16;
 
 
 } // namespace
@@ -474,6 +477,16 @@ void CaptureController::onSnapshot(const DesktopSnapshot &snapshot)
         if (m_mode == Mode::Recording) {
             // Area first, then the countdown (if any), then recording.
             selector->deleteLater();
+            // A sliver (a separator or border picked as a window, a slip of
+            // the mouse) would make a video of a few lines of pixels.
+            if (rect.width() < kMinRecordSize || rect.height() < kMinRecordSize) {
+                onGrabFailed(tr("The area is too small to record (%1 × %2): it must be at least %3 pixels "
+                                "wide and high. Drag an area, or click a larger window.")
+                                 .arg(rect.width())
+                                 .arg(rect.height())
+                                 .arg(kMinRecordSize));
+                return;
+            }
             afterDelay([this, rect] { QTimer::singleShot(kShortDelayMs, this, [this, rect] { startRecording(rect); }); });
             return;
         }
@@ -557,6 +570,9 @@ void CaptureController::startRecording(const QRect &rect)
 #ifndef Q_OS_WIN
     options.fullColor = AppSettings::recordFullColor();
 #endif
+    options.microphone = AppSettings::recordMicrophone();
+    options.microphoneDevice = AppSettings::recordMicrophoneDevice();
+    options.systemAudio = AppSettings::recordSystemAudio() && SystemAudioCapture::isSupported();
 
     auto *session = new RecordingSession(rect, options, this);
     m_recording = session;

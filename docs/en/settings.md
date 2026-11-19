@@ -49,7 +49,7 @@ Which buttons the toolbar shows, in what order, and its size; see [Changing the 
 
 ## Recording
 
-Mouse and keys in the video, frame rate and color detail; see [Screen Recording](./record#mouse-and-keys-in-the-video).
+Mouse and keys in the video, frame rate and color detail; see [Screen Recording](./record#mouse-and-keys-in-the-video). Recording the microphone and the sound the computer plays; see [Sound](./record#sound).
 
 ## Text Recognition
 

@@ -1,10 +1,10 @@
 ---
-description: Recording part of the screen to MP4, pausing and stopping, showing mouse clicks and keys, and the recording settings.
+description: Recording part of the screen to MP4, pausing and stopping, recording sound, showing mouse clicks and keys, and the recording settings.
 ---
 
 # Screen Recording
 
-Glimpse records a window or an area of the screen to an MP4 video, for demonstrations and bug reports. Sound is not recorded.
+Glimpse records a window or an area of the screen to an MP4 video, for demonstrations and bug reports. The microphone and the sound the computer plays can be recorded with it.
 
 ## Starting and stopping
 
@@ -21,6 +21,21 @@ Recordings are saved in the `Recordings` subfolder of the folder chosen in the s
 | Show in Folder | Show it in the file manager |
 | Copy Path | Copy the file's path to the clipboard |
 | Discard | Move the recording to the Recycle Bin |
+
+## Sound
+
+Sound is off by default. In **Settings > Recording > Sound**:
+
+| Setting | Description |
+| --- | --- |
+| Record the microphone | Records the input device chosen. **Default device** follows the system's default microphone |
+| Record the sound the computer plays | Records what the default output device plays, such as videos and notification sounds |
+
+With both on, they are mixed into one track, saved as AAC in the MP4. While the recording is paused, no sound is recorded, so it stays in step with the picture.
+
+If the microphone cannot be opened, the recording does not start and the reason is shown. On Windows, check that desktop apps may use the microphone in **Settings > Privacy & security > Microphone**.
+
+On Linux, recording the sound the computer plays needs PipeWire.
 
 ## Mouse and keys in the video
 

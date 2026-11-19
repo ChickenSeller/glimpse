@@ -2,6 +2,7 @@
 
 #include "CaptureMode.h"
 
+#include <QByteArray>
 #include <QColor>
 #include <QKeySequence>
 #include <QList>
@@ -89,6 +90,14 @@ void setRecordFrameRate(int rate);
 // ScreenRecorder::Options::fullColor).
 bool recordFullColor();
 void setRecordFullColor(bool on);
+// Sound in recordings: a microphone (its QAudioDevice id; empty for the
+// system's default input) and what the computer plays. Both off by default.
+bool recordMicrophone();
+void setRecordMicrophone(bool on);
+QByteArray recordMicrophoneDevice();
+void setRecordMicrophoneDevice(const QByteArray &id);
+bool recordSystemAudio();
+void setRecordSystemAudio(bool on);
 
 // The one folder Glimpse saves into ("output" next to the program by default);
 // each kind of file has its own subfolder in it: "Save As..." for captures

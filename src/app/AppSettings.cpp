@@ -340,6 +340,36 @@ void setRecordFullColor(bool on)
     SettingsStore::open().setValue(QStringLiteral("recording/fullColor"), on);
 }
 
+bool recordMicrophone()
+{
+    return SettingsStore::open().value(QStringLiteral("recording/microphone"), false).toBool();
+}
+
+void setRecordMicrophone(bool on)
+{
+    SettingsStore::open().setValue(QStringLiteral("recording/microphone"), on);
+}
+
+QByteArray recordMicrophoneDevice()
+{
+    return SettingsStore::open().value(QStringLiteral("recording/microphoneDevice")).toString().toUtf8();
+}
+
+void setRecordMicrophoneDevice(const QByteArray &id)
+{
+    SettingsStore::open().setValue(QStringLiteral("recording/microphoneDevice"), QString::fromUtf8(id));
+}
+
+bool recordSystemAudio()
+{
+    return SettingsStore::open().value(QStringLiteral("recording/systemAudio"), false).toBool();
+}
+
+void setRecordSystemAudio(bool on)
+{
+    SettingsStore::open().setValue(QStringLiteral("recording/systemAudio"), on);
+}
+
 QString defaultSaveFolder()
 {
     return QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("output"));

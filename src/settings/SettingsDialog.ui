@@ -738,6 +738,45 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="recordSoundGroup">
+         <property name="title">
+          <string>Sound</string>
+         </property>
+         <layout class="QGridLayout" name="recordSoundLayout" columnstretch="0,1">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="recordMicrophoneCheck">
+            <property name="text">
+             <string>Record the &amp;microphone:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="recordMicrophoneCombo"/>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="recordSystemAudioCheck">
+            <property name="text">
+             <string>Record the sound the computer &amp;plays</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QLabel" name="recordSoundNote">
+            <property name="text">
+             <string>With both, they are mixed into one track. While paused, no sound is recorded.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="foregroundRole">
+             <enum>QPalette::PlaceholderText</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <layout class="QFormLayout" name="recordForm">
          <item row="0" column="0">
           <widget class="QLabel" name="recordFrameRateLabel">

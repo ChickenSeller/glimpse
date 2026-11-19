@@ -253,6 +253,8 @@ qt_add_library(glimpse_app STATIC
     src/qr/QrResultDialog.h
     src/qr/QrResultDialog.ui
 
+    src/record/AudioTrack.cpp
+    src/record/AudioTrack.h
     src/record/InputMonitor.h
     src/record/KeyboardOverlay.cpp
     src/record/KeyboardOverlay.h
@@ -261,6 +263,8 @@ qt_add_library(glimpse_app STATIC
     src/record/RecordingDoneDialog.ui
     src/record/RecordingPanel.ui
     src/record/RecordingSession.cpp
+    src/record/MicrophoneCapture.cpp
+    src/record/MicrophoneCapture.h
     src/record/RecordingSession.h
     src/record/ScreenRecorder.cpp
     src/record/ScreenRecorder.h
@@ -312,6 +316,9 @@ qt_add_translations(TARGETS glimpse glimpse-site-shots
         src/ocr/WindowsOcrEngine.h
         src/record/ScreenCastCapture.cpp
         src/record/ScreenCastCapture.h
+        src/record/SystemAudioCapture_pipewire.cpp
+        src/record/SystemAudioCapture_stub.cpp
+        src/record/SystemAudioCapture_win.cpp
     TS_FILES
         translations/glimpse_zh_CN.ts
         translations/glimpse_ja.ts
@@ -370,9 +377,20 @@ if(UNIX AND NOT APPLE)
         target_link_libraries(glimpse_app PUBLIC PkgConfig::PIPEWIRE)
         target_compile_definitions(glimpse_app PUBLIC GLIMPSE_HAVE_PIPEWIRE)
     else()
-        message(WARNING "libpipewire-0.3 not found: Wayland recordings will not show the pointer.")
+        message(WARNING "libpipewire-0.3 not found: Wayland recordings will not show the pointer "
+                        "and cannot record the sound played.")
     endif()
 endif()
+
+# What the computer plays, for recordings: WASAPI loopback, or PipeWire.
+if(WIN32)
+    set(GLIMPSE_SYSTEM_AUDIO src/record/SystemAudioCapture_win.cpp)
+elseif(PIPEWIRE_FOUND)
+    set(GLIMPSE_SYSTEM_AUDIO src/record/SystemAudioCapture_pipewire.cpp)
+else()
+    set(GLIMPSE_SYSTEM_AUDIO src/record/SystemAudioCapture_stub.cpp)
+endif()
+target_sources(glimpse_app PRIVATE src/record/SystemAudioCapture.h ${GLIMPSE_SYSTEM_AUDIO})
 
 set_target_properties(glimpse PROPERTIES
     WIN32_EXECUTABLE TRUE
@@ -473,11 +491,17 @@ qt_add_executable(glimpse-record-test
     tests/RecordTest.cpp
     src/capture/DesktopSnapshot.cpp
     src/capture/Platform.cpp
+    src/record/AudioTrack.cpp
+    src/record/AudioTrack.h
     src/record/InputMonitor.h
     src/record/KeyboardOverlay.cpp
     src/record/KeyboardOverlay.h
+    src/record/MicrophoneCapture.cpp
+    src/record/MicrophoneCapture.h
     src/record/ScreenRecorder.cpp
     src/record/ScreenRecorder.h
+    src/record/SystemAudioCapture.h
+    ${GLIMPSE_SYSTEM_AUDIO}
 )
 if(WIN32)
     target_sources(glimpse-record-test PRIVATE src/capture/CursorCapture_win.cpp src/record/InputMonitor_win.cpp)

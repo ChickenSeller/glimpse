@@ -10,6 +10,7 @@
 #include "ocr/ModelStore.h"
 #include "ocr/OcrEngine.h"
 #include "record/ScreenRecorder.h"
+#include "record/SystemAudioCapture.h"
 #include "translate/FirefoxTranslation.h"
 #include "translate/LocalModel.h"
 #include "translate/Translator.h"
@@ -19,6 +20,8 @@
 #include <QColorDialog>
 #include <QCoreApplication>
 #include <QListWidget>
+#include <QAudioDevice>
+#include <QMediaDevices>
 #include <QMenu>
 #include <QDir>
 #include <QFileDialog>
@@ -154,6 +157,23 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->recordColorCombo->addItem(tr("High (charts, colored text)"), true);
     ui->recordColorCombo->setCurrentIndex(AppSettings::recordFullColor() ? 1 : 0);
     connect(ui->recordColorCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+
+    // Sound: the system's default input follows it when it changes.
+    ui->recordMicrophoneCheck->setChecked(AppSettings::recordMicrophone());
+    ui->recordMicrophoneCombo->addItem(tr("Default device"), QByteArray());
+    const QList<QAudioDevice> inputs = QMediaDevices::audioInputs();
+    for (const QAudioDevice &device : inputs)
+        ui->recordMicrophoneCombo->addItem(device.description(), device.id());
+    ui->recordMicrophoneCombo->setCurrentIndex(
+        std::max(0, ui->recordMicrophoneCombo->findData(AppSettings::recordMicrophoneDevice())));
+    ui->recordMicrophoneCombo->setEnabled(ui->recordMicrophoneCheck->isChecked());
+    connect(ui->recordMicrophoneCheck, &QCheckBox::toggled, ui->recordMicrophoneCombo, &QWidget::setEnabled);
+    connect(ui->recordMicrophoneCombo, &QComboBox::currentIndexChanged, this, [this] { setModified(true); });
+    ui->recordSystemAudioCheck->setChecked(AppSettings::recordSystemAudio() && SystemAudioCapture::isSupported());
+    if (!SystemAudioCapture::isSupported()) {
+        ui->recordSystemAudioCheck->setEnabled(false);
+        ui->recordSystemAudioCheck->setToolTip(tr("Needs PipeWire (Glimpse built with libpipewire-0.3)."));
+    }
     setFreehandColor(AppSettings::freehandColor());
 
     for (CaptureMode mode : kAllCaptureModes)
@@ -307,7 +327,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     for (QCheckBox *check : {ui->autostartCheck, ui->usageStatsCheck, ui->captureToolbarCheck, ui->captureCursorCheck, ui->captureClipboardCheck, ui->adjustSelectionCheck,
                              ui->scrollPreviewCheck,
                              ui->freehandTransparentCheck,
-                             ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck})
+                             ui->recordHighlightCheck, ui->recordClicksCheck, ui->recordKeysCheck,
+                             ui->recordMicrophoneCheck, ui->recordSystemAudioCheck})
         connect(check, &QCheckBox::toggled, this, [this] { setModified(true); });
     connect(ui->scrollPreviewOpacitySpin, &QSpinBox::valueChanged, this, [this] { setModified(true); });
     setModified(false);
@@ -412,6 +433,10 @@ bool SettingsDialog::apply()
     AppSettings::setRecordKeyPosition(ui->recordKeyPositionCombo->currentData().toInt());
     AppSettings::setRecordFrameRate(ui->recordFrameRateCombo->currentData().toInt());
     AppSettings::setRecordFullColor(ui->recordColorCombo->currentData().toBool());
+    AppSettings::setRecordMicrophone(ui->recordMicrophoneCheck->isChecked());
+    AppSettings::setRecordMicrophoneDevice(ui->recordMicrophoneCombo->currentData().toByteArray());
+    if (SystemAudioCapture::isSupported())
+        AppSettings::setRecordSystemAudio(ui->recordSystemAudioCheck->isChecked());
 
     const QString language = selectedLanguage();
     if (language != AppSettings::language()) {
@@ -686,6 +711,9 @@ void SettingsDialog::restoreDefaults()
     ui->recordKeyPositionCombo->setCurrentIndex(0);
     ui->recordFrameRateCombo->setCurrentIndex(std::max(0, ui->recordFrameRateCombo->findData(30)));
     ui->recordColorCombo->setCurrentIndex(0);
+    ui->recordMicrophoneCheck->setChecked(false);
+    ui->recordMicrophoneCombo->setCurrentIndex(0);
+    ui->recordSystemAudioCheck->setChecked(false);
     if (m_freehandColor != QColor(Qt::white)) {
         setFreehandColor(Qt::white);
         setModified(true);

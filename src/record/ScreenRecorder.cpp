@@ -1,12 +1,18 @@
 #include "ScreenRecorder.h"
 
+#include "AudioTrack.h"
 #include "InputMonitor.h"
+#include "MicrophoneCapture.h"
+#include "SystemAudioCapture.h"
 #ifdef GLIMPSE_HAVE_PIPEWIRE
 #include "ScreenCastCapture.h"
 #endif
 #include "capture/CursorCapture.h"
 #include "capture/Platform.h"
 
+#include <QAudioBuffer>
+#include <QAudioBufferInput>
+#include <QAudioFormat>
 #include <QCursor>
 #include <QMediaFormat>
 #include <QMediaRecorder>
@@ -22,6 +28,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
+#include <vector>
 
 namespace {
 
@@ -34,6 +42,21 @@ const QColor kBand(32, 32, 32);
 const QColor kLeftClick(229, 57, 53);
 const QColor kRightClick(30, 136, 229);
 const QColor kMiddleClick(67, 160, 71);
+
+// The sound is mixed this far behind the clock: the devices hand it over in
+// chunks, some time after it was heard.
+constexpr qint64 kAudioDelayMs = 150;
+constexpr int kAudioIntervalMs = 20;
+
+QAudioFormat audioFormat()
+{
+    QAudioFormat format;
+    format.setSampleRate(AudioTrack::kRate);
+    format.setChannelCount(AudioTrack::kChannels);
+    format.setChannelConfig(QAudioFormat::ChannelConfigStereo);
+    format.setSampleFormat(QAudioFormat::Float);
+    return format;
+}
 
 #ifndef Q_OS_WIN
 // BT.709, limited range.
@@ -173,6 +196,15 @@ ScreenRecorder::ScreenRecorder(QScreen *screen, const QRect &logicalRect, const 
             emit finished(m_recorder->actualLocation().toLocalFile());
     });
 
+    if (hasAudio()) {
+        m_audioInput = new QAudioBufferInput(audioFormat(), this);
+        m_output.setAudioBufferInput(m_audioInput);
+        connect(m_audioInput, &QAudioBufferInput::readyToSendAudioBuffer, this, &ScreenRecorder::sendAudio);
+        m_audioTimer = new QTimer(this);
+        m_audioTimer->setInterval(kAudioIntervalMs);
+        connect(m_audioTimer, &QTimer::timeout, this, [this] { mixAudio(false); });
+    }
+
     if (m_options.showClicks || m_options.showKeys) {
         m_inputMonitor = InputMonitor::create(this);
         connect(m_inputMonitor, &InputMonitor::mouseButton, this, [this](Qt::MouseButton button, bool pressed) {
@@ -212,10 +244,15 @@ ScreenRecorder::~ScreenRecorder()
 {
     if (m_inputMonitor)
         m_inputMonitor->stop();
+    stopAudio();
 }
 
 void ScreenRecorder::start()
 {
+    // First: a microphone that cannot be opened stops the recording here.
+    // The time it takes (seconds, for one that was idle) is not recorded.
+    if (hasAudio() && !startAudio())
+        return;
     m_clock.start();
     if (m_options.showKeys)
         m_keyboard.setLayout(currentKeyboardLayout());
@@ -237,6 +274,11 @@ void ScreenRecorder::stop()
     setCaptureActive(false);
     if (m_inputMonitor)
         m_inputMonitor->stop();
+    if (hasAudio()) {
+        // The rest of the sound, up to now.
+        stopAudio();
+        mixAudio(true);
+    }
     if (!m_recording) {
         // No screen content ever came (the portal was still asking).
         fail(tr("Nothing was recorded: the screen content did not arrive."));
@@ -250,6 +292,8 @@ void ScreenRecorder::beginRecording()
     m_recording = true;
     QMediaFormat format(QMediaFormat::MPEG4);
     format.setVideoCodec(QMediaFormat::VideoCodec::H264);
+    if (hasAudio())
+        format.setAudioCodec(QMediaFormat::AudioCodec::AAC);
 #ifndef Q_OS_WIN
     // Twice the size: H.264 encoders take at most 4096 pixels a side, H.265
     // ones 8192 (NVENC, VA-API).
@@ -270,6 +314,7 @@ void ScreenRecorder::setPaused(bool paused)
     if (paused) {
         m_pausedSince = m_clock.elapsed();
     } else {
+        m_pauses.append({m_pausedSince, m_clock.elapsed()});
         m_pausedTotal += m_clock.elapsed() - m_pausedSince;
         m_pausedSince = -1;
     }
@@ -292,7 +337,99 @@ void ScreenRecorder::fail(const QString &message)
     setCaptureActive(false);
     if (m_inputMonitor)
         m_inputMonitor->stop();
+    stopAudio();
     emit failed(message);
+}
+
+bool ScreenRecorder::startAudio()
+{
+    QString error;
+    if (m_options.microphone) {
+        m_microphoneTrack = std::make_unique<AudioTrack>();
+        m_microphone = new MicrophoneCapture(m_options.microphoneDevice, m_microphoneTrack.get(), this);
+        if (!m_microphone->start(&error)) {
+            fail(error);
+            return false;
+        }
+    }
+    if (m_options.systemAudio) {
+        m_systemTrack = std::make_unique<AudioTrack>();
+        m_systemAudio = std::make_unique<SystemAudioCapture>(m_systemTrack.get());
+        if (!m_systemAudio->start(&error)) {
+            fail(error);
+            return false;
+        }
+    }
+    return true;
+}
+
+void ScreenRecorder::stopAudio()
+{
+    if (m_audioTimer)
+        m_audioTimer->stop();
+    if (m_microphone)
+        m_microphone->stop();
+    if (m_systemAudio)
+        m_systemAudio->stop();
+}
+
+void ScreenRecorder::mixAudio(bool all)
+{
+    if (m_audioMixed < 0)
+        return;
+    const qint64 now = AudioTrack::frameAt(m_clock);
+    const qint64 to = all ? now : now - AudioTrack::kRate * kAudioDelayMs / 1000;
+    const qint64 from = m_audioMixed;
+    if (to <= from)
+        return;
+    std::vector<float> mix(size_t(to - from) * AudioTrack::kChannels, 0.0f);
+    for (AudioTrack *track : {m_microphoneTrack.get(), m_systemTrack.get()}) {
+        if (track)
+            track->mixInto(mix.data(), from, to);
+    }
+    m_audioMixed = to;
+    for (float &sample : mix)
+        sample = std::clamp(sample, -1.0f, 1.0f);
+
+    // Paused, the video stands still and its time does not run: the sound
+    // of that time is left out.
+    const auto frameOf = [](qint64 ms) { return ms * AudioTrack::kRate / 1000; };
+    m_pauses.removeIf([&](const std::pair<qint64, qint64> &pause) { return frameOf(pause.second) <= from; });
+    QList<std::pair<qint64, qint64>> pauses;
+    for (const auto &[begin, end] : std::as_const(m_pauses))
+        pauses.append({frameOf(begin), frameOf(end)});
+    if (m_paused)
+        pauses.append({frameOf(m_pausedSince), std::numeric_limits<qint64>::max()});
+    qint64 at = from;
+    const auto keepUntil = [&](qint64 until) {
+        until = std::min(until, to);
+        if (until > at) {
+            m_audioPending.append(reinterpret_cast<const char *>(mix.data() + (at - from) * AudioTrack::kChannels),
+                                  qsizetype((until - at) * AudioTrack::kChannels * sizeof(float)));
+        }
+    };
+    for (const auto &[begin, end] : std::as_const(pauses)) {
+        keepUntil(begin);
+        at = std::max(at, end);
+        if (at >= to)
+            break;
+    }
+    keepUntil(to);
+    sendAudio();
+}
+
+void ScreenRecorder::sendAudio()
+{
+    if (!m_audioInput || m_audioPending.isEmpty())
+        return;
+    const QAudioFormat format = audioFormat();
+    const qint64 frames = m_audioPending.size() / format.bytesPerFrame();
+    const QAudioBuffer buffer(m_audioPending, format, m_audioSent * 1000000 / AudioTrack::kRate);
+    // Not taken while the encoder is busy: kept, and sent with what follows.
+    if (m_audioInput->sendAudioBuffer(buffer)) {
+        m_audioSent += frames;
+        m_audioPending.clear();
+    }
 }
 
 QPoint ScreenRecorder::cursorPos(qreal scale) const
@@ -362,7 +499,20 @@ void ScreenRecorder::writeFrame()
 {
     if (m_stopping || m_failed || m_paused || m_area.isNull())
         return;
-    const qint64 now = durationMs();
+    // The video (and the sound) starts at 0 with the first frame, however
+    // long the screen content took to come.
+    if (m_videoOrigin < 0) {
+        m_videoOrigin = durationMs();
+        if (hasAudio()) {
+            m_audioMixed = AudioTrack::frameAt(m_clock);
+            for (AudioTrack *track : {m_microphoneTrack.get(), m_systemTrack.get()}) {
+                if (track)
+                    track->start(&m_clock, m_audioMixed);
+            }
+            m_audioTimer->start();
+        }
+    }
+    const qint64 now = durationMs() - m_videoOrigin;
     const qint64 frameMs = 1000 / std::max(1, m_options.frameRate);
 
     QImage out = m_area.copy();
