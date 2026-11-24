@@ -84,15 +84,43 @@ QImage ScrollStitcher::transposed(const QImage &image)
     return out;
 }
 
-ScrollStitcher::Signature ScrollStitcher::signature(const QImage &image)
+void ScrollStitcher::chooseLevels(const QImage &image)
+{
+    // The most common value of each channel: the background's, mostly.
+    int histogram[3][256] = {};
+    for (int y = 0; y < image.height(); y += 2) {
+        const auto *row = reinterpret_cast<const QRgb *>(image.constScanLine(y));
+        for (int x = 0; x < image.width(); x += 2) {
+            ++histogram[0][qRed(row[x])];
+            ++histogram[1][qGreen(row[x])];
+            ++histogram[2][qBlue(row[x])];
+        }
+    }
+    for (int c = 0; c < 3; ++c) {
+        const int mode = int(std::max_element(histogram[c], histogram[c] + 256) - histogram[c]);
+        // That value in the middle of its level, a few steps from either edge.
+        const int offset = (kLevel / 2 - mode % kLevel + kLevel) % kLevel;
+        for (int v = 0; v < 256; ++v)
+            m_levels[c][v] = quint8((v + offset) / kLevel);
+    }
+}
+
+ScrollStitcher::Signature ScrollStitcher::signature(const QImage &image) const
 {
     Signature sig;
     sig.hashes.resize(size_t(image.height()) * kSegments);
     sig.content.resize(sig.hashes.size());
     const int margin = sideMargin(image);
     const int usable = image.width() - 2 * margin;
+    std::vector<quint32> levels(size_t(std::max(0, usable)));
     for (int y = 0; y < image.height(); ++y) {
-        const auto *row = reinterpret_cast<const quint32 *>(image.constScanLine(y)) + margin;
+        const auto *pixels = reinterpret_cast<const QRgb *>(image.constScanLine(y)) + margin;
+        for (int x = 0; x < usable; ++x) {
+            const QRgb px = pixels[x];
+            levels[size_t(x)] = quint32(m_levels[0][qRed(px)]) << 16 | quint32(m_levels[1][qGreen(px)]) << 8
+                                | m_levels[2][qBlue(px)];
+        }
+        const quint32 *row = levels.data();
         for (int k = 0; k < kSegments; ++k) {
             const int from = usable * k / kSegments;
             const int to = usable * (k + 1) / kSegments;
@@ -216,6 +244,8 @@ ScrollStitcher::Result ScrollStitcher::addFrame(const QImage &input)
     frame.setDevicePixelRatio(input.devicePixelRatio());
     if (m_horizontal)
         frame = transposed(frame);
+    if (m_frames == 0)
+        chooseLevels(frame);
     Signature sig = signature(frame);
 
     if (m_frames == 0) {
@@ -362,7 +392,10 @@ int ScrollStitcher::findShift(const Signature &next, int skipTop, int skipBottom
                 const bool same = prev.hashes[a + k] == next.hashes[b + k];
                 ++compared;
                 matched += same;
-                if (prev.content[a + k]) {
+                // Content on either side: at a wrong shift, blank parts of
+                // one frame (with only the lines of a table across them)
+                // meet the text of the other.
+                if (prev.content[a + k] || next.content[b + k]) {
                     ++dCompared;
                     dMatched += same;
                     if (prev.hashes[a + k] != prev.hashes[b + k]) {

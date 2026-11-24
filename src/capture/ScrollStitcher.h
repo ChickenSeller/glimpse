@@ -78,7 +78,14 @@ private:
 
     // Columns as rows (and back again), keeping the device pixel ratio.
     static QImage transposed(const QImage &image);
-    static Signature signature(const QImage &image);
+    // Rows are compared in levels of kLevel values per channel, not exactly:
+    // browsers dither gradients (a background a step lighter here and there,
+    // fixed to the screen while the content scrolls over it), which would
+    // leave no row the same as before. The levels are placed so that the
+    // most common colour (the background) sits in the middle of its level.
+    static constexpr int kLevel = 8;
+    void chooseLevels(const QImage &firstFrame);
+    Signature signature(const QImage &image) const;
     bool rowsEqual(const Signature &a, int rowA, const Signature &b, int rowB) const;
     // The same row in two frames, but for a little that animates (a progress
     // bar, a caret): still a row that did not scroll.
@@ -102,6 +109,7 @@ private:
 
     Scrolling m_scrolling;
     bool m_horizontal;
+    quint8 m_levels[3][256] = {}; // channel value -> level, see chooseLevels()
     int m_frames = 0;
     QImage m_previous;
     Signature m_previousSignature;

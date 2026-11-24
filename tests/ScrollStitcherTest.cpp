@@ -4,6 +4,7 @@
 
 #include "capture/ScrollStitcher.h"
 
+#include <QDir>
 #include <QGuiApplication>
 #include <QPainter>
 #include <QRandomGenerator>
@@ -154,11 +155,99 @@ bool runBrowserCase()
     return ok;
 }
 
+// The horizontal shift from a to b (positive: b shows the view scrolled
+// right), by the least mean difference of a sample of pixels: slow, but
+// tolerant of anything that is not exactly equal.
+int bruteShiftX(const QImage &a, const QImage &b, int range)
+{
+    int best = 0;
+    double bestDiff = 1e30;
+    for (int dx = -range; dx <= range; ++dx) {
+        double diff = 0;
+        long n = 0;
+        for (int y = 0; y < a.height(); y += 6) {
+            const auto *ra = reinterpret_cast<const QRgb *>(a.constScanLine(y));
+            const auto *rb = reinterpret_cast<const QRgb *>(b.constScanLine(y));
+            for (int x = std::max(0, -dx); x < std::min(a.width(), a.width() - dx); x += 3) {
+                diff += std::abs(qGray(ra[x + dx]) - qGray(rb[x]));
+                ++n;
+            }
+        }
+        if (n > 0 && diff / n < bestDiff) {
+            bestDiff = diff / n;
+            best = dx;
+        }
+    }
+    return best;
+}
+
+// --replay <dir> [--vertical]: feeds the frames a capture saved with
+// QT_LOGGING_RULES="glimpse.scroll.debug=true" (glimpse-manual-*.png) to a
+// Tracking stitcher, printing what it made of each, and saves the result.
+int replay(const QString &dir, bool horizontal)
+{
+    const QDir frames(dir);
+    const QStringList files = frames.entryList({QStringLiteral("glimpse-manual-*.png")}, QDir::Files, QDir::Name);
+    ScrollStitcher stitcher(ScrollStitcher::Scrolling::Tracking,
+                            horizontal ? ScrollStitcher::Direction::Horizontal : ScrollStitcher::Direction::Vertical);
+    QImage previous;
+    for (const QString &file : files) {
+        const QImage frame = QImage(frames.filePath(file)).convertToFormat(QImage::Format_RGB32);
+        const auto result = stitcher.addFrame(frame);
+        const int truth = previous.isNull() || !horizontal ? 0 : bruteShiftX(previous, frame, frame.width() / 3);
+        // How much of the overlap is exactly the same at the true shift.
+        long same = 0, all = 0;
+        if (truth != 0) {
+            for (int y = 0; y < frame.height(); ++y) {
+                const auto *ra = reinterpret_cast<const QRgb *>(previous.constScanLine(y));
+                const auto *rb = reinterpret_cast<const QRgb *>(frame.constScanLine(y));
+                for (int x = std::max(0, -truth); x < std::min(frame.width(), frame.width() - truth); ++x) {
+                    ++all;
+                    same += ra[x + truth] == rb[x];
+                }
+            }
+        }
+        std::printf("%s  result %d  shift %5d  true %5d  exact %5.1f%%  length %d\n", qPrintable(file), int(result),
+                    stitcher.lastShift(), truth, all ? 100.0 * same / all : 0.0,
+                    horizontal ? stitcher.image().width() : stitcher.height());
+        if (result == ScrollStitcher::Result::Added || result == ScrollStitcher::Result::Moved)
+            previous = frame;
+        else if (previous.isNull())
+            previous = frame;
+    }
+    stitcher.image().save(frames.filePath(QStringLiteral("replay-result.png")));
+    return 0;
+}
+
 } // namespace
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    const QStringList args = app.arguments();
+    // --diff a.png b.png <out.png>: b lined up on a by the true horizontal
+    // shift, pixels that differ in red over a dimmed b.
+    if (args.size() >= 5 && args[1] == QLatin1String("--diff")) {
+        const QImage a = QImage(args[2]).convertToFormat(QImage::Format_RGB32);
+        const QImage b = QImage(args[3]).convertToFormat(QImage::Format_RGB32);
+        const int dx = bruteShiftX(a, b, a.width() / 3);
+        QImage out(b.size(), QImage::Format_RGB32);
+        for (int y = 0; y < b.height(); ++y) {
+            const auto *ra = reinterpret_cast<const QRgb *>(a.constScanLine(y));
+            const auto *rb = reinterpret_cast<const QRgb *>(b.constScanLine(y));
+            auto *ro = reinterpret_cast<QRgb *>(out.scanLine(y));
+            for (int x = 0; x < b.width(); ++x) {
+                const int g = qGray(rb[x]) / 3;
+                const bool inside = x + dx >= 0 && x + dx < a.width();
+                ro[x] = !inside ? qRgb(0, 0, 80) : ra[x + dx] == rb[x] ? qRgb(g, g, g) : qRgb(255, 0, 0);
+            }
+        }
+        out.save(args[4]);
+        std::printf("shift %d\n", dx);
+        return 0;
+    }
+    if (args.size() >= 3 && args[1] == QLatin1String("--replay"))
+        return replay(args[2], !args.contains(QLatin1String("--vertical")));
     bool ok = true;
     // Real scrolling moves a fixed number of wheel notches per step.
     ok &= runCase("fixed steps, blank band", QList<int>(20, 150), true);
@@ -246,6 +335,40 @@ int main(int argc, char *argv[])
         std::printf("%-28s %s  (%dx%d)\n", "horizontal preview fits", fits ? "PASS" : "FAIL", preview.width(),
                     preview.height());
         ok &= fits;
+    }
+    // A dithered background, fixed to the screen while the page scrolls over
+    // it (browsers dither gradients): white a step darker in a pattern.
+    {
+        const auto dithered = [](QImage frame) {
+            for (int y = 0; y < frame.height(); ++y) {
+                auto *row = reinterpret_cast<QRgb *>(frame.scanLine(y));
+                for (int x = 0; x < frame.width(); ++x) {
+                    if (row[x] == qRgb(255, 255, 255) && (x * 7 + y * 3) % 5 < 2)
+                        row[x] = qRgb(255, 255, 254);
+                }
+            }
+            return frame;
+        };
+        const QImage page = makePage(3000, false);
+        ScrollStitcher stitcher(ScrollStitcher::Scrolling::Tracking);
+        int scroll = 0, furthest = 0;
+        for (int step : {0, 120, 77, -150, 201, 33, 180, 260, 160, -60, 199, 64, 150}) {
+            scroll = std::max(0, scroll + step);
+            furthest = std::max(furthest, scroll);
+            stitcher.addFrame(dithered(frameAt(page, scroll)));
+        }
+        const auto end = stitcher.addFrame(dithered(frameAt(page, scroll)));
+        const QImage actual = stitcher.image();
+        bool same = end == ScrollStitcher::Result::NoChange && actual.height() == kHeader + furthest + kContent + kFooter;
+        for (int y = 0; same && y < furthest + kContent; ++y) {
+            const auto *got = reinterpret_cast<const QRgb *>(actual.constScanLine(kHeader + y));
+            const auto *want = reinterpret_cast<const QRgb *>(page.constScanLine(y));
+            for (int x = 0; same && x < kWidth; ++x)
+                same = std::abs(qBlue(got[x]) - qBlue(want[x])) <= 1 && qRed(got[x]) == qRed(want[x]);
+        }
+        std::printf("%-28s %s  (%dx%d)\n", "dithered background", same ? "PASS" : "FAIL", actual.width(),
+                    actual.height());
+        ok &= same;
     }
     // Overshooting step: the stitcher must refuse it rather than stitch garbage.
     {
