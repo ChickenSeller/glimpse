@@ -12,10 +12,14 @@ namespace {
 // Marks the wheel input Glimpse sends, so the hook can tell it from the user's.
 constexpr ULONG_PTR kOwnInput = 0x476c6d70; // "Glmp"
 
+std::atomic<bool> g_horizontal{false};
 std::atomic<bool> g_watching{false};
 std::atomic<bool> g_userScrolled{false};
 std::atomic<bool> g_pacing{false};
-std::atomic<int> g_pending{0}; // wheel units held back while pacing
+// Wheel units held back while pacing, as they came: of the vertical wheel
+// (horizontally, those turned with Shift held), and of the horizontal one.
+std::atomic<int> g_pending{0};
+std::atomic<int> g_pendingH{0};
 
 // A low-level hook sees all mouse input before any window does. Windows
 // passes the input on without it when the hook's thread does not answer in
@@ -26,9 +30,20 @@ LRESULT CALLBACK mouseHook(int code, WPARAM message, LPARAM data)
     if (code == HC_ACTION && (message == WM_MOUSEWHEEL || message == WM_MOUSEHWHEEL)) {
         const auto *info = reinterpret_cast<const MSLLHOOKSTRUCT *>(data);
         if (info->dwExtraInfo != kOwnInput) {
-            if (g_pacing && message == WM_MOUSEWHEEL) {
-                g_pending += GET_WHEEL_DELTA_WPARAM(info->mouseData);
-                return 1; // held back; passed on by the capture
+            if (g_pacing) {
+                const int delta = GET_WHEEL_DELTA_WPARAM(info->mouseData);
+                if (!g_horizontal) {
+                    if (message == WM_MOUSEWHEEL) {
+                        g_pending += delta;
+                        return 1; // held back; passed on by the capture
+                    }
+                } else if (message == WM_MOUSEHWHEEL) {
+                    g_pendingH += delta;
+                    return 1;
+                } else if (GetAsyncKeyState(VK_SHIFT) & 0x8000) {
+                    g_pending += delta; // Shift+wheel scrolls sideways
+                    return 1;
+                }
             }
             if (g_watching)
                 g_userScrolled = true;
@@ -65,14 +80,18 @@ void updateHook()
     }
 }
 
-void sendWheel(int delta, ULONG_PTR extra)
+// The horizontal wheel's units are positive to the right, unlike the vertical
+// one's, which are positive up: `delta` is in the vertical wheel's sense.
+void sendWheel(int delta, ULONG_PTR extra, bool horizontal = g_horizontal)
 {
     // SendInput goes through the normal input path, so it reaches whatever is
     // under the pointer exactly like a real wheel (posting WM_MOUSEWHEEL does
     // not work for browsers and other apps that read raw input).
+    if (horizontal)
+        delta = -delta;
     INPUT input{};
     input.type = INPUT_MOUSE;
-    input.mi.dwFlags = MOUSEEVENTF_WHEEL;
+    input.mi.dwFlags = horizontal ? MOUSEEVENTF_HWHEEL : MOUSEEVENTF_WHEEL;
     input.mi.mouseData = DWORD(delta);
     input.mi.dwExtraInfo = extra;
     SendInput(1, &input, sizeof(input));
@@ -113,14 +132,16 @@ long integrityOfProcess(DWORD pid)
 
 namespace ScrollInput {
 
+void setHorizontal(bool horizontal)
+{
+    g_horizontal = horizontal;
+    g_pending = 0;
+    g_pendingH = 0;
+}
+
 void wheel(int notches)
 {
     sendWheel(notches * WHEEL_DELTA, kOwnInput);
-}
-
-void wheelBy(int delta)
-{
-    sendWheel(delta, kOwnInput);
 }
 
 void userWheel(int notches)
@@ -132,14 +153,26 @@ void pace(bool on)
 {
     g_pacing = on;
     g_pending = 0;
+    g_pendingH = 0;
     updateHook();
 }
 
-int takePending(int limit)
+int passOnPending(int limit)
 {
-    const int taken = std::clamp(g_pending.load(), -limit, limit);
-    g_pending -= taken;
-    return taken;
+    // The horizontal wheel's own units first, sent back as they came; then the
+    // vertical wheel's, also as they came (with Shift still held, they scroll
+    // sideways again).
+    if (const int h = std::clamp(g_pendingH.load(), -limit, limit)) {
+        g_pendingH -= h;
+        sendWheel(-h, kOwnInput, true);
+        return -h;
+    }
+    const int v = std::clamp(g_pending.load(), -limit, limit);
+    if (v != 0) {
+        g_pending -= v;
+        sendWheel(v, kOwnInput, false);
+    }
+    return v;
 }
 
 bool escapePressed()

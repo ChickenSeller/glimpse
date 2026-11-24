@@ -53,10 +53,12 @@ const QColor kPreviewBorder(0xff, 0xd4, 0x00);
 class PreviewWindow : public QWidget
 {
 public:
-    explicit PreviewWindow(qreal opacity)
+    // `alignment`: where the image sits in the window, the side nearest the area.
+    PreviewWindow(qreal opacity, Qt::Alignment alignment)
         : QWidget(nullptr, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool
                                | Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus)
         , m_opacity(opacity)
+        , m_alignment(alignment)
     {
         setAttribute(Qt::WA_ShowWithoutActivating);
         setAttribute(Qt::WA_TranslucentBackground);
@@ -73,9 +75,11 @@ protected:
     {
         if (m_image.isNull())
             return;
-        // Only as wide as the image, centered; it narrows as it grows longer.
+        // Only as large as the image; it narrows (or flattens) as it grows longer.
         const QSizeF size = m_image.deviceIndependentSize();
-        const QRectF image(QPointF((width() - size.width()) / 2, kPreviewPad), size);
+        const qreal x = m_alignment & Qt::AlignHCenter ? (width() - size.width()) / 2 : kPreviewPad;
+        const qreal y = m_alignment & Qt::AlignBottom ? height() - kPreviewPad - size.height() : kPreviewPad;
+        const QRectF image(QPointF(x, y), size);
         QPainter p(this);
         // See-through, so it hides less of what is beside the area.
         p.setOpacity(m_opacity);
@@ -93,6 +97,7 @@ protected:
 private:
     QImage m_image;
     qreal m_opacity;
+    Qt::Alignment m_alignment;
 };
 
 // Over the area until the user clicks where to scroll: catches that click
@@ -186,9 +191,13 @@ ScrollCaptureSession::~ScrollCaptureSession() = default;
 
 void ScrollCaptureSession::start()
 {
-    if (m_rect.width() < 16 || m_rect.height() < 48) {
+    if (std::min(m_rect.width(), m_rect.height()) < 16 || std::max(m_rect.width(), m_rect.height()) < 48) {
         finish();
         return;
+    }
+    if (m_horizontal) {
+        m_stitcher = ScrollStitcher(m_stitcher.scrolling(), ScrollStitcher::Direction::Horizontal);
+        ScrollInput::setHorizontal(true);
     }
     ScrollInput::escapePressed(); // forget an Esc from before (e.g. a canceled selection)
     createChrome();
@@ -350,6 +359,30 @@ void ScrollCaptureSession::undo()
     updatePreview();
 }
 
+void ScrollCaptureSession::switchDirection(bool horizontal)
+{
+    // Only before anything is stitched on (see updatePanel()): the first
+    // frame alone is quickly grabbed again.
+    if (m_done || horizontal == m_horizontal || m_stitcher.canUndo())
+        return;
+    qCDebug(lcScroll) << "now scrolling" << (horizontal ? "to the right" : "down");
+    m_horizontal = horizontal;
+    m_stitcher = ScrollStitcher(m_stitcher.scrolling(),
+                                horizontal ? ScrollStitcher::Direction::Horizontal : ScrollStitcher::Direction::Vertical);
+    ScrollInput::setHorizontal(horizontal);
+    m_notches = 2;
+    m_steps = 0;
+    m_unchanged = 0;
+    m_retrying = false;
+    m_lost = false;
+    m_pixelsPerNotch = 0;
+    m_passedOn = 0;
+    m_preview.reset();
+    placePreview(m_panelOverlaps ? QRect() : m_panel->geometry());
+    updatePanel();
+    emit horizontalChanged(horizontal);
+}
+
 void ScrollCaptureSession::createChrome()
 {
     // The frame sits entirely outside the captured area.
@@ -371,10 +404,18 @@ void ScrollCaptureSession::createChrome()
     m_undo->setFocusPolicy(Qt::NoFocus);
     m_undo->setToolTip(tr("Take back the last part stitched on (Ctrl+Z)"));
     connect(m_undo, &QPushButton::clicked, this, &ScrollCaptureSession::undo);
+    m_direction = new QPushButton(tr("Horizontal"));
+    m_direction->setCheckable(true);
+    m_direction->setChecked(m_horizontal);
+    m_direction->setFocusPolicy(Qt::NoFocus);
+    m_direction->setToolTip(tr("Scroll to the right instead of down, for a wide image; "
+                               "only until something is stitched on"));
+    connect(m_direction, &QPushButton::toggled, this, &ScrollCaptureSession::switchDirection);
     auto *stop = new QPushButton(tr("Stop"));
     stop->setFocusPolicy(Qt::NoFocus);
     connect(stop, &QPushButton::clicked, this, &ScrollCaptureSession::stop);
     layout->addWidget(m_status);
+    layout->addWidget(m_direction);
     layout->addWidget(m_undo);
     layout->addWidget(stop);
     // Room for the longest status, so the panel never cuts one off.
@@ -420,28 +461,49 @@ void ScrollCaptureSession::createChrome()
 }
 
 // Beside the area, its bottom level with the area's, on the side with room
-// and clear of the panel; not at all if there is no such room.
+// and clear of the panel; not at all if there is no such room. Horizontally,
+// below or above the area, its left edge level with the area's.
 void ScrollCaptureSession::placePreview(const QRect &panel)
 {
     if (m_previewOpacity <= 0)
         return;
     const QRect screen = m_screen->geometry();
     const int gap = kBorder + 6;
-    const int height = std::min(kPreviewMaxHeight, std::max(m_rect.height(), 160));
-    const int top = std::max(screen.top(), m_rect.bottom() - height + 1);
-    const int rightRoom = screen.right() - (m_rect.right() + gap);
-    const int leftRoom = (m_rect.left() - gap) - screen.left();
-    QList<QRect> candidates;
-    if (rightRoom >= kPreviewMinWidth)
-        candidates << QRect(m_rect.right() + gap, top, std::min(kPreviewMaxWidth, rightRoom), height);
-    if (leftRoom >= kPreviewMinWidth) {
-        const int width = std::min(kPreviewMaxWidth, leftRoom);
-        candidates << QRect(m_rect.left() - gap - width, top, width, height);
+    QList<std::pair<QRect, Qt::Alignment>> candidates;
+    if (m_horizontal) {
+        // The long side runs along the area, short of the panel if it is there.
+        const int width = std::min(kPreviewMaxHeight, std::max(m_rect.width(), 160));
+        const int left = std::max(screen.left(), std::min(m_rect.left(), screen.right() + 1 - width));
+        const int belowRoom = screen.bottom() - (m_rect.bottom() + gap);
+        const int aboveRoom = (m_rect.top() - gap) - screen.top();
+        if (belowRoom >= kPreviewMinWidth)
+            candidates.append({QRect(left, m_rect.bottom() + gap, width, std::min(kPreviewMaxWidth, belowRoom)),
+                               Qt::AlignLeft | Qt::AlignTop});
+        if (aboveRoom >= kPreviewMinWidth) {
+            const int height = std::min(kPreviewMaxWidth, aboveRoom);
+            candidates.append({QRect(left, m_rect.top() - gap - height, width, height), Qt::AlignLeft | Qt::AlignBottom});
+        }
+        for (auto &[r, alignment] : candidates) {
+            if (panel.intersects(r) && panel.left() - gap - r.left() >= kPreviewMinWidth)
+                r.setRight(panel.left() - gap - 1);
+        }
+    } else {
+        const int height = std::min(kPreviewMaxHeight, std::max(m_rect.height(), 160));
+        const int top = std::max(screen.top(), m_rect.bottom() - height + 1);
+        const int rightRoom = screen.right() - (m_rect.right() + gap);
+        const int leftRoom = (m_rect.left() - gap) - screen.left();
+        if (rightRoom >= kPreviewMinWidth)
+            candidates.append({QRect(m_rect.right() + gap, top, std::min(kPreviewMaxWidth, rightRoom), height),
+                               Qt::AlignHCenter | Qt::AlignTop});
+        if (leftRoom >= kPreviewMinWidth) {
+            const int width = std::min(kPreviewMaxWidth, leftRoom);
+            candidates.append({QRect(m_rect.left() - gap - width, top, width, height), Qt::AlignHCenter | Qt::AlignTop});
+        }
     }
-    for (const QRect &r : std::as_const(candidates)) {
+    for (const auto &[r, alignment] : std::as_const(candidates)) {
         if (panel.intersects(r))
             continue;
-        m_preview = std::make_unique<PreviewWindow>(m_previewOpacity);
+        m_preview = std::make_unique<PreviewWindow>(m_previewOpacity, alignment);
         m_preview->setGeometry(r);
         Platform::disableWindowAnimations(m_preview.get());
         m_preview->show();
@@ -465,6 +527,8 @@ void ScrollCaptureSession::updatePanel()
     if (!m_status)
         return;
     m_undo->setEnabled(m_stitcher.canUndo());
+    // Switching starts over, so not once there is something to lose.
+    m_direction->setEnabled(!m_stitcher.canUndo());
     if (m_clickCatcher)
         m_status->setText(tr("Click in the area where to scroll  ·  Esc to cancel"));
     else if (m_scrolling == Scrolling::Automatic)
@@ -557,11 +621,9 @@ void ScrollCaptureSession::passOnWheel(ScrollStitcher::Result result)
         const double room = 0.5 * m_stitcher.contentHeight();
         limit = std::clamp(int(room / m_pixelsPerNotch * 120), 20, 120 * kMaxNotches);
     }
-    m_passedOn = ScrollInput::takePending(limit);
-    if (m_passedOn != 0) {
-        qCDebug(lcScroll) << "passing on" << m_passedOn << "of the wheel; a notch scrolls" << m_pixelsPerNotch;
-        ScrollInput::wheelBy(m_passedOn);
-    }
+    m_passedOn = ScrollInput::passOnPending(limit);
+    if (m_passedOn != 0)
+        qCDebug(lcScroll) << "passed on" << m_passedOn << "of the wheel; a notch scrolls" << m_pixelsPerNotch;
 }
 
 void ScrollCaptureSession::step()
@@ -679,6 +741,7 @@ void ScrollCaptureSession::finish()
         m_clickCatcher->close();
     m_clickHint.reset();
     ScrollInput::watchUser(false);
+    ScrollInput::setHorizontal(false);
     if (m_hotkeys)
         m_hotkeys->clear();
     m_frame.clear();

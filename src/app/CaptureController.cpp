@@ -519,6 +519,8 @@ void CaptureController::startScrollingCapture(const QRect &rect, bool manual)
     auto *session = new ScrollCaptureSession(
         rect, manual ? ScrollCaptureSession::Scrolling::Manual : ScrollCaptureSession::Scrolling::Automatic, this);
     session->setPreviewOpacity(AppSettings::scrollPreview() ? AppSettings::scrollPreviewOpacity() / 100.0 : 0.0);
+    session->setHorizontal(AppSettings::scrollHorizontal());
+    connect(session, &ScrollCaptureSession::horizontalChanged, this, &AppSettings::setScrollHorizontal);
     connect(session, &ScrollCaptureSession::finished, this, [this, session](const QImage &image) {
         session->deleteLater();
         endCapture();

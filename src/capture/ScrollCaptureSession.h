@@ -34,6 +34,10 @@ class QWidget;
 // Beside the area, where there is room, a preview shows the stitched image so
 // far. Ctrl+Z or Undo takes back the last rows stitched on (and switches to
 // manual scrolling: scrolling back up a little picks up from there).
+//
+// Horizontally (the panel's Horizontal button, until something is stitched
+// on), the area scrolls to the right instead, with the horizontal wheel, and
+// a wide image comes out; the preview is then above or below the area.
 class ScrollCaptureSession : public QObject
 {
     Q_OBJECT
@@ -47,6 +51,9 @@ public:
     // How opaque the preview beside the area is (0 to 1); 0 shows none.
     // Before start().
     void setPreviewOpacity(qreal opacity) { m_previewOpacity = opacity; }
+    // Scrolls to the right rather than down. Before start(); the user can
+    // switch on the panel.
+    void setHorizontal(bool horizontal) { m_horizontal = horizontal; }
     void start();
     // As if the user clicked at `point` (global, logical) to begin automatic
     // scrolling; for tests, which cannot click.
@@ -68,8 +75,12 @@ signals:
     // out of reach of the wheel input; the session waits for continueManually()
     // or abort(), with Esc and Ctrl+Z released for the question.
     void elevationNeeded();
+    // The user switched between scrolling down and to the right.
+    void horizontalChanged(bool horizontal);
 
 private:
+    // Starts over in the other direction, from what the area shows now.
+    void switchDirection(bool horizontal);
     void showClickHint();
     // After the click that picks where to scroll.
     void beginScrolling(const QPoint &scrollPoint);
@@ -96,6 +107,7 @@ private:
     void passOnWheel(ScrollStitcher::Result result);
 
     Scrolling m_scrolling;
+    bool m_horizontal = false;
     QScreen *m_screen = nullptr;
     QRect m_rect;         // logical, global, within m_screen
     QPoint m_scrollPoint; // where the pointer sits while scrolling
@@ -106,6 +118,7 @@ private:
     std::unique_ptr<QWidget> m_panel;
     QLabel *m_status = nullptr;
     QPushButton *m_undo = nullptr;
+    QPushButton *m_direction = nullptr;
     std::unique_ptr<QWidget> m_preview;
     QPointer<QWidget> m_clickCatcher; // over the area until the click
     std::unique_ptr<QWidget> m_clickHint; // says to click, until then

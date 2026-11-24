@@ -1734,6 +1734,14 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>最後につなげた部分を取り消す（Ctrl+Z）</translation>
     </message>
     <message>
+        <source>Horizontal</source>
+        <translation>横方向</translation>
+    </message>
+    <message>
+        <source>Scroll to the right instead of down, for a wide image; only until something is stitched on</source>
+        <translation>下ではなく右へスクロールして横長の画像にします（つなぎ始める前のみ）</translation>
+    </message>
+    <message>
         <location line="+12"/>
         <location line="+90"/>
         <source>Not lined up: scroll back a little  ·  Esc to stop</source>

@@ -60,6 +60,10 @@ bool scrollPreview();
 void setScrollPreview(bool show);
 int scrollPreviewOpacity();
 void setScrollPreviewOpacity(int percent);
+// Whether scrolling capture last scrolled to the right rather than down (the
+// panel's Horizontal button); the next one starts that way.
+bool scrollHorizontal();
+void setScrollHorizontal(bool horizontal);
 // What fills a freehand capture outside the drawn outline: transparent by
 // default, or a solid color (kept while transparency is switched on).
 bool freehandTransparent();

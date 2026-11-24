@@ -226,6 +226,16 @@ void setScrollPreviewOpacity(int percent)
     SettingsStore::open().setValue(QStringLiteral("capture/scrollPreviewOpacity"), std::clamp(percent, 20, 100));
 }
 
+bool scrollHorizontal()
+{
+    return SettingsStore::open().value(QStringLiteral("capture/scrollHorizontal"), false).toBool();
+}
+
+void setScrollHorizontal(bool horizontal)
+{
+    SettingsStore::open().setValue(QStringLiteral("capture/scrollHorizontal"), horizontal);
+}
+
 bool freehandTransparent()
 {
     return SettingsStore::open().value(QStringLiteral("capture/freehandTransparent"), true).toBool();

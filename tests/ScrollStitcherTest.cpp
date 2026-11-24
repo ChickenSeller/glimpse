@@ -7,6 +7,7 @@
 #include <QGuiApplication>
 #include <QPainter>
 #include <QRandomGenerator>
+#include <QTransform>
 
 #include <algorithm>
 #include <cstdio>
@@ -208,6 +209,42 @@ int main(int argc, char *argv[])
         const bool fits = preview.width() <= 200 && preview.height() == 300
                           && std::abs(preview.width() - full.width() * 300 / full.height()) <= 1;
         std::printf("%-28s %s  (%dx%d)\n", "preview fits", fits ? "PASS" : "FAIL", preview.width(), preview.height());
+        ok &= fits;
+    }
+    // Scrolling to the right: the same page turned on its side (header at the
+    // left, footer at the right), scrolled back and forth by the user.
+    {
+        const auto turned = [](const QImage &image) {
+            return image.transformed(QTransform(0, 1, 1, 0, 0, 0)).convertToFormat(QImage::Format_RGB32);
+        };
+        const QImage page = makePage(3000, false);
+        ScrollStitcher stitcher(ScrollStitcher::Scrolling::Tracking, ScrollStitcher::Direction::Horizontal);
+        int scroll = 0, furthest = 0;
+        for (int step : {0, 120, 77, -150, 201, 33, 180, 260, 160, -60, 199, 64, 150}) {
+            scroll = std::max(0, scroll + step);
+            furthest = std::max(furthest, scroll);
+            stitcher.addFrame(turned(frameAt(page, scroll)));
+        }
+        const auto end = stitcher.addFrame(turned(frameAt(page, scroll)));
+        QImage expected(kWidth, kHeader + furthest + kContent + kFooter, QImage::Format_RGB32);
+        {
+            QPainter p(&expected);
+            const QImage first = frameAt(page, 0);
+            p.drawImage(0, 0, first, 0, 0, kWidth, kHeader);
+            p.drawImage(0, kHeader, page, 0, 0, kWidth, furthest + kContent);
+            p.drawImage(0, kHeader + furthest + kContent, first, 0, kHeader + kContent, kWidth, kFooter);
+        }
+        const QImage actual = stitcher.image();
+        const bool sideways = end == ScrollStitcher::Result::NoChange && actual == turned(expected);
+        std::printf("%-28s %s  (%dx%d)\n", "horizontal, tracking", sideways ? "PASS" : "FAIL", actual.width(),
+                    actual.height());
+        ok &= sideways;
+
+        const QImage preview = stitcher.preview(QSize(300, 200));
+        const bool fits = preview.height() <= 200 && preview.width() == 300
+                          && std::abs(preview.height() - actual.height() * 300 / actual.width()) <= 1;
+        std::printf("%-28s %s  (%dx%d)\n", "horizontal preview fits", fits ? "PASS" : "FAIL", preview.width(),
+                    preview.height());
         ok &= fits;
     }
     // Overshooting step: the stitcher must refuse it rather than stitch garbage.

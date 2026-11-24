@@ -1734,6 +1734,14 @@ Click &quot;Allow Screenshots&quot; and confirm in the system dialog that appear
         <translation>撤回最后拼上的一段（Ctrl+Z）</translation>
     </message>
     <message>
+        <source>Horizontal</source>
+        <translation>横向</translation>
+    </message>
+    <message>
+        <source>Scroll to the right instead of down, for a wide image; only until something is stitched on</source>
+        <translation>向右而不是向下滚动，拼出一张宽图；开始拼接后就不能再切换</translation>
+    </message>
+    <message>
         <location line="+12"/>
         <location line="+90"/>
         <source>Not lined up: scroll back a little  ·  Esc to stop</source>

@@ -17,10 +17,16 @@
 // the view is, and rows are appended once it passes the lowest point so far.
 // The last rows appended can be taken back (undoLast()); Tracking then picks
 // up again from there once the view is back within reach of it.
+//
+// Horizontally, the same goes for columns, from left to right: each frame is
+// transposed (columns become rows) on its way in, and the result on its way
+// out; "rows", "height", "down" and "header" below then mean columns, width,
+// right and the still columns at the left.
 class ScrollStitcher
 {
 public:
     enum class Scrolling { Down, Tracking };
+    enum class Direction { Vertical, Horizontal };
     enum class Result {
         Added,     // new rows were appended
         Moved,     // Tracking: lined up, but showed nothing new
@@ -30,8 +36,9 @@ public:
                    // part are out of view (after undoLast()); scroll back up
     };
 
-    explicit ScrollStitcher(Scrolling scrolling = Scrolling::Down)
+    explicit ScrollStitcher(Scrolling scrolling = Scrolling::Down, Direction direction = Direction::Vertical)
         : m_scrolling(scrolling)
+        , m_horizontal(direction == Direction::Horizontal)
     {
     }
 
@@ -39,6 +46,7 @@ public:
 
     // From program scrolling (Down) to the user's (Tracking), mid-capture.
     void setScrolling(Scrolling scrolling) { m_scrolling = scrolling; }
+    Scrolling scrolling() const { return m_scrolling; }
     // Takes back the rows the last added frame appended; false if none are
     // left to take back (the first frame stays).
     bool undoLast();
@@ -68,6 +76,8 @@ private:
     };
     static constexpr int kSegments = 32;
 
+    // Columns as rows (and back again), keeping the device pixel ratio.
+    static QImage transposed(const QImage &image);
     static Signature signature(const QImage &image);
     bool rowsEqual(const Signature &a, int rowA, const Signature &b, int rowB) const;
     // The same row in two frames, but for a little that animates (a progress
@@ -85,10 +95,13 @@ private:
     int findShift(const Signature &next, int skipTop, int skipBottom) const;
     void appendRows(const QImage &source, int first, int count);
     QImage footerImage() const;
+    // preview() as the rows are kept (transposed, horizontally).
+    QImage previewRows(const QSize &maxSize) const;
     // Row `y` of image(), without building it.
     const uchar *rowAt(int y, const QImage &footer) const;
 
     Scrolling m_scrolling;
+    bool m_horizontal;
     int m_frames = 0;
     QImage m_previous;
     Signature m_previousSignature;

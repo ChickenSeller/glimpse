@@ -3,6 +3,10 @@
 // TODO: X11 via XTest. Wayland does not let clients inject input into others.
 namespace ScrollInput {
 
+void setHorizontal(bool)
+{
+}
+
 void wheel(int)
 {
 }
@@ -21,10 +25,6 @@ bool userScrolled()
     return false;
 }
 
-void wheelBy(int)
-{
-}
-
 void userWheel(int)
 {
 }
@@ -33,7 +33,7 @@ void pace(bool)
 {
 }
 
-int takePending(int)
+int passOnPending(int)
 {
     return 0;
 }

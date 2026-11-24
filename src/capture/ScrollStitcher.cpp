@@ -65,6 +65,25 @@ int sideMargin(const QImage &image)
 
 } // namespace
 
+QImage ScrollStitcher::transposed(const QImage &image)
+{
+    QImage out(image.height(), image.width(), QImage::Format_RGB32);
+    out.setDevicePixelRatio(image.devicePixelRatio());
+    // In tiles, so that both images are read and written a cache line at a time.
+    constexpr int kTile = 64;
+    const int w = image.width(), h = image.height();
+    for (int y0 = 0; y0 < h; y0 += kTile) {
+        for (int x0 = 0; x0 < w; x0 += kTile) {
+            for (int y = y0; y < std::min(h, y0 + kTile); ++y) {
+                const auto *src = reinterpret_cast<const quint32 *>(image.constScanLine(y));
+                for (int x = x0; x < std::min(w, x0 + kTile); ++x)
+                    reinterpret_cast<quint32 *>(out.scanLine(x))[y] = src[x];
+            }
+        }
+    }
+    return out;
+}
+
 ScrollStitcher::Signature ScrollStitcher::signature(const QImage &image)
 {
     Signature sig;
@@ -195,6 +214,8 @@ ScrollStitcher::Result ScrollStitcher::addFrame(const QImage &input)
 {
     QImage frame = input.convertToFormat(QImage::Format_RGB32);
     frame.setDevicePixelRatio(input.devicePixelRatio());
+    if (m_horizontal)
+        frame = transposed(frame);
     Signature sig = signature(frame);
 
     if (m_frames == 0) {
@@ -467,7 +488,7 @@ QImage ScrollStitcher::image() const
     const QImage footer = footerImage();
     for (int y = 0; y < footer.height(); ++y)
         std::memcpy(result.scanLine(m_bodyHeight + y), footer.constScanLine(y), size_t(result.width()) * 4);
-    return result;
+    return m_horizontal ? transposed(result) : result;
 }
 
 QImage ScrollStitcher::footerImage() const
@@ -487,6 +508,15 @@ const uchar *ScrollStitcher::rowAt(int y, const QImage &footer) const
 }
 
 QImage ScrollStitcher::preview(const QSize &maxSize) const
+{
+    if (m_horizontal) {
+        const QImage image = previewRows(maxSize.transposed());
+        return image.isNull() ? image : transposed(image);
+    }
+    return previewRows(maxSize);
+}
+
+QImage ScrollStitcher::previewRows(const QSize &maxSize) const
 {
     const int w = m_body.width();
     const int h = height();
