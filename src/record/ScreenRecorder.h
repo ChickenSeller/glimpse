@@ -102,9 +102,19 @@ private:
     };
 
     void setCaptureActive(bool active);
+    // Only kept: the capture may deliver a frame per screen refresh (while
+    // anything on screen redraws all the time, like the area selector of a
+    // screenshot), and turning each into an image would hog the GUI thread.
+    // The latest is taken once per video frame, see takeFrame().
     void onFrame(const QVideoFrame &frame);
+    void takeFrame();
     // A whole screen, physical pixels.
     void onImage(const QImage &image);
+    // Where the area lies in a screen frame of `size` (physical pixels),
+    // with m_scale set from it.
+    QRect cropFor(const QSize &size);
+    // The area's pixels are in; starts the encoder with the first ones.
+    void areaUpdated();
     // Picks the codec for the area's real size and starts the encoder.
     void beginRecording();
     // Writes one video frame: the latest screen content with the pointer and
@@ -142,6 +152,7 @@ private:
     ScreenCastCapture *m_screenCast = nullptr; // Wayland, with the pointer
     QVideoSink *m_sink = nullptr;
     QTimer *m_frameTimer = nullptr;
+    std::unique_ptr<QVideoFrame> m_pendingFrame; // delivered, not yet taken
     QImage m_area;          // latest screen content of the area, physical
     QPoint m_areaOrigin;    // its top-left, physical, relative to the screen
     QSize m_frameSize;      // of the video: the area, and the band if any

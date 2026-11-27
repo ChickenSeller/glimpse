@@ -459,34 +459,92 @@ void ScreenRecorder::setCaptureActive(bool active)
 
 void ScreenRecorder::onFrame(const QVideoFrame &frame)
 {
-    if (frame.isValid())
+    if (!frame.isValid() || m_stopping || m_failed)
+        return;
+    if (m_pendingFrame)
+        *m_pendingFrame = frame;
+    else
+        m_pendingFrame = std::make_unique<QVideoFrame>(frame);
+    // The first one at once: the encoder starts with it.
+    if (m_area.isNull())
+        takeFrame();
+}
+
+void ScreenRecorder::takeFrame()
+{
+    if (!m_pendingFrame || !m_screen)
+        return;
+    QVideoFrame frame = std::exchange(*m_pendingFrame, QVideoFrame());
+    if (!frame.isValid())
+        return;
+    // Straight from the frame's memory, only the area's pixels, where its
+    // format is one QImage reads as is; otherwise the whole screen converted.
+    QImage::Format format = QImage::Format_Invalid;
+    switch (frame.pixelFormat()) {
+    case QVideoFrameFormat::Format_BGRA8888:
+    case QVideoFrameFormat::Format_BGRA8888_Premultiplied:
+        format = QImage::Format_ARGB32;
+        break;
+    case QVideoFrameFormat::Format_BGRX8888:
+        format = QImage::Format_RGB32;
+        break;
+    default:
+        break;
+    }
+    if (format == QImage::Format_Invalid || frame.mirrored() || frame.rotation() != QtVideo::Rotation::None
+        || !frame.map(QVideoFrame::ReadOnly)) {
         onImage(frame.toImage());
+        return;
+    }
+    const QRect crop = cropFor(frame.size());
+    if (crop.isEmpty()) {
+        frame.unmap();
+        return;
+    }
+    const QImage screen(frame.bits(0), frame.width(), frame.height(), frame.bytesPerLine(0), format);
+    // A deep copy: the frame's memory goes back to the capture when unmapped.
+    m_area = screen.copy(crop).convertToFormat(QImage::Format_ARGB32);
+    frame.unmap();
+    m_areaOrigin = crop.topLeft();
+    areaUpdated();
 }
 
 void ScreenRecorder::onImage(const QImage &image)
 {
     if (m_stopping || m_failed || !m_screen || image.isNull())
         return;
+    const QRect crop = cropFor(image.size());
+    // ARGB32 is what the encoder path takes as is; RGB32 frames came out black.
+    m_area = image.copy(crop).convertToFormat(QImage::Format_ARGB32);
+    m_areaOrigin = crop.topLeft();
+    areaUpdated();
+}
+
+QRect ScreenRecorder::cropFor(const QSize &size)
+{
     const QRect screenRect = m_screen->geometry();
-    m_scale = qreal(image.width()) / screenRect.width();
+    m_scale = qreal(size.width()) / screenRect.width();
+    const QRect image(QPoint(0, 0), size);
 
     // H.264 (4:2:0) needs even dimensions.
     const QRectF area(QPointF(m_rect.topLeft() - screenRect.topLeft()) * m_scale, QSizeF(m_rect.size()) * m_scale);
 #ifdef Q_OS_WIN
-    QRect crop = area.toAlignedRect().intersected(image.rect());
+    QRect crop = area.toAlignedRect().intersected(image);
 #else
     // Only pixels wholly inside the area: the red frame, which cannot be
     // kept out of the capture here, sits right outside it, and a scaled frame
     // window (XWayland at 150%) blends into the pixels it partly covers.
     QRect crop = QRect(QPoint(int(std::ceil(area.left())), int(std::ceil(area.top()))),
                        QPoint(int(std::floor(area.right())) - 1, int(std::floor(area.bottom())) - 1))
-                     .intersected(image.rect());
+                     .intersected(image);
 #endif
     crop.setWidth(crop.width() & ~1);
     crop.setHeight(crop.height() & ~1);
-    // ARGB32 is what the encoder path takes as is; RGB32 frames came out black.
-    m_area = image.copy(crop).convertToFormat(QImage::Format_ARGB32);
-    m_areaOrigin = crop.topLeft();
+    return crop;
+}
+
+void ScreenRecorder::areaUpdated()
+{
     // The area's size in physical pixels is only known now.
     // (On Windows the encoder starts with the recording, before any frame.)
     if (m_frameSize.isEmpty())
@@ -497,7 +555,10 @@ void ScreenRecorder::onImage(const QImage &image)
 
 void ScreenRecorder::writeFrame()
 {
-    if (m_stopping || m_failed || m_paused || m_area.isNull())
+    if (m_stopping || m_failed || m_paused)
+        return;
+    takeFrame();
+    if (m_area.isNull())
         return;
     // The video (and the sound) starts at 0 with the first frame, however
     // long the screen content took to come.
