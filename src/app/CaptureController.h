@@ -86,6 +86,10 @@ private:
     // manual: the user scrolls, see ScrollCaptureSession.
     void startScrollingCapture(const QRect &rect, bool manual);
     void startRecording(const QRect &rect);
+    // A recording ended (or failed): the toolbar back, if it hid it.
+    void endRecording();
+    // Says why a capture or recording failed (tray message or a box).
+    void showFailure(const QString &message);
     // Runs the "delay before capture" countdown (if any), then `then`.
     void afterDelay(std::function<void()> then);
     void grabAfterDelay();
@@ -118,4 +122,6 @@ private:
     QRect m_pinRect; // where the region being pinned was chosen
     QPointer<WhiteboardCanvas> m_whiteboard;
     bool m_restoreToolbar = false;
+    // The toolbar was hidden for the recording, to come back when it ends.
+    bool m_restoreToolbarAfterRecording = false;
 };

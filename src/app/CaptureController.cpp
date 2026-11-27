@@ -556,8 +556,9 @@ void CaptureController::startScrollingCapture(const QRect &rect, bool manual)
 
 void CaptureController::startRecording(const QRect &rect)
 {
-    // Still "busy" while recording: the toolbar stays hidden (it would be in
-    // the video); the record button, hotkey or the panel's Stop end it.
+    // The record button, hotkey or the panel's Stop end it. Meanwhile other
+    // captures work as usual; the toolbar stays hidden (it would be in the
+    // video) until the recording ends.
     const QString folder = AppSettings::recordFolder();
     QDir().mkpath(folder);
     ScreenRecorder::Options options;
@@ -580,7 +581,7 @@ void CaptureController::startRecording(const QRect &rect)
     m_recording = session;
     connect(session, &RecordingSession::finished, this, [this, session](const QString &path, qint64 durationMs) {
         session->deleteLater();
-        endCapture();
+        endRecording();
         auto *dialog = new RecordingDoneDialog(path, durationMs);
         dialog->show();
         dialog->raise();
@@ -588,15 +589,39 @@ void CaptureController::startRecording(const QRect &rect)
     });
     connect(session, &RecordingSession::failed, this, [this, session](const QString &message) {
         session->deleteLater();
-        onGrabFailed(tr("Recording failed: %1").arg(message));
+        endRecording();
+        showFailure(tr("Recording failed: %1").arg(message));
     });
+    // Picking the area is over: no longer "busy", so screenshots, scrolling
+    // captures and the rest can be taken while it records.
+    m_restoreToolbarAfterRecording = m_restoreToolbar;
+    m_restoreToolbar = false;
+    endCapture();
     session->start();
+}
+
+void CaptureController::endRecording()
+{
+    m_recording.clear();
+    if (m_restoreToolbarAfterRecording) {
+        m_restoreToolbarAfterRecording = false;
+        // Not in the middle of another capture, which hides it too.
+        if (m_busy)
+            m_restoreToolbar = true;
+        else
+            m_toolbar->show();
+    }
 }
 
 void CaptureController::onGrabFailed(const QString &message)
 {
     closePermissionDialog();
     endCapture();
+    showFailure(message);
+}
+
+void CaptureController::showFailure(const QString &message)
+{
     if (m_tray)
         m_tray->showMessage(tr("Capture failed"), message, QSystemTrayIcon::Warning);
     else
