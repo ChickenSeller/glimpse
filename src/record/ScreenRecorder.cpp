@@ -227,6 +227,24 @@ ScreenRecorder::ScreenRecorder(QScreen *screen, const QRect &logicalRect, const 
         connect(m_inputMonitor, &InputMonitor::keyPressed, this, [this](const QString &text) {
             if (!m_options.showKeys)
                 return;
+            // Modifiers pressed on their own ("Ctrl") grow into what follows
+            // while they are held ("Ctrl + Shift", "Ctrl + Shift + S").
+            static const QStringList modifiers = {QStringLiteral("Ctrl"), QStringLiteral("Alt"),
+                                                  QStringLiteral("Shift"), QStringLiteral("Win")};
+            const QString separator = QStringLiteral(" + ");
+            const auto onlyModifiers = [&](const QStringList &parts) {
+                return std::all_of(parts.begin(), parts.end(), [&](const QString &p) { return modifiers.contains(p); });
+            };
+            if (!m_keys.isEmpty() && m_keys.last().count == 1 && m_keys.last().text != text) {
+                const QStringList last = m_keys.last().text.split(separator);
+                const QStringList parts = text.split(separator);
+                if (onlyModifiers(last)
+                    && std::all_of(last.begin(), last.end(), [&](const QString &p) { return parts.contains(p); })) {
+                    m_keys.last().text = text;
+                    m_keys.last().at = m_clock.elapsed();
+                    return;
+                }
+            }
             // A repeated combination counts up instead of piling up.
             if (!m_keys.isEmpty() && m_keys.last().text == text) {
                 m_keys.last().count++;

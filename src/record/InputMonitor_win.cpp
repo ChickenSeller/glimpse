@@ -4,6 +4,9 @@
 #include <QMetaObject>
 #include <QStringList>
 
+#include <algorithm>
+#include <initializer_list>
+
 #include <windows.h>
 
 namespace {
@@ -83,6 +86,7 @@ public:
         if (m_mouseHook)
             return;
         g_monitor = this;
+        std::fill(std::begin(m_modifiersDown), std::end(m_modifiersDown), false);
         // Called on this (the GUI) thread's message loop; they must return quickly.
         m_mouseHook = SetWindowsHookExW(WH_MOUSE_LL, &WinInputMonitor::mouseProc, GetModuleHandleW(nullptr), 0);
         m_keyboardHook = SetWindowsHookExW(WH_KEYBOARD_LL, &WinInputMonitor::keyboardProc, GetModuleHandleW(nullptr), 0);
@@ -135,19 +139,36 @@ private:
                     emit g_monitor->keyState(id, down);
             }, Qt::QueuedConnection);
         }
-        if (code == HC_ACTION && g_monitor && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)) {
+        if (code == HC_ACTION && g_monitor) {
             const auto *key = reinterpret_cast<const KBDLLHOOKSTRUCT *>(lParam);
-            if (!isModifier(key->vkCode)) {
+            const bool down = wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN;
+            const DWORD vk = key->vkCode;
+            // A modifier on its own shows too ("Ctrl"), once as it goes down,
+            // not again as it repeats; the key that follows makes it a
+            // combination (see ScreenRecorder).
+            const bool modifier = isModifier(vk);
+            bool report = down;
+            if (modifier && vk < 256) {
+                report = down && !m_modifiersDown[vk];
+                m_modifiersDown[vk] = down;
+            }
+            if (report) {
+                // The key itself may not count as held yet while its own
+                // event is being reported.
+                const auto is = [vk](std::initializer_list<DWORD> keys) {
+                    return std::find(keys.begin(), keys.end(), vk) != keys.end();
+                };
                 QStringList parts;
-                if (held(VK_CONTROL))
+                if (held(VK_CONTROL) || is({VK_CONTROL, VK_LCONTROL, VK_RCONTROL}))
                     parts << QStringLiteral("Ctrl");
-                if (held(VK_MENU))
+                if (held(VK_MENU) || is({VK_MENU, VK_LMENU, VK_RMENU}))
                     parts << QStringLiteral("Alt");
-                if (held(VK_SHIFT))
+                if (held(VK_SHIFT) || is({VK_SHIFT, VK_LSHIFT, VK_RSHIFT}))
                     parts << QStringLiteral("Shift");
-                if (held(VK_LWIN) || held(VK_RWIN))
+                if (held(VK_LWIN) || held(VK_RWIN) || is({VK_LWIN, VK_RWIN}))
                     parts << QStringLiteral("Win");
-                parts << keyName(*key);
+                if (!modifier)
+                    parts << keyName(*key);
                 const QString text = parts.join(QStringLiteral(" + "));
                 QMetaObject::invokeMethod(g_monitor, [text] {
                     if (g_monitor)
@@ -157,6 +178,9 @@ private:
         }
         return CallNextHookEx(nullptr, code, wParam, lParam);
     }
+
+    // Modifier keys down, by virtual key: their auto-repeat is not reported.
+    static inline bool m_modifiersDown[256] = {};
 
     HHOOK m_mouseHook = nullptr;
     HHOOK m_keyboardHook = nullptr;

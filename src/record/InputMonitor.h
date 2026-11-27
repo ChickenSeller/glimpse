@@ -24,7 +24,8 @@ public:
 signals:
     void mouseButton(Qt::MouseButton button, bool pressed);
     // A key with the modifiers held, e.g. "Ctrl + Shift + S"; plain typing
-    // reports single keys ("A", "Space").
+    // reports single keys ("A", "Space"). Modifiers going down report the
+    // ones held so far ("Ctrl", then "Ctrl + Shift"), not as they repeat.
     void keyPressed(const QString &combination);
     // Every key going down or up, by where it is on the keyboard (the ids of
     // KeyboardOverlay); auto-repeat reports "pressed" again.
